@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace AventasApi.Models.ViewModels
+{
+    public class PedidoPostViewModel
+    {
+        public string CodigoCliente { get; set; }
+        public string CodigoColeccion { get; set; }
+        public string AcuerdoVenta { get; set; }
+        public string EmpresaId { get; set; }
+        public string Usuario { get; set; }
+        public System.DateTime? FechaActual { get; set; }
+        public System.DateTime? FechaEntrega { get; set; }
+        public string Observacion { get; set; }
+
+        public string NombreCliente { get; set; }
+
+        public string Firma { get; set; }
+
+        public Location location = new Location();
+
+        public List<DetallePedidoPostViewModel> DetallePedido;
+
+        public int TipoVenta { get; set; }
+        public TipoPedidoViewModel TipoPedido { get; set; }
+
+        public string Linea { get; set; }
+        public string NombreColeccion { get; set; }
+        public Nullable<decimal> TotalUnidades { get; set; }
+        public Nullable<decimal> TotalXPedido { get; set; }
+
+        public PedidoPostViewModel()
+        {
+            DetallePedido = new List<DetallePedidoPostViewModel>();
+
+        }
+    }
+}
