@@ -1,6 +1,6 @@
 ﻿using AventasApi.Models.Authentication;
 using AventasApi.Services.Authentication;
-using Responses;
+//using Responses;
 using System.Collections.Generic;
 using System.Web.Http;
 
@@ -20,7 +20,7 @@ namespace AventasApi.Controllers.Authentication
         {
             var answer = _authenticationAppService.Authentication(credential);
 
-            if (answer.Type == TypeResponse.ErrorValidation)
+            if (answer.Type != "1")
             {
                 return BadRequest(answer.Message);
             }

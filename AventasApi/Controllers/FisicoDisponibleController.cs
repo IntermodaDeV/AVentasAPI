@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using AventasApi.Models.ViewModels;
-using IMS.Tokens.Services;
+//using IMS.Tokens.Services;
 using AventasApi.Models.Authentication;
 using AventasApi.Models.ApiModels;
 using AventasApi.GestorData;

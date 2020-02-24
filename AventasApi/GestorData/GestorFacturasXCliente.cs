@@ -55,13 +55,10 @@ namespace AventasApi.GestorData
                         if (i + 1 * 100 > clientes.Count())
                         {
                             buffer = clientes.GetRange(i * 100, clientes.Count() - ((i - 1) * 100));
-
                         }
                         else
                         {
                             buffer = clientes.GetRange(i * 100, 100);
-
-
                         }
                         var taskGetacuerdos =
                         buffer.Select(async col =>

@@ -11,10 +11,10 @@ using AventasApi.Models.ApiModels;
 using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
 //using IMS.Extensions;
-using IMS.Tokens.Services;
+//using IMS.Tokens.Services;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-using Responses;
+//using Responses;
 using RestSharp;
 using System.Data.Entity;
 using AventasApi.Services.AsyncJobs;
@@ -313,7 +313,7 @@ namespace AventasApi.Controllers
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Accept", "application/json");
                 request.AddJsonBody(pe);
-                IRestResponse<Response<string>> response = client.Execute<Response<string>>(request);
+                IRestResponse response = client.Execute(request);
                 string content = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(response.Content);
                 if (content.StartsWith("Success"))
                 {

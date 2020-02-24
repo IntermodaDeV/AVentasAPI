@@ -99,7 +99,9 @@ namespace AventasApi.Controllers
                                                           IdLinea = pxc.IdLinea
                                                       }).ToList(),
                                                       ListaImagenes = pxc.FotografiasXProducto.Where(txp => txp.FotografiaProducto != null)
-                                                         .Where(txp => (pxc.FotografiasXProducto.Where(fxp => fxp.CodigoColor == "").Count() > 0 && txp.CodigoColor == "") || (pxc.FotografiasXProducto.FirstOrDefault() != null && txp.CodigoColor == pxc.FotografiasXProducto.FirstOrDefault().CodigoColor)).Select(foto => new FotografiasXProductoViewModel
+                                                         .Where(txp => (pxc.FotografiasXProducto.Where(fxp => fxp.CodigoColor == "").Count() > 0 && txp.CodigoColor == "") || (pxc.FotografiasXProducto.FirstOrDefault() != null && txp.CodigoColor == pxc.FotografiasXProducto.FirstOrDefault().CodigoColor))
+                                                         //.Orderby(foto => foto)
+                                                         .Select(foto => new FotografiasXProductoViewModel
                                                          {
                                                              IdFotografia = foto.IdFotografia,
                                                              FotografiaProducto = urlImagenes + foto.FotografiaProducto,

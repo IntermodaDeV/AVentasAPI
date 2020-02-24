@@ -1,5 +1,6 @@
 ﻿using AventasApi.Models.Authentication;
-using IMS.Tokens.Services;
+using AventasApi.Services.Authentication;
+//using IMS.Tokens.Services;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -11,11 +12,12 @@ namespace AventasApi.Filters
 {
     public class Auth : AuthorizationFilterAttribute
     {
+        AuthenticationAppService TokenService = new AuthenticationAppService();
         private bool ValidateToken(string token, out string message)
         {
             try
             {
-                var user = TokenService.Validate<UserAuthenticated>(token);
+                var user = TokenService.Validate(token);
 
                 if (user.DueDate <= DateTime.Now)
                 {
