@@ -9,19 +9,20 @@ using AventasApi.Models.ApiModels;
 using System.Diagnostics;
 using RestSharp;
 using Newtonsoft.Json;
+using AventasApi.Enviroments;
 
 namespace AventasApi.GestorData
 {
     public class GestorAcuerdosVenta
     {
-        private string UrlString = @"http://190.109.223.244:8083/api/acuerdos/{0}/{1}/{2}/Incremental";//0= entity,1=usuario,2=date 20190101 
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}acuerdos/{0}/{1}/{2}/Incremental";//0= entity,1=usuario,2=date 20190101 
 
 
         //private static AVentasEntities context = new AVentasEntities();
 
 
 
-        public async Task<List<AcuerdosxCliente>> ObtenerAcuerdosxCliente()
+        public List<AcuerdosxCliente> ObtenerAcuerdosxCliente()
         {
             List<Asesores> asesores = new List<Asesores>();
             List<TiposdePedido> tiposPedido = new List<TiposdePedido>();
@@ -36,7 +37,7 @@ namespace AventasApi.GestorData
             {
                 string peticion = string.Format(UrlString, ase.EmpresaId, ase.Usuario, "20190101");
                 var restClient = new RestClient(peticion);
-                restClient.Timeout = 600*1000;
+                restClient.Timeout = 600 * 1000;
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("Accept", "application/json");
                 IRestResponse response = restClient.Execute(request);
@@ -51,12 +52,12 @@ namespace AventasApi.GestorData
                     foreach (var acu in acuerdos)
                     {
                         var tipoPedido = tiposPedido.FirstOrDefault(tp => tp.TipoPedido == acu.CLASS_SALES_AGREEMENT);
-                        decimal total,saldo,liberado,entregado,facturado = 0;
-                        decimal.TryParse(acu.AMOUNT,out total);
-                        decimal.TryParse(acu.REMAINING,out saldo);
-                        decimal.TryParse(acu.RELEASED,out liberado);
-                        decimal.TryParse(acu.DELIVERED,out entregado);
-                        decimal.TryParse(acu.INVOICED,out facturado);
+                        decimal total, saldo, liberado, entregado, facturado = 0;
+                        decimal.TryParse(acu.AMOUNT, out total);
+                        decimal.TryParse(acu.REMAINING, out saldo);
+                        decimal.TryParse(acu.RELEASED, out liberado);
+                        decimal.TryParse(acu.DELIVERED, out entregado);
+                        decimal.TryParse(acu.INVOICED, out facturado);
                         var acuerdoAGuardar = new AcuerdosxCliente
                         {
                             IdAcuerdoxCliente = acu.ID_SALES_AGREEMENT,
@@ -71,14 +72,15 @@ namespace AventasApi.GestorData
                             Entregado = entregado,
                             //IdLinea = acu.,
                         };
-                        if(!acuerdoXAsesorsAGuardar.Any(acuer=> acuer.IdAcuerdoxCliente == acuerdoAGuardar.IdAcuerdoxCliente))
+                        if (!acuerdoXAsesorsAGuardar.Any(acuer => acuer.IdAcuerdoxCliente == acuerdoAGuardar.IdAcuerdoxCliente))
                             acuerdoXAsesorsAGuardar.Add(acuerdoAGuardar);
                     }
                     lock (acuerdosAGuardar)
                     {
-                        acuerdoXAsesorsAGuardar.ForEach(acuer => {
-                        if (!acuerdosAGuardar.Any(acuerd => acuer.IdAcuerdoxCliente == acuerd.IdAcuerdoxCliente))
-                            acuerdosAGuardar.Add(acuer);
+                        acuerdoXAsesorsAGuardar.ForEach(acuer =>
+                        {
+                            if (!acuerdosAGuardar.Any(acuerd => acuer.IdAcuerdoxCliente == acuerd.IdAcuerdoxCliente))
+                                acuerdosAGuardar.Add(acuer);
                         });
                     }
                 }

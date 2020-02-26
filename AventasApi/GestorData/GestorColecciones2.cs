@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using AventasApi.Enviroments;
 using AventasApi.Infrastructure;
 using AventasApi.Models;
 using AventasApi.Models.ViewModels;
@@ -16,7 +17,7 @@ namespace AventasApi.GestorData
 {
     public class GestorColecciones2
     {
-        private string UrlString = @"http://190.109.223.244:8083/api/paquetes/imhn/";
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}api/paquetes/imhn/";
         public async Task<ColeccionesYTiposDeColeccionViewModel> ObtenerColecciones()
         {
             List<Colecciones> ColeccionesAGuardar = new List<Colecciones>();

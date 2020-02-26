@@ -1,4 +1,5 @@
-﻿using AventasApi.Infrastructure;
+﻿using AventasApi.Enviroments;
+using AventasApi.Infrastructure;
 using AventasApi.Models.ApiModels;
 using AventasApi.Models.ViewModels;
 using System;
@@ -14,7 +15,7 @@ namespace AventasApi.GestorData
 {
     public class GestorDistribucionesXTalla
     {
-        private static string UrlString = @"http://190.109.223.244:8083/api/productos/imhn/distribucion";
+        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}productos/imhn/distribucion";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 
@@ -53,9 +54,9 @@ namespace AventasApi.GestorData
                         {
                             try
                             {
-                                if (col.DIST_QTY != "0.00")
+                                if (col.DIST_QTY != "0.00" && col.DIST_QTY != ".00")
                                 {
-                                    Debug.WriteLine(col.DIST_QTY);
+                                    //Debug.WriteLine(col.DIST_QTY);
                                     var tallaEmpaque = context.TallasXGrupo.FirstOrDefault(tallXGrup => col.SIZE_CHART == tallXGrup.GrupoTalla.CodigoGrupoTalla && tallXGrup.CodigoTalla == col.DISTRIBUTION);
                                     if (tallaEmpaque != null)
                                     {

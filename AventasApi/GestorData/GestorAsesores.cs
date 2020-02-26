@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using AventasApi.Enviroments;
 using AventasApi.Infrastructure;
 using AventasApi.Models;
 using AventasApi.Models.ApiModels;
@@ -14,7 +15,7 @@ namespace AventasApi.GestorData
 {
     public class GestorAsesores
     {
-        private string UrlString = @"http://190.109.223.244:8083/api/asesor/AsesoresDisponibles";
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}asesor/AsesoresDisponibles";
         private HttpClient client = new ClienteHttp();
         public bool ColeccionesActualizadas = false;
         public bool ErrorAlActualizar = false;

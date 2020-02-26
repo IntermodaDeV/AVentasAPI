@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using AventasApi.Enviroments;
 using AventasApi.Infrastructure;
 using AventasApi.Models;
 using AventasApi.Models.ApiModels;
@@ -16,7 +17,7 @@ namespace AventasApi.GestorData
 {
     public class GestorClientes
     {
-        private  string UrlString = @"http://190.109.223.244:8083/api/clientes/{0}/{1}";
+        private  string UrlString = $"{Enviroment.CRMWebServiceURLApi}clientes/{0}/{1}";
 
 
         public async Task<ClientesYMaestroGrupoPrecioViewModel> ObtenerClientesConRutaYMaestroGrupoPrecio(List<Rutas> rutasAsesor)

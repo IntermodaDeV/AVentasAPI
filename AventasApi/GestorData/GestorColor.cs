@@ -6,11 +6,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using AventasApi.Models.ApiModels;
+using AventasApi.Enviroments;
+
 namespace AventasApi.GestorData
 {
     public class GestorColor
     {
-        private static string UrlString = @"http://190.109.223.244:8084/api/collection/Color";
+        private static string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/Color";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 

@@ -1,4 +1,5 @@
-﻿using AventasApi.Infrastructure;
+﻿using AventasApi.Enviroments;
+using AventasApi.Infrastructure;
 using AventasApi.Models.ApiModels;
 using AventasApi.Models.ViewModels;
 using System;
@@ -13,7 +14,7 @@ namespace AventasApi.GestorData
 {
     public class GestorCreditoXCliente
     {
-        private static string UrlString = @"http://190.109.223.244:8083/api/clientes/imhn/{0}/{1}";
+        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}clientes/imhn/{0}/{1}";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 

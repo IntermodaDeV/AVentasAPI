@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using AventasApi.Enviroments;
 using AventasApi.Infrastructure;
 using AventasApi.Models.ApiModels;
 
@@ -13,7 +14,7 @@ namespace AventasApi.GestorData
 {
 public class GestorTipoPaquete
     {
-        private static string UrlString = @"http://190.109.223.244:8083/api/paquetes/imhn";
+        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}api/paquetes/imhn";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 

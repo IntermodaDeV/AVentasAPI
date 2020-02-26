@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using AventasApi.Enviroments;
 using AventasApi.Infrastructure;
 using AventasApi.Models;
 using AventasApi.Models.ApiModels;
@@ -13,7 +14,7 @@ namespace AventasApi.GestorData
 {
     public static class GestorMaestroEdad
     {
-        private static string UrlString = @"http://190.109.223.244:8084/api/collection/Details";
+        private static string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/Details";
         private static HttpClient client = new ClienteHttp();
         public static bool ProductosActualizados = false;
         public static bool ErrorAlActualizar = false;

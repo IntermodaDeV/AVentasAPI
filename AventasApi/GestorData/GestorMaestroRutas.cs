@@ -12,12 +12,13 @@ using System.Web.Http;
 using System.Web.Routing;
 using RestSharp;
 using Newtonsoft.Json;
+using AventasApi.Enviroments;
 
 namespace AventasApi.GestorData
 {
     public class GestorMaestroRutas
     {
-        private string UrlString = @"http://190.109.223.244:8083/api/asesor/{0}/{1}/rutas";
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}asesor/{0}/{1}/rutas";
         
 
 

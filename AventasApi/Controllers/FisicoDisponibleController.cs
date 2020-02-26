@@ -13,6 +13,7 @@ using AventasApi.Models.Authentication;
 using AventasApi.Models.ApiModels;
 using AventasApi.GestorData;
 using System;
+using AventasApi.Enviroments;
 //using IMS.Extensions;
 
 namespace AventasApi.Controllers
@@ -23,7 +24,7 @@ namespace AventasApi.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> ActualizarCuentaCorriente(string ProductoId, string CodigoColor ,string CodigoTalla)
         {
-            string UrlString = @"http://190.109.223.244:8084/api/collection/disponibleEspecifico";
+            string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/disponibleEspecifico";
             HttpClient client = new ClienteHttp();
             var Credentials = new Dictionary<string, string> {
                 { "userName", "desarrollo" },

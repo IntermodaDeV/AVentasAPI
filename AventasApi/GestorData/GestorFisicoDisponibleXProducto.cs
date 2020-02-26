@@ -7,13 +7,14 @@ using System.Web;
 using AventasApi.Models.ApiModels;
 using System.Diagnostics;
 using AventasApi.Infrastructure;
+using AventasApi.Enviroments;
 
 namespace AventasApi.GestorData
 {
     public class GestorFisicoDisponibleXProducto
     {
 
-        private static string UrlString = @"http://190.109.223.244:8084/api/collection/disponible";
+        private static string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/disponible";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 

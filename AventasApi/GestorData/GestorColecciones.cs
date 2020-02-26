@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using AventasApi.Enviroments;
 using AventasApi.Infrastructure;
 using AventasApi.Models;
 
@@ -12,7 +13,7 @@ namespace AventasApi.GestorData
 {
     public static class GestorColecciones
     {
-        private static string UrlString = @"http://190.109.223.244:8084/api/collection/List";
+        private static string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/List";
         public static HttpClient client = new ClienteHttp();
         public static bool ColeccionesActualizadas = false;
         public static bool ErrorAlActualizar = false;

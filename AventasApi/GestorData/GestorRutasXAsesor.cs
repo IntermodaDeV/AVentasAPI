@@ -1,4 +1,5 @@
-﻿using AventasApi.GestorData;
+﻿using AventasApi.Enviroments;
+using AventasApi.GestorData;
 using AventasApi.Infrastructure;
 using AventasApi.Models.ApiModels;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ namespace AventasApi.GestorData
 {
     public class GestorRutasXAsesor
     {
-        private string UrlString = @"http://190.109.223.244:8083/api/asesor/{0}/{1}/rutas";
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}asesor/{0}/{1}/rutas";
 
         public async Task<List<RutasxAsesor>> ObtenerRutasXAsesor()
         {

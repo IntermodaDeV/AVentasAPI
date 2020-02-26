@@ -20,6 +20,7 @@ using System.Data.Entity;
 using AventasApi.Services.AsyncJobs;
 using AventasApi.Models;
 using AventasApi.Services.Authentication;
+using AventasApi.Enviroments;
 
 namespace AventasApi.Controllers
 {
@@ -308,7 +309,7 @@ namespace AventasApi.Controllers
             string PEdidoID = "";
             try
             {
-                var client = new RestClient(@"http://190.109.223.244:8083/api/pedidos/upload");
+                var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
                 client.Timeout = 480 * (1000);
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Accept", "application/json");

@@ -17,12 +17,13 @@ using RestSharp;
 //using IMS.Extensions;
 using System.Data.Entity;
 using AventasApi.Models.ViewModels;
+using AventasApi.Enviroments;
 
 namespace AventasApi.GestorData
 {
     public class GestorImagenesXProducto
     {
-        private string UrlString = @"http://190.109.223.244:8083/api/productos/imhn/{0}";/// 1 = productId
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}productos/imhn/{0}";/// 1 = productId
         public HttpClient client = new ClienteHttp();
         public async Task<List<FotografiasXProductoViewModel>> ObtenerImagenesXProducto()
         {

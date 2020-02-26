@@ -12,12 +12,13 @@ using System.Data.Entity;
 using System.Configuration;
 using System.Data.SqlClient;
 using BulkInsert;
+using AventasApi.Enviroments;
 
 namespace AventasApi.GestorData
 {
     public class GestorPrecioEspecifico
     {
-        private static string UrlString = @"http://190.109.223.244:8083/api/paquetes/imhn/{0}/hnl/{1}";
+        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}paquetes/imhn/{0}/hnl/{1}";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 

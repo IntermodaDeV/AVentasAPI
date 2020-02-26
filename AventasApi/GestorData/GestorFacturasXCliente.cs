@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using AventasApi.Enviroments;
 using AventasApi.Infrastructure;
 using AventasApi.Models.ApiModels;
 using AventasApi.Models.ViewModels;
@@ -14,7 +15,7 @@ namespace AventasApi.GestorData
 {
     public class GestorFacturasXCliente
     {
-        private static string UrlString = @"http://190.109.223.244:8083/api/facturas/imhn/1/{0}/{1}/FactCliente";
+        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}facturas/imhn/1/{0}/{1}/FactCliente";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 

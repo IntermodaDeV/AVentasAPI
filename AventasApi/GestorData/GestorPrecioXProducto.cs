@@ -7,13 +7,14 @@ using System.Web;
 using AventasApi.Models.ApiModels;
 using System.Diagnostics;
 using AventasApi.Infrastructure;
+using AventasApi.Enviroments;
 //using IMS.Extensions;
 
 namespace AventasApi.GestorData
 {
     public class GestorPrecioXProducto
     {
-        private static string UrlString = @"http://190.109.223.244:8084/api/collection/GrupoPrecios";
+        private static string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/GrupoPrecios";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 

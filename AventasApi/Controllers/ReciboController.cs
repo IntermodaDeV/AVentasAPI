@@ -12,6 +12,7 @@ using System.Web.Http;
 using System.Data.Entity;
 using AventasApi.Services.Authentication;
 using AventasApi.Services.AsyncJobs;
+using AventasApi.Enviroments;
 
 namespace AventasApi.Controllers
 {
@@ -242,7 +243,7 @@ namespace AventasApi.Controllers
             {
                 var reciboHeaders = new List<ReciboApiModel>();
                 var client = new RestClient();
-                var request = new RestRequest(@"http://190.109.223.244:8083/api/recibos/upload", Method.POST)
+                var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
                 {
                     RequestFormat = DataFormat.Json
                 };
