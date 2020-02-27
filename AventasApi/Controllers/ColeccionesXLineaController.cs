@@ -15,7 +15,7 @@ namespace AventasApi.Controllers
 {
     public class ColeccionesXLineaController : ApiController
     {
-        AVentasEntities context = new AVentasEntities();
+        readonly AVentasEntities context = new AVentasEntities();
 
         public ColeccionesXLineaController()
         {

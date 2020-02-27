@@ -13,6 +13,7 @@ using System.Data.Entity;
 using AventasApi.Services.Authentication;
 using AventasApi.Services.AsyncJobs;
 using AventasApi.Enviroments;
+using AventasApi.Models;
 
 namespace AventasApi.Controllers
 {
@@ -36,21 +37,42 @@ namespace AventasApi.Controllers
                 Fecha = rec.Fecha,
                 IdTipoPago = rec.IdTipoPago,
                 Referencia = rec.Referencia,
-                FechaCheque = rec.FechaCheque,
+                FechaPago = rec.FechaCheque,
                 IdBanco = rec.IdBanco,
                 Valor = rec.Valor,
                 IdMoneda = rec.IdMoneda,
                 Sincronizado = rec.Sincronizado,
                 CodigoAsesor = rec.CodigoAsesor,
                 IdFactura = rec.IdFactura,
+                DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == rec.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
                 Descuento = rec.Descuento,
+                Cliente = context.Clientes.Where(cli => cli.CodigoCliente == rec.CodigoCliente).Select(cli => new ClienteViewModel
+                {
+                    Codigo = cli.CodigoCliente,
+                    Nombre = cli.Nombre,
+                    Direccion = cli.Direccion,
+                    Moneda = cli.IdMoneda
+                }).FirstOrDefault(),
+                TipoPago = context.TiposdePago.Where(tp => tp.IdTipoPago == rec.IdTipoPago).Select(tp => new TipoPagoViewModel
+                {
+                    IdTipoPago = tp.IdTipoPago,
+                    Codigo = tp.Codigo,
+                    Descripcion = tp.Descripcion,
+                    Tipo = tp.Tipo,
+                    EmpresaId = tp.EmpresaId,
+
+                }).FirstOrDefault(),
                 DetalleRecibo = rec.RecibosDetalle.Select(recDet => new RecibosDetalleViewModel
                 {
                     IdReciboDetalle = recDet.IdReciboDetalle,
+                    Factura = rec.FacturasxCliente.Factura,
+                    Tipo = rec.FacturasxCliente.Tipo,
                     ReciboId = recDet.ReciboId,
                     IdSubFactura = recDet.IdSubFactura,
                     Valor = recDet.Valor,
+                    ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
                     Descuento = recDet.Descuento,
+                    DiasVencimiento = DbFunctions.DiffDays(rec.Fecha ,recDet.SubFacturasxCliente.FechaVencimiento)??0
                 }).ToList()
             }).ToList();
             return Ok(recibosXAsesor);
@@ -114,8 +136,8 @@ namespace AventasApi.Controllers
                         {
                             valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
                         }
-                        var recibo = recibosXPago.FirstOrDefault(rec =>  rec.TIPO_PAGO == pago.CodigoTipoPago && rec.REFERENCIA == pago.Referencia);
-                        RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago &&  recXCli.Referencia == pago.Referencia);
+                        var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pago.CodigoTipoPago && rec.REFERENCIA == pago.Referencia);
+                        RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago && recXCli.Referencia == pago.Referencia);
                         if (recibo == null)
                         {
                             recibo = new ReciboApiModel
@@ -154,7 +176,7 @@ namespace AventasApi.Controllers
                                 Fecha = DateTime.Now,
                                 IdTipoPago = pagoBD.IdTipoPago,
                                 Referencia = recibo.REFERENCIA,
-                                FechaCheque = reciboPost.FechaPago,
+                                FechaPago = reciboPost.FechaPago,
                                 IdBanco = bank?.IdBanco,
                                 Valor = 0,
                                 IdMoneda = pago.IdMoneda,
@@ -195,6 +217,7 @@ namespace AventasApi.Controllers
                             subfactura.Saldo = 0;
                         }
                         reciboXCliente.Descuento += detalleReciboXCliente.Descuento;
+                        reciboXCliente.Valor += detalleReciboXCliente.Valor;
                         reciboXCliente.DetalleRecibo.Add(detalleReciboXCliente);
                         var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == recibo.FACTURA);
                         if (pagoAplicado == null)
