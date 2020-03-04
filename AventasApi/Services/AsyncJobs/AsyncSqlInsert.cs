@@ -55,7 +55,7 @@ namespace AventasApi.Services.AsyncJobs
                     Fecha = rec.Fecha,
                     IdTipoPago = rec.IdTipoPago,
                     Referencia = rec.Referencia,
-                    FechaCheque = rec.FechaCheque,
+                    FechaCheque = rec.FechaPago,
                     IdBanco = rec.IdBanco,
                     Valor = rec.Valor,
                     IdMoneda = rec.IdMoneda,

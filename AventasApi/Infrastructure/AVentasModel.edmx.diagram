@@ -42,7 +42,7 @@
         <EntityTypeShape EntityType="AVentasModel.MaestroLinea" Width="1.5" PointX="3" PointY="48" />
         <EntityTypeShape EntityType="AVentasModel.MaestroMoneda" Width="1.5" PointX="3.75" PointY="35.375" />
         <EntityTypeShape EntityType="AVentasModel.MonedasxEmpresa" Width="1.5" PointX="6" PointY="37" />
-        <EntityTypeShape EntityType="AVentasModel.Pantallas" Width="1.5" PointX="0.75" PointY="1" />
+        <EntityTypeShape EntityType="AVentasModel.Pantallas" Width="1.5" PointX="0.875" PointY="1" />
         <EntityTypeShape EntityType="AVentasModel.PantallasxUsuario" Width="1.5" PointX="3" PointY="1" />
         <EntityTypeShape EntityType="AVentasModel.PedidosDetalle" Width="1.5" PointX="18.5" PointY="39.5" />
         <EntityTypeShape EntityType="AVentasModel.PedidosxCliente" Width="1.5" PointX="16.25" PointY="39.25" />
