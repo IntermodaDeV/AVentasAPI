@@ -15,7 +15,7 @@ namespace AventasApi.GestorData
 {
     public class GestorFacturasXCliente
     {
-        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}facturas/imhn/1/{0}/{1}/FactCliente";
+        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}facturas/imhn/1/{{0}}/{{1}}/FactCliente";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 
@@ -46,16 +46,21 @@ namespace AventasApi.GestorData
                         ClienteId = cliRut.CodigoCliente
                     }).ToList();
                 }
+                //clientes.ForEach(cli => { 
+                //    Debug.WriteLine(cli.ClienteId);
+                //});
+                //Debug.WriteLine("cantidad original");
 
+                //Debug.WriteLine(clientes.Count);
                 if (clientes != null && clientes.Count > 0)
                 {
 
-                    for (int i = 0; ((i + 1) * 100) < clientes.Count(); i++)
+                    for (int i = 0; (i * 100) < clientes.Count(); i++)
                     {
                         List<AsesorXClienteViewModel> buffer = new List<AsesorXClienteViewModel>();
-                        if (i + 1 * 100 > clientes.Count())
+                        if ((i + 1) * 100 > clientes.Count())
                         {
-                            buffer = clientes.GetRange(i * 100, clientes.Count() - ((i - 1) * 100));
+                            buffer = clientes.GetRange(i * 100, clientes.Count() - ((i ) * 100));
                         }
                         else
                         {
@@ -66,6 +71,7 @@ namespace AventasApi.GestorData
                         {
                             List<FacturasXClienteApiModel> facturasXCliente = new List<FacturasXClienteApiModel>();
                             HttpResponseMessage response = await client.GetAsync(string.Format(UrlString, col.CodigoAsesor, col.ClienteId)).ConfigureAwait(false);
+                            //HttpResponseMessage response = await client.GetAsync(string.Format(UrlString, col.CodigoAsesor, col.ClienteId)).ConfigureAwait(false);
                             if (response.IsSuccessStatusCode)
                             {
                                 facturasXCliente = await response.Content.ReadAsAsync<List<FacturasXClienteApiModel>>();
@@ -122,6 +128,7 @@ namespace AventasApi.GestorData
 
 
                         });
+
                         await Task.WhenAll(taskGetacuerdos);
                     }
                     Debug.WriteLine("FFinalizo");

@@ -7,66 +7,17 @@ using System.Threading.Tasks;
 using System.Web;
 using AventasApi.Models.ApiModels;
 using AventasApi.Enviroments;
+using AventasApi.Models.ViewModels;
 
 namespace AventasApi.GestorData
 {
     public class GestorLineas
     {
-        private static string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/Lineas";
-        private static HttpClient client = new ClienteHttp();
-        public static Task TaskActualizarLineas;
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}clientes/{{0}}/{{1}}";
 
-        //private static AVentasEntities context = new AVentasEntities();
-        static Dictionary<string, string> Credentials = new Dictionary<string, string> {
-            { "userName", "desarrollo" },
-            { "password", "Intermoda2020" },
-
-        };
-
-
-        static GestorLineas()
+        public async Task<ClientesYMaestroGrupoPrecioViewModel> ObtenerClientesConRutaYMaestroGrupoPrecio(List<Rutas> rutasAsesor)
         {
-            ReiniciarTaskActualizarLineas();
-
-        }
-        public static async void ReiniciarTaskActualizarLineas()
-        {
-
-
-            TaskActualizarLineas = new Task(async () =>
-             {
-                 var content = new FormUrlEncodedContent(Credentials);
-                 List<LineaApiModel> lineas = new List<LineaApiModel>();
-
-                 HttpResponseMessage response = null;
-                 response = await client.PostAsync(UrlString, content).ConfigureAwait(false);
-
-                 if (response != null && response.IsSuccessStatusCode)
-                 {
-                     lineas = await response.Content.ReadAsAsync<List<LineaApiModel>>();
-
-                     if (lineas != null)
-                     {
-                         lineas.ForEach(lin =>
-                         {
-
-                             using (AVentasEntities context = new AVentasEntities())
-                             {
-                                 context.MaestroLinea.Add(new MaestroLinea
-                                 {
-                                     IdLinea = lin.codigo,
-                                     Linea = lin.description
-                                 });
-                                 context.SaveChanges();
-                             }
-
-                         });
-                     }
-
-                 }
-                 
-
-             });
+            return new ClientesYMaestroGrupoPrecioViewModel();
         }
     }
 }

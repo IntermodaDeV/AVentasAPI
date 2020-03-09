@@ -17,7 +17,7 @@ namespace AventasApi.GestorData
 {
     public class GestorClientes
     {
-        private  string UrlString = $"{Enviroment.CRMWebServiceURLApi}clientes/{0}/{1}";
+        private  string UrlString = $"{Enviroment.CRMWebServiceURLApi}clientes/{{0}}/{{1}}";
 
 
         public async Task<ClientesYMaestroGrupoPrecioViewModel> ObtenerClientesConRutaYMaestroGrupoPrecio(List<Rutas> rutasAsesor)

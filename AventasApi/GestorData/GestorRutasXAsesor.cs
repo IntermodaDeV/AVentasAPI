@@ -18,7 +18,7 @@ namespace AventasApi.GestorData
 {
     public class GestorRutasXAsesor
     {
-        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}asesor/{0}/{1}/rutas";
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}asesor/{{0}}/{{1}}/rutas";
 
         public async Task<List<RutasxAsesor>> ObtenerRutasXAsesor()
         {

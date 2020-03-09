@@ -18,7 +18,7 @@ namespace AventasApi.GestorData
 {
     public class GestorMaestroRutas
     {
-        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}asesor/{0}/{1}/rutas";
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}asesor/{{0}}/{{1}}/rutas";
         
 
 

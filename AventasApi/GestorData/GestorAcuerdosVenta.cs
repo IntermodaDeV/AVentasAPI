@@ -15,7 +15,7 @@ namespace AventasApi.GestorData
 {
     public class GestorAcuerdosVenta
     {
-        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}acuerdos/{0}/{1}/{2}/Incremental";//0= entity,1=usuario,2=date 20190101 
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}acuerdos/{{0}}/{{1}}/{{2}}/Incremental";//0= entity,1=usuario,2=date 20190101 
 
 
         //private static AVentasEntities context = new AVentasEntities();

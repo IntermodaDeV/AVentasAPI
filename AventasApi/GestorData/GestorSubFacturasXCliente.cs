@@ -14,7 +14,7 @@ namespace AventasApi.GestorData
 {
     public class GestorSubFacturasXCliente
     {
-        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}facturas/IMHN/gmonrroy/gmonrroy/0/{0}";
+        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}facturas/IMHN/gmonrroy/gmonrroy/0/{{0}}";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 
@@ -43,12 +43,12 @@ namespace AventasApi.GestorData
 
                 if (clientes != null && clientes.Count > 0)
                 {
-                    for (int i = 0; ((i + 1) * 100) < clientes.Count(); i++)
+                    for (int i = 0; (i * 100) < clientes.Count(); i++)
                     {
                         List<Clientes> buffer = new List<Clientes>();
-                        if (i + 1 * 100 > clientes.Count())
+                        if ((i + 1) * 100 > clientes.Count())
                         {
-                            buffer = clientes.GetRange(i * 100, clientes.Count() - ((i - 1) * 100));
+                            buffer = clientes.GetRange(i * 100, clientes.Count() - (i * 100));
 
                         }
                         else
@@ -61,6 +61,7 @@ namespace AventasApi.GestorData
                             buffer.Select(async col =>
                         {
                             List<SubFacturasXClienteApiModel> facturasXCliente = new List<SubFacturasXClienteApiModel>();
+                            //HttpResponseMessage response = await client.GetAsync(string.Format(UrlString, "IMHN-000000272")).ConfigureAwait(false);
                             HttpResponseMessage response = await client.GetAsync(string.Format(UrlString, col.CodigoCliente)).ConfigureAwait(false);
                             if (response.IsSuccessStatusCode)
                             {

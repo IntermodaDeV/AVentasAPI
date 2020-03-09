@@ -18,7 +18,7 @@ namespace AventasApi.GestorData
 {
     public class GestorPrecioEspecifico
     {
-        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}paquetes/imhn/{0}/hnl/{1}";
+        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}paquetes/imhn/{{0}}/hnl/{{1}}";
         private static HttpClient client = new ClienteHttp();
         public static Task TaskActualizarLineas;
 

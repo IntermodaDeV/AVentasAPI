@@ -23,7 +23,7 @@ namespace AventasApi.GestorData
 {
     public class GestorImagenesXProducto
     {
-        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}productos/imhn/{0}";/// 1 = productId
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}productos/imhn/{{0}}";/// 1 = productId
         public HttpClient client = new ClienteHttp();
         public async Task<List<FotografiasXProductoViewModel>> ObtenerImagenesXProducto()
         {

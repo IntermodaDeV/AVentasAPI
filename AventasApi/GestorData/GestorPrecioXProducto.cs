@@ -45,12 +45,12 @@ namespace AventasApi.GestorData
 
                 if (gruposTalla != null && gruposTalla.Count > 0)
                 {
-                    for (int i = 0; ((i + 1) * 100) < gruposTalla.Count(); i++)
+                    for (int i = 0; (i * 100) < gruposTalla.Count(); i++)
                     {
                         List<ProductosxColeccion> buffer = new List<ProductosxColeccion>();
-                        if (i + 1 * 100 > gruposTalla.Count())
+                        if ((i + 1) * 100 > gruposTalla.Count())
                         {
-                            buffer = gruposTalla.GetRange(i * 100, gruposTalla.Count() - ((i - 1) * 100));
+                            buffer = gruposTalla.GetRange(i * 100, gruposTalla.Count() - (i * 100));
 
                         }
                         else

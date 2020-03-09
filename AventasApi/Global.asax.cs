@@ -63,15 +63,15 @@ namespace AventasApi
             //GestorImagenesXProducto.ActualizarImagenes();
 
 
-            if (false && GestorDistribucionesXTalla.TaskActualizarLineas.Status != TaskStatus.Running)
+            if (true && GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Running)
             {
                 try
                 {
-                    if (GestorDistribucionesXTalla.TaskActualizarLineas.Status != TaskStatus.Created)
+                    if (GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Created)
                     {
-                        GestorDistribucionesXTalla.TaskActualizarLineas.Start();
+                        GestorSubFacturasXCliente.TaskActualizarLineas.Start();
                     }
-                    GestorDistribucionesXTalla.TaskActualizarLineas.Start();
+                    GestorSubFacturasXCliente.TaskActualizarLineas.Start();
                 }
                 catch (Exception e)
                 {
