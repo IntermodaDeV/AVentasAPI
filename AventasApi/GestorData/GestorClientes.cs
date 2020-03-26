@@ -17,7 +17,7 @@ namespace AventasApi.GestorData
 {
     public class GestorClientes
     {
-        private  string UrlString = $"{Enviroment.CRMWebServiceURLApi}clientes/{{0}}/{{1}}";
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}clientes/{{0}}/{{1}}";
 
 
         public async Task<ClientesYMaestroGrupoPrecioViewModel> ObtenerClientesConRutaYMaestroGrupoPrecio(List<Rutas> rutasAsesor)
@@ -33,7 +33,7 @@ namespace AventasApi.GestorData
             }
             Parallel.ForEach(asesores, ase =>
             {
-               
+
                 string peticion = string.Format(UrlString, ase.EmpresaId, ase.Usuario);
                 var restClient = new RestClient(peticion);
                 var request = new RestRequest(Method.GET);
@@ -79,7 +79,7 @@ namespace AventasApi.GestorData
                         }
                         var rutaAAgregar = new Rutas
                         {
-                            CodigoRuta = cliente.ENTITY.ToLower()  + "-" + cliente.SALES_AREA,
+                            CodigoRuta = cliente.ENTITY.ToLower() + "-" + cliente.SALES_AREA,
                             EmpresaId = cliente.ENTITY,
                             Nombre = cliente.SALES_AREA_NAME
                         };
@@ -120,6 +120,54 @@ namespace AventasApi.GestorData
                 MaestroGrupoPrecio = gruposPrecio,
                 Rutas = rutas
             };
+        }
+        public async Task<Clientes> ObtenerClientePorId(string clienteID, string usuario, string empresaId)
+        {
+            string peticion = string.Format(UrlString, empresaId, usuario)+"/"+ clienteID;
+            var restClient = new RestClient(peticion);
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Accept", "application/json");
+            IRestResponse response = restClient.Execute(request);
+
+            if (response.IsSuccessful)
+            {
+                var clientes = JsonConvert.DeserializeObject<List<ClientesCRMApiModel>>(response.Content);
+                if (clientes != null && (clientes.Count() == 1))
+                {
+                    var clienteCRM = clientes[0];
+                    var cliente = new Clientes
+                    {
+                        CodigoCliente = clienteCRM.ACCOUNT,
+                        EmpresaId = clienteCRM.ENTITY,
+                        Nombre = clienteCRM.NAME,
+                        ComunidadAutonoma = clienteCRM.AUTONOMOUS_COMMUNITY,
+                        GrupoPrecio = clienteCRM.PRICE,
+                        GrupoCliente = clienteCRM.CUSTOMER_GROUP,
+                        Descuento = clienteCRM.TOTAL_DISCOUNT,
+                        Direccion = clienteCRM.ADDRESS,
+                        IdMoneda = clienteCRM.CURRENCY,
+                        FacturacionEntrega = clienteCRM.BLOCKED,
+                        //Latitud = ,
+                        //Longitud = ,
+                        //Provincias = ,
+                        //Region = ,
+                        //Revision = ,
+
+                    };
+                    try
+                    {
+                        cliente.CreditoDisponible = decimal.Parse(clienteCRM.CREDIT_AVAILABLE);
+                    }
+                    catch (Exception) { }
+                    try
+                    {
+                        cliente.LimiteCredito = decimal.Parse(clienteCRM.CREDIT_LIMIT);
+                    }
+                    catch (Exception) { }
+                    return cliente;
+                }
+            }
+            return null;
         }
         public async Task GuardarRutas(List<Rutas> rutasAGuardar)
         {

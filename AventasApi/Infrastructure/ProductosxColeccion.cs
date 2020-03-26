@@ -24,6 +24,7 @@ namespace AventasApi.Infrastructure
             this.PedidosDetalle = new HashSet<PedidosDetalle>();
             this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
             this.PreciosxProducto = new HashSet<PreciosxProducto>();
+            this.TallasxProducto = new HashSet<TallasxProducto>();
         }
     
         public int IdProducto { get; set; }
@@ -54,5 +55,7 @@ namespace AventasApi.Infrastructure
         public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PreciosxProducto> PreciosxProducto { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TallasxProducto> TallasxProducto { get; set; }
     }
 }

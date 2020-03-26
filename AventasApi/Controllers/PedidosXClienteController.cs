@@ -57,7 +57,6 @@ namespace AventasApi.Controllers
         {
             using (AVentasEntities context = new AVentasEntities())
             {
-
                 List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
                 {
                     PedidoId = ped.PedidoId,
@@ -106,11 +105,19 @@ namespace AventasApi.Controllers
                         .Select(gruposXDetPed => new GruposTallaXDetPed
                         {
                             GrupoTalla = gruposXDetPed.Key,
-                            ListaTalla = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == gruposXDetPed.Key).Select(txp => new TallaViewModel
+                            ListaTalla = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == gruposXDetPed.Key).Where(txp =>  false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc=> pxc.ProductosxColeccion.FisicoDisponible. Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)).Select(txp => new TallaViewModel
                             {
                                 GrupoTallaId = txp.CodigoGrupoTalla,
                                 Talla = txp.CodigoTalla,
-                                Orden = txp.Orden ?? 0
+                                Orden = txp.Orden ?? 0,
+                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                {
+                                    IdDistribucion = dis.IdDistribucion,
+                                    IdTallaxGrupo = dis.IdTallaxGrupo,
+                                    NombreDistribucion = dis.NombreDistribucion,
+                                    NombreTalla = dis.NombreTalla,
+                                    Cantidad = dis.Cantidad,
+                                }).ToList()
                             }).OrderBy(txp => txp.Orden).ToList(),
                             prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoProducto)
                         .Select(pedDet => new ProductosXDetPed
@@ -342,7 +349,7 @@ namespace AventasApi.Controllers
                 asesor.CorrelativoPedidos = numeroCorelativo + 1;
                 context.SaveChanges();
             }
-            AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar,Pedido.Firma);
+            AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
 
             return Ok(new { EncabezadoPedido = new { PedidoId = PEdidoID } });
         }

@@ -192,6 +192,7 @@
     <Compile Include="Controllers\FacturasXClienteController.cs" />
     <Compile Include="Controllers\FisicoDisponibleController.cs" />
     <Compile Include="Controllers\GeoposicionController.cs" />
+    <Compile Include="Controllers\GestorController.cs" />
     <Compile Include="Controllers\MaestroLineaController.cs" />
     <Compile Include="Controllers\MonedaController.cs" />
     <Compile Include="Controllers\PedidosXClienteController.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Controllers\TipoVisitaClienteController.cs" />
     <Compile Include="Enviroments\Enviroment.cs" />
     <Compile Include="Filters\Auth.cs" />
+    <Compile Include="GestorData\Asesor.cs" />
     <Compile Include="GestorData\ClienteHttp.cs" />
     <Compile Include="GestorData\GestorAcuerdosVenta.cs" />
     <Compile Include="GestorData\GestorAsesores.cs" />
@@ -230,6 +232,7 @@
     <Compile Include="GestorData\GestorProductos.cs" />
     <Compile Include="GestorData\GestorMaestroRutas.cs" />
     <Compile Include="GestorData\GestorRutasXAsesor.cs" />
+    <Compile Include="GestorData\GestorSaldosCliente.cs" />
     <Compile Include="GestorData\GestorSubFacturasXCliente.cs" />
     <Compile Include="GestorData\GestorTallaXGrupoTalla.cs" />
     <Compile Include="GestorData\GestorTipoPaquete.cs" />
@@ -431,6 +434,9 @@
     <Compile Include="Infrastructure\TallasXGrupo.cs">
       <DependentUpon>AVentasModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\TallasxProducto.cs">
+      <DependentUpon>AVentasModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Infrastructure\TiposdeColeccion.cs">
       <DependentUpon>AVentasModel.tt</DependentUpon>
     </Compile>
@@ -552,6 +558,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AsyncJobs\AsyncSqlInsert.cs" />
     <Compile Include="Services\Authentication\AuthenticationAppService.cs" />
+    <Compile Include="Singleton\GestorManager.cs" />
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
   </ItemGroup>
   <ItemGroup>

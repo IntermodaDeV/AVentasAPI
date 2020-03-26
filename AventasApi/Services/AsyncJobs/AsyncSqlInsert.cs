@@ -19,9 +19,9 @@ namespace AventasApi.Services.AsyncJobs
         {
             factory = new TaskFactory();
         }
-        public static async void IngresarPedido(PedidosxCliente pedido, string firma)
+        public static  void IngresarPedido(PedidosxCliente pedido, string firma)
         {
-            factory.StartNew(() =>
+            var pedidoTask = Task.Run(() =>
             {
                 using (AVentasEntities context = new AVentasEntities())
                 {
@@ -43,9 +43,9 @@ namespace AventasApi.Services.AsyncJobs
 
             });
         }
-        public static async void IngresarRecibos(List<RecibosxClienteViewModel> recibos)
+        public static  void IngresarRecibos(List<RecibosxClienteViewModel> recibos)
         {
-            factory.StartNew(() =>
+            var reciboTask = Task.Run(() =>
             {
 
                 var reciboAAgregar = recibos.Select(rec => new RecibosxCliente

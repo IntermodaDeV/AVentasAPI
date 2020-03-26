@@ -63,7 +63,7 @@ namespace AventasApi
             //GestorImagenesXProducto.ActualizarImagenes();
 
 
-            if (true && GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Running)
+            if (false && GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Running)
             {
                 try
                 {

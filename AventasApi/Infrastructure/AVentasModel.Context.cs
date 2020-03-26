@@ -88,6 +88,7 @@ namespace AventasApi.Infrastructure
         public virtual DbSet<TipoVisitaCliente> TipoVisitaCliente { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
         public virtual DbSet<Acciones> Acciones { get; set; }
+        public virtual DbSet<TallasxProducto> TallasxProducto { get; set; }
     
         public virtual ObjectResult<string> sp_ResetearTablas()
         {

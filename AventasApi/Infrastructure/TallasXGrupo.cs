@@ -18,6 +18,7 @@ namespace AventasApi.Infrastructure
         public TallasXGrupo()
         {
             this.DistribucionxTalla = new HashSet<DistribucionxTalla>();
+            this.TallasxProducto = new HashSet<TallasxProducto>();
         }
     
         public int IdTallaxGrupo { get; set; }
@@ -28,5 +29,7 @@ namespace AventasApi.Infrastructure
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DistribucionxTalla> DistribucionxTalla { get; set; }
         public virtual GrupoTalla GrupoTalla { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TallasxProducto> TallasxProducto { get; set; }
     }
 }

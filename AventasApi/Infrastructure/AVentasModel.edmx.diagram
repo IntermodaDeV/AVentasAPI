@@ -161,6 +161,9 @@
         <AssociationConnector Association="AVentasModel.FK__RecibosDe__Recib__7F01C5FD" />
         <AssociationConnector Association="AVentasModel.FK__RutasxAse__Codig__6497E884" />
         <AssociationConnector Association="AVentasModel.FK__TiposdePa__IdTip__2D67AF2B" />
+        <EntityTypeShape EntityType="AVentasModel.TallasxProducto" Width="1.5" PointX="16.5" PointY="27" />
+        <AssociationConnector Association="AVentasModel.FK__TallasxPr__IdPro__270FB757" />
+        <AssociationConnector Association="AVentasModel.FK__TallasxPr__IdTal__2803DB90" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

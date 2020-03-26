@@ -672,6 +672,14 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <Property Name="Orden" Type="decimal" Precision="18" Scale="1" />
           <Property Name="CodigoGrupoTalla" Type="varchar" MaxLength="250" />
         </EntityType>
+        <EntityType Name="TallasxProducto">
+          <Key>
+            <PropertyRef Name="IdTallaxProducto" />
+          </Key>
+          <Property Name="IdTallaxProducto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdProducto" Type="int" />
+          <Property Name="IdTallaxGrupo" Type="int" />
+        </EntityType>
         <EntityType Name="TiposdeColeccion">
           <Key>
             <PropertyRef Name="ColeccionTipo" />
@@ -1774,6 +1782,30 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__TallasxPr__IdPro__270FB757">
+          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
+          <End Role="TallasxProducto" Type="Self.TallasxProducto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductosxColeccion">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="TallasxProducto">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TallasxPr__IdTal__2803DB90">
+          <End Role="TallasXGrupo" Type="Self.TallasXGrupo" Multiplicity="0..1" />
+          <End Role="TallasxProducto" Type="Self.TallasxProducto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TallasXGrupo">
+              <PropertyRef Name="IdTallaxGrupo" />
+            </Principal>
+            <Dependent Role="TallasxProducto">
+              <PropertyRef Name="IdTallaxGrupo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__TiposdePa__Empre__29971E47">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
           <End Role="TiposdePago" Type="Self.TiposdePago" Multiplicity="*" />
@@ -1943,6 +1975,7 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <EntitySet Name="SubFacturasxCliente" EntityType="Self.SubFacturasxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TallasXGrupo" EntityType="Self.TallasXGrupo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TallasxProducto" EntityType="Self.TallasxProducto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdeColeccion" EntityType="Self.TiposdeColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdePago" EntityType="Self.TiposdePago" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdePagoDetalle" EntityType="Self.TiposdePagoDetalle" Schema="dbo" store:Type="Tables" />
@@ -2305,6 +2338,14 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <AssociationSet Name="FK__TallasXGr__Codig__4AD81681" Association="Self.FK__TallasXGr__Codig__4AD81681">
             <End Role="GrupoTalla" EntitySet="GrupoTalla" />
             <End Role="TallasXGrupo" EntitySet="TallasXGrupo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TallasxPr__IdPro__270FB757" Association="Self.FK__TallasxPr__IdPro__270FB757">
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+            <End Role="TallasxProducto" EntitySet="TallasxProducto" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TallasxPr__IdTal__2803DB90" Association="Self.FK__TallasxPr__IdTal__2803DB90">
+            <End Role="TallasXGrupo" EntitySet="TallasXGrupo" />
+            <End Role="TallasxProducto" EntitySet="TallasxProducto" />
           </AssociationSet>
           <AssociationSet Name="FK__TiposdePa__Empre__29971E47" Association="Self.FK__TiposdePa__Empre__29971E47">
             <End Role="Empresa" EntitySet="Empresa" />
@@ -2809,6 +2850,15 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <FunctionImport Name="CuentaCorriente21" ReturnType="Collection(AVentasModel.CuentaCorriente21_Result)">
           <Parameter Name="CodigoCliente" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="TallasxProducto" EntityType="AVentasModel.TallasxProducto" />
+          <AssociationSet Name="FK__TallasxPr__IdPro__270FB757" Association="AVentasModel.FK__TallasxPr__IdPro__270FB757">
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+            <End Role="TallasxProducto" EntitySet="TallasxProducto" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TallasxPr__IdTal__2803DB90" Association="AVentasModel.FK__TallasxPr__IdTal__2803DB90">
+            <End Role="TallasXGrupo" EntitySet="TallasXGrupo" />
+            <End Role="TallasxProducto" EntitySet="TallasxProducto" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="PResumenCredito_Result">
           <Property Type="Int32" Name="Id" Nullable="true" />
@@ -3565,6 +3615,7 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <NavigationProperty Name="PedidosDetalle" Relationship="AVentasModel.FK_PedidosDetalle_ProductosxColeccion" FromRole="ProductosxColeccion" ToRole="PedidosDetalle" />
           <NavigationProperty Name="PrecioEspecifico" Relationship="AVentasModel.FK__PrecioEsp__IdPro__377B294A" FromRole="ProductosxColeccion" ToRole="PrecioEspecifico" />
           <NavigationProperty Name="PreciosxProducto" Relationship="AVentasModel.FK__PreciosxP__IdMon__542C7691" FromRole="ProductosxColeccion" ToRole="PreciosxProducto" />
+          <NavigationProperty Name="TallasxProducto" Relationship="AVentasModel.FK__TallasxPr__IdPro__270FB757" FromRole="ProductosxColeccion" ToRole="TallasxProducto" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -3696,6 +3747,7 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <Property Name="CodigoGrupoTalla" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="DistribucionxTalla" Relationship="AVentasModel.FK__Distribuc__IdTal__0E7913B7" FromRole="TallasXGrupo" ToRole="DistribucionxTalla" />
           <NavigationProperty Name="GrupoTalla" Relationship="AVentasModel.FK__TallasXGr__Codig__4AD81681" FromRole="TallasXGrupo" ToRole="GrupoTalla" />
+          <NavigationProperty Name="TallasxProducto" Relationship="AVentasModel.FK__TallasxPr__IdTal__2803DB90" FromRole="TallasXGrupo" ToRole="TallasxProducto" />
         </EntityType>
         <EntityType Name="TiposdeColeccion">
           <Key>
@@ -4933,6 +4985,40 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <Property Type="Decimal" Name="APagar" Nullable="true" Precision="15" Scale="4" />
           <Property Type="String" Name="idmoneda" Nullable="true" MaxLength="100" />
         </ComplexType>
+        <EntityType Name="TallasxProducto">
+          <Key>
+            <PropertyRef Name="IdTallaxProducto" />
+          </Key>
+          <Property Name="IdTallaxProducto" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdProducto" Type="Int32" />
+          <Property Name="IdTallaxGrupo" Type="Int32" />
+          <NavigationProperty Name="ProductosxColeccion" Relationship="AVentasModel.FK__TallasxPr__IdPro__270FB757" FromRole="TallasxProducto" ToRole="ProductosxColeccion" />
+          <NavigationProperty Name="TallasXGrupo" Relationship="AVentasModel.FK__TallasxPr__IdTal__2803DB90" FromRole="TallasxProducto" ToRole="TallasXGrupo" />
+        </EntityType>
+        <Association Name="FK__TallasxPr__IdPro__270FB757">
+          <End Type="AVentasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="0..1" />
+          <End Type="AVentasModel.TallasxProducto" Role="TallasxProducto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductosxColeccion">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="TallasxProducto">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TallasxPr__IdTal__2803DB90">
+          <End Type="AVentasModel.TallasXGrupo" Role="TallasXGrupo" Multiplicity="0..1" />
+          <End Type="AVentasModel.TallasxProducto" Role="TallasxProducto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TallasXGrupo">
+              <PropertyRef Name="IdTallaxGrupo" />
+            </Principal>
+            <Dependent Role="TallasxProducto">
+              <PropertyRef Name="IdTallaxGrupo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5793,6 +5879,15 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="TallasxProducto">
+            <EntityTypeMapping TypeName="AVentasModel.TallasxProducto">
+              <MappingFragment StoreEntitySet="TallasxProducto">
+                <ScalarProperty Name="IdTallaxGrupo" ColumnName="IdTallaxGrupo" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="IdTallaxProducto" ColumnName="IdTallaxProducto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
