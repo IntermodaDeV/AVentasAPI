@@ -200,6 +200,7 @@
     <Compile Include="Controllers\PruebaColeccionesXLineaController.cs" />
     <Compile Include="Controllers\RazonNoVentaController.cs" />
     <Compile Include="Controllers\ReciboController.cs" />
+    <Compile Include="Controllers\TallasPorProductoController.cs" />
     <Compile Include="Controllers\TipoPagoController.cs" />
     <Compile Include="Controllers\TipoPedidoController.cs" />
     <Compile Include="Controllers\TiposColeccionController.cs" />
@@ -233,6 +234,7 @@
     <Compile Include="GestorData\GestorMaestroRutas.cs" />
     <Compile Include="GestorData\GestorRutasXAsesor.cs" />
     <Compile Include="GestorData\GestorSaldosCliente.cs" />
+    <Compile Include="GestorData\GestorSizesByProduct.cs" />
     <Compile Include="GestorData\GestorSubFacturasXCliente.cs" />
     <Compile Include="GestorData\GestorTallaXGrupoTalla.cs" />
     <Compile Include="GestorData\GestorTipoPaquete.cs" />
@@ -549,6 +551,7 @@
     <Compile Include="Models\ViewModels\PedidosXClienteViewModel.cs" />
     <Compile Include="Models\ViewModels\ProductoXColeccionViewModel.cs" />
     <Compile Include="Models\ViewModels\CuotasViewModel.cs" />
+    <Compile Include="Models\ViewModels\TallaPorProductoViewModel.cs" />
     <Compile Include="Models\ViewModels\TallaViewModel.cs" />
     <Compile Include="Models\ViewModels\TipoPagoDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\TipoPagoViewModel.cs" />
