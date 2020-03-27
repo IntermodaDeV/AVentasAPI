@@ -22,23 +22,13 @@ namespace AventasApi.Controllers
         //    _authenticationAppService = new AuthenticationAppService();
         //}
 
-        [Route("~/api/TallasPorProducto/{codColeccion}")]
+        [Route("~/api/TallasPorProducto")]
         [HttpGet()]
-        public async Task<IHttpActionResult> SizesByProduct(string codColeccion)
+        public async Task<IHttpActionResult> SizesByProduct()
         {
-            var validateParameter = codColeccion == null;
-            if (validateParameter)
-            {
-                return BadRequest();
-            }
 
             GestorSizesByProduct gestorSizesByProduct = new GestorSizesByProduct();           
-            bool result = await gestorSizesByProduct.ObtenerTallasXProducto(codColeccion);
-            if (result)
-            {
-                return Ok();
-            }
-            return BadRequest();
+            return await Task.FromResult(Ok());
         }
     }
 }

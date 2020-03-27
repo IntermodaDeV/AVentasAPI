@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -15,72 +15,163 @@ namespace AventasApi.GestorData
     public class GestorSizesByProduct
     {
         private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}paquetes/imhn/{{0}}";
+        public static bool tallasAgregadas = false;
+        public static bool errorAlAgregar = false;
 
-        public async Task<bool> ObtenerTallasXProducto(string colleccionId)
+        public static async Task ObtenerTallasXProducto()
         {
-            string peticion = string.Format(UrlString, colleccionId);
-            var restClient = new RestClient(peticion);
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("Accept", "application/json");
-            IRestResponse response = restClient.Execute(request);
-
-            if (response.IsSuccessful)
+            try
             {
-                List<TallaPorProductoViewModel> tallas = JsonConvert.DeserializeObject<List<TallaPorProductoViewModel>>(response.Content);
-                var validarSiTallaEsValida = tallas != null && tallas.Count > 0;
-                if (validarSiTallaEsValida)
+                Random randomColorNumber = new Random();
+                List<Colecciones> colecciones = new List<Colecciones>();
+                using (AVentasEntities context = new AVentasEntities())
                 {
-                    var result = tallas.GroupBy(x => new { x.CodProducto }).Select(g => g.First());
-                    int count = result.Count();
+                    colecciones = context.Colecciones.ToList();
+                }
 
-                    foreach (var talla in result)
+                List<Task> taskColecciones = colecciones.Select(coleccion =>
+                    Task.Run(async () =>
                     {
-                        validarSiTallaEsValida = talla != null;
-                        if (validarSiTallaEsValida)
+                        string peticion = string.Format(UrlString, coleccion.CodigoColeccion);
+                        var restClient = new RestClient(peticion);
+                        var request = new RestRequest(Method.GET);
+                        request.AddHeader("Accept", "application/json");
+                        IRestResponse response = restClient.Execute(request);
+
+                        if (response.IsSuccessful)
                         {
-                            using (AVentasEntities context = new AVentasEntities())
+                            List<TallaPorProductoViewModel> tallas = JsonConvert.DeserializeObject<List<TallaPorProductoViewModel>>(response.Content);
+
+                            var validarSiTallaEsValida = tallas != null && tallas.Count > 0;
+                            if (validarSiTallaEsValida)
                             {
-                                int productoId = 0; int tallaId = 0;
-                                await Task.Run(() =>
-                                {
-                                    var producto = context.ProductosxColeccion
-                                         .FirstOrDefault(x => x.CodigoProducto == (talla.CodProducto ?? " "));
-                                    productoId = (producto == null) ? 0 : producto.IdProducto;
-                                });
+                                var result = tallas.GroupBy(x => new { x.PRODUCT }).Select(g => g.First());
+                                int count = result.Count();
 
-                                await Task.Run(() =>
+                                foreach (var talla in result)
                                 {
-                                    var grupoTalla = context.TallasXGrupo
-                                         .FirstOrDefault(x => x.CodigoGrupoTalla == (talla.CodTallaGrupo ?? " ") &&
-                                         x.CodigoTalla == (talla.CodTalla ?? " "));
-                                    tallaId = (grupoTalla == null) ? 0 : grupoTalla.IdTallaxGrupo;
-                                });
-
-                                var validarData = tallaId != 0 && productoId != 0;
-                                if (validarData)
-                                {
-                                    TallasxProducto tallasxProducto = new TallasxProducto()
+                                    validarSiTallaEsValida = talla != null;
+                                    if (validarSiTallaEsValida)
                                     {
-                                        IdProducto =  productoId,
-                                        IdTallaxGrupo = tallaId 
-                                    };
-                                    context.TallasxProducto.Add(tallasxProducto);
+                                        using (AVentasEntities context = new AVentasEntities())
+                                        {
+                                            int productoId = 0; int tallaId = 0;
+                                            var producto = context.ProductosxColeccion
+                                                 .FirstOrDefault(x => x.CodigoProducto == (talla.PRODUCT ?? " "));
+                                            productoId = (producto == null) ? 0 : producto.IdProducto;
 
-                                    try
-                                    {
-                                        await context.SaveChangesAsync();
+                                            var grupoTalla = context.TallasXGrupo
+                                                 .FirstOrDefault(x => x.CodigoGrupoTalla == (talla.SIZEGROUP ?? " ") &&
+                                                 x.CodigoTalla == (talla.SIZE ?? " "));
+                                            tallaId = (grupoTalla == null) ? 0 : grupoTalla.IdTallaxGrupo;
+
+
+                                            var validarData = tallaId != 0 && productoId != 0;
+                                            if (validarData)
+                                            {
+                                                TallasxProducto tallasxProducto = new TallasxProducto()
+                                                {
+                                                    IdProducto = productoId,
+                                                    IdTallaxGrupo = tallaId
+                                                };
+                                                context.TallasxProducto.Add(tallasxProducto);
+
+                                                try
+                                                {
+                                                    await context.SaveChangesAsync();
+                                                }
+                                                catch (Exception ex) { }
+                                            }
+                                        }
                                     }
-                                    catch (Exception ex) { }
+
                                 }
                             }
-                        }
+                        } })
+                ).ToList();
 
-                    }
-                    return true;
-                }
+                Task cargarProductos = Task.WhenAll(taskColecciones);
+                cargarProductos.Wait();
+                tallasAgregadas = true;
+                Debug.WriteLine("Finalizo");
             }
-
-            return false;
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
+        //public async Task<bool> ObtenerTallasXProducto()
+        //{
+        //    List<Colecciones> colecciones = new List<Colecciones>();
+        //    using (AVentasEntities context = new AVentasEntities())
+        //    {
+        //        colecciones = context.Colecciones.ToList();
+
+        //    }
+        //    string peticion = string.Format(UrlString);
+        //    var restClient = new RestClient(peticion);
+        //    var request = new RestRequest(Method.GET);
+        //    request.AddHeader("Accept", "application/json");
+        //    IRestResponse response = restClient.Execute(request);
+
+        //    if (response.IsSuccessful)
+        //    {
+        //        List<TallaPorProductoViewModel> tallas = JsonConvert.DeserializeObject<List<TallaPorProductoViewModel>>(response.Content);
+        //        var validarSiTallaEsValida = tallas != null && tallas.Count > 0;
+        //        if (validarSiTallaEsValida)
+        //        {
+        //            var result = tallas.GroupBy(x => new { x.CodProducto }).Select(g => g.First());
+        //            int count = result.Count();
+
+        //            foreach (var talla in result)
+        //            {
+        //                validarSiTallaEsValida = talla != null;
+        //                if (validarSiTallaEsValida)
+        //                {
+        //                    using (AVentasEntities context = new AVentasEntities())
+        //                    {
+        //                        int productoId = 0; int tallaId = 0;
+        //                        await Task.Run(() =>
+        //                        {
+        //                            var producto = context.ProductosxColeccion
+        //                                 .FirstOrDefault(x => x.CodigoProducto == (talla.CodProducto ?? " "));
+        //                            productoId = (producto == null) ? 0 : producto.IdProducto;
+        //                        });
+
+        //                        await Task.Run(() =>
+        //                        {
+        //                            var grupoTalla = context.TallasXGrupo
+        //                                 .FirstOrDefault(x => x.CodigoGrupoTalla == (talla.CodTallaGrupo ?? " ") &&
+        //                                 x.CodigoTalla == (talla.CodTalla ?? " "));
+        //                            tallaId = (grupoTalla == null) ? 0 : grupoTalla.IdTallaxGrupo;
+        //                        });
+
+        //                        var validarData = tallaId != 0 && productoId != 0;
+        //                        if (validarData)
+        //                        {
+        //                            TallasxProducto tallasxProducto = new TallasxProducto()
+        //                            {
+        //                                IdProducto =  productoId,
+        //                                IdTallaxGrupo = tallaId 
+        //                            };
+        //                            context.TallasxProducto.Add(tallasxProducto);
+
+        //                            try
+        //                            {
+        //                                await context.SaveChangesAsync();
+        //                            }
+        //                            catch (Exception ex) { }
+        //                        }
+        //                    }
+        //                }
+
+        //            }
+        //            return true;
+        //        }
+        //    }
+
+        //    return false;
+        //}
     }
 }
