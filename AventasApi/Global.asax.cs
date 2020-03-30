@@ -22,9 +22,6 @@ namespace AventasApi
             GestorImagenesXProducto gestorImagenesXProducto = new GestorImagenesXProducto();
             GestorAcuerdosVenta gestorAcuerdosVenta = new GestorAcuerdosVenta();
             GestorColecciones2 gestorColecciones = new GestorColecciones2();
-            GestorSizesByProduct gestorSizesByProduct = new GestorSizesByProduct();
-
-
             //var listaAsesores = ga.ObtenerAsesores().Result;
             //ga.GuardarAsesores(listaAsesores).Wait();
 
@@ -64,7 +61,7 @@ namespace AventasApi
             //GestorClientes.ActualizarClientes();
             //GestorAsesores.ActualizarAsesores();
             //GestorImagenesXProducto.ActualizarImagenes();
-            GestorSizesByProduct.ObtenerTallasXProducto();
+
 
             if (false && GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Running)
             {

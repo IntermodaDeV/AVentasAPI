@@ -105,7 +105,7 @@ namespace AventasApi.Controllers
                         .Select(gruposXDetPed => new GruposTallaXDetPed
                         {
                             GrupoTalla = gruposXDetPed.Key,
-                            ListaTalla = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == gruposXDetPed.Key).Where(txp =>  false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc=> pxc.ProductosxColeccion.FisicoDisponible. Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)).Select(txp => new TallaViewModel
+                            ListaTalla = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == gruposXDetPed.Key).Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)).Select(txp => new TallaViewModel
                             {
                                 GrupoTallaId = txp.CodigoGrupoTalla,
                                 Talla = txp.CodigoTalla,
@@ -145,7 +145,21 @@ namespace AventasApi.Controllers
                                          Linea = detPed.Linea,
                                          MontoLinea = detPed.MontoLinea,
                                          PrecioUnitario = detPed.PrecioUnitario,
-                                         Talla = detPed.CodigoTalla
+                                         Talla = detPed.CodigoTalla,
+                                         TallaObject = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == detPed.ProductosxColeccion.CodigoGrupoTalla && txp.CodigoTalla == detPed.CodigoTalla).Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)).Select(txp => new TallaViewModel
+                                         {
+                                             GrupoTallaId = txp.CodigoGrupoTalla,
+                                             Talla = txp.CodigoTalla,
+                                             Orden = txp.Orden ?? 0,
+                                             Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                             {
+                                                 IdDistribucion = dis.IdDistribucion,
+                                                 IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                 NombreDistribucion = dis.NombreDistribucion,
+                                                 NombreTalla = dis.NombreTalla,
+                                                 Cantidad = dis.Cantidad,
+                                             }).ToList()
+                                         }).FirstOrDefault()
                                      }).ToList()
 
                                  }).ToList()
