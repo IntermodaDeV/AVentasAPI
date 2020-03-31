@@ -1,6 +1,6 @@
 ﻿using AventasApi.Enviroments;
 using AventasApi.Infrastructure;
-using AventasApi.Models.ViewModels;
+using AventasApi.Models.ApiModels;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -40,7 +40,7 @@ namespace AventasApi.GestorData
 
                         if (response.IsSuccessful)
                         {
-                            List<TallaPorProductoViewModel> tallas = JsonConvert.DeserializeObject<List<TallaPorProductoViewModel>>(response.Content);
+                            List<TallaXProductoCRMApiModel> tallas = JsonConvert.DeserializeObject<List<TallaXProductoCRMApiModel>>(response.Content);
 
                             var validarSiTallaEsValida = tallas != null && tallas.Count > 0;
                             if (validarSiTallaEsValida)

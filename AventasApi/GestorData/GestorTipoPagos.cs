@@ -1,29 +1,27 @@
-﻿using System;
+﻿using AventasApi.Enviroments;
+using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
-using AventasApi.Enviroments;
-using AventasApi.Infrastructure;
-using AventasApi.Models.ApiModels;
 using AventasApi.Utils;
-using Newtonsoft.Json;
+using System.Web;
 using RestSharp;
+using AventasApi.Models.ApiModels;
+using Newtonsoft.Json;
+using AventasApi.Infrastructure;
+using System.Data.Entity;
 
 namespace AventasApi.GestorData
 {
-    public class GestorBancos
+    public class GestorTipoPagos
     {
-        private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}bancos/imhn";
+        private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}tipopagos/imhn";
 
 
-        public static async Task ObtenerBancos()
+        public static async Task ObtenerTipos()
         {
             LogicValidation LogicValidation = new LogicValidation();
+
             try
             {
                 await Task.Run(() =>
@@ -35,33 +33,35 @@ namespace AventasApi.GestorData
 
                     if (response.IsSuccessful)
                     {
-                        List<BancoApiModel> listaBancos = JsonConvert.DeserializeObject<List<BancoApiModel>>(response.Content);
+                        List<TiposPagoCRMApiModel> listaTipos = JsonConvert.DeserializeObject<List<TiposPagoCRMApiModel>>(response.Content);
 
-                        if (LogicValidation.ValidateDataCount(listaBancos.Count))
+                        if (LogicValidation.ValidateDataCount(listaTipos.Count))
                         {
-                            foreach (var banco in listaBancos)
+                            foreach (var tipo in listaTipos)
                             {
-                                if (LogicValidation.IsDataValid(banco))
+                                if (LogicValidation.IsDataValid(tipo))
                                 {
                                     using (AVentasEntities context = new AVentasEntities())
                                     {
-                                        var bancoBD = context.Bancos.FirstOrDefault(x=>x.NombreBanco == banco.CODE);
-                                        if (LogicValidation.IsDataValid(bancoBD))
+                                        var tipoPago = context.TiposdePago.FirstOrDefault(x => x.Codigo == tipo.CODE);
+                                        if (LogicValidation.IsDataValid(tipoPago))
                                         {
-                                            context.Entry(bancoBD).State = EntityState.Modified;
-                                            bancoBD.NombreBanco = banco.CODE;
-                                            bancoBD.Descripcion = banco.DESCRIPTION;
-                                            bancoBD.EmpresaId = banco.COMPANY_CODE;
+                                            context.Entry(tipoPago).State = EntityState.Modified;
+                                            tipoPago.Codigo = tipo.CODE;
+                                            tipoPago.Descripcion = tipo.DESCRIPTION;
+                                            tipoPago.Tipo = tipo.TYPE;
+                                            tipoPago.EmpresaId = tipo.COMPANY_CODE;
                                         }
                                         else
                                         {
-                                            Bancos nuevoBanco = new Bancos()
+                                            TiposdePago nuevoTipo = new TiposdePago()
                                             {
-                                                NombreBanco = banco.CODE,
-                                                Descripcion = banco.DESCRIPTION,
-                                                EmpresaId = banco.COMPANY_CODE,
+                                                Codigo = tipo.CODE,
+                                                Descripcion = tipo.DESCRIPTION,
+                                                Tipo = tipo.TYPE,
+                                                EmpresaId = tipo.COMPANY_CODE,
                                             };
-                                            context.Bancos.Add(nuevoBanco);
+                                            context.TiposdePago.Add(nuevoTipo);
                                         }
 
                                         try

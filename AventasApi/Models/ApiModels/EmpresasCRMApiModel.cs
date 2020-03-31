@@ -7,8 +7,6 @@ namespace AventasApi.Models.ApiModels
 {
     public class EmpresasCRMApiModel
     {
-        public int id { get; set; }
-
         public string COMPANY_CODE { get; set; }
 
         public string NAME { get; set; }

@@ -218,8 +218,10 @@
     <Compile Include="GestorData\GestorColor.cs" />
     <Compile Include="GestorData\GestorColoresXProducto.cs" />
     <Compile Include="GestorData\GestorCreditoXCliente.cs" />
+    <Compile Include="GestorData\GestorCuentasBancarias.cs" />
     <Compile Include="GestorData\GestorData.cs" />
     <Compile Include="GestorData\GestorDistribucionesXTalla.cs" />
+    <Compile Include="GestorData\GestorEmpresas.cs" />
     <Compile Include="GestorData\GestorFacturasXCliente.cs" />
     <Compile Include="GestorData\GestorFisicoDisponibleXProducto.cs" />
     <Compile Include="GestorData\GestorGrupoTalla.cs" />
@@ -233,8 +235,10 @@
     <Compile Include="GestorData\GestorMaestroRutas.cs" />
     <Compile Include="GestorData\GestorRutasXAsesor.cs" />
     <Compile Include="GestorData\GestorSaldosCliente.cs" />
+    <Compile Include="GestorData\GestorSizesByProduct.cs" />
     <Compile Include="GestorData\GestorSubFacturasXCliente.cs" />
     <Compile Include="GestorData\GestorTallaXGrupoTalla.cs" />
+    <Compile Include="GestorData\GestorTipoPagos.cs" />
     <Compile Include="GestorData\GestorTipoPaquete.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -468,7 +472,9 @@
     <Compile Include="Models\ApiModels\ColeccionesCRMApiViewModel.cs" />
     <Compile Include="Models\ApiModels\ColorApiModel.cs" />
     <Compile Include="Models\ApiModels\CuentaCorrienteApiModel.cs" />
+    <Compile Include="Models\ApiModels\CuentasBancariasCRMApiModel.cs" />
     <Compile Include="Models\ApiModels\DistribucionXTallaApiModel.cs" />
+    <Compile Include="Models\ApiModels\EmpresasCRMApiModel.cs" />
     <Compile Include="Models\ApiModels\FacturasXClienteApiModel.cs" />
     <Compile Include="Models\ApiModels\FisicoDisponibleXProductoApiModel.cs" />
     <Compile Include="Models\ApiModels\GestorPrecioXProductoApiModel.cs" />
@@ -483,6 +489,7 @@
     <Compile Include="Models\ApiModels\RutasXAsesorApiModel.cs" />
     <Compile Include="Models\ApiModels\SubFacturasXClienteApiModel.cs" />
     <Compile Include="Models\ApiModels\TallaPorGrupoTalla.cs" />
+    <Compile Include="Models\ApiModels\TiposPagoCRMApiModel.cs" />
     <Compile Include="Models\Authentication\AuthenticationResponse.cs" />
     <Compile Include="Models\Authentication\Menu.cs" />
     <Compile Include="Models\Authentication\UserAuthenticated.cs" />
@@ -549,6 +556,7 @@
     <Compile Include="Models\ViewModels\PedidosXClienteViewModel.cs" />
     <Compile Include="Models\ViewModels\ProductoXColeccionViewModel.cs" />
     <Compile Include="Models\ViewModels\CuotasViewModel.cs" />
+    <Compile Include="Models\ViewModels\TallaPorProductoViewModel.cs" />
     <Compile Include="Models\ViewModels\TallaViewModel.cs" />
     <Compile Include="Models\ViewModels\TipoPagoDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\TipoPagoViewModel.cs" />
@@ -560,6 +568,7 @@
     <Compile Include="Services\Authentication\AuthenticationAppService.cs" />
     <Compile Include="Singleton\GestorManager.cs" />
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
+    <Compile Include="Utils\logicValidation.cs" />
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="Infrastructure\AVentasModel.edmx">

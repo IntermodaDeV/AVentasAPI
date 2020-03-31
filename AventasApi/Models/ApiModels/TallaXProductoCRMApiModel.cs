@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace AventasApi.Models.ViewModels
+namespace AventasApi.Models.ApiModels
 {
-    public class TallaPorProductoViewModel
+    public class TallaXProductoCRMApiModel
     {
-        public int id { get; set; }
-
         public string PRODUCT { get; set; }
-
         public string SIZEGROUP { get; set; }
-
         public string SIZE { get; set; }
     }
 }

@@ -22,6 +22,10 @@ namespace AventasApi
             GestorImagenesXProducto gestorImagenesXProducto = new GestorImagenesXProducto();
             GestorAcuerdosVenta gestorAcuerdosVenta = new GestorAcuerdosVenta();
             GestorColecciones2 gestorColecciones = new GestorColecciones2();
+            GestorEmpresas gestorEmpresas = new GestorEmpresas();
+            GestorBancos gestorBancos = new GestorBancos();
+            GestorCuentasBancarias gestorCuentasBancarias = new GestorCuentasBancarias();
+            GestorTipoPagos gestorTipoPagos = new GestorTipoPagos();
             //var listaAsesores = ga.ObtenerAsesores().Result;
             //ga.GuardarAsesores(listaAsesores).Wait();
 
@@ -54,6 +58,10 @@ namespace AventasApi
 
 
 
+            //GestorEmpresas.ObtenerEmpresas();
+            //GestorBancos.ObtenerBancos();
+            //GestorCuentasBancarias.ObtenerCuentas();
+            GestorTipoPagos.ObtenerTipos();
 
             //GestorMaestroEdad.ActualizarProductos();
             //GestorProductos.ActualizarProductos();
