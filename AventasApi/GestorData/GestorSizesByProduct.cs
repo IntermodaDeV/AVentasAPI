@@ -46,7 +46,6 @@ namespace AventasApi.GestorData
                             if (validarSiTallaEsValida)
                             {
                                 var result = tallas.GroupBy(x => new { x.PRODUCT }).Select(g => g.First());
-                                int count = result.Count();
 
                                 foreach (var talla in result)
                                 {

@@ -19,5 +19,11 @@ namespace AventasApi.Utils
             var isValid = counter > restrictionValue;
             return isValid;
         }
+
+        public bool ValidateDataCountWithRestriction(int counter, int restrictionValue)
+        {
+            var isValid = counter > restrictionValue;
+            return isValid;
+        }
     }
 }

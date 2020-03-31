@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AventasApi.Utils;
 using System.Threading.Tasks;
-
 using System.Web;
 using RestSharp;
 using Newtonsoft.Json;
@@ -44,7 +43,12 @@ namespace AventasApi.GestorData
                                     using (AVentasEntities context = new AVentasEntities())
                                     {
                                         var cuentaBD = context.CuentasBancarias.FirstOrDefault(x => x.NumeroCuenta == (cuenta.ACCOUNT_NUM ?? " "));
-                                        var banco = context.Bancos.FirstOrDefault(x => x.NombreBanco == (cuenta.BANK_GROUP ?? " "));
+                                        var banco =
+                                        context.Bancos.FirstOrDefault(x => x.NombreBanco == (cuenta.BANK_GROUP ?? " ") || 
+                                        x.Descripcion == (cuenta.BANK_GROUP ?? " ") || x.Descripcion == (cuenta.DESCRIPTION ?? " ")) ??
+                                        context.Bancos.FirstOrDefault(x => x.NombreBanco.Contains(cuenta.BANK_GROUP)) ??
+                                        context.Bancos.FirstOrDefault(x => x.Descripcion == cuenta.DESCRIPTION);
+
                                         if (LogicValidation.IsDataValid(cuentaBD))
                                         {                                       
                                             context.Entry(cuentaBD).State = EntityState.Modified;
@@ -93,6 +97,21 @@ namespace AventasApi.GestorData
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public static string GrupoBanco(string grupoBanco)
+        {
+            LogicValidation LogicValidation = new LogicValidation();
+            var valor = " ";
+            if (LogicValidation.IsDataValid(grupoBanco))
+            {
+                string[] banco = grupoBanco.Split('-');
+                if (LogicValidation.ValidateDataCountWithRestriction(banco.Count(), 1))
+                {
+                    valor = banco[0] + " " + banco[1];
+                }
+            }
+            return valor;
         }
     }    
 }

@@ -211,6 +211,7 @@
     <Compile Include="GestorData\GestorAcuerdosVenta.cs" />
     <Compile Include="GestorData\GestorAsesores.cs" />
     <Compile Include="GestorData\GestorAtributos.cs" />
+    <Compile Include="GestorData\GestorAtributosXProductos.cs" />
     <Compile Include="GestorData\GestorBancos.cs" />
     <Compile Include="GestorData\GestorClientes.cs" />
     <Compile Include="GestorData\GestorColecciones.cs" />
@@ -464,6 +465,7 @@
     <Compile Include="Models\ApiModels\AcuerdoVentaDetalleApiModel.cs" />
     <Compile Include="Models\ApiModels\AsesorApiModel.cs" />
     <Compile Include="Models\ApiModels\AtributosApiModel.cs" />
+    <Compile Include="Models\ApiModels\AtributosXProductoCRMApiModel.cs" />
     <Compile Include="Models\ApiModels\BancoApiModel.cs" />
     <Compile Include="Models\ApiModels\ClientesApiModel.cs" />
     <Compile Include="Models\ApiModels\ClientesCRMApiModel.cs" />
@@ -489,6 +491,7 @@
     <Compile Include="Models\ApiModels\RutasXAsesorApiModel.cs" />
     <Compile Include="Models\ApiModels\SubFacturasXClienteApiModel.cs" />
     <Compile Include="Models\ApiModels\TallaPorGrupoTalla.cs" />
+    <Compile Include="Models\ApiModels\TallaXProductoCRMApiModel.cs" />
     <Compile Include="Models\ApiModels\TiposPagoCRMApiModel.cs" />
     <Compile Include="Models\Authentication\AuthenticationResponse.cs" />
     <Compile Include="Models\Authentication\Menu.cs" />
@@ -556,7 +559,6 @@
     <Compile Include="Models\ViewModels\PedidosXClienteViewModel.cs" />
     <Compile Include="Models\ViewModels\ProductoXColeccionViewModel.cs" />
     <Compile Include="Models\ViewModels\CuotasViewModel.cs" />
-    <Compile Include="Models\ViewModels\TallaPorProductoViewModel.cs" />
     <Compile Include="Models\ViewModels\TallaViewModel.cs" />
     <Compile Include="Models\ViewModels\TipoPagoDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\TipoPagoViewModel.cs" />
