@@ -46,10 +46,10 @@ namespace AventasApi.GestorData
                     var validarSiTallaEsValida = tallas != null && tallas.Count > 0;
                     if (validarSiTallaEsValida)
                     {
+                        List<TallasxProducto> tallasxProductosXResult = new List<TallasxProducto>();
                         //var result = tallas.GroupBy(x => new { x.PRODUCT }).Select(g => g.First());
                         Parallel.ForEach(tallas, talla =>
                          {
-                             List<TallasxProducto> tallasxProductosXResult = new List<TallasxProducto>();
                              validarSiTallaEsValida = talla != null;
                              if (validarSiTallaEsValida)
                              {
@@ -73,9 +73,12 @@ namespace AventasApi.GestorData
                                              IdProducto = productoId,
                                              IdTallaxGrupo = tallaId
                                          };
-                                         if (!tallasxProductosXResult.Any(tallXProd => tallaxProducto.IdProducto == tallXProd.IdProducto && tallaxProducto.IdTallaxProducto == tallXProd.IdTallaxProducto))
+                                         lock (tallasxProductosXResult)
                                          {
-                                             tallasxProductosXResult.Add(tallaxProducto);
+                                             if (!(tallasxProductosXResult.Any(tallXProd => (tallaxProducto.IdProducto == tallXProd.IdProducto) && (tallaxProducto.IdTallaxGrupo == tallXProd.IdTallaxGrupo))))
+                                             {
+                                                 tallasxProductosXResult.Add(tallaxProducto);
+                                             }
                                          }
 
                                      }
@@ -85,11 +88,8 @@ namespace AventasApi.GestorData
                                      }
                                  }
                              }
-                             lock (tallasxProductos)
-                             {
-                                 tallasxProductos.AddRange(tallasxProductosXResult);
-                             }
                          });
+                        tallasxProductos.AddRange(tallasxProductosXResult);
                     }
                 }
             }
