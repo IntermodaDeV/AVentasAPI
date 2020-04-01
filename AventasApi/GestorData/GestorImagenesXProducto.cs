@@ -85,7 +85,7 @@ namespace AventasApi.GestorData
             using (AVentasEntities context = new AVentasEntities())
             {
 
-                var connectionString = "data source=209.126.64.158,49170;initial catalog=AventasTesting20200206;persist security info=True;user id=developer;password=D3vCitHn.20!8;MultipleActiveResultSets=True;App=EntityFramework&quot;";
+                var connectionString = "data source=209.126.64.158,49170;initial catalog=AventasTesting20200211;persist security info=True;user id=developer;password=D3vCitHn.20!8;MultipleActiveResultSets=True;App=EntityFramework&quot;";
 
 
                 var transaction = context.Database.BeginTransaction();

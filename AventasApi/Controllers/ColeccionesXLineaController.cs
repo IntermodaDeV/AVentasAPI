@@ -108,7 +108,7 @@ namespace AventasApi.Controllers
                                                              CodigoColor = foto.CodigoColor,
                                                              Principal = foto.Principal ?? false
                                                          }).ToList(),
-                                                      ListaTalla = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == pxc.CodigoGrupoTalla).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)
+                                                      ListaTalla = context.TallasxProducto.Where(txp=> txp.IdProducto==pxc.IdProducto).Select(txp=> txp.TallasXGrupo).Where(txp => txp.CodigoGrupoTalla == pxc.CodigoGrupoTalla).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)
                                                       .Select(txp => new TallaViewModel
                                                       {
                                                           Talla = txp.CodigoTalla,
