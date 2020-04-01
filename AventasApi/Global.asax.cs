@@ -75,7 +75,7 @@ namespace AventasApi
             //GestorClientes.ActualizarClientes();
             //GestorAsesores.ActualizarAsesores();
             //GestorImagenesXProducto.ActualizarImagenes();
-
+            GestorImagenesXProducto.ObtenerImagenesXProducto();
 
             if (false && GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Running)
             {

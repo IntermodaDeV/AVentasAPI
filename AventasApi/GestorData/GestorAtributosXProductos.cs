@@ -22,9 +22,10 @@ namespace AventasApi.GestorData
         public static async Task ObtenerAtributosXProducto()
         {
             LogicValidation LogicValidation = new LogicValidation();
+            List<ProductosxColeccion> productosLista = new List<ProductosxColeccion>();
+
             try
             {
-                List<ProductosxColeccion> productosLista = new List<ProductosxColeccion>();
                 using (AVentasEntities context = new AVentasEntities())
                 {
                     productosLista = context.ProductosxColeccion.ToList();

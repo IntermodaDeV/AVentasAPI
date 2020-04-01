@@ -480,6 +480,7 @@
     <Compile Include="Models\ApiModels\FacturasXClienteApiModel.cs" />
     <Compile Include="Models\ApiModels\FisicoDisponibleXProductoApiModel.cs" />
     <Compile Include="Models\ApiModels\GestorPrecioXProductoApiModel.cs" />
+    <Compile Include="Models\ApiModels\ImagenesXProductoCRMApiModel.cs" />
     <Compile Include="Models\ApiModels\ImageneXProductoXColorApiModel.cs" />
     <Compile Include="Models\ApiModels\ImagenXProductoApiModel.cs" />
     <Compile Include="Models\ApiModels\LineaApiModel.cs" />
