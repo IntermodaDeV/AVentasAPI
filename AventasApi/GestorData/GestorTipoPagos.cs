@@ -16,12 +16,10 @@ namespace AventasApi.GestorData
     public class GestorTipoPagos
     {
         private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}tipopagos/imhn";
-
+        private static LogicValidation LogicValidation = new LogicValidation();
 
         public static async Task ObtenerTipos()
         {
-            LogicValidation LogicValidation = new LogicValidation();
-
             try
             {
                 await Task.Run(() =>
@@ -37,6 +35,7 @@ namespace AventasApi.GestorData
 
                         if (LogicValidation.ValidateDataCount(listaTipos.Count))
                         {
+                            int updateCount = 0, insertCount = 0, errorCount = 0;
                             foreach (var tipo in listaTipos)
                             {
                                 if (LogicValidation.IsDataValid(tipo))
@@ -46,14 +45,27 @@ namespace AventasApi.GestorData
                                         var tipoPago = context.TiposdePago.FirstOrDefault(x => x.Codigo == tipo.CODE);
                                         if (LogicValidation.IsDataValid(tipoPago))
                                         {
+                                            updateCount++;
                                             context.Entry(tipoPago).State = EntityState.Modified;
                                             tipoPago.Codigo = tipo.CODE;
                                             tipoPago.Descripcion = tipo.DESCRIPTION;
                                             tipoPago.Tipo = tipo.TYPE;
                                             tipoPago.EmpresaId = tipo.COMPANY_CODE;
+
+                                            try
+                                            {
+                                                context.SaveChanges();
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                updateCount--;
+                                                errorCount++;
+                                                Console.WriteLine(ex);
+                                            }
                                         }
                                         else
                                         {
+                                            insertCount++;
                                             TiposdePago nuevoTipo = new TiposdePago()
                                             {
                                                 Codigo = tipo.CODE,
@@ -62,21 +74,23 @@ namespace AventasApi.GestorData
                                                 EmpresaId = tipo.COMPANY_CODE,
                                             };
                                             context.TiposdePago.Add(nuevoTipo);
-                                        }
 
-                                        try
-                                        {
-                                            context.SaveChanges();
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Console.WriteLine(ex);
+                                            try
+                                            {
+                                                context.SaveChanges();
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                insertCount--;
+                                                errorCount++;
+                                                Console.WriteLine(ex);
+                                            }
                                         }
                                     }
-
                                 }
-
                             }
+                            string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
+                            LogicValidation.EmailNotification("GestorTipoPagos", counter);
                         }
                     }
                 });

@@ -31,6 +31,7 @@ namespace AventasApi.GestorData
                     productosLista = context.ProductosxColeccion.ToList();
                 }
 
+           
                 List<Task> taskColecciones = productosLista.Select(productoXColecion =>
                     Task.Run(async () =>
                     {
@@ -46,6 +47,7 @@ namespace AventasApi.GestorData
 
                             if (LogicValidation.ValidateDataCount(productos.Count))
                             {
+                                int updateCount = 0, insertCount = 0, errorCount = 0;
                                 foreach (var atributo in productos)
                                 {
                                     if (LogicValidation.IsDataValid(atributo))
@@ -56,14 +58,27 @@ namespace AventasApi.GestorData
                                                              && x.IdProducto == productoXColecion.IdProducto);
                                             if (LogicValidation.IsDataValid(atributoBD))
                                             {
+                                                updateCount++;
                                                 context.Entry(atributoBD).State = EntityState.Modified;
                                                 atributoBD.CodigoAtributo = atributo.CODIGO;
                                                 atributoBD.IdProducto = productoXColecion.IdProducto;
                                                 atributoBD.Descripcion1 = atributo.DESCRIPTION;
                                                 atributoBD.Descripcion2 = atributo.DESCRIPTION2;
+
+                                                try
+                                                {
+                                                    context.SaveChanges();
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    updateCount--;
+                                                    errorCount++;
+                                                    Console.WriteLine(ex);
+                                                }
                                             }
                                             else
                                             {
+                                                insertCount++;
                                                 AtributosxProducto atributosxProducto = new AtributosxProducto()
                                                 {
                                                     CodigoAtributo = atributo.CODIGO,
@@ -72,20 +87,30 @@ namespace AventasApi.GestorData
                                                     Descripcion2 = atributo.DESCRIPTION2,
                                                 };
                                                 context.AtributosxProducto.Add(atributosxProducto);
-                                            }
 
-                                            try
-                                            {
-                                                await context.SaveChangesAsync();
+                                                try
+                                                {
+                                                    context.SaveChanges();
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    insertCount--;
+                                                    errorCount++;
+                                                    Console.WriteLine(ex);
+                                                }
                                             }
-                                            catch (Exception ex) { }
                                         }
                                     }
                                 }
+                                string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
+                                LogicValidation.EmailNotification("GestorAtributosXProductos", counter);
                             }
                         }
                     })
                 ).ToList();
+                //string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
+                //LogicValidation.EmailNotification("GestorAtributosXProductos", counter);
+
 
                 Task cargarProductos = Task.WhenAll(taskColecciones);
                 cargarProductos.Wait();

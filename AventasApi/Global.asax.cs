@@ -28,6 +28,7 @@ namespace AventasApi
             GestorTipoPagos gestorTipoPagos = new GestorTipoPagos();
             GestorAtributosXProductos gestorAtributosXProductos = new GestorAtributosXProductos();
             GestorSizesByProduct gestorSizesByProduct = new GestorSizesByProduct();
+            GestorColoresXProducto gestorColoresXProducto = new GestorColoresXProducto();
 
             //var sizesByProductList = gestorSizesByProduct.ObtenerTallasXProducto().Result;
             //gestorSizesByProduct.GuardarTallasXPRoducto(sizesByProductList).Wait();
@@ -66,8 +67,10 @@ namespace AventasApi
             //GestorEmpresas.ObtenerEmpresas();
             //GestorBancos.ObtenerBancos();
             //GestorCuentasBancarias.ObtenerCuentas();
-            //GestorAtributosXProductos.ObtenerAtributosXProducto();
             //GestorTipoPagos.ObtenerTipos();
+            GestorAtributosXProductos.ObtenerAtributosXProducto();
+
+            //            GestorColoresXProducto.ObtenerColoresXProducto();
 
             //GestorMaestroEdad.ActualizarProductos();
             //GestorProductos.ActualizarProductos();
@@ -75,7 +78,7 @@ namespace AventasApi
             //GestorClientes.ActualizarClientes();
             //GestorAsesores.ActualizarAsesores();
             //GestorImagenesXProducto.ActualizarImagenes();
-            GestorImagenesXProducto.ObtenerImagenesXProducto();
+            //GestorImagenesXProducto.ObtenerImagenesXProducto();
 
             if (false && GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Running)
             {

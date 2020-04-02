@@ -1,113 +1,117 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
+using AventasApi.Utils;
 using System.Threading.Tasks;
 using System.Web;
 using AventasApi.Models.ApiModels;
 using System.Diagnostics;
 using AventasApi.Infrastructure;
 using AventasApi.Enviroments;
+using RestSharp;
+using Newtonsoft.Json;
 
 namespace AventasApi.GestorData
 {
     public class GestorColoresXProducto
     {
-        private static string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/disponible";
-        private static HttpClient client = new ClienteHttp();
-        public static Task TaskActualizarLineas;
+        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}paquetes/imhn/{{0}}";
+        private static LogicValidation LogicValidation = new LogicValidation();
 
-        //private static AVentasEntities context = new AVentasEntities();
-
-
-        static GestorColoresXProducto()
+        public static async Task ObtenerColoresXProducto()
         {
-            ReiniciarTaskActualizarLineas();
+            List<Colecciones> colecciones = new List<Colecciones>();
 
-        }
-        public static async void ReiniciarTaskActualizarLineas()
-        {
-
-
-            TaskActualizarLineas = new Task(async () =>
+            using (AVentasEntities context = new AVentasEntities())
             {
+                colecciones = context.Colecciones.ToList();
+            }
 
-                List<ProductosxColeccion> gruposTalla = new List<ProductosxColeccion>();
-             
-
-                using (AVentasEntities context = new AVentasEntities())
+            foreach (var coleccion in colecciones)
+            {
+                string peticion = string.Format(UrlString, coleccion.CodigoColeccion);
+                var restClient = new RestClient(peticion);
+                var request = new RestRequest(Method.GET);
+                request.AddHeader("Accept", "application/json");
+                IRestResponse response = restClient.Execute(request);
+                if (response.IsSuccessful)
                 {
-                    gruposTalla = context.ProductosxColeccion.ToList();
-                }
-
-                if (gruposTalla != null && gruposTalla.Count > 0)
-                {
-                    for (int i = 0;(i* 100) <gruposTalla.Count(); i++)
+                    var colores = JsonConvert.DeserializeObject<List<ColorXProductoCRMApiModel>>(response.Content);
+                    if (LogicValidation.ValidateDataCount(colores.Count))
                     {
-                        List<ProductosxColeccion> buffer = new List<ProductosxColeccion>();
-                        if ((i+1) * 100>gruposTalla.Count())
+                        int updateCount = 0, insertCount = 0 , errorCount = 0;
+                        Parallel.ForEach(colores, color =>
                         {
-                             buffer = gruposTalla.GetRange(i*100, gruposTalla.Count()-(i * 100));
-
-                        }
-                        else
-                        {
-                             buffer = gruposTalla.GetRange(i*100, 100);
-                           
-
-                        }
-                        var taskGetTallasXGrupoTalla =
-                            buffer.Select(async col =>
-                        {
-                            var Credentials = new Dictionary<string, string> {
-                                { "userName", "desarrollo" },
-                                { "password", "Intermoda2020" },
-                                { "ItemID", col.CodigoProducto },
-                            };
-                            List<FisicoDisponibleXProductoApiModel> tallasXGrupoTalla = new List<FisicoDisponibleXProductoApiModel>();
-                            var content = new FormUrlEncodedContent(Credentials);
-                            HttpResponseMessage response = await client.PostAsync(UrlString, content).ConfigureAwait(false);
-                            if (response.IsSuccessStatusCode)
+                            if (LogicValidation.IsDataValid(color))
                             {
-                                tallasXGrupoTalla = await response.Content.ReadAsAsync<List<FisicoDisponibleXProductoApiModel>>();
-                                var codigoColores = tallasXGrupoTalla.Select(ta => ta.color).Distinct();
-                                foreach (var codigoColore in codigoColores)
+                                using (AVentasEntities context = new AVentasEntities())
                                 {
-                                    using (AVentasEntities context = new AVentasEntities())
+                                    var producto = context.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == color.PRODUCT
+                                       && prod.IdColeccion == coleccion.IdColeccion);
+                                    if (LogicValidation.IsDataValid(producto))
                                     {
-
-                                        context.ColoresxProducto.Add(new ColoresxProducto
+                                        var colorBD = context.ColoresxProducto.FirstOrDefault(col => col.IdProducto == producto.IdProducto
+                                                       && col.CodigoColor == color.COLORCODE);
+                                        if (LogicValidation.IsDataValid(colorBD))
                                         {
-                                            CodigoColor = codigoColore,
-                                            IdProducto = col.IdProducto,
+                                            updateCount++;
+                                        }
+                                        else
+                                        {
+                                            insertCount++;
+                                            ColoresxProducto nuevoColor = new ColoresxProducto()
+                                            {
+                                                CodigoColor = color.COLORCODE,
+                                                IdProducto = producto.IdProducto,
+                                                Disponible = null
+                                            };
+                                            context.ColoresxProducto.Add(nuevoColor);
 
-                                        });
-                                        context.SaveChanges();
+                                            try
+                                            {
+                                                context.SaveChanges();
+                                            }
+                                            catch (Exception) { insertCount--; errorCount++; }
+                                        }
                                     }
                                 }
-                                
-
-
                             }
-                            else
-                            {
-                                Debug.WriteLine("Error en a peticion");
-
-                            }
-
                         });
-                        await Task.WhenAll(taskGetTallasXGrupoTalla);
-
+                        string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
+                        LogicValidation.EmailNotification("GestorColoresXProducto", counter);
                     }
-                    
-                    Debug.WriteLine("Finalizo");
-
-                    
-                  
                 }
-
-
-            });
+            }
         }
+
+        //public static void ColorPorProducto(ColorXProductoCRMApiModel color, int IdColeccion)
+        //{
+        //    using (AVentasEntities context = new AVentasEntities())
+        //    {
+        //        var producto = context.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == color.PRODUCT
+        //           && prod.IdColeccion == IdColeccion);
+        //        if (LogicValidation.IsDataValid(producto))
+        //        {
+        //            var colorBD = context.ColoresxProducto.FirstOrDefault(col => col.IdProducto == producto.IdProducto
+        //                           && col.CodigoColor == color.COLORCODE);
+        //            if (!LogicValidation.IsDataValid(colorBD))
+        //            {
+        //                ColoresxProducto nuevoColor = new ColoresxProducto()
+        //                {
+        //                    CodigoColor = color.COLORCODE,
+        //                    IdProducto = producto.IdProducto,
+        //                    Disponible = null
+        //                };
+        //                context.ColoresxProducto.Add(nuevoColor);
+
+        //                try
+        //                {
+        //                    context.SaveChanges();
+        //                }
+        //                catch (Exception) { }
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

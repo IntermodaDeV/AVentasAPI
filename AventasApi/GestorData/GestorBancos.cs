@@ -19,11 +19,10 @@ namespace AventasApi.GestorData
     public class GestorBancos
     {
         private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}bancos/imhn";
-
+        private static LogicValidation LogicValidation = new LogicValidation();
 
         public static async Task ObtenerBancos()
         {
-            LogicValidation LogicValidation = new LogicValidation();
             try
             {
                 await Task.Run(() =>
@@ -39,6 +38,7 @@ namespace AventasApi.GestorData
 
                         if (LogicValidation.ValidateDataCount(listaBancos.Count))
                         {
+                            int updateCount = 0, insertCount = 0, errorCount = 0;
                             foreach (var banco in listaBancos)
                             {
                                 if (LogicValidation.IsDataValid(banco))
@@ -48,13 +48,26 @@ namespace AventasApi.GestorData
                                         var bancoBD = context.Bancos.FirstOrDefault(x=>x.NombreBanco == banco.CODE);
                                         if (LogicValidation.IsDataValid(bancoBD))
                                         {
+                                            updateCount++;
                                             context.Entry(bancoBD).State = EntityState.Modified;
                                             bancoBD.NombreBanco = banco.CODE;
                                             bancoBD.Descripcion = banco.DESCRIPTION;
                                             bancoBD.EmpresaId = banco.COMPANY_CODE;
+
+                                            try
+                                            {
+                                                context.SaveChanges();
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                updateCount--;
+                                                errorCount++;
+                                                Console.WriteLine(ex);
+                                            }
                                         }
                                         else
                                         {
+                                            insertCount++;
                                             Bancos nuevoBanco = new Bancos()
                                             {
                                                 NombreBanco = banco.CODE,
@@ -62,21 +75,23 @@ namespace AventasApi.GestorData
                                                 EmpresaId = banco.COMPANY_CODE,
                                             };
                                             context.Bancos.Add(nuevoBanco);
-                                        }
 
-                                        try
-                                        {
-                                            context.SaveChanges();
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Console.WriteLine(ex);
+                                            try
+                                            {
+                                                context.SaveChanges();
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                insertCount--;
+                                                errorCount++;
+                                                Console.WriteLine(ex);
+                                            }
                                         }
                                     }
-
                                 }
-
                             }
+                            string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
+                            LogicValidation.EmailNotification("GestorBancos", counter);
                         }
                     }
                 });
