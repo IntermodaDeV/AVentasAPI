@@ -105,7 +105,8 @@ namespace AventasApi.Controllers
                         .Select(gruposXDetPed => new GruposTallaXDetPed
                         {
                             GrupoTalla = gruposXDetPed.Key,
-                            ListaTalla = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == gruposXDetPed.Key).Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)).Select(txp => new TallaViewModel
+                            // prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoProducto)
+                            ListaTalla = gruposXDetPed.GroupBy(pedDet=> pedDet.CodigoTalla).Select(pedDet=> pedDet.Key).SelectMany(pedDet=>  context.TallasXGrupo.Where(txp=> txp.CodigoTalla == pedDet &&txp.CodigoGrupoTalla == gruposXDetPed.Key) ).Select(txp => new TallaViewModel
                             {
                                 GrupoTallaId = txp.CodigoGrupoTalla,
                                 Talla = txp.CodigoTalla,
@@ -128,7 +129,7 @@ namespace AventasApi.Controllers
                             Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
                             CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
                             TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
-                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Select(colXprod =>
+                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod=> colXprod.Sum(det=> det.Cantidad)>0).Select(colXprod =>
                                  new ColoresXProdXDetPed
                                  {
                                      CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
