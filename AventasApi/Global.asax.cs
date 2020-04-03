@@ -15,7 +15,7 @@ namespace AventasApi
     {
         protected void Application_Start()
         {
-            GestorAsesores ga = new GestorAsesores();
+            GestorAsesores gestorAsesores = new GestorAsesores();
             GestorMaestroRutas gestorRutas = new GestorMaestroRutas();
             GestorClientes gestorClientes = new GestorClientes();
             GestorRutasXAsesor gestorRutasXAsesor = new GestorRutasXAsesor();
@@ -28,6 +28,7 @@ namespace AventasApi
             GestorTipoPagos gestorTipoPagos = new GestorTipoPagos();
             GestorAtributosXProductos gestorAtributosXProductos = new GestorAtributosXProductos();
             GestorSizesByProduct gestorSizesByProduct = new GestorSizesByProduct();
+            GestorColoresXProducto gestorColoresXProducto = new GestorColoresXProducto();
 
             //var sizesByProductList = gestorSizesByProduct.ObtenerTallasXProducto().Result;
             //gestorSizesByProduct.GuardarTallasXPRoducto(sizesByProductList).Wait();
@@ -58,16 +59,14 @@ namespace AventasApi
             //gestorColecciones.GuardarTiposDeColecciones(coleccionesYTiposDeColeccion.TiposdeColeccion).Wait();
             //gestorColecciones.GuardarColecciones(coleccionesYTiposDeColeccion.Colecciones).Wait();
 
-
-
-
-
-
             //GestorEmpresas.ObtenerEmpresas();
             //GestorBancos.ObtenerBancos();
             //GestorCuentasBancarias.ObtenerCuentas();
-            //GestorAtributosXProductos.ObtenerAtributosXProducto();
             //GestorTipoPagos.ObtenerTipos();
+            //GestorAtributosXProductos.ObtenerAtributosXProducto();
+            //GestorImagenesXProducto.ObtenerImagenesXProducto();
+            //GestorColoresXProducto.ObtenerColoresXProducto();
+            GestorAsesores.ObtenerAsesores();
 
             //GestorMaestroEdad.ActualizarProductos();
             //GestorProductos.ActualizarProductos();
@@ -75,7 +74,7 @@ namespace AventasApi
             //GestorClientes.ActualizarClientes();
             //GestorAsesores.ActualizarAsesores();
             //GestorImagenesXProducto.ActualizarImagenes();
-
+            //GestorImagenesXProducto.ObtenerImagenesXProducto();
 
             if (false && GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Running)
             {

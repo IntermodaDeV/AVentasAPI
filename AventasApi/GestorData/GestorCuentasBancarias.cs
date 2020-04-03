@@ -16,11 +16,10 @@ namespace AventasApi.GestorData
     public class GestorCuentasBancarias
     {
         private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}cuentasbancarias/imhn";
+        private static LogicValidation LogicValidation = new LogicValidation();
 
         public static async Task ObtenerCuentas()
         {
-            LogicValidation LogicValidation = new LogicValidation();
-
             try
             {
                 await Task.Run(() =>
@@ -36,6 +35,7 @@ namespace AventasApi.GestorData
 
                         if (LogicValidation.ValidateDataCount(cuentasBancarias.Count))
                         {
+                            int updateCount = 0, insertCount = 0, errorCount = 0;
                             foreach (var cuenta in cuentasBancarias)
                             {
                                 if (LogicValidation.IsDataValid(cuenta))
@@ -50,7 +50,8 @@ namespace AventasApi.GestorData
                                         context.Bancos.FirstOrDefault(x => x.Descripcion == cuenta.DESCRIPTION);
 
                                         if (LogicValidation.IsDataValid(cuentaBD))
-                                        {                                       
+                                        {
+                                            updateCount++;
                                             context.Entry(cuentaBD).State = EntityState.Modified;
                                             cuentaBD.NombreBanco = cuenta.CODE;
                                             cuentaBD.NumeroCuenta = cuenta.ACCOUNT_NUM;
@@ -59,35 +60,27 @@ namespace AventasApi.GestorData
                                             cuentaBD.IdBanco = banco?.IdBanco; 
                                             cuentaBD.IdMoneda = cuenta.CURRENCY;
                                             cuentaBD.EmpresaId = cuenta.COMPANY_CODE;
+
+                                            try
+                                            {
+                                                context.SaveChanges();
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                errorCount++;
+                                                Console.WriteLine(ex);
+                                            }
                                         }
                                         else
                                         {
-                                            CuentasBancarias nuevaCuenta = new CuentasBancarias()
-                                            {
-                                                NombreBanco = cuenta.CODE,
-                                                NumeroCuenta = cuenta.ACCOUNT_NUM,
-                                                Descripcion = cuenta.DESCRIPTION,
-                                                GrupoBanco = cuenta.BANK_GROUP,
-                                                IdBanco = banco?.IdBanco,
-                                                IdMoneda = cuenta.CURRENCY,
-                                                EmpresaId = cuenta.COMPANY_CODE,
-                                            };
-                                            context.CuentasBancarias.Add(nuevaCuenta);
-                                        }
-
-                                        try
-                                        {
-                                            context.SaveChanges();
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Console.WriteLine(ex);
+                                            insertCount++;
+                                            errorCount += CreandoCuenta(cuenta, banco?.IdBanco);
                                         }
                                     }
-
                                 }
-
                             }
+                            string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
+                            LogicValidation.EmailNotification("GestorCuentasBancarias", counter);
                         }
                     }
                 });
@@ -112,6 +105,36 @@ namespace AventasApi.GestorData
                 }
             }
             return valor;
+        }
+
+        public static int CreandoCuenta(CuentasBancariasCRMApiModel cuenta, int? idBanco)
+        {
+            int contador = 0;
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                CuentasBancarias nuevaCuenta = new CuentasBancarias()
+                {
+                    NombreBanco = cuenta.CODE,
+                    NumeroCuenta = cuenta.ACCOUNT_NUM,
+                    Descripcion = cuenta.DESCRIPTION,
+                    GrupoBanco = cuenta.BANK_GROUP,
+                    IdBanco = idBanco,
+                    IdMoneda = cuenta.CURRENCY,
+                    EmpresaId = cuenta.COMPANY_CODE,
+                };
+                context.CuentasBancarias.Add(nuevaCuenta);
+
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    contador++;
+                    Console.WriteLine(ex);
+                }
+            }
+            return contador;
         }
     }    
 }

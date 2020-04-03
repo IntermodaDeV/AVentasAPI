@@ -473,6 +473,7 @@
     <Compile Include="Models\ApiModels\ColeccionCRMApiModel.cs" />
     <Compile Include="Models\ApiModels\ColeccionesCRMApiViewModel.cs" />
     <Compile Include="Models\ApiModels\ColorApiModel.cs" />
+    <Compile Include="Models\ApiModels\ColorXProductoCRMApiModel.cs" />
     <Compile Include="Models\ApiModels\CuentaCorrienteApiModel.cs" />
     <Compile Include="Models\ApiModels\CuentasBancariasCRMApiModel.cs" />
     <Compile Include="Models\ApiModels\DistribucionXTallaApiModel.cs" />
@@ -480,6 +481,7 @@
     <Compile Include="Models\ApiModels\FacturasXClienteApiModel.cs" />
     <Compile Include="Models\ApiModels\FisicoDisponibleXProductoApiModel.cs" />
     <Compile Include="Models\ApiModels\GestorPrecioXProductoApiModel.cs" />
+    <Compile Include="Models\ApiModels\ImagenesXProductoCRMApiModel.cs" />
     <Compile Include="Models\ApiModels\ImageneXProductoXColorApiModel.cs" />
     <Compile Include="Models\ApiModels\ImagenXProductoApiModel.cs" />
     <Compile Include="Models\ApiModels\LineaApiModel.cs" />

@@ -19,11 +19,10 @@ namespace AventasApi.GestorData
     public class GestorBancos
     {
         private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}bancos/imhn";
-
+        private static LogicValidation LogicValidation = new LogicValidation();
 
         public static async Task ObtenerBancos()
         {
-            LogicValidation LogicValidation = new LogicValidation();
             try
             {
                 await Task.Run(() =>
@@ -39,6 +38,7 @@ namespace AventasApi.GestorData
 
                         if (LogicValidation.ValidateDataCount(listaBancos.Count))
                         {
+                            int updateCount = 0, insertCount = 0, errorCount = 0;
                             foreach (var banco in listaBancos)
                             {
                                 if (LogicValidation.IsDataValid(banco))
@@ -48,35 +48,32 @@ namespace AventasApi.GestorData
                                         var bancoBD = context.Bancos.FirstOrDefault(x=>x.NombreBanco == banco.CODE);
                                         if (LogicValidation.IsDataValid(bancoBD))
                                         {
+                                            updateCount++;
                                             context.Entry(bancoBD).State = EntityState.Modified;
                                             bancoBD.NombreBanco = banco.CODE;
                                             bancoBD.Descripcion = banco.DESCRIPTION;
                                             bancoBD.EmpresaId = banco.COMPANY_CODE;
+
+                                            try
+                                            {
+                                                context.SaveChanges();
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                errorCount++;
+                                                Console.WriteLine(ex);
+                                            }
                                         }
                                         else
                                         {
-                                            Bancos nuevoBanco = new Bancos()
-                                            {
-                                                NombreBanco = banco.CODE,
-                                                Descripcion = banco.DESCRIPTION,
-                                                EmpresaId = banco.COMPANY_CODE,
-                                            };
-                                            context.Bancos.Add(nuevoBanco);
-                                        }
-
-                                        try
-                                        {
-                                            context.SaveChanges();
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Console.WriteLine(ex);
+                                            insertCount++;
+                                            errorCount += CreandoBanco(banco);
                                         }
                                     }
-
                                 }
-
                             }
+                            string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
+                            LogicValidation.EmailNotification("GestorBancos", counter);
                         }
                     }
                 });
@@ -86,6 +83,32 @@ namespace AventasApi.GestorData
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public static int CreandoBanco(BancoApiModel banco)
+        {
+            int contador = 0;
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                Bancos nuevoBanco = new Bancos()
+                {
+                    NombreBanco = banco.CODE,
+                    Descripcion = banco.DESCRIPTION,
+                    EmpresaId = banco.COMPANY_CODE,
+                };
+                context.Bancos.Add(nuevoBanco);
+
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    contador++;
+                    Console.WriteLine(ex);
+                }
+            }
+            return contador;
         }
     }
 }

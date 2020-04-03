@@ -22,14 +22,16 @@ namespace AventasApi.GestorData
         public static async Task ObtenerAtributosXProducto()
         {
             LogicValidation LogicValidation = new LogicValidation();
+            List<ProductosxColeccion> productosLista = new List<ProductosxColeccion>();
+
             try
             {
-                List<ProductosxColeccion> productosLista = new List<ProductosxColeccion>();
                 using (AVentasEntities context = new AVentasEntities())
                 {
                     productosLista = context.ProductosxColeccion.ToList();
                 }
 
+           
                 List<Task> taskColecciones = productosLista.Select(productoXColecion =>
                     Task.Run(async () =>
                     {
@@ -45,6 +47,7 @@ namespace AventasApi.GestorData
 
                             if (LogicValidation.ValidateDataCount(productos.Count))
                             {
+                                int updateCount = 0, insertCount = 0, errorCount = 0;
                                 foreach (var atributo in productos)
                                 {
                                     if (LogicValidation.IsDataValid(atributo))
@@ -55,37 +58,38 @@ namespace AventasApi.GestorData
                                                              && x.IdProducto == productoXColecion.IdProducto);
                                             if (LogicValidation.IsDataValid(atributoBD))
                                             {
+                                                updateCount++;
                                                 context.Entry(atributoBD).State = EntityState.Modified;
                                                 atributoBD.CodigoAtributo = atributo.CODIGO;
                                                 atributoBD.IdProducto = productoXColecion.IdProducto;
                                                 atributoBD.Descripcion1 = atributo.DESCRIPTION;
                                                 atributoBD.Descripcion2 = atributo.DESCRIPTION2;
+
+                                                try
+                                                {
+                                                    context.SaveChanges();
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    errorCount++;
+                                                    Console.WriteLine(ex);
+                                                }
                                             }
                                             else
                                             {
-                                                AtributosxProducto atributosxProducto = new AtributosxProducto()
-                                                {
-                                                    CodigoAtributo = atributo.CODIGO,
-                                                    IdProducto = productoXColecion.IdProducto,
-                                                    Descripcion1 = atributo.DESCRIPTION,
-                                                    Descripcion2 = atributo.DESCRIPTION2,
-                                                };
-                                                context.AtributosxProducto.Add(atributosxProducto);
+                                                insertCount++;
+                                                errorCount += CreandoAtributo(atributo, productoXColecion.IdProducto);
                                             }
-
-                                            try
-                                            {
-                                                await context.SaveChangesAsync();
-                                            }
-                                            catch (Exception ex) { }
                                         }
                                     }
                                 }
+                                string coleccion = "Id: "+ productoXColecion.IdColeccion;
+                                string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
+                                LogicValidation.EmailNotificationWithCollection("GestorAtributosXProductos", counter, coleccion);
                             }
                         }
                     })
                 ).ToList();
-
                 Task cargarProductos = Task.WhenAll(taskColecciones);
                 cargarProductos.Wait();
                 tallasAgregadas = true;
@@ -96,6 +100,29 @@ namespace AventasApi.GestorData
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public static int CreandoAtributo(AtributosXProductoCRMApiModel atributo, int idProducto)
+        {
+            int contador = 0;
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                AtributosxProducto atributosxProducto = new AtributosxProducto()
+                {
+                    CodigoAtributo = atributo.CODIGO,
+                    IdProducto = idProducto,
+                    Descripcion1 = atributo.DESCRIPTION,
+                    Descripcion2 = atributo.DESCRIPTION2,
+                };
+                context.AtributosxProducto.Add(atributosxProducto);
+
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception) { contador++; }
+            }
+            return contador;
         }
     }
 }
