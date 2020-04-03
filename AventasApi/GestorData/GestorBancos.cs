@@ -60,7 +60,6 @@ namespace AventasApi.GestorData
                                             }
                                             catch (Exception ex)
                                             {
-                                                updateCount--;
                                                 errorCount++;
                                                 Console.WriteLine(ex);
                                             }
@@ -68,24 +67,7 @@ namespace AventasApi.GestorData
                                         else
                                         {
                                             insertCount++;
-                                            Bancos nuevoBanco = new Bancos()
-                                            {
-                                                NombreBanco = banco.CODE,
-                                                Descripcion = banco.DESCRIPTION,
-                                                EmpresaId = banco.COMPANY_CODE,
-                                            };
-                                            context.Bancos.Add(nuevoBanco);
-
-                                            try
-                                            {
-                                                context.SaveChanges();
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                insertCount--;
-                                                errorCount++;
-                                                Console.WriteLine(ex);
-                                            }
+                                            errorCount += CreandoBanco(banco);
                                         }
                                     }
                                 }
@@ -101,6 +83,32 @@ namespace AventasApi.GestorData
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public static int CreandoBanco(BancoApiModel banco)
+        {
+            int contador = 0;
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                Bancos nuevoBanco = new Bancos()
+                {
+                    NombreBanco = banco.CODE,
+                    Descripcion = banco.DESCRIPTION,
+                    EmpresaId = banco.COMPANY_CODE,
+                };
+                context.Bancos.Add(nuevoBanco);
+
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    contador++;
+                    Console.WriteLine(ex);
+                }
+            }
+            return contador;
         }
     }
 }

@@ -59,32 +59,13 @@ namespace AventasApi.GestorData
                                             catch (Exception ex)
                                             {
                                                 errorCount++;
-                                                updateCount--;
                                                 Console.WriteLine(ex);
                                             }
                                         }
                                         else
                                         {
                                             insertCount++;
-                                            Empresa nuevaEmpresa = new Empresa()
-                                            {
-                                                EmpresaId = empresa.COMPANY_CODE,
-                                                NombreEmpresa = empresa.NAME,
-                                                Direccion = empresa.ADDRESS,
-                                                RegistroTributario = empresa.NIFCIF
-                                            };
-                                            context.Empresa.Add(nuevaEmpresa);
-
-                                            try
-                                            {
-                                                context.SaveChanges();
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                insertCount--;
-                                                errorCount++;
-                                                Console.WriteLine(ex);
-                                            }
+                                            errorCount += CreandoEmpresa(empresa);
                                         }
                                     }
                                 }
@@ -100,6 +81,34 @@ namespace AventasApi.GestorData
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public static int CreandoEmpresa(EmpresasCRMApiModel empresa)
+        {
+            int contador = 0;
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                Empresa nuevaEmpresa = new Empresa()
+                {
+                    EmpresaId = empresa.COMPANY_CODE,
+                    NombreEmpresa = empresa.NAME,
+                    Direccion = empresa.ADDRESS,
+                    RegistroTributario = empresa.NIFCIF,
+                    Revision = null
+                };
+                context.Empresa.Add(nuevaEmpresa);
+
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    contador++;
+                    Console.WriteLine(ex);
+                }
+            }
+            return contador;
         }
     }
 }

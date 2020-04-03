@@ -39,7 +39,7 @@ namespace AventasApi.GestorData
                     var colores = JsonConvert.DeserializeObject<List<ColorXProductoCRMApiModel>>(response.Content);
                     if (LogicValidation.ValidateDataCount(colores.Count))
                     {
-                        int updateCount = 0, insertCount = 0 , errorCount = 0;
+                        int updateCount = 0, insertCount = 0, errorCount = 0;
                         Parallel.ForEach(colores, color =>
                         {
                             if (LogicValidation.IsDataValid(color))
@@ -52,66 +52,43 @@ namespace AventasApi.GestorData
                                     {
                                         var colorBD = context.ColoresxProducto.FirstOrDefault(col => col.IdProducto == producto.IdProducto
                                                        && col.CodigoColor == color.COLORCODE);
-                                        if (LogicValidation.IsDataValid(colorBD))
-                                        {
-                                            updateCount++;
-                                        }
-                                        else
+                                        if (!LogicValidation.IsDataValid(colorBD))
                                         {
                                             insertCount++;
-                                            ColoresxProducto nuevoColor = new ColoresxProducto()
-                                            {
-                                                CodigoColor = color.COLORCODE,
-                                                IdProducto = producto.IdProducto,
-                                                Disponible = null
-                                            };
-                                            context.ColoresxProducto.Add(nuevoColor);
-
-                                            try
-                                            {
-                                                context.SaveChanges();
-                                            }
-                                            catch (Exception) { insertCount--; errorCount++; }
+                                            errorCount += CreandoColor(color, producto.IdProducto);
                                         }
                                     }
                                 }
                             }
                         });
+                        string collection = "Id " + coleccion.IdColeccion + ", Cod " + coleccion.CodigoColeccion;
                         string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
-                        LogicValidation.EmailNotification("GestorColoresXProducto", counter);
+                        LogicValidation.EmailNotificationWithCollection("GestorColoresXProducto", counter, collection);
                     }
                 }
             }
         }
 
-        //public static void ColorPorProducto(ColorXProductoCRMApiModel color, int IdColeccion)
-        //{
-        //    using (AVentasEntities context = new AVentasEntities())
-        //    {
-        //        var producto = context.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == color.PRODUCT
-        //           && prod.IdColeccion == IdColeccion);
-        //        if (LogicValidation.IsDataValid(producto))
-        //        {
-        //            var colorBD = context.ColoresxProducto.FirstOrDefault(col => col.IdProducto == producto.IdProducto
-        //                           && col.CodigoColor == color.COLORCODE);
-        //            if (!LogicValidation.IsDataValid(colorBD))
-        //            {
-        //                ColoresxProducto nuevoColor = new ColoresxProducto()
-        //                {
-        //                    CodigoColor = color.COLORCODE,
-        //                    IdProducto = producto.IdProducto,
-        //                    Disponible = null
-        //                };
-        //                context.ColoresxProducto.Add(nuevoColor);
+        public static int CreandoColor(ColorXProductoCRMApiModel color, int IdProducto)
+        {
+            int contador = 0;
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                ColoresxProducto nuevoColor = new ColoresxProducto()
+                {
+                    CodigoColor = color.COLORCODE,
+                    IdProducto = IdProducto,
+                    Disponible = null
+                };
+                context.ColoresxProducto.Add(nuevoColor);
 
-        //                try
-        //                {
-        //                    context.SaveChanges();
-        //                }
-        //                catch (Exception) { }
-        //            }
-        //        }
-        //    }
-        //}
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception) { contador++; }
+            }
+            return contador;
+        }
     }
 }

@@ -58,7 +58,6 @@ namespace AventasApi.GestorData
                                             }
                                             catch (Exception ex)
                                             {
-                                                updateCount--;
                                                 errorCount++;
                                                 Console.WriteLine(ex);
                                             }
@@ -66,25 +65,7 @@ namespace AventasApi.GestorData
                                         else
                                         {
                                             insertCount++;
-                                            TiposdePago nuevoTipo = new TiposdePago()
-                                            {
-                                                Codigo = tipo.CODE,
-                                                Descripcion = tipo.DESCRIPTION,
-                                                Tipo = tipo.TYPE,
-                                                EmpresaId = tipo.COMPANY_CODE,
-                                            };
-                                            context.TiposdePago.Add(nuevoTipo);
-
-                                            try
-                                            {
-                                                context.SaveChanges();
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                insertCount--;
-                                                errorCount++;
-                                                Console.WriteLine(ex);
-                                            }
+                                            errorCount += CreandoTipoPago(tipo);
                                         }
                                     }
                                 }
@@ -100,6 +81,33 @@ namespace AventasApi.GestorData
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public static int CreandoTipoPago(TiposPagoCRMApiModel tipo)
+        {
+            int contador = 0;
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                TiposdePago nuevoTipo = new TiposdePago()
+                {
+                    Codigo = tipo.CODE,
+                    Descripcion = tipo.DESCRIPTION,
+                    Tipo = tipo.TYPE,
+                    EmpresaId = tipo.COMPANY_CODE,
+                };
+                context.TiposdePago.Add(nuevoTipo);
+
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    contador++;
+                    Console.WriteLine(ex);
+                }
+            }
+            return contador;
         }
     }
 }

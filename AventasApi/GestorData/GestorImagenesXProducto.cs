@@ -23,11 +23,10 @@ namespace AventasApi.GestorData
     public class GestorImagenesXProducto
     {
         private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}productos/imhn/{{0}}";
-
+        private static LogicValidation LogicValidation = new LogicValidation();
 
         public static async Task ObtenerImagenesXProducto()
         {
-            LogicValidation LogicValidation = new LogicValidation();
             List<Colecciones> colecciones = new List<Colecciones>();
 
             using (AVentasEntities context = new AVentasEntities())
@@ -47,6 +46,7 @@ namespace AventasApi.GestorData
                     var ListaImagenes = JsonConvert.DeserializeObject<List<ImageneXProductoXColorApiModel>>(response.Content);
                     if (LogicValidation.ValidateDataCount(ListaImagenes.Count))
                     {
+                        int updateCount = 0, insertCount = 0, errorCount = 0;
                         Parallel.ForEach(ListaImagenes, imagen =>
                         {
                             if (LogicValidation.IsDataValid(imagen))
@@ -74,6 +74,7 @@ namespace AventasApi.GestorData
                                             bool resul = EvaluarModelos(imagenModel, imagen);
                                             if (!resul)
                                             {
+                                                updateCount++;
                                                 context.Entry(imagenBD).State = EntityState.Modified;
                                                 imagenBD.IdProducto = producto.IdProducto;
                                                 imagenBD.CodigoColor = imagen.ITEM_COLOR;
@@ -86,34 +87,23 @@ namespace AventasApi.GestorData
                                                 }
                                                 catch (Exception ex)
                                                 {
+                                                    errorCount++;
                                                     Console.WriteLine(ex);
                                                 }
                                             }
                                         }
                                         else
                                         {
-                                            FotografiasXProducto nuevaImagen = new FotografiasXProducto()
-                                            {
-                                                CodigoColor = imagen.ITEM_COLOR,
-                                                FotografiaProducto = nombreImagen,
-                                                Principal = (imagen.IMAGE_MAIN == "1") ? true : false
-                                            };
-                                            context.FotografiasXProducto.Add(nuevaImagen);
-
-                                            try
-                                            {
-                                                context.SaveChanges();
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                Console.WriteLine(ex);
-                                            }
+                                            insertCount++;
+                                            errorCount += CreandoFotografia(imagen, producto.IdProducto, nombreImagen);
                                         }
                                     }
                                 }
                             }
-
                         });
+                        string collection = "Id " + coleccion.IdColeccion + ", Cod " + coleccion.CodigoColeccion;
+                        string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
+                        LogicValidation.EmailNotificationWithCollection("GestorImagenesXProducto", counter, collection);
                     }
                 }
             }
@@ -153,102 +143,129 @@ namespace AventasApi.GestorData
             return nombreImagen;
         }
 
-        //public async Task<List<FotografiasXProductoViewModel>> ObtenerImagenesXProducto()
-        //{
-        //    List<Colecciones> colecciones = new List<Colecciones>();
-        //    List<FotografiasXProductoViewModel> fotografiasXProducto = new List<FotografiasXProductoViewModel>();
-        //    LogicValidation LogicValidation = new LogicValidation();
+        public static int CreandoFotografia(ImageneXProductoXColorApiModel imagen, int idProducto, string nombreImagen)
+        {
+            int contador = 0;
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                FotografiasXProducto nuevaImagen = new FotografiasXProducto()
+                {
+                    CodigoColor = imagen.ITEM_COLOR,
+                    FotografiaProducto = nombreImagen,
+                    IdProducto = idProducto,
+                    Principal = (imagen.IMAGE_MAIN == "1") ? true : false
+                };
+                context.FotografiasXProducto.Add(nuevaImagen);
 
-        //    using (AVentasEntities context = new AVentasEntities())
-        //    {
-        //        colecciones = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().ToList();
-        //    }
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    contador++;
+                    Console.WriteLine(ex);
+                }
+            }
+            return contador;
+        }
 
-        //    Parallel.ForEach(colecciones, col =>
-        //    {
-        //        string peticion = string.Format(UrlString, col.CodigoColeccion);
-        //        var restClient = new RestClient(peticion);
-        //        var request = new RestRequest(Method.GET);
-        //        request.AddHeader("Accept", "application/json");
-        //        IRestResponse response = restClient.Execute(request);
-        //        if (response.IsSuccessful)
-        //        {
-        //            var ListaImagenes = JsonConvert.DeserializeObject<List<ImageneXProductoXColorApiModel>>(response.Content);
-        //            List<FotografiasXProductoViewModel> fotografiasXProductoAAgregar = new List<FotografiasXProductoViewModel>();
+                //public async Task<List<FotografiasXProductoViewModel>> ObtenerImagenesXProducto()
+                //{
+                //    List<Colecciones> colecciones = new List<Colecciones>();
+                //    List<FotografiasXProductoViewModel> fotografiasXProducto = new List<FotografiasXProductoViewModel>();
+                //    LogicValidation LogicValidation = new LogicValidation();
 
-        //            if (LogicValidation.ValidateDataCount(ListaImagenes.Count))
-        //            {
-        //                foreach (var imagen in ListaImagenes)
-        //                {
-        //                    string nombreImagen = UrlImagen(imagen.IMAGE_PATH);
-        //                    var producto = col.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == imagen.ITEM_CODE);
-        //                    if (LogicValidation.IsDataValid(producto))
-        //                    {
-        //                        var imagenAGuardar = new FotografiasXProductoViewModel
-        //                        {
-        //                            FotografiaProducto = nombreImagen,
-        //                            IdProducto = producto.IdProducto,
-        //                            CodigoColor = imagen.ITEM_COLOR,
-        //                            Principal = imagen.IMAGE_MAIN == "1"
-        //                        };
-        //                        fotografiasXProductoAAgregar.Add(imagenAGuardar);
+                //    using (AVentasEntities context = new AVentasEntities())
+                //    {
+                //        colecciones = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().ToList();
+                //    }
 
-        //                        using (AVentasEntities context = new AVentasEntities())
-        //                        {
-        //                            var imagenBD = context.FotografiasXProducto.FirstOrDefault(img => img.IdProducto == producto.IdProducto
-        //                                            && img.FotografiaProducto == nombreImagen);
-        //                            if (LogicValidation.IsDataValid(imagenBD))
-        //                            {
-        //                                var imagenModel = new ImageneXProductoXColorApiModel()
-        //                                {
-        //                                    ITEM_CODE = producto.CodigoProducto,
-        //                                    ITEM_COLOR = imagenBD.CodigoColor,
-        //                                    IMAGE_PATH = imagenBD.FotografiaProducto,
-        //                                    IMAGE_MAIN = imagenBD.Principal.ToString(),
+                //    Parallel.ForEach(colecciones, col =>
+                //    {
+                //        string peticion = string.Format(UrlString, col.CodigoColeccion);
+                //        var restClient = new RestClient(peticion);
+                //        var request = new RestRequest(Method.GET);
+                //        request.AddHeader("Accept", "application/json");
+                //        IRestResponse response = restClient.Execute(request);
+                //        if (response.IsSuccessful)
+                //        {
+                //            var ListaImagenes = JsonConvert.DeserializeObject<List<ImageneXProductoXColorApiModel>>(response.Content);
+                //            List<FotografiasXProductoViewModel> fotografiasXProductoAAgregar = new List<FotografiasXProductoViewModel>();
 
-        //                                };
+                //            if (LogicValidation.ValidateDataCount(ListaImagenes.Count))
+                //            {
+                //                foreach (var imagen in ListaImagenes)
+                //                {
+                //                    string nombreImagen = UrlImagen(imagen.IMAGE_PATH);
+                //                    var producto = col.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == imagen.ITEM_CODE);
+                //                    if (LogicValidation.IsDataValid(producto))
+                //                    {
+                //                        var imagenAGuardar = new FotografiasXProductoViewModel
+                //                        {
+                //                            FotografiaProducto = nombreImagen,
+                //                            IdProducto = producto.IdProducto,
+                //                            CodigoColor = imagen.ITEM_COLOR,
+                //                            Principal = imagen.IMAGE_MAIN == "1"
+                //                        };
+                //                        fotografiasXProductoAAgregar.Add(imagenAGuardar);
 
-        //                                if (imagenModel.Equals(imagen))
-        //                                {
+                //                        using (AVentasEntities context = new AVentasEntities())
+                //                        {
+                //                            var imagenBD = context.FotografiasXProducto.FirstOrDefault(img => img.IdProducto == producto.IdProducto
+                //                                            && img.FotografiaProducto == nombreImagen);
+                //                            if (LogicValidation.IsDataValid(imagenBD))
+                //                            {
+                //                                var imagenModel = new ImageneXProductoXColorApiModel()
+                //                                {
+                //                                    ITEM_CODE = producto.CodigoProducto,
+                //                                    ITEM_COLOR = imagenBD.CodigoColor,
+                //                                    IMAGE_PATH = imagenBD.FotografiaProducto,
+                //                                    IMAGE_MAIN = imagenBD.Principal.ToString(),
 
-        //                                }
-        //                                else
-        //                                {
+                //                                };
 
-        //                                }
-        //                            }
-        //                            else
-        //                            {
-        //                                FotografiasXProducto nuevaImagen = new FotografiasXProducto()
-        //                                {
-        //                                    CodigoColor = imagen.ITEM_COLOR,
-        //                                    FotografiaProducto = nombreImagen,
-        //                                    Principal = Convert.ToBoolean(imagen.IMAGE_MAIN)
-        //                                };
-        //                                context.FotografiasXProducto.Add(nuevaImagen);
-        //                            }
+                //                                if (imagenModel.Equals(imagen))
+                //                                {
 
-        //                            //try
-        //                            //{
-        //                            //    context.SaveChanges();
-        //                            //}
-        //                            //catch (Exception ex)
-        //                            //{
-        //                            //    Console.WriteLine(ex);
-        //                            //}
-        //                        }
+                //                                }
+                //                                else
+                //                                {
 
-        //                    }
-        //                }
-        //                lock (fotografiasXProducto)
-        //                {
-        //                    fotografiasXProducto.AddRange(fotografiasXProductoAAgregar);
-        //                }
-        //            }
-        //        }
-        //    });
-        //    return fotografiasXProducto;
-        //}
+                //                                }
+                //                            }
+                //                            else
+                //                            {
+                //                                FotografiasXProducto nuevaImagen = new FotografiasXProducto()
+                //                                {
+                //                                    CodigoColor = imagen.ITEM_COLOR,
+                //                                    FotografiaProducto = nombreImagen,
+                //                                    Principal = Convert.ToBoolean(imagen.IMAGE_MAIN)
+                //                                };
+                //                                context.FotografiasXProducto.Add(nuevaImagen);
+                //                            }
+
+                //                            //try
+                //                            //{
+                //                            //    context.SaveChanges();
+                //                            //}
+                //                            //catch (Exception ex)
+                //                            //{
+                //                            //    Console.WriteLine(ex);
+                //                            //}
+                //                        }
+
+                //                    }
+                //                }
+                //                lock (fotografiasXProducto)
+                //                {
+                //                    fotografiasXProducto.AddRange(fotografiasXProductoAAgregar);
+                //                }
+                //            }
+                //        }
+                //    });
+                //    return fotografiasXProducto;
+                //}
 
         public async Task GuardarImagenesXProducto(List<FotografiasXProductoViewModel> fotografiasAguardar)
         {

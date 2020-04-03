@@ -71,7 +71,6 @@ namespace AventasApi.GestorData
                                                 }
                                                 catch (Exception ex)
                                                 {
-                                                    updateCount--;
                                                     errorCount++;
                                                     Console.WriteLine(ex);
                                                 }
@@ -79,39 +78,18 @@ namespace AventasApi.GestorData
                                             else
                                             {
                                                 insertCount++;
-                                                AtributosxProducto atributosxProducto = new AtributosxProducto()
-                                                {
-                                                    CodigoAtributo = atributo.CODIGO,
-                                                    IdProducto = productoXColecion.IdProducto,
-                                                    Descripcion1 = atributo.DESCRIPTION,
-                                                    Descripcion2 = atributo.DESCRIPTION2,
-                                                };
-                                                context.AtributosxProducto.Add(atributosxProducto);
-
-                                                try
-                                                {
-                                                    context.SaveChanges();
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    insertCount--;
-                                                    errorCount++;
-                                                    Console.WriteLine(ex);
-                                                }
+                                                errorCount += CreandoAtributo(atributo, productoXColecion.IdProducto);
                                             }
                                         }
                                     }
                                 }
+                                string coleccion = "Id: "+ productoXColecion.IdColeccion;
                                 string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
-                                LogicValidation.EmailNotification("GestorAtributosXProductos", counter);
+                                LogicValidation.EmailNotificationWithCollection("GestorAtributosXProductos", counter, coleccion);
                             }
                         }
                     })
                 ).ToList();
-                //string counter = updateCount.ToString() + "-" + insertCount.ToString() + "-" + errorCount.ToString();
-                //LogicValidation.EmailNotification("GestorAtributosXProductos", counter);
-
-
                 Task cargarProductos = Task.WhenAll(taskColecciones);
                 cargarProductos.Wait();
                 tallasAgregadas = true;
@@ -122,6 +100,29 @@ namespace AventasApi.GestorData
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        public static int CreandoAtributo(AtributosXProductoCRMApiModel atributo, int idProducto)
+        {
+            int contador = 0;
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                AtributosxProducto atributosxProducto = new AtributosxProducto()
+                {
+                    CodigoAtributo = atributo.CODIGO,
+                    IdProducto = idProducto,
+                    Descripcion1 = atributo.DESCRIPTION,
+                    Descripcion2 = atributo.DESCRIPTION2,
+                };
+                context.AtributosxProducto.Add(atributosxProducto);
+
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception) { contador++; }
+            }
+            return contador;
         }
     }
 }
