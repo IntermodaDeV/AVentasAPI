@@ -72,7 +72,7 @@ namespace AventasApi.GestorData
                             var asesorModel = new AsesoresAPIViewModel(asesorBD);
                             var asesorAPI = new AsesoresAPIViewModel(asesor);
 
-                            bool resul = EvaluarModelos(asesorModel, asesor);
+                            bool resul = EvaluarModelos(asesorModel, asesorAPI);
                             if (!resul)
                             {
                                 updateCount++;
