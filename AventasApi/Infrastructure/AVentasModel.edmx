@@ -45,6 +45,30 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <Property Name="Monto" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Saldo" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
+        <EntityType Name="AnticiposxCliente">
+          <Key>
+            <PropertyRef Name="AnticipoId" />
+          </Key>
+          <Property Name="AnticipoId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NumeroRecibo" Type="varchar" MaxLength="250" />
+          <Property Name="CodigoCliente" Type="varchar" MaxLength="250" />
+          <Property Name="Fecha" Type="datetime" />
+          <Property Name="IdTipoPago" Type="int" />
+          <Property Name="Referencia" Type="varchar(max)" />
+          <Property Name="FechaCheque" Type="datetime" />
+          <Property Name="IdBanco" Type="int" />
+          <Property Name="IdCuentaBancaria" Type="int" />
+          <Property Name="Valor" Type="decimal" Precision="15" Scale="4" />
+          <Property Name="IdMoneda" Type="varchar" MaxLength="100" />
+          <Property Name="Sincronizado" Type="bit" />
+          <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
+          <Property Name="FechaCreacion" Type="datetime" />
+          <Property Name="UsuarioCreacion" Type="varchar" MaxLength="250" />
+          <Property Name="FechaModificacion" Type="datetime" />
+          <Property Name="UsuarioModificacion" Type="varchar" MaxLength="250" />
+          <Property Name="Descuento" Type="decimal" Precision="15" Scale="4" />
+          <Property Name="Tipo" Type="varchar" MaxLength="250" />
+        </EntityType>
         <EntityType Name="Asesores">
           <Key>
             <PropertyRef Name="CodigoAsesor" />
@@ -1698,6 +1722,18 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__RecibosxC__IdFac__383A4359">
+          <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
+          <End Role="RecibosxCliente" Type="Self.RecibosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FacturasxCliente">
+              <PropertyRef Name="IdFactura" />
+            </Principal>
+            <Dependent Role="RecibosxCliente">
+              <PropertyRef Name="IdFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__RutasxAse__Codig__6497E884">
           <End Role="Rutas" Type="Self.Rutas" Multiplicity="1" />
           <End Role="RutasxAsesor" Type="Self.RutasxAsesor" Multiplicity="*" />
@@ -1923,6 +1959,7 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
         <EntityContainer Name="AVentasModelStoreContainer">
           <EntitySet Name="AcuerdosxCliente" EntityType="Self.AcuerdosxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AcuerdosxClienteDetalle" EntityType="Self.AcuerdosxClienteDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AnticiposxCliente" EntityType="Self.AnticiposxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Asesores" EntityType="Self.Asesores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AsignacionxAsesor" EntityType="Self.AsignacionxAsesor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AsignacionxAsesorDetalle" EntityType="Self.AsignacionxAsesorDetalle" Schema="dbo" store:Type="Tables" />
@@ -2308,6 +2345,10 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
             <End Role="RecibosDetalle" EntitySet="RecibosDetalle" />
           </AssociationSet>
           <AssociationSet Name="FK__RecibosxC__IdFac__00EA0E6F" Association="Self.FK__RecibosxC__IdFac__00EA0E6F">
+            <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
+            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RecibosxC__IdFac__383A4359" Association="Self.FK__RecibosxC__IdFac__383A4359">
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
             <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
           </AssociationSet>
@@ -2859,6 +2900,7 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
             <End Role="TallasXGrupo" EntitySet="TallasXGrupo" />
             <End Role="TallasxProducto" EntitySet="TallasxProducto" />
           </AssociationSet>
+          <EntitySet Name="AnticiposxCliente" EntityType="AVentasModel.AnticiposxCliente" />
           </EntityContainer>
         <ComplexType Name="PResumenCredito_Result">
           <Property Type="Int32" Name="Id" Nullable="true" />
@@ -5019,6 +5061,30 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="AnticiposxCliente">
+          <Key>
+            <PropertyRef Name="AnticipoId" />
+          </Key>
+          <Property Name="AnticipoId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NumeroRecibo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="IdTipoPago" Type="Int32" />
+          <Property Name="Referencia" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCheque" Type="DateTime" Precision="3" />
+          <Property Name="IdBanco" Type="Int32" />
+          <Property Name="IdCuentaBancaria" Type="Int32" />
+          <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Sincronizado" Type="Boolean" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioCreacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioModificacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="Tipo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5885,6 +5951,31 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
                 <ScalarProperty Name="IdTallaxGrupo" ColumnName="IdTallaxGrupo" />
                 <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
                 <ScalarProperty Name="IdTallaxProducto" ColumnName="IdTallaxProducto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AnticiposxCliente">
+            <EntityTypeMapping TypeName="AVentasModel.AnticiposxCliente">
+              <MappingFragment StoreEntitySet="AnticiposxCliente">
+                <ScalarProperty Name="Tipo" ColumnName="Tipo" />
+                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
+                <ScalarProperty Name="UsuarioModificacion" ColumnName="UsuarioModificacion" />
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
+                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="IdCuentaBancaria" ColumnName="IdCuentaBancaria" />
+                <ScalarProperty Name="IdBanco" ColumnName="IdBanco" />
+                <ScalarProperty Name="FechaCheque" ColumnName="FechaCheque" />
+                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
+                <ScalarProperty Name="IdTipoPago" ColumnName="IdTipoPago" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
+                <ScalarProperty Name="AnticipoId" ColumnName="AnticipoId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

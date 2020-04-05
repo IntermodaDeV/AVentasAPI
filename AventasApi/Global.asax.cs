@@ -66,7 +66,7 @@ namespace AventasApi
             //GestorAtributosXProductos.ObtenerAtributosXProducto();
             //GestorImagenesXProducto.ObtenerImagenesXProducto();
             //GestorColoresXProducto.ObtenerColoresXProducto();
-            GestorAsesores.ObtenerAsesores();
+            //GestorAsesores.ObtenerAsesores();
 
             //GestorMaestroEdad.ActualizarProductos();
             //GestorProductos.ActualizarProductos();

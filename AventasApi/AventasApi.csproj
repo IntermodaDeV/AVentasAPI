@@ -253,6 +253,9 @@
     <Compile Include="Infrastructure\AcuerdosxClienteDetalle.cs">
       <DependentUpon>AVentasModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\AnticiposxCliente.cs">
+      <DependentUpon>AVentasModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Infrastructure\Asesores.cs">
       <DependentUpon>AVentasModel.tt</DependentUpon>
     </Compile>
@@ -509,6 +512,7 @@
     <Compile Include="Models\ViewModels\AcuerdosXTipoPedidoViewModel.cs" />
     <Compile Include="Models\ViewModels\AcuerdoVentaDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\AcuerdoVentaViewModel.cs" />
+    <Compile Include="Models\ViewModels\AnticiposViewModel.cs" />
     <Compile Include="Models\ViewModels\AsesorXClienteViewModel.cs" />
     <Compile Include="Models\ViewModels\AsignacionesXFechaViewModel.cs" />
     <Compile Include="Models\ViewModels\AsignacionXAsesorViewModel.cs" />
