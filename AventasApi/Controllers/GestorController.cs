@@ -1,5 +1,5 @@
 ﻿using AventasApi.GestorData;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Singleton;
 using System;
 using System.Collections.Generic;

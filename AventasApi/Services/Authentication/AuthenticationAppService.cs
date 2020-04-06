@@ -1,5 +1,5 @@
 ﻿using AventasApi.Enviroments;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Models.Authentication;
 using JWT;
 using JWT.Algorithms;

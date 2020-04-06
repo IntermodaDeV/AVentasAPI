@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using AventasApi.Models.ApiModels;
 using System.Diagnostics;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Enviroments;
 using RestSharp;
 using Newtonsoft.Json;

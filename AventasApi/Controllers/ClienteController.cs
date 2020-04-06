@@ -1,5 +1,5 @@
 ﻿using AventasApi.Filters;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +35,7 @@ namespace AventasApi.Controllers
         {
             try
             {
-                var cuentaCorriente = context.CuentaCorriente21(codigoCliente);
+                var cuentaCorriente = context.CuentaCorriente(codigoCliente);
                 return Ok(cuentaCorriente);
 
             }

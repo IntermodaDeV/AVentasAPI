@@ -6,8 +6,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using AventasApi.GestorData;
-using AventasApi.Infrastructure;
-//using AventasApi.Infrastructure;
+using DBData.Database;
+//using DBData.Database;
 using AventasApi.Models.ViewModels;
 using System.Data.Entity;
 

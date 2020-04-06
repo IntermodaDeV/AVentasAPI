@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AventasApi.Utils;
 using AventasApi.Enviroments;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Models;
 using AventasApi.Models.ApiModels;
 using System.Data.Entity;

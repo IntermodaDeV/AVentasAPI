@@ -4,8 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AventasApi", "AventasApi\AventasApi.csproj", "{1FC444AE-5884-46F0-BFD2-9E5750159859}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C91118CB-AE36-4D15-9C12-47C5240B2612} = {C91118CB-AE36-4D15-9C12-47C5240B2612}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DB", "DB\DB.csproj", "{0312ED7D-A573-4241-880D-B6DD9D348715}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBData", "DBData\DBData.csproj", "{C91118CB-AE36-4D15-9C12-47C5240B2612}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +20,10 @@ Global
 		{1FC444AE-5884-46F0-BFD2-9E5750159859}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FC444AE-5884-46F0-BFD2-9E5750159859}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FC444AE-5884-46F0-BFD2-9E5750159859}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0312ED7D-A573-4241-880D-B6DD9D348715}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0312ED7D-A573-4241-880D-B6DD9D348715}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0312ED7D-A573-4241-880D-B6DD9D348715}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0312ED7D-A573-4241-880D-B6DD9D348715}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C91118CB-AE36-4D15-9C12-47C5240B2612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C91118CB-AE36-4D15-9C12-47C5240B2612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C91118CB-AE36-4D15-9C12-47C5240B2612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C91118CB-AE36-4D15-9C12-47C5240B2612}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

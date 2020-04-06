@@ -1,5 +1,5 @@
 ﻿using AventasApi.Filters;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using AventasApi.GestorData;
 
-//using AventasApi.Infrastructure;
+//using DBData.Database;
 using AventasApi.Models.ViewModels;
 
 public class AsesorController : ApiController

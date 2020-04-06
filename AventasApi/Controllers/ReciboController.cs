@@ -1,4 +1,4 @@
-﻿using AventasApi.Infrastructure;
+﻿using DBData.Database;
 using AventasApi.Models.ApiModels;
 using AventasApi.Models.ViewModels;
 using RestSharp;

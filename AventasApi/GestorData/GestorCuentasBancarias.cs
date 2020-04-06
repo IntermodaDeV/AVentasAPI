@@ -8,7 +8,7 @@ using System.Web;
 using RestSharp;
 using Newtonsoft.Json;
 using AventasApi.Models.ApiModels;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using System.Data.Entity;
 
 namespace AventasApi.GestorData

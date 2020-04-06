@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using AventasApi.ImageManager;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Models.ApiModels;
 using AventasApi.Models.ViewModels;
 

@@ -1,5 +1,5 @@
 ﻿using AventasApi.Filters;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Models;
 using System.Collections.Generic;
 using System.Linq;

@@ -162,16 +162,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Infrastructure\AVentasModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>AVentasModel.edmx</DependentUpon>
-      <LastGenOutput>AVentasModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Infrastructure\AVentasModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>AVentasModel.edmx</DependentUpon>
-      <LastGenOutput>AVentasModel.cs</LastGenOutput>
-    </Content>
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -243,225 +233,6 @@
     <Compile Include="GestorData\GestorTipoPaquete.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Acciones.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\AcuerdosxCliente.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\AcuerdosxClienteDetalle.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\AnticiposxCliente.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Asesores.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\AsignacionxAsesor.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\AsignacionxAsesorDetalle.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\AtributosxColeccion.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\AtributosxProducto.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\AVentasModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AVentasModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\AVentasModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\AVentasModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AVentasModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Bancos.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\BitacoraGeoposicion.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\BitacoraVisitasCliente.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Clientes.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\ClientesxRuta.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Colecciones.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Colores.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\ColoresxProducto.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Configuraciones.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\CuentaCorriente1_Result.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\CuentaCorriente21_Result.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\CuentaCorriente2_Result.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\CuentasBancarias.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\DistribucionxTalla.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\EdadesxColeccion.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Empresa.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Errores.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\EstadisticaVisita_Result.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\EstadosPedido.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\FacturasxCliente.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\FirmasxPedido.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\FisicoDisponible.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\FormularioIntroDetalle.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\FormularioIntroDetallexRoles.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\FormularioIntroEncabezado.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\FotografiasXProducto.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\GrupoTalla.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\LimiteCreditoxCliente.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\LineasxColeccion.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\MaestroEdad.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\MaestroGrupoPrecio.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\MaestroLinea.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\MaestroMoneda.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\MonedasxEmpresa.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Pantallas.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\PantallasxUsuario.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\PedidosDetalle.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\PedidosxCliente.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\PrecioEspecifico.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\PreciosxProducto.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\PResumenCredito_Result.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\PrioridadAsignacion.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\ProductosxColeccion.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\RazonNoVentaCausa.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\RazonNoVentaTipo.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\RecibosDetalle.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\RecibosxCliente.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Rutas.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\RutasxAsesor.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\SubFacturasxCliente.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\sysdiagrams.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\TallasXGrupo.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\TallasxProducto.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\TiposdeColeccion.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\TiposdePago.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\TiposdePagoDetalle.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\TiposdePedido.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\TipoVisitaCliente.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\Usuarios.cs">
-      <DependentUpon>AVentasModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ApiModels\AcuerdoCRMApiModel.cs" />
     <Compile Include="Models\ApiModels\AcuerdoVentaApiModel.cs" />
@@ -579,13 +350,6 @@
     <Compile Include="Utils\logicValidation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EntityDeploy Include="Infrastructure\AVentasModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>AVentasModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Infrastructure\AVentasModel.edmx.diagram">
-      <DependentUpon>AVentasModel.edmx</DependentUpon>
-    </Content>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -605,6 +369,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DBData\DBData.csproj">
+      <Project>{c91118cb-ae36-4d15-9c12-47c5240b2612}</Project>
+      <Name>DBData</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

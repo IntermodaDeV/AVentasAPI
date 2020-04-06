@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using AventasApi.Filters;
 using AventasApi.GestorData;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Models.ApiModels;
 using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
