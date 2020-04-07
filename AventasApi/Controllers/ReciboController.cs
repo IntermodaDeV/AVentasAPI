@@ -1,5 +1,5 @@
 ﻿using DBData.Database;
-using AventasApi.Models.ApiModels;
+//using AventasApi.Models.ApiModels;
 using AventasApi.Models.ViewModels;
 using RestSharp;
 using System;
@@ -12,8 +12,10 @@ using System.Web.Http;
 using System.Data.Entity;
 using AventasApi.Services.Authentication;
 using AventasApi.Services.AsyncJobs;
-using AventasApi.Enviroments;
+//using AventasApi.Enviroments;
 using AventasApi.Models;
+using ExternalApiData.Models.ApiModels;
+using ExternalApiData.Enviroments;
 
 namespace AventasApi.Controllers
 {

@@ -5,9 +5,9 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using AventasApi.Filters;
-using AventasApi.GestorData;
+//using AventasApi.GestorData;
 using DBData.Database;
-using AventasApi.Models.ApiModels;
+//using AventasApi.Models.ApiModels;
 using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
 //using IMS.Extensions;
@@ -20,7 +20,9 @@ using System.Data.Entity;
 using AventasApi.Services.AsyncJobs;
 using AventasApi.Models;
 using AventasApi.Services.Authentication;
-using AventasApi.Enviroments;
+using ExternalApiData.Models.ApiModels;
+using ExternalApiData.Enviroments;
+//using AventasApi.Enviroments;
 
 namespace AventasApi.Controllers
 {

@@ -1,4 +1,4 @@
-﻿using AventasApi.GestorData;
+﻿//using AventasApi.GestorData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace AventasApi.Singleton
     sealed class GestorManager
     {
         private static readonly GestorManager _instance = new GestorManager();
-        public static Task TaskActualizarFacturas = new Task(GestorFacturasXCliente.ActualizarFacturas);
+        //public static Task TaskActualizarFacturas = new Task(GestorFacturasXCliente.ActualizarFacturas);
 
         static GestorManager()
         {

@@ -194,81 +194,10 @@
     <Compile Include="Controllers\TipoPedidoController.cs" />
     <Compile Include="Controllers\TiposColeccionController.cs" />
     <Compile Include="Controllers\TipoVisitaClienteController.cs" />
-    <Compile Include="Enviroments\Enviroment.cs" />
     <Compile Include="Filters\Auth.cs" />
-    <Compile Include="GestorData\Asesor.cs" />
-    <Compile Include="GestorData\ClienteHttp.cs" />
-    <Compile Include="GestorData\GestorAcuerdosVenta.cs" />
-    <Compile Include="GestorData\GestorAsesores.cs" />
-    <Compile Include="GestorData\GestorAtributos.cs" />
-    <Compile Include="GestorData\GestorAtributosXProductos.cs" />
-    <Compile Include="GestorData\GestorBancos.cs" />
-    <Compile Include="GestorData\GestorClientes.cs" />
-    <Compile Include="GestorData\GestorColecciones.cs" />
-    <Compile Include="GestorData\GestorColecciones2.cs" />
-    <Compile Include="GestorData\GestorColor.cs" />
-    <Compile Include="GestorData\GestorColoresXProducto.cs" />
-    <Compile Include="GestorData\GestorCreditoXCliente.cs" />
-    <Compile Include="GestorData\GestorCuentasBancarias.cs" />
-    <Compile Include="GestorData\GestorData.cs" />
-    <Compile Include="GestorData\GestorDistribucionesXTalla.cs" />
-    <Compile Include="GestorData\GestorEmpresas.cs" />
-    <Compile Include="GestorData\GestorFacturasXCliente.cs" />
-    <Compile Include="GestorData\GestorFisicoDisponibleXProducto.cs" />
-    <Compile Include="GestorData\GestorGrupoTalla.cs" />
-    <Compile Include="GestorData\GestorImagenesXProducto.cs" />
-    <Compile Include="GestorData\GestorLimiteCuentaCorriente.cs" />
-    <Compile Include="GestorData\GestorLineas.cs" />
-    <Compile Include="GestorData\GestorPrecioEspecifico.cs" />
-    <Compile Include="GestorData\GestorPrecioXProducto.cs" />
-    <Compile Include="GestorData\GestorMaestroEdad.cs" />
-    <Compile Include="GestorData\GestorProductos.cs" />
-    <Compile Include="GestorData\GestorMaestroRutas.cs" />
-    <Compile Include="GestorData\GestorRutasXAsesor.cs" />
-    <Compile Include="GestorData\GestorSaldosCliente.cs" />
-    <Compile Include="GestorData\GestorSizesByProduct.cs" />
-    <Compile Include="GestorData\GestorSubFacturasXCliente.cs" />
-    <Compile Include="GestorData\GestorTallaXGrupoTalla.cs" />
-    <Compile Include="GestorData\GestorTipoPagos.cs" />
-    <Compile Include="GestorData\GestorTipoPaquete.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\ApiModels\AcuerdoCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\AcuerdoVentaApiModel.cs" />
-    <Compile Include="Models\ApiModels\AcuerdoVentaDetalleApiModel.cs" />
-    <Compile Include="Models\ApiModels\AsesorApiModel.cs" />
-    <Compile Include="Models\ApiModels\AtributosApiModel.cs" />
-    <Compile Include="Models\ApiModels\AtributosXProductoCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\BancoApiModel.cs" />
-    <Compile Include="Models\ApiModels\ClientesApiModel.cs" />
-    <Compile Include="Models\ApiModels\ClientesCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\ColeccionApiModel.cs" />
-    <Compile Include="Models\ApiModels\ColeccionCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\ColeccionesCRMApiViewModel.cs" />
-    <Compile Include="Models\ApiModels\ColorApiModel.cs" />
-    <Compile Include="Models\ApiModels\ColorXProductoCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\CuentaCorrienteApiModel.cs" />
-    <Compile Include="Models\ApiModels\CuentasBancariasCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\DistribucionXTallaApiModel.cs" />
-    <Compile Include="Models\ApiModels\EmpresasCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\FacturasXClienteApiModel.cs" />
-    <Compile Include="Models\ApiModels\FisicoDisponibleXProductoApiModel.cs" />
-    <Compile Include="Models\ApiModels\GestorPrecioXProductoApiModel.cs" />
-    <Compile Include="Models\ApiModels\ImagenesXProductoCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\ImageneXProductoXColorApiModel.cs" />
-    <Compile Include="Models\ApiModels\ImagenXProductoApiModel.cs" />
-    <Compile Include="Models\ApiModels\LineaApiModel.cs" />
-    <Compile Include="Models\ApiModels\PedidoApiModel.cs" />
-    <Compile Include="Models\ApiModels\PedidoCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\PreciosCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\ProductoXColeccionApiModel.cs" />
-    <Compile Include="Models\ApiModels\ReciboApiModel.cs" />
-    <Compile Include="Models\ApiModels\RutasXAsesorApiModel.cs" />
-    <Compile Include="Models\ApiModels\SubFacturasXClienteApiModel.cs" />
-    <Compile Include="Models\ApiModels\TallaPorGrupoTalla.cs" />
-    <Compile Include="Models\ApiModels\TallaXProductoCRMApiModel.cs" />
-    <Compile Include="Models\ApiModels\TiposPagoCRMApiModel.cs" />
     <Compile Include="Models\Authentication\AuthenticationResponse.cs" />
     <Compile Include="Models\Authentication\Menu.cs" />
     <Compile Include="Models\Authentication\UserAuthenticated.cs" />
@@ -374,6 +303,10 @@
     <ProjectReference Include="..\DBData\DBData.csproj">
       <Project>{c91118cb-ae36-4d15-9c12-47c5240b2612}</Project>
       <Name>DBData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ExternalApiData\ExternalApiData.csproj">
+      <Project>{E175801B-FF18-4726-B747-CD994B9EBCC7}</Project>
+      <Name>ExternalApiData</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

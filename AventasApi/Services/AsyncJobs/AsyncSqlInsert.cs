@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using AventasApi.ImageManager;
 using DBData.Database;
-using AventasApi.Models.ApiModels;
+//using AventasApi.Models.ApiModels;
 using AventasApi.Models.ViewModels;
 
 namespace AventasApi.Services.AsyncJobs

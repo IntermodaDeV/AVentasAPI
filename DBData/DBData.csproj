@@ -292,6 +292,7 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\AcuerdosxClienteRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />

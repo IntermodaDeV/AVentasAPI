@@ -5,8 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using AventasApi.GestorData;
-using AventasApi.Models.ApiModels;
+//using AventasApi.GestorData;
+//using AventasApi.Models.ApiModels;
 using AventasApi.Models.CustomerLocationApp;
 
 namespace AventasApi.Controllers
@@ -17,7 +17,7 @@ namespace AventasApi.Controllers
         public async Task<IHttpActionResult> Get()
         {
             string UrlString = @"http://209.126.64.158:3083/api/CoordenadasXCliente";
-            HttpClient client = new ClienteHttp();
+            HttpClient client = new HttpClient();
 
             List<RutaConCoordenadaViewModel> rutas = new List<RutaConCoordenadaViewModel>();
             HttpResponseMessage response = await client.GetAsync(UrlString).ConfigureAwait(false);
