@@ -111,21 +111,21 @@ namespace AventasApi.GestorData
 
         public static bool EvaluarModelos(object imagenBD, object imagen)
         {
-            if (imagenBD == null || imagen == null)
+            if (LogicValidation.AreModelsValids(imagenBD, imagen))
             {
                 return false;
             }
 
-            if (imagenBD.GetType() != imagen.GetType())
+            if (LogicValidation.AreModelDistinct(imagenBD, imagen))
             {
                 return false;
             }
 
-            var Props = imagenBD.GetType().GetProperties();
-            foreach (var Prop in Props)
+            var properties = imagenBD.GetType().GetProperties();
+            foreach (var property in properties)
             {
-                var aPropValue = Prop.GetValue(imagenBD) ?? string.Empty;
-                var bPropValue = Prop.GetValue(imagen) ?? string.Empty;
+                var aPropValue = property.GetValue(imagenBD) ?? string.Empty;
+                var bPropValue = property.GetValue(imagen) ?? string.Empty;
                 if (aPropValue.ToString() != bPropValue.ToString())
                     return false;
             }

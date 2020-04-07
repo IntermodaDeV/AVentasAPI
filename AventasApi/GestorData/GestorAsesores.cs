@@ -20,25 +20,20 @@ namespace AventasApi.GestorData
     {
         private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}asesor/AsesoresDisponibles";
         private static LogicValidation LogicValidation = new LogicValidation();
-        private HttpClient client = new ClienteHttp();
         public bool ColeccionesActualizadas = false;
         public bool ErrorAlActualizar = false;
 
         public static async Task<List<Asesores>> ObtenerAsesores()
         {
             List<Asesores> asesoresAGuardar = new List<Asesores>();
-            //HttpResponseMessage response = await client.GetAsync(UrlString).ConfigureAwait(false);
-            //List<AsesorApiModel> asesores = await response.Content.ReadAsAsync<List<AsesorApiModel>>();
 
             var restClient = new RestClient(UrlString);
             var request = new RestRequest(Method.GET);
             request.AddHeader("Accept", "application/json");
             IRestResponse response = restClient.Execute(request);
-
             if (response.IsSuccessful)
             {
                 List<AsesorApiModel> asesores = JsonConvert.DeserializeObject<List<AsesorApiModel>>(response.Content);
-
                 if (LogicValidation.ValidateDataCount(asesores.Count))
                 {
                     asesoresAGuardar = asesores.Select(ase => new Asesores
@@ -48,8 +43,7 @@ namespace AventasApi.GestorData
                         EmpresaId = ase.ENTITY,
                         Usuario = ase.CODE,
                         Diario = ase.JOURNAL
-                    }
-                    ).ToList();
+                    }).ToList();
                     await GuardarAsesores(asesoresAGuardar);
                 }
             }
@@ -108,21 +102,21 @@ namespace AventasApi.GestorData
 
         public static bool EvaluarModelos(object imagenBD, object imagen)
         {
-            if (imagenBD == null || imagen == null)
+            if (LogicValidation.AreModelsValids(imagenBD, imagen))
             {
                 return false;
             }
 
-            if (imagenBD.GetType() != imagen.GetType())
+            if (LogicValidation.AreModelDistinct(imagenBD, imagen))
             {
                 return false;
             }
 
-            var Props = imagenBD.GetType().GetProperties();
-            foreach (var Prop in Props)
+            var properties = imagenBD.GetType().GetProperties();
+            foreach (var property in properties)
             {
-                var aPropValue = Prop.GetValue(imagenBD) ?? string.Empty;
-                var bPropValue = Prop.GetValue(imagen) ?? string.Empty;
+                var aPropValue = property.GetValue(imagenBD) ?? string.Empty;
+                var bPropValue = property.GetValue(imagen) ?? string.Empty;
                 if (aPropValue.ToString() != bPropValue.ToString())
                     return false;
             }
