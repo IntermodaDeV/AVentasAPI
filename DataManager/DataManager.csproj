@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AcuerdosManager.cs" />
+    <Compile Include="ColeccionesManager.cs" />
+    <Compile Include="Extensions\Colecciones.cs" />
     <Compile Include="Extensions\AcuerdosXCliente.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
