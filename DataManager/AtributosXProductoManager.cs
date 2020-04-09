@@ -15,10 +15,9 @@ namespace DataManager
 
         public async Task ObtenerAtributos(string CodigoProducto)
         {
-            var atributosXProducto = new List<AtributosXProductoCRMApiModel>();
             GestorAtributosXProductos gestorAtributos = new GestorAtributosXProductos();
 
-            atributosXProducto = gestorAtributos.ObtenerAtributosDesdeCRMAPI(CodigoProducto ?? " ").Result;
+            var atributosXProducto = gestorAtributos.ObtenerAtributosDesdeCRMAPI(CodigoProducto ?? " ").Result;
             if (LogicValidation.ValidateDataCount(atributosXProducto.Count))
             {
                 var atributos = atributosXProducto.Select(atr => atr.CreandoAtributo()).ToList();

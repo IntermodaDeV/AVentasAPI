@@ -37,17 +37,5 @@ namespace AventasApi.Utils
             var isValid = counter > restrictionValue;
             return isValid;
         }
-
-        public bool AreModelsValids(object firstModel, object secondModel)
-        {
-            var isValid = firstModel == null || secondModel == null;
-            return isValid;
-        }
-
-        public bool AreModelDistinct(object firstModel, object secondModel)
-        {
-            var isValid = firstModel.GetType() != secondModel.GetType();
-            return isValid;
-        }
     }
 }

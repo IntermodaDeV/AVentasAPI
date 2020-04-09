@@ -95,5 +95,29 @@ namespace DBData.Utils
             var isValid = counter > restrictionValue;
             return isValid;
         }
+
+        public bool AreModelsValids(object firstModel, object secondModel)
+        {
+            var isValid = firstModel == null || secondModel == null;
+            return isValid;
+        }
+
+        public bool AreModelDistinct(object firstModel, object secondModel)
+        {
+            var isValid = firstModel.GetType() != secondModel.GetType();
+            return isValid;
+        }
+
+        public string SeparatorProperty(string property, int position)
+        {
+            string result = " ";
+            try
+            {
+                result = (property != null) ? (position == 1) ?
+                    property.Split('-').First() : property.Split('-').Last() : " ";
+            }
+            catch (Exception) { }
+            return result;
+        }
     }
 }
