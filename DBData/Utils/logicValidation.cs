@@ -119,5 +119,28 @@ namespace DBData.Utils
             catch (Exception) { }
             return result;
         }
+
+        public bool ValidateModels(object imagenBD, object imagen)
+        {
+            if (imagenBD == null || imagen == null)
+            {
+                return false;
+            }
+
+            if (imagenBD.GetType() != imagen.GetType())
+            {
+                return false;
+            }
+
+            var Props = imagenBD.GetType().GetProperties();
+            foreach (var Prop in Props)
+            {
+                var aPropValue = Prop.GetValue(imagenBD) ?? string.Empty;
+                var bPropValue = Prop.GetValue(imagen) ?? string.Empty;
+                if (aPropValue.ToString() != bPropValue.ToString())
+                    return false;
+            }
+            return true;
+        }
     }
 }

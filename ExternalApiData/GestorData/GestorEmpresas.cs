@@ -3,7 +3,6 @@ using ExternalApiData.Models.ApiModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RestSharp;
-using AventasApi.Utils;
 using Newtonsoft.Json;
 
 namespace ExternalApiData.GestorData
@@ -11,7 +10,6 @@ namespace ExternalApiData.GestorData
     public class GestorEmpresas
     {
         private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}empresa/empresas";
-        private static readonly LogicValidation LogicValidation = new LogicValidation();
 
         public async Task<List<EmpresasCRMApiModel>> ObtenerEmpresasDesdeCRMAPI()
         {
