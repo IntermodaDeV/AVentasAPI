@@ -5,9 +5,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using AventasApi.GestorData;
-using AventasApi.Infrastructure;
-//using AventasApi.Infrastructure;
+//using AventasApi.GestorData;
+using DBData.Database;
+//using DBData.Database;
 using AventasApi.Models.ViewModels;
 
 using System.Data.Entity;
@@ -80,7 +80,7 @@ namespace AventasApi.Controllers
                                                       CodigoColeccion = vw_coleccion.CodigoColeccion,
                                                       CodigoProducto = pxc.IdProducto,
                                                       NombreProducto = pxc.NombreProducto,
-                                                      Precio = pxc.PreciosxProducto.Where(preEsp => true ||  !filtarXGrupoPrecio).Select(precio => new PrecioXProductoViewModel
+                                                      Precio = pxc.PreciosxProducto.Where(preEsp => true || !filtarXGrupoPrecio).Select(precio => new PrecioXProductoViewModel
                                                       {
                                                           GrupoPrecio = precio.GrupoPrecio,
                                                           IdMoneda = precio.IdMoneda,
@@ -100,7 +100,7 @@ namespace AventasApi.Controllers
                                                       }).ToList(),
                                                       ListaImagenes = pxc.FotografiasXProducto.Where(txp => txp.FotografiaProducto != null)
                                                          .Where(txp => (pxc.FotografiasXProducto.Where(fxp => fxp.CodigoColor == "").Count() > 0 && txp.CodigoColor == "") || (pxc.FotografiasXProducto.FirstOrDefault() != null && txp.CodigoColor == pxc.FotografiasXProducto.FirstOrDefault().CodigoColor))
-                                                         .OrderByDescending(foto=> foto.Principal)
+                                                         .OrderByDescending(foto => foto.Principal)
                                                          .Select(foto => new FotografiasXProductoViewModel
                                                          {
                                                              IdFotografia = foto.IdFotografia,
@@ -108,7 +108,22 @@ namespace AventasApi.Controllers
                                                              CodigoColor = foto.CodigoColor,
                                                              Principal = foto.Principal ?? false
                                                          }).ToList(),
-                                                      ListaTalla = context.TallasxProducto.Where(txp=> txp.IdProducto==pxc.IdProducto).Select(txp=> txp.TallasXGrupo).Where(txp => txp.CodigoGrupoTalla == pxc.CodigoGrupoTalla).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)
+                                                      //ListaTalla = pxc.FisicoDisponible.GroupBy(fisDis => fisDis.CodigoTalla).Where(fisDisGroup => fisDisGroup.Sum(fisDis => fisDis.Disponible) > 0).Select(fisDisGroup => fisDisGroup.FirstOrDefault()).Select(fisDis => context.TallasXGrupo.Where(tallXGrup => tallXGrup.CodigoGrupoTalla == pxc.CodigoGrupoTalla).FirstOrDefault(tallXGrup => tallXGrup.CodigoTalla == fisDis.CodigoTalla)).Select(txp => new TallaViewModel
+                                                      //{
+                                                      //    Talla = txp.CodigoTalla,
+                                                      //    GrupoTallaId = txp.CodigoGrupoTalla,
+                                                      //    Orden = txp.Orden ?? 0,
+                                                      //    Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                                      //    {
+                                                      //        IdDistribucion = dis.IdDistribucion,
+                                                      //        IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                      //        NombreDistribucion = dis.NombreDistribucion,
+                                                      //        NombreTalla = dis.NombreTalla,
+                                                      //        Cantidad = dis.Cantidad,
+                                                      //    }).ToList(),
+
+                                                      //}).OrderBy(txp => txp.Orden).ToList(),
+                                                      ListaTalla = context.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)
                                                       .Select(txp => new TallaViewModel
                                                       {
                                                           Talla = txp.CodigoTalla,
@@ -146,7 +161,7 @@ namespace AventasApi.Controllers
                                                              IdTalla = f.CodigoTalla,
                                                              Cantidad = f.Disponible,
                                                              MinStock = f.MinStock,
-                                                             PreciosEspecificos = f.PrecioEspecifico.Where(preEsp=> filtarXGrupoPrecio).Where(preEsp=> preEsp.GrupoPrecio==grupoPrecio).Select(preEsp => new PrecioEspecificoViewModel
+                                                             PreciosEspecificos = f.PrecioEspecifico.Where(preEsp => filtarXGrupoPrecio).Where(preEsp => preEsp.GrupoPrecio == grupoPrecio).Select(preEsp => new PrecioEspecificoViewModel
                                                              {
                                                                  IdPrecioEspecifico = preEsp.IdPrecioEspecifico,
                                                                  IdMoneda = preEsp.IdMoneda,

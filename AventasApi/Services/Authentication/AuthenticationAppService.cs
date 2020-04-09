@@ -1,5 +1,5 @@
-﻿using AventasApi.Enviroments;
-using AventasApi.Infrastructure;
+﻿//using AventasApi.Enviroments;
+using DBData.Database;
 using AventasApi.Models.Authentication;
 using JWT;
 using JWT.Algorithms;
@@ -9,6 +9,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExternalApiData.Enviroments;
 //using IMS.Extensions;
 
 namespace AventasApi.Services.Authentication

@@ -1,4 +1,4 @@
-﻿using AventasApi.GestorData;
+﻿//using AventasApi.GestorData;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,6 +15,8 @@ namespace AventasApi
     {
         protected void Application_Start()
         {
+/*
+
             GestorAsesores gestorAsesores = new GestorAsesores();
             GestorMaestroRutas gestorRutas = new GestorMaestroRutas();
             GestorClientes gestorClientes = new GestorClientes();
@@ -30,6 +32,7 @@ namespace AventasApi
             GestorSizesByProduct gestorSizesByProduct = new GestorSizesByProduct();
             GestorColoresXProducto gestorColoresXProducto = new GestorColoresXProducto();
 
+    */
             //var sizesByProductList = gestorSizesByProduct.ObtenerTallasXProducto().Result;
             //gestorSizesByProduct.GuardarTallasXPRoducto(sizesByProductList).Wait();
             //var listaAsesores = ga.ObtenerAsesores().Result;
@@ -66,7 +69,7 @@ namespace AventasApi
             //GestorAtributosXProductos.ObtenerAtributosXProducto();
             //GestorImagenesXProducto.ObtenerImagenesXProducto();
             //GestorColoresXProducto.ObtenerColoresXProducto();
-            GestorAsesores.ObtenerAsesores();
+            //GestorAsesores.ObtenerAsesores();
 
             //GestorMaestroEdad.ActualizarProductos();
             //GestorProductos.ActualizarProductos();
@@ -75,7 +78,7 @@ namespace AventasApi
             //GestorAsesores.ActualizarAsesores();
             //GestorImagenesXProducto.ActualizarImagenes();
             //GestorImagenesXProducto.ObtenerImagenesXProducto();
-
+/*
             if (false && GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Running)
             {
                 try
@@ -93,6 +96,9 @@ namespace AventasApi
                 }
 
             }
+
+    */
+
             //if (false && GestorColecciones.TaskActualizarColecciones.Status != TaskStatus.Running)
             //{
             //    try

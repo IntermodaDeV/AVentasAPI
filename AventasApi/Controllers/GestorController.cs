@@ -1,5 +1,5 @@
-﻿using AventasApi.GestorData;
-using AventasApi.Infrastructure;
+﻿//using AventasApi.GestorData;
+using DBData.Database;
 using AventasApi.Singleton;
 using System;
 using System.Collections.Generic;
@@ -17,16 +17,16 @@ namespace AventasApi.Controllers
     public class GestorController : ApiController
     {
 
-        [HttpGet]
-        [Route("api/Gestor/ActualizarSaldos/{ClienteId}")]
-        public async Task<IHttpActionResult> ActualizarSaldos(string ClienteId)
-        {
-            GestorSaldosCliente gestorSaldos = new GestorSaldosCliente();
-            string status = await gestorSaldos.ActualizarSaldos(ClienteId);
-            return Ok(status);
+        //[HttpGet]
+        //[Route("api/Gestor/ActualizarSaldos/{ClienteId}")]
+        //public async Task<IHttpActionResult> ActualizarSaldos(string ClienteId)
+        //{
+        //    GestorSaldosCliente gestorSaldos = new GestorSaldosCliente();
+        //    string status = await gestorSaldos.ActualizarSaldos(ClienteId);
+        //    return Ok(status);
 
 
-        }
+        //}
 
         //[HttpGet]
         //[Route("api/Gestor/ActualizarColecciones")]

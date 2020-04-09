@@ -5,9 +5,9 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using AventasApi.Filters;
-using AventasApi.GestorData;
-using AventasApi.Infrastructure;
-using AventasApi.Models.ApiModels;
+//using AventasApi.GestorData;
+using DBData.Database;
+//using AventasApi.Models.ApiModels;
 using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
 //using IMS.Extensions;
@@ -20,7 +20,9 @@ using System.Data.Entity;
 using AventasApi.Services.AsyncJobs;
 using AventasApi.Models;
 using AventasApi.Services.Authentication;
-using AventasApi.Enviroments;
+using ExternalApiData.Models.ApiModels;
+using ExternalApiData.Enviroments;
+//using AventasApi.Enviroments;
 
 namespace AventasApi.Controllers
 {
@@ -105,7 +107,8 @@ namespace AventasApi.Controllers
                         .Select(gruposXDetPed => new GruposTallaXDetPed
                         {
                             GrupoTalla = gruposXDetPed.Key,
-                            ListaTalla = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == gruposXDetPed.Key).Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)).Select(txp => new TallaViewModel
+                            // prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoProducto)
+                            ListaTalla = gruposXDetPed.GroupBy(pedDet=> pedDet.CodigoTalla).Select(pedDet=> pedDet.Key).SelectMany(pedDet=>  context.TallasXGrupo.Where(txp=> txp.CodigoTalla == pedDet &&txp.CodigoGrupoTalla == gruposXDetPed.Key) ).Select(txp => new TallaViewModel
                             {
                                 GrupoTallaId = txp.CodigoGrupoTalla,
                                 Talla = txp.CodigoTalla,
@@ -128,7 +131,7 @@ namespace AventasApi.Controllers
                             Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
                             CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
                             TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
-                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Select(colXprod =>
+                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod=> colXprod.Sum(det=> det.Cantidad)>0).Select(colXprod =>
                                  new ColoresXProdXDetPed
                                  {
                                      CantidadXColor = colXprod.Sum(cant => cant.Cantidad),

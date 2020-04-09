@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Models.ViewModels;
 
 namespace AventasApi.Models

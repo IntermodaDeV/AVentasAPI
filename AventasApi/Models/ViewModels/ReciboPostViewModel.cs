@@ -12,6 +12,9 @@ namespace AventasApi.Models.ViewModels
         public List<PagosReciboPostViewModel> Pagos { get; set; }
         public string Descripcion { get; set; }
         public List<int> SubFacturas { get; set; }
+        public string CodigoCliente { get; set; }
+        public string Tipo { get; set; }
+
         public ReciboPostViewModel()
         {
             Pagos = new List<PagosReciboPostViewModel>();

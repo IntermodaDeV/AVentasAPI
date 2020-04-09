@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1">
+        <EntityTypeShape EntityType="AventasModel.AcuerdosxCliente" Width="1.5" PointX="3" PointY="41.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.AcuerdosxClienteDetalle" Width="1.5" PointX="5.25" PointY="41.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.AnticiposxCliente" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Asesores" Width="1.5" PointX="14" PointY="28.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.AsignacionxAsesor" Width="1.5" PointX="10.25" PointY="46.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.AsignacionxAsesorDetalle" Width="1.5" PointX="12.5" PointY="51.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.AtributosxColeccion" Width="1.5" PointX="5.25" PointY="34.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.AtributosxProducto" Width="1.5" PointX="12.5" PointY="33.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Bancos" Width="1.5" PointX="3" PointY="47.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.BitacoraGeoposicion" Width="1.5" PointX="18.5" PointY="53.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.BitacoraVisitasCliente" Width="1.5" PointX="13.25" PointY="37" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Clientes" Width="1.5" PointX="8" PointY="41.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.ClientesxRuta" Width="1.5" PointX="13.25" PointY="48.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Colecciones" Width="1.5" PointX="3" PointY="35" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Colores" Width="1.5" PointX="16.25" PointY="55.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.ColoresxProducto" Width="1.5" PointX="18.5" PointY="41.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Configuraciones" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.CuentasBancarias" Width="1.5" PointX="5.25" PointY="44.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.DistribucionxTalla" Width="1.5" PointX="21.5" PointY="32.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.EdadesxColeccion" Width="1.5" PointX="8.25" PointY="36.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Empresa" Width="1.5" PointX="0.75" PointY="42.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Errores" Width="1.5" PointX="0.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.EstadosPedido" Width="1.5" PointX="14" PointY="26" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.FacturasxCliente" Width="1.5" PointX="13.25" PointY="41.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.FirmasxPedido" Width="1.5" PointX="18.5" PointY="35.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.FisicoDisponible" Width="1.5" PointX="18.5" PointY="45.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.FormularioIntroDetalle" Width="1.5" PointX="5" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.FormularioIntroDetallexRoles" Width="1.5" PointX="7.25" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.FormularioIntroEncabezado" Width="1.5" PointX="2.75" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.FotografiasXProducto" Width="1.5" PointX="18.5" PointY="49.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.GrupoTalla" Width="1.5" PointX="8" PointY="49.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.LimiteCreditoxCliente" Width="1.5" PointX="10.25" PointY="55.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.LineasxColeccion" Width="1.5" PointX="8.25" PointY="33.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.MaestroEdad" Width="1.5" PointX="6" PointY="26.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.MaestroGrupoPrecio" Width="1.5" PointX="21.5" PointY="50.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.MaestroLinea" Width="1.5" PointX="6" PointY="30" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.MaestroMoneda" Width="1.5" PointX="16.25" PointY="28" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.MonedasxEmpresa" Width="1.5" PointX="6" PointY="37.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Pantallas" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.PantallasxUsuario" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.PedidosDetalle" Width="1.5" PointX="21.5" PointY="37.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.PedidosxCliente" Width="1.5" PointX="16.25" PointY="32.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.PrecioEspecifico" Width="1.5" PointX="23.75" PointY="42.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.PreciosxProducto" Width="1.5" PointX="18.5" PointY="38.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.PrioridadAsignacion" Width="1.5" PointX="8" PointY="53" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.ProductosxColeccion" Width="1.5" PointX="10.25" PointY="40.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.RazonNoVentaCausa" Width="1.5" PointX="11" PointY="37.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.RazonNoVentaTipo" Width="1.5" PointX="11" PointY="30.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.RecibosDetalle" Width="1.5" PointX="20.75" PointY="46.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.RecibosxCliente" Width="1.5" PointX="15.5" PointY="49" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Rutas" Width="1.5" PointX="11" PointY="58.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.RutasxAsesor" Width="1.5" PointX="23.25" PointY="46.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.SubFacturasxCliente" Width="1.5" PointX="15.5" PointY="41.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.sysdiagrams" Width="1.5" PointX="2.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.TallasXGrupo" Width="1.5" PointX="19.25" PointY="32.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.TallasxProducto" Width="1.5" PointX="21.5" PointY="41.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.TiposdeColeccion" Width="1.5" PointX="0.75" PointY="36.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.TiposdePago" Width="1.5" PointX="3" PointY="67" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.TiposdePagoDetalle" Width="1.5" PointX="5.25" PointY="54.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.TiposdePedido" Width="1.5" PointX="0.75" PointY="48.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.TipoVisitaCliente" Width="1.5" PointX="8" PointY="55.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Usuarios" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.Acciones" Width="1.5" PointX="4.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.vw_AtributosxColeccion" Width="1.5" PointX="9.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.vw_ClientesxRuta" Width="1.5" PointX="6.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.vw_ColoresxProducto" Width="1.5" PointX="8.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.vw_FisicoDisponible" Width="1.5" PointX="10.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.vw_LineasxColeccion" Width="1.5" PointX="11.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.vw_TallasxProducto" Width="1.5" PointX="11.75" PointY="3.75" IsExpanded="true" />
+        <AssociationConnector Association="AventasModel.FK__Acuerdosx__Empre__2BE97B0D" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Acuerdosx__IdLin__17786E0C" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Acuerdosx__IdMon__2AF556D4" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Acuerdosx__IdTip__2A01329B" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Acuerdosx__Saldo__2EC5E7B8" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Acuerdosx__Total__290D0E62" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__SubFactur__IdAcu__7ADC2F5E" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK_FacturasxCliente_AcuerdosxCliente" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Asignacio__Codig__61BB7BD9" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__BitacoraG__Codig__5B638405" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__BitacoraV__Codig__10766AC2" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__Codig__6B44E613" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__RutasxAse__Codig__658C0CBD" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Asignacio__Codig__60C757A0" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Asignacio__idAsi__5540965B" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Asignacio__idPri__24134F1B" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Asignacio__idTip__26EFBBC6" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__BitacoraG__IdAsi__4C214075" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Asignacio__idTip__5634BA94" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Atributos__IdCol__5AC46587" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Atributos__IdLin__5BB889C0" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Atributos__IdPro__2C1E8537" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Bancos__EmpresaI__168449D3" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__CuentasBa__IdBan__1A54DAB7" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__BitacoraG__Codig__6E765879" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__BitacoraV__Codig__0F824689" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__BitacoraV__IdRaz__0D99FE17" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__BitacoraV__IdRaz__0E8E2250" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Clientes__GrupoP__3A5795F5" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Clientes__IdMone__5649C92D" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Clientesx__Codig__5C02A283" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Facturasx__Codig__7152C524" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__LimiteCre__Codig__7E57BA87" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__Codig__0F183235" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__SubFactur__Codig__77FFC2B3" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK_Clientes_Empresa" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Clientesx__Codig__5B0E7E4A" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Coleccion__Colec__6A3BB341" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Coleccion__FotoP__405A880E" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__EdadesxCo__IdCol__795DFB40" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__LineasxCo__IdCol__442B18F2" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Productos__IdCol__4DB4832C" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__ColoresxP__Codig__52793849" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__FisicoDis__Codig__7B7B4DDC" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Fotografi__Codig__45C948A1" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__ColoresxP__IdPro__536D5C82" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__CuentasBa__Empre__1C3D2329" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__CuentasBa__IdMon__1B48FEF0" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Distribuc__IdTal__0E7913B7" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__EdadesxCo__IdEda__7869D707" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__EdadesxCo__IdLin__09946309" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Facturasx__Empre__7246E95D" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__MonedasxE__Empre__3D7E1B63" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__Empre__6C390A4C" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__SubFactur__Empre__78F3E6EC" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__TiposdePa__Empre__29971E47" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__TiposdePa__Empre__2C738AF2" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Facturasx__IdLin__742F31CF" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Facturasx__IdMon__733B0D96" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Facturasx__IdTip__75235608" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__RecibosxC__IdFac__383A4359" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK_SubFacturasxCliente_FacturasxCliente" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__FirmasxPe__Pedid__75C27486" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__FisicoDis__MinSt__7A8729A3" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdFis__396371BC" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Formulari__codFo__0B47A151" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Formulari__codFo__0C3BC58A" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Formulari__codFo__0D2FE9C3" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Fotografi__IdPro__190BB0C3" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Productos__Codig__4F9CCB9E" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__TallasXGr__Codig__4AD81681" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__LineasxCo__IdLin__4336F4B9" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Productos__IdEda__68336F3E" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PrecioEsp__Grupo__386F4D83" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Productos__IdLin__4EA8A765" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK_Linea" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__MonedasxE__IdMon__3C89F72A" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__idMon__353DDB1D" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdMon__36870511" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PreciosxP__IdMon__55209ACA" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__SubFactur__IdMon__79E80B25" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Pantallas__IdPan__05F8DC4F" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Pantallas__IdUsu__0504B816" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PedidosDe__Pedid__70099B30" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK_PedidosDetalle_ProductosxColeccion" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__IdTip__6A50C1DA" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdPro__377B294A" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__PreciosxP__IdMon__542C7691" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__TallasxPr__IdPro__270FB757" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__RazonNoVe__IdRaz__0ABD916C" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__RecibosDe__IdSub__7FF5EA36" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__RecibosDe__Recib__7F01C5FD" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__RutasxAse__Codig__6497E884" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__TallasxPr__IdTal__2803DB90" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__TiposdePa__IdTip__2D67AF2B" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
