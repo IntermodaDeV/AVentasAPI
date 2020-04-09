@@ -13,9 +13,9 @@ namespace ExternalApiData.GestorData
         private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}empresa/empresas";
         private static readonly LogicValidation LogicValidation = new LogicValidation();
 
-        public async Task<List<EmpresasCRMApiModel>> ObtenerEmpresas()
+        public async Task<List<EmpresasCRMApiModel>> ObtenerEmpresasDesdeCRMAPI()
         {
-            List<EmpresasCRMApiModel> empresasCRMs = new List<EmpresasCRMApiModel>();
+            var empresas = new List<EmpresasCRMApiModel>();
             await Task.Run(() =>
             {
                 var restClient = new RestClient(UrlString);
@@ -25,10 +25,10 @@ namespace ExternalApiData.GestorData
 
                 if (response.IsSuccessful)
                 {
-                    empresasCRMs = JsonConvert.DeserializeObject<List<EmpresasCRMApiModel>>(response.Content);
+                    empresas = JsonConvert.DeserializeObject<List<EmpresasCRMApiModel>>(response.Content);
                 }
             });
-            return empresasCRMs;
+            return empresas;
         }
     }
 }

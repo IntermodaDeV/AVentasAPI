@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ExternalApiData.Enviroments;
-using DBData.Database;
 using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
 using RestSharp;
@@ -16,9 +13,9 @@ namespace ExternalApiData.GestorData
         private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}bancos/imhn";
         private static readonly LogicValidation LogicValidation = new LogicValidation();
 
-        public static async Task<List<BancoApiModel>> ObtenerBancos()
+        public async Task<List<BancoApiModel>> ObtenerBancosDesdeCRMAPI()
         {
-            List<BancoApiModel> listaBancos = new List<BancoApiModel>();
+            var listaBancos = new List<BancoApiModel>();
             await Task.Run(() =>
             {
                 var restClient = new RestClient(UrlString);

@@ -42,7 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AcuerdosManager.cs" />
+    <Compile Include="BancoManager.cs" />
+    <Compile Include="EmpresasManager.cs" />
     <Compile Include="Extensions\AcuerdosXCliente.cs" />
+    <Compile Include="Extensions\BancoExtension.cs" />
+    <Compile Include="Extensions\EmpresasExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

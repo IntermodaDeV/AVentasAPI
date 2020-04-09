@@ -7,11 +7,12 @@ using System;
 
 namespace DBData.Repositories
 {
-    public class EmpresasRepository
+    public class EmpresaRepository
     {
+        private static readonly LogicValidation LogicValidation = new LogicValidation();
+
         public async Task SendToDatabase(List<Empresa> empresas)
         {
-            var LogicValidation = new LogicValidation();
             int updateCount = 0, insertCount = 0, errorCount = 0;
             foreach (var empresa in empresas)
             {
@@ -19,7 +20,7 @@ namespace DBData.Repositories
                 {
                     using (AVentasEntities context = new AVentasEntities())
                     {
-                        var empresaBD = context.Empresa.Find(empresa.EmpresaId);
+                        var empresaBD = await context.Empresa.FindAsync(empresa.EmpresaId);
                         if (LogicValidation.IsDataValid(empresaBD))
                         {
                             updateCount++;
@@ -30,7 +31,7 @@ namespace DBData.Repositories
 
                             try
                             {
-                               await context.SaveChangesAsync();
+                                await context.SaveChangesAsync();
                             }
                             catch (Exception ex)
                             {

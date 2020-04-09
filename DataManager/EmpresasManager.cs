@@ -1,5 +1,4 @@
-﻿using DBData.Database;
-using ExternalApiData.GestorData;
+﻿using ExternalApiData.GestorData;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AventasApi.Utils;
@@ -10,21 +9,20 @@ using DBData.Repositories;
 
 namespace DataManager
 {
-    class EmpresasManager
+    public class EmpresasManager
     {
         private static readonly LogicValidation LogicValidation = new LogicValidation();
 
         public async Task ObtenerEmpresas()
         {
-            List<EmpresasCRMApiModel> empresas = new List<EmpresasCRMApiModel>();
             GestorEmpresas gestorEmpresa = new GestorEmpresas();
 
-            empresas = gestorEmpresa.ObtenerEmpresas().Result;
+            var empresas = gestorEmpresa.ObtenerEmpresasDesdeCRMAPI().Result;
             if (LogicValidation.ValidateDataCount(empresas.Count))
             {
-                var empresasList = empresas.Select(acu => acu.CreandoEmpresa()).ToList();
-                EmpresasRepository empresasRepository = new EmpresasRepository();
-                await empresasRepository.SendToDatabase(empresasList);
+                var listaEmpresas = empresas.Select(emp => emp.CreandoEmpresa()).ToList();
+                EmpresaRepository empresaRepository = new EmpresaRepository();
+                await empresaRepository.SendToDatabase(listaEmpresas);
             }
         }
     }

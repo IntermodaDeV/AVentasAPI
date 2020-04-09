@@ -9,12 +9,12 @@ using System.Data.Entity;
 
 namespace DBData.Repositories
 {
-    class BancoRepository
+    public class BancosRepository
     {
+        private static readonly LogicValidation LogicValidation = new LogicValidation();
+
         public async Task SendToDatabase(List<Bancos> listaBancos)
         {
-            var LogicValidation = new LogicValidation();
-
             int updateCount = 0, insertCount = 0, errorCount = 0;
             foreach (var banco in listaBancos)
             {
@@ -22,7 +22,7 @@ namespace DBData.Repositories
                 {
                     using (AVentasEntities context = new AVentasEntities())
                     {
-                        var bancoBD = context.Bancos.FirstOrDefault(x => x.NombreBanco == banco.CODE);
+                        var bancoBD = await context.Bancos.FirstOrDefaultAsync(x => x.NombreBanco == banco.NombreBanco);
                         if (LogicValidation.IsDataValid(bancoBD))
                         {
                             updateCount++;
