@@ -16,7 +16,7 @@ namespace ExternalApiData.GestorData
     public class GestorTallaXGrupoTalla
     {
         private string UrlString = $"{Enviroment.CRMWebServiceURLApi}productos/imhn/tallas";
-        public async Task<List<GrupoTallaApiModel>> ObtenerGruposTalla()
+        public async Task<List<TallaPorGrupoTalla>> Obtener()
         {
             string peticion = string.Format(UrlString);
             var restClient = new RestClient(peticion)
@@ -26,8 +26,8 @@ namespace ExternalApiData.GestorData
             var request = new RestRequest(Method.GET);
             request.AddHeader("Accept", "application/json");
             IRestResponse response = restClient.Execute(request);
-            var lineasDeserializadas = JsonConvert.DeserializeObject<List<GrupoTallaApiModel>>(response.Content);
-            return lineasDeserializadas;
+            var listaDeserializada = JsonConvert.DeserializeObject<List<TallaPorGrupoTalla>>(response.Content);
+            return listaDeserializada;
         }
     }
 }
