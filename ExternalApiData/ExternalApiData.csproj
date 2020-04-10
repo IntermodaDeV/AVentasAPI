@@ -95,6 +95,10 @@
     <Compile Include="GestorData\GestorAcuerdosVenta.cs" />
     <Compile Include="GestorData\GestorAsesores.cs" />
     <Compile Include="GestorData\GestorColecciones.cs" />
+    <Compile Include="GestorData\GestorProductos.cs" />
+    <Compile Include="GestorData\GestorColor.cs" />
+    <Compile Include="GestorData\GestorTipoPaquete.cs" />
+    <Compile Include="GestorData\GestorDistribucionesXTalla.cs" />
     <Compile Include="GestorData\GestorTallaXGrupoTalla.cs" />
     <Compile Include="GestorData\GestorGrupoTalla.cs" />
     <Compile Include="GestorData\GestorLineas.cs" />
