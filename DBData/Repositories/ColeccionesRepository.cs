@@ -9,6 +9,13 @@ namespace DBData.Repositories
 {
     public class ColeccionesRepository
     {
+        public async Task<List<Colecciones>> ObtenerColecciones()
+        {
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                return context.Colecciones.AsNoTracking().ToList();
+            }
+        }
         public async Task GuardarColecciones(List<Colecciones> coleccionesAGuardar)
         {
             using (AVentasEntities context = new AVentasEntities())
@@ -35,6 +42,8 @@ namespace DBData.Repositories
                     }
                     else
                     {
+                        coleccionEnBD = new Colecciones();
+
                         coleccionEnBD.IdColeccion = coleccionAGuardar.IdColeccion;
                         coleccionEnBD.CodigoColeccion = coleccionAGuardar.CodigoColeccion;
                         coleccionEnBD.Nombre = coleccionAGuardar.Nombre;

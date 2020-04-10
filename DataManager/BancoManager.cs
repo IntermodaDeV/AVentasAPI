@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DataManager
 {
-    class BancoManager
+    public class BancoManager
     {
         private static readonly LogicValidation LogicValidation = new LogicValidation();
 

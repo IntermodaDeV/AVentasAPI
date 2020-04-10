@@ -16,7 +16,7 @@ namespace ExternalApiData.GestorData
 {
     public class GestorColecciones
     {
-        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}api/paquetes/imhn/";
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}paquetes/imhn/";
         public async Task<List<ColeccionCRMApiModel>> ObtenerColecciones()
         {
             string peticion = string.Format(UrlString);

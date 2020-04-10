@@ -10,7 +10,7 @@ using DataManager.Extensions;
 
 namespace DataManager
 {
-    class ColeccionesManager
+    public class ColeccionesManager
     {
         public async Task<List<Colecciones>> ObtnerColecciones()
         {
@@ -18,7 +18,7 @@ namespace DataManager
             var colecciones = gestorColecciones.ObtenerColecciones().Result;
             if (colecciones != null && colecciones.Count > 0)
             {
-                return colecciones.Select(col => col.ToColecciones()).ToList();
+                return colecciones.Where(col=> col.PACKAGE_TYPE!= "N/A").Select(col => col.ToColecciones()).ToList();
             }
             return null;
         }
@@ -27,7 +27,7 @@ namespace DataManager
             ColeccionesRepository acuerdosxClienteRepository = new ColeccionesRepository();
             return acuerdosxClienteRepository.ModificarOAgregarColecciones(coleccoinesAGuardar).Result;
         }
-        public  async Task IniciarProceso(List<Colecciones> coleccoinesAGuardar)
+        public  async Task IniciarProceso()
         {
            var colecciones = ObtnerColecciones().Result; ;
             var a = GuardarColecciones(colecciones).Result;
