@@ -11,6 +11,5 @@ namespace ExternalApiData.Models.ApiModels
         public string ITEM_COLOR { get; set; }
         public string IMAGE_PATH { get; set; }
         public string IMAGE_MAIN { get; set; }
-       // public string ENTITY { get; set; }
     }
 }

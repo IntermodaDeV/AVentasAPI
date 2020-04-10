@@ -9,7 +9,6 @@ using ExternalApiData.Models.ApiModels;
 using System.Diagnostics;
 using RestSharp;
 using Newtonsoft.Json;
-//using ExternalApiData Enviroments;
 using ExternalApiData.Enviroments;
 namespace ExternalApiData.GestorData
 {
