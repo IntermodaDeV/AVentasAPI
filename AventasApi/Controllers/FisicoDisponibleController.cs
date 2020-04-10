@@ -1,5 +1,5 @@
 ﻿using AventasApi.Filters;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +8,14 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using AventasApi.Models.ViewModels;
-using IMS.Tokens.Services;
+//using IMS.Tokens.Services;
 using AventasApi.Models.Authentication;
-using AventasApi.Models.ApiModels;
-using AventasApi.GestorData;
+//using AventasApi.Models.ApiModels;
+//using AventasApi.GestorData;
 using System;
+//using AventasApi.Enviroments;
+using ExternalApiData.Models.ApiModels;
+using ExternalApiData.Enviroments;
 //using IMS.Extensions;
 
 namespace AventasApi.Controllers
@@ -23,8 +26,8 @@ namespace AventasApi.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> ActualizarCuentaCorriente(string ProductoId, string CodigoColor ,string CodigoTalla)
         {
-            string UrlString = @"http://190.109.223.244:8084/api/collection/disponibleEspecifico";
-            HttpClient client = new ClienteHttp();
+            string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/disponibleEspecifico";
+            HttpClient client = new HttpClient();
             var Credentials = new Dictionary<string, string> {
                 { "userName", "desarrollo" },
                 { "password", "Intermoda2020" },

@@ -7,6 +7,10 @@ namespace AventasApi.Models.ViewModels
 {
     public class DetalleXPedidoViewModel
     {
+        public DetalleXPedidoViewModel()
+        {
+            //this.Distribucion = new List<DistribucionXTallaViewModel>();
+        }
         public int IdRegistro { get; set; }
         public string PedidoId { get; set; }
         public string CodigoProducto { get; set; }
@@ -18,5 +22,8 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> MontoLinea { get; set; }
         public Nullable<decimal> PrecioUnitario { get; set; }
         public string Talla { get; set; }
+        public TallaViewModel TallaObject { get; set; }
+        //public List<DistribucionXTallaViewModel> Distribucion;
+
     }
 }

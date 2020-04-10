@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using AventasApi.ImageManager;
-using AventasApi.Infrastructure;
-using AventasApi.Models.ApiModels;
+using DBData.Database;
+//using AventasApi.Models.ApiModels;
 using AventasApi.Models.ViewModels;
 
 namespace AventasApi.Services.AsyncJobs
@@ -19,9 +19,9 @@ namespace AventasApi.Services.AsyncJobs
         {
             factory = new TaskFactory();
         }
-        public static async void IngresarPedido(PedidosxCliente pedido, string firma)
+        public static  void IngresarPedido(PedidosxCliente pedido, string firma)
         {
-            factory.StartNew(() =>
+            var pedidoTask = Task.Run(() =>
             {
                 using (AVentasEntities context = new AVentasEntities())
                 {
@@ -43,9 +43,9 @@ namespace AventasApi.Services.AsyncJobs
 
             });
         }
-        public static async void IngresarRecibos(List<RecibosxClienteViewModel> recibos)
+        public static  void IngresarRecibos(List<RecibosxClienteViewModel> recibos)
         {
-            factory.StartNew(() =>
+            var reciboTask = Task.Run(() =>
             {
 
                 var reciboAAgregar = recibos.Select(rec => new RecibosxCliente
@@ -55,7 +55,7 @@ namespace AventasApi.Services.AsyncJobs
                     Fecha = rec.Fecha,
                     IdTipoPago = rec.IdTipoPago,
                     Referencia = rec.Referencia,
-                    FechaCheque = rec.FechaCheque,
+                    FechaCheque = rec.FechaPago,
                     IdBanco = rec.IdBanco,
                     Valor = rec.Valor,
                     IdMoneda = rec.IdMoneda,

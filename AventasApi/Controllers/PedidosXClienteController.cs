@@ -5,21 +5,24 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using AventasApi.Filters;
-using AventasApi.GestorData;
-using AventasApi.Infrastructure;
-using AventasApi.Models.ApiModels;
+//using AventasApi.GestorData;
+using DBData.Database;
+//using AventasApi.Models.ApiModels;
 using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
 //using IMS.Extensions;
-using IMS.Tokens.Services;
+//using IMS.Tokens.Services;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-using Responses;
+//using Responses;
 using RestSharp;
 using System.Data.Entity;
 using AventasApi.Services.AsyncJobs;
 using AventasApi.Models;
 using AventasApi.Services.Authentication;
+using ExternalApiData.Models.ApiModels;
+using ExternalApiData.Enviroments;
+//using AventasApi.Enviroments;
 
 namespace AventasApi.Controllers
 {
@@ -56,7 +59,6 @@ namespace AventasApi.Controllers
         {
             using (AVentasEntities context = new AVentasEntities())
             {
-
                 List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
                 {
                     PedidoId = ped.PedidoId,
@@ -105,11 +107,20 @@ namespace AventasApi.Controllers
                         .Select(gruposXDetPed => new GruposTallaXDetPed
                         {
                             GrupoTalla = gruposXDetPed.Key,
-                            ListaTalla = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == gruposXDetPed.Key).Select(txp => new TallaViewModel
+                            // prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoProducto)
+                            ListaTalla = gruposXDetPed.GroupBy(pedDet=> pedDet.CodigoTalla).Select(pedDet=> pedDet.Key).SelectMany(pedDet=>  context.TallasXGrupo.Where(txp=> txp.CodigoTalla == pedDet &&txp.CodigoGrupoTalla == gruposXDetPed.Key) ).Select(txp => new TallaViewModel
                             {
                                 GrupoTallaId = txp.CodigoGrupoTalla,
                                 Talla = txp.CodigoTalla,
-                                Orden = txp.Orden ?? 0
+                                Orden = txp.Orden ?? 0,
+                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                {
+                                    IdDistribucion = dis.IdDistribucion,
+                                    IdTallaxGrupo = dis.IdTallaxGrupo,
+                                    NombreDistribucion = dis.NombreDistribucion,
+                                    NombreTalla = dis.NombreTalla,
+                                    Cantidad = dis.Cantidad,
+                                }).ToList()
                             }).OrderBy(txp => txp.Orden).ToList(),
                             prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoProducto)
                         .Select(pedDet => new ProductosXDetPed
@@ -120,7 +131,7 @@ namespace AventasApi.Controllers
                             Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
                             CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
                             TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
-                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Select(colXprod =>
+                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod=> colXprod.Sum(det=> det.Cantidad)>0).Select(colXprod =>
                                  new ColoresXProdXDetPed
                                  {
                                      CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
@@ -137,7 +148,21 @@ namespace AventasApi.Controllers
                                          Linea = detPed.Linea,
                                          MontoLinea = detPed.MontoLinea,
                                          PrecioUnitario = detPed.PrecioUnitario,
-                                         Talla = detPed.CodigoTalla
+                                         Talla = detPed.CodigoTalla,
+                                         TallaObject = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == detPed.ProductosxColeccion.CodigoGrupoTalla && txp.CodigoTalla == detPed.CodigoTalla).Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)).Select(txp => new TallaViewModel
+                                         {
+                                             GrupoTallaId = txp.CodigoGrupoTalla,
+                                             Talla = txp.CodigoTalla,
+                                             Orden = txp.Orden ?? 0,
+                                             Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                             {
+                                                 IdDistribucion = dis.IdDistribucion,
+                                                 IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                 NombreDistribucion = dis.NombreDistribucion,
+                                                 NombreTalla = dis.NombreTalla,
+                                                 Cantidad = dis.Cantidad,
+                                             }).ToList()
+                                         }).FirstOrDefault()
                                      }).ToList()
 
                                  }).ToList()
@@ -308,12 +333,12 @@ namespace AventasApi.Controllers
             string PEdidoID = "";
             try
             {
-                var client = new RestClient(@"http://190.109.223.244:8083/api/pedidos/upload");
+                var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
                 client.Timeout = 480 * (1000);
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Accept", "application/json");
                 request.AddJsonBody(pe);
-                IRestResponse<Response<string>> response = client.Execute<Response<string>>(request);
+                IRestResponse response = client.Execute(request);
                 string content = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(response.Content);
                 if (content.StartsWith("Success"))
                 {
@@ -341,7 +366,7 @@ namespace AventasApi.Controllers
                 asesor.CorrelativoPedidos = numeroCorelativo + 1;
                 context.SaveChanges();
             }
-            AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar,Pedido.Firma);
+            AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
 
             return Ok(new { EncabezadoPedido = new { PedidoId = PEdidoID } });
         }

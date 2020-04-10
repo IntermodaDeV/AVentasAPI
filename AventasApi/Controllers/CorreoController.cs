@@ -8,8 +8,8 @@ using System.Net.Http;
 using System.Net.Mail;
 using System.Web.Http;
 using AventasApi.Models.ViewModels;
-using IMS.Tokens.Services;
-using AventasApi.Infrastructure;
+//using IMS.Tokens.Services;
+using DBData.Database;
 using AventasApi.Models.Authentication;
 
 namespace AventasApi.Controllers

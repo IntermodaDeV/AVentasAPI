@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using AventasApi.Infrastructure;
+using DBData.Database;
 using AventasApi.Models.ViewModels;
 
 namespace AventasApi.Controllers

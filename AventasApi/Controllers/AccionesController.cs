@@ -1,7 +1,7 @@
 ﻿using AventasApi.Filters;
-using AventasApi.Infrastructure;
+//using DBData.Database;
 using AventasApi.Models.Authentication;
-using IMS.Tokens.Services;
+//using IMS.Tokens.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
 using AventasApi.Models.ViewModels;
+using DBData.Database;
+
 namespace AventasApi.Controllers
 {
     public class AccionesController : ApiController

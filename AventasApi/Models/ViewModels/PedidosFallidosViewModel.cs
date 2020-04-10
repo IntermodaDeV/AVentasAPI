@@ -1,8 +1,9 @@
-﻿using System;
+﻿using ExternalApiData.Models.ApiModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using AventasApi.Models.ApiModels;
+//using AventasApi.Models.ApiModels;
 
 namespace AventasApi.Models.ViewModels
 {
