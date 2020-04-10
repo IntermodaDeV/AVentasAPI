@@ -5,7 +5,7 @@ using System.Web;
 
 namespace ExternalApiData.Models.ApiModels
 {
-    public class LineaApiModel
+    public class GrupoTallaApiModel
     {
         public string CODIGO { get; set; }
         public string DESCRIPTION { get; set; }
