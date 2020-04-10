@@ -42,12 +42,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AcuerdosManager.cs" />
+    <Compile Include="AsesoresManager.cs" />
+    <Compile Include="AtributosXProductoManager.cs" />
     <Compile Include="BancoManager.cs" />
+    <Compile Include="ColoresXProductoManager.cs" />
+    <Compile Include="CuentasBancariasManager.cs" />
     <Compile Include="EmpresasManager.cs" />
     <Compile Include="Extensions\AcuerdosXCliente.cs" />
+    <Compile Include="Extensions\AsesoresExtension.cs" />
+    <Compile Include="Extensions\AtributosXProductoExtension.cs" />
     <Compile Include="Extensions\BancoExtension.cs" />
+    <Compile Include="Extensions\ColoresXProductoExtension.cs" />
+    <Compile Include="Extensions\CuentasBancariasExtension.cs" />
     <Compile Include="Extensions\EmpresasExtension.cs" />
+    <Compile Include="Extensions\ImagenesXProductoExtension.cs" />
+    <Compile Include="Extensions\TipoPagosExtension.cs" />
+    <Compile Include="ImagenesXProductoManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SizesByProductManager.cs" />
+    <Compile Include="TipoPagosManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DBData\DBData.csproj">
