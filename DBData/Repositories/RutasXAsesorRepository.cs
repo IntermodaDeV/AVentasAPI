@@ -24,7 +24,8 @@ namespace DBData.Repositories
                     {
                         if (logicValidation.IsDataValid(ruta))
                         {
-                            if (logicValidation.ValidateDataCountWithRestriction(ruta.CodigoAsesor.Length, 1))
+                            var code = logicValidation.SeparatorProperty(ruta.CodigoRuta, 2);
+                            if (logicValidation.ValidateDataCountWithRestriction(code.Length, 1))
                             {
                                 insertCount++;
                                 errorCount += await CreandoAtributo(ruta, CodigoAsesor ?? " ");

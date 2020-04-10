@@ -15,7 +15,7 @@ namespace DataManager.Extensions
             RutasxAsesor nuevaRuta = new RutasxAsesor()
             {
                 CodigoRuta = rutaXAsesor.ENTITY.ToLower() + "-" + rutaXAsesor.CODE,
-                CodigoAsesor = rutaXAsesor.CODE,
+                CodigoAsesor = null,
             };
             return nuevaRuta;
         }
