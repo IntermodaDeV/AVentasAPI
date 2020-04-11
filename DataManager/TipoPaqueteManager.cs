@@ -15,12 +15,12 @@ namespace DataManager
         {
             GestorTipoPaquete gestorTipoPaquete = new GestorTipoPaquete();
 
-            var listaTipos = gestorTipoPaquete.ObtenerTiposDesdeCRMAPI().Result;
+            var listaTipos = gestorTipoPaquete.ObtenerTipoPaqueteDesdeCRMAPI().Result;
             if (logicValidation.ValidateDataCount(listaTipos.Count))
             {
-                var tiposPaquete = listaTipos.Select(tipo => tipo.CreandoTipoColeccion()).ToList();
+                //var tiposPaquete = listaTipos.Select(x => x.CreandoTipoColeccion()).ToList();
                 TipoPaqueteRepository tipoRepository = new TipoPaqueteRepository();
-                await tipoRepository.SendToDatabase(tiposPaquete);
+                await tipoRepository.SendToDatabase(listaTipos);
             }
         }
     }

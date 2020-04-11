@@ -301,7 +301,6 @@
     <Compile Include="Repositories\CuentasBancariasRepository.cs" />
     <Compile Include="Repositories\EmpresasRepository.cs" />
     <Compile Include="Repositories\ImagenesXProductoRepository.cs" />
-    <Compile Include="Repositories\RutasRepository.cs" />
     <Compile Include="Repositories\RutasXAsesorRepository.cs" />
     <Compile Include="Repositories\LineasRepository.cs" />
     <Compile Include="Repositories\ProductosXColeccionRepository.cs" />

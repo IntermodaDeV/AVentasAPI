@@ -10,7 +10,7 @@ namespace DataManager.Extensions
 {
     public static class RutasXAsesorExtension
     {
-        public static RutasxAsesor CreandoRuta(this RutasXAsesorApiModel rutaXAsesor)
+        public static RutasxAsesor CreandoRutaXAsesor(this RutasXAsesorApiModel rutaXAsesor)
         {
             RutasxAsesor nuevaRuta = new RutasxAsesor()
             {

@@ -16,7 +16,8 @@ namespace ExternalApiData.GestorData
     public class GestorTipoPaquete
     {
         private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}api/paquetes/imhn";
-        public async Task<List<TiposdeColeccion>> Obtener()
+
+        public async Task<List<TiposdeColeccion>> ObtenerTipoPaqueteDesdeCRMAPI()
         {
             string peticion = string.Format(UrlString);
             var restClient = new RestClient(peticion)
