@@ -58,12 +58,9 @@
     <Compile Include="Extensions\CuentasBancariasExtension.cs" />
     <Compile Include="Extensions\EmpresasExtension.cs" />
     <Compile Include="Extensions\ImagenesXProductoExtension.cs" />
-<<<<<<< HEAD
     <Compile Include="Extensions\RutasExtension.cs" />
     <Compile Include="Extensions\RutasXAsesorExtension.cs" />
-=======
     <Compile Include="Extensions\ProductosxColeccionExtension.cs" />
->>>>>>> acfe0fc37b8f6a72947065d07700b15e0fe13b36
     <Compile Include="Extensions\TipoPagosExtension.cs" />
     <Compile Include="Extensions\TipoPaqueteExtension.cs" />
     <Compile Include="ImagenesXProductoManager.cs" />

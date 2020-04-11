@@ -301,13 +301,10 @@
     <Compile Include="Repositories\CuentasBancariasRepository.cs" />
     <Compile Include="Repositories\EmpresasRepository.cs" />
     <Compile Include="Repositories\ImagenesXProductoRepository.cs" />
-<<<<<<< HEAD
     <Compile Include="Repositories\RutasRepository.cs" />
     <Compile Include="Repositories\RutasXAsesorRepository.cs" />
-=======
     <Compile Include="Repositories\LineasRepository.cs" />
     <Compile Include="Repositories\ProductosXColeccionRepository.cs" />
->>>>>>> acfe0fc37b8f6a72947065d07700b15e0fe13b36
     <Compile Include="Repositories\SizesByProductRepository.cs" />
     <Compile Include="Repositories\TipoPagosRepository.cs" />
     <Compile Include="Repositories\TipoPaqueteRepository.cs" />
