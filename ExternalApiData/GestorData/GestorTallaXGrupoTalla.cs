@@ -6,87 +6,28 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using ExternalApiData.Models.ApiModels;
-using System.Diagnostics;
 using ExternalApiData.Enviroments;
+using ExternalApiData.Models;
+using RestSharp;
+using Newtonsoft.Json;
 
 namespace ExternalApiData.GestorData
 {
     public class GestorTallaXGrupoTalla
     {
-        
-        private static string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/GrupoTalla";
-        private static HttpClient client = new ClienteHttp();
-        public static Task TaskActualizarLineas;
-
-        //private static AVentasEntities context = new AVentasEntities();
-
-
-        static GestorTallaXGrupoTalla()
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}productos/imhn/tallas";
+        public async Task<List<TallaPorGrupoTalla>> Obtener()
         {
-            ReiniciarTaskActualizarLineas();
-
-        }
-        public static async void ReiniciarTaskActualizarLineas()
-        {
-
-
-            TaskActualizarLineas = new Task(async () =>
+            string peticion = string.Format(UrlString);
+            var restClient = new RestClient(peticion)
             {
-
-                List<GrupoTalla> gruposTalla = new List<GrupoTalla>();
-
-                using (AVentasEntities context = new AVentasEntities())
-                {
-                    gruposTalla = context.GrupoTalla.ToList();
-
-                }
-
-                if (gruposTalla != null && gruposTalla.Count > 0)
-                {
-                    var taskGetTallasXGrupoTalla =
-                        gruposTalla.Select(async col =>
-                        {
-                            var Credentials = new Dictionary<string, string> {
-                                { "userName", "desarrollo" },
-                                { "password", "Intermoda2020" },
-                                { "GrupoTalla", col.CodigoGrupoTalla },
-                            };
-                            List<TallaPorGrupoTalla> tallasXGrupoTalla = new List<TallaPorGrupoTalla>();
-                            var content = new FormUrlEncodedContent(Credentials);
-                            HttpResponseMessage response = await client.PostAsync(UrlString, content).ConfigureAwait(false);
-                            if (response.IsSuccessStatusCode)
-                            {
-                                tallasXGrupoTalla = await response.Content.ReadAsAsync<List<TallaPorGrupoTalla>>();
-                                tallasXGrupoTalla.ForEach(txg =>
-                                {
-                                    using (AVentasEntities context = new AVentasEntities())
-                                    {
-                                        context.TallasXGrupo.Add(new TallasXGrupo
-                                        {
-                                            CodigoTalla = txg.codigo,
-                                            CodigoGrupoTalla = col.CodigoGrupoTalla,
-                                            Orden = (int)float.Parse(txg.description)
-                                        });
-                                        context.SaveChanges();
-                                    }
-                                });
-
-
-                            }
-                            else
-                            {
-                                Debug.WriteLine("Error");
-
-                            }
-
-                        });
-                    await Task.WhenAll(taskGetTallasXGrupoTalla);
-                    Debug.WriteLine("Finalizo");
-
-                }
-
-
-            });
+                Timeout = 600 * 1000
+            };
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Accept", "application/json");
+            IRestResponse response = restClient.Execute(request);
+            var listaDeserializada = JsonConvert.DeserializeObject<List<TallaPorGrupoTalla>>(response.Content);
+            return listaDeserializada;
         }
     }
 }

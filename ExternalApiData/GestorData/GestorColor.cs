@@ -7,71 +7,38 @@ using System.Threading.Tasks;
 using System.Web;
 using ExternalApiData.Models.ApiModels;
 using ExternalApiData.Enviroments;
+using ExternalApiData.Models;
+using RestSharp;
+using Newtonsoft.Json;
 
 namespace ExternalApiData.GestorData
 {
     public class GestorColor
     {
         private static string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/Color";
-        private static HttpClient client = new ClienteHttp();
-        public static Task TaskActualizarLineas;
-
-        //private static AVentasEntities context = new AVentasEntities();
-        static Dictionary<string, string> Credentials = new Dictionary<string, string> {
-            { "userName", "desarrollo" },
-            { "password", "Intermoda2020" },
-
-        };
-
-
-        static GestorColor()
+        public async Task<List<ColorApiModel>> Obtener()
         {
-            ReiniciarTaskActualizarLineas();
-
-        }
-        public static async void ReiniciarTaskActualizarLineas()
-        {
-            
-            TaskActualizarLineas = new Task(async () =>
+            string peticion = string.Format(UrlString);
+            var restClient = new RestClient(peticion)
             {
-                var content = new FormUrlEncodedContent(Credentials);
-                List<ColorApiModel> lineas = new List<ColorApiModel>();
-
-                HttpResponseMessage response = null;
-                response = await client.PostAsync(UrlString, content).ConfigureAwait(false);
-
-                if (response != null && response.IsSuccessStatusCode)
-                {
-                    lineas = await response.Content.ReadAsAsync<List<ColorApiModel>>();
-
-                    if (lineas != null)
-                    {
-                        lineas.ForEach(lin =>
-                        {
-
-                            using (AVentasEntities context = new AVentasEntities())
-                            {
-
-                                context.Colores.Add(new Colores
-                                {
-                                    CodigoColor=lin.codigo,
-                                    Rgb= lin.rgb,
-                                    Color = lin.nombre
-                                    
-                                });
-                                context.SaveChanges();
-                            }
-
-                        });
-                    }
-
-                }
-                else
-                {
-
-                }
-
-            });
+                Timeout = 600 * 1000
+            };
+            var request = new RestRequest(Method.POST);
+            Credentials credentials = new Credentials
+            {
+                userName = "desarrollo",
+                password = "Intermoda2020",
+            };
+            request.AddJsonBody(credentials);
+            request.AddHeader("Accept", "application/json");
+            IRestResponse response = restClient.Execute(request);
+            var listaDeserializada = JsonConvert.DeserializeObject<List<ColorApiModel>>(response.Content);
+            return listaDeserializada;
         }
+    }
+    public class Credentials
+    {
+        public string userName { get; set; }
+        public string password { get; set; }
     }
 }

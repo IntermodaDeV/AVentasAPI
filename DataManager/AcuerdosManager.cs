@@ -10,7 +10,7 @@ using DataManager.Extensions;
 using DBData.Repositories;
 namespace DataManager
 {
-    class AcuerdosManager
+   public class AcuerdosManager
     {
         public async Task<List<AcuerdosxCliente>> ObtnerAcuerdos()
         {

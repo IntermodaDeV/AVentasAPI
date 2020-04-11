@@ -6,72 +6,28 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using ExternalApiData.Models.ApiModels;
-using System.Diagnostics;
-using System.Net.Http.Headers;
 using ExternalApiData.Enviroments;
+using ExternalApiData.Models;
+using RestSharp;
+using Newtonsoft.Json;
 
 namespace ExternalApiData.GestorData
 {
     public class GestorGrupoTalla
     {
-        private static string UrlString = $"{Enviroment.KREAWebServiceURLApi}collection/GrupoTalla";
-        private static HttpClient client = new ClienteHttp();
-        public static Task TaskActualizarLineas;
-
-        //private static AVentasEntities context = new AVentasEntities();
-        static Dictionary<string, string> Credentials = new Dictionary<string, string> {
-            { "userName", "desarrollo" },
-            { "password", "Intermoda2020" },
-
-        };
-
-
-        static GestorGrupoTalla()
+        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}productos/GruposTallas";
+        public async Task<List<GrupoTallaApiModel>> ObtenerGruposTalla()
         {
-            ReiniciarTaskActualizarLineas();
-
-        }
-        public static async void ReiniciarTaskActualizarLineas()
-        {
-            
-
-            TaskActualizarLineas = new Task(async () =>
-             {
-                 var content = new FormUrlEncodedContent(Credentials);
-                 List<LineaApiModel> lineas = new List<LineaApiModel>();
-
-                 HttpResponseMessage response = null;
-                 response = await client.PostAsync(UrlString, content).ConfigureAwait(false);
-
-                 if (response != null && response.IsSuccessStatusCode)
-                 {
-                     lineas = await response.Content.ReadAsAsync<List<LineaApiModel>>();
-
-                     if (lineas != null)
-                     {
-                         lineas.ForEach(lin =>
-                         {
-
-                             using (AVentasEntities context = new AVentasEntities())
-                             {
-                                 context.GrupoTalla.Add(new GrupoTalla
-                                 {
-                                     CodigoGrupoTalla = lin.codigo,
-                                     Descripcion = lin.description
-                                 });
-                                 context.SaveChanges();
-                             }
-
-                         });
-                     }
-
-                 }
-                 else
-                 {
-
-                 }
-
-             });
+            string peticion = string.Format(UrlString);
+            var restClient = new RestClient(peticion)
+            {
+                Timeout = 600 * 1000
+            };
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Accept", "application/json");
+            IRestResponse response = restClient.Execute(request);
+            var lineasDeserializadas = JsonConvert.DeserializeObject<List<GrupoTallaApiModel>>(response.Content);
+            return lineasDeserializadas;
         }
     }
 }

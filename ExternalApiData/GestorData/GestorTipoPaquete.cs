@@ -1,32 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using DBData.Database;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
-using ExternalApiData.Enviroments;
+using System.Web;
 using ExternalApiData.Models.ApiModels;
-using Newtonsoft.Json;
+using ExternalApiData.Enviroments;
+using ExternalApiData.Models;
 using RestSharp;
+using Newtonsoft.Json;
 
 namespace ExternalApiData.GestorData
 {
     public class GestorTipoPaquete
     {
-        private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}paquetes/imhn";
-
-        public async Task<List<ColeccionesCRMApiViewModel>> ObtenerTiposDesdeCRMAPI()
+        private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}api/paquetes/imhn";
+        public async Task<List<TiposdeColeccion>> Obtener()
         {
-            var colecciones = new List<ColeccionesCRMApiViewModel>();
-            await Task.Run(() =>
+            string peticion = string.Format(UrlString);
+            var restClient = new RestClient(peticion)
             {
-                var restClient = new RestClient(UrlString);
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("Accept", "application/json");
-                IRestResponse response = restClient.Execute(request);
-
-                if (response.IsSuccessful)
-                {
-                    colecciones = JsonConvert.DeserializeObject<List<ColeccionesCRMApiViewModel>>(response.Content);
-                }
-            });
-            return colecciones;
+                Timeout = 600 * 1000
+            };
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Accept", "application/json");
+            IRestResponse response = restClient.Execute(request);
+            var listaDeserializada = JsonConvert.DeserializeObject<List<TiposdeColeccion>>(response.Content);
+            return listaDeserializada;
         }
     }
 }

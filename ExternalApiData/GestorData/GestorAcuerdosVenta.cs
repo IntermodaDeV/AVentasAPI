@@ -32,8 +32,6 @@ namespace ExternalApiData.GestorData
             IRestResponse response = restClient.Execute(request);
             //List<AcuerdoCRMApiModel> acuerdos = new List<AcuerdoCRMApiModel>();
             var acuerdosDeserializados = JsonConvert.DeserializeObject<List<AcuerdoCRMApiModel>>(response.Content);
-            if (acuerdosDeserializados != null && acuerdosDeserializados.Count > 0)
-                return acuerdosDeserializados;
             return acuerdosDeserializados;
         }
         public async Task<List<AcuerdoCRMApiModel>> ObtenerAcuerdosXCliente(string usuario, string clienteID, string empresaId)
@@ -181,6 +179,6 @@ namespace ExternalApiData.GestorData
 
         //    return acuerdosAGuardar;
         //}
-       
+
     }
 }

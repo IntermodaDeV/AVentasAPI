@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
 using AventasApi.Services.AsyncJobs;
+using DataManager;
 
 namespace AventasApi
 {
@@ -15,24 +16,34 @@ namespace AventasApi
     {
         protected void Application_Start()
         {
-/*
 
-            GestorAsesores gestorAsesores = new GestorAsesores();
-            GestorMaestroRutas gestorRutas = new GestorMaestroRutas();
-            GestorClientes gestorClientes = new GestorClientes();
-            GestorRutasXAsesor gestorRutasXAsesor = new GestorRutasXAsesor();
-            GestorImagenesXProducto gestorImagenesXProducto = new GestorImagenesXProducto();
-            GestorAcuerdosVenta gestorAcuerdosVenta = new GestorAcuerdosVenta();
-            GestorColecciones2 gestorColecciones = new GestorColecciones2();
-            GestorEmpresas gestorEmpresas = new GestorEmpresas();
-            GestorBancos gestorBancos = new GestorBancos();
-            GestorCuentasBancarias gestorCuentasBancarias = new GestorCuentasBancarias();
-            GestorTipoPagos gestorTipoPagos = new GestorTipoPagos();
-            GestorAtributosXProductos gestorAtributosXProductos = new GestorAtributosXProductos();
-            GestorSizesByProduct gestorSizesByProduct = new GestorSizesByProduct();
-            GestorColoresXProducto gestorColoresXProducto = new GestorColoresXProducto();
+            ColeccionesManager manager = new ColeccionesManager();
+            ProductosXColeccionManager productosManager = new ProductosXColeccionManager();
 
-    */
+            //manager.IniciarProceso().Wait();
+            //productosManager.IniciarProceso().Wait();
+
+
+
+
+            /*
+
+                        GestorAsesores gestorAsesores = new GestorAsesores();
+                        GestorMaestroRutas gestorRutas = new GestorMaestroRutas();
+                        GestorClientes gestorClientes = new GestorClientes();
+                        GestorRutasXAsesor gestorRutasXAsesor = new GestorRutasXAsesor();
+                        GestorImagenesXProducto gestorImagenesXProducto = new GestorImagenesXProducto();
+                        GestorAcuerdosVenta gestorAcuerdosVenta = new GestorAcuerdosVenta();
+                        GestorColecciones2 gestorColecciones = new GestorColecciones2();
+                        GestorEmpresas gestorEmpresas = new GestorEmpresas();
+                        GestorBancos gestorBancos = new GestorBancos();
+                        GestorCuentasBancarias gestorCuentasBancarias = new GestorCuentasBancarias();
+                        GestorTipoPagos gestorTipoPagos = new GestorTipoPagos();
+                        GestorAtributosXProductos gestorAtributosXProductos = new GestorAtributosXProductos();
+                        GestorSizesByProduct gestorSizesByProduct = new GestorSizesByProduct();
+                        GestorColoresXProducto gestorColoresXProducto = new GestorColoresXProducto();
+
+                */
             //var sizesByProductList = gestorSizesByProduct.ObtenerTallasXProducto().Result;
             //gestorSizesByProduct.GuardarTallasXPRoducto(sizesByProductList).Wait();
             //var listaAsesores = ga.ObtenerAsesores().Result;
@@ -78,26 +89,26 @@ namespace AventasApi
             //GestorAsesores.ActualizarAsesores();
             //GestorImagenesXProducto.ActualizarImagenes();
             //GestorImagenesXProducto.ObtenerImagenesXProducto();
-/*
-            if (false && GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Running)
-            {
-                try
-                {
-                    if (GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Created)
-                    {
-                        GestorSubFacturasXCliente.TaskActualizarLineas.Start();
-                    }
-                    GestorSubFacturasXCliente.TaskActualizarLineas.Start();
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                    throw;
-                }
+            /*
+                        if (false && GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Running)
+                        {
+                            try
+                            {
+                                if (GestorSubFacturasXCliente.TaskActualizarLineas.Status != TaskStatus.Created)
+                                {
+                                    GestorSubFacturasXCliente.TaskActualizarLineas.Start();
+                                }
+                                GestorSubFacturasXCliente.TaskActualizarLineas.Start();
+                            }
+                            catch (Exception e)
+                            {
+                                Debug.WriteLine(e);
+                                throw;
+                            }
 
-            }
+                        }
 
-    */
+                */
 
             //if (false && GestorColecciones.TaskActualizarColecciones.Status != TaskStatus.Running)
             //{

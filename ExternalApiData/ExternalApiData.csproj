@@ -77,6 +77,7 @@
     <Compile Include="ApiModels\GestorPrecioXProductoApiModel.cs" />
     <Compile Include="ApiModels\ImageneXProductoXColorApiModel.cs" />
     <Compile Include="ApiModels\ImagenXProductoApiModel.cs" />
+    <Compile Include="ApiModels\GrupoTallaApiModel.cs" />
     <Compile Include="ApiModels\LineaApiModel.cs" />
     <Compile Include="ApiModels\PedidoApiModel.cs" />
     <Compile Include="ApiModels\PedidoCRMApiModel.cs" />
@@ -92,6 +93,14 @@
     <Compile Include="Enviroments\Enviroment.cs" />
     <Compile Include="GestorData\GestorAcuerdosVenta.cs" />
     <Compile Include="GestorData\GestorAsesores.cs" />
+    <Compile Include="GestorData\GestorColecciones.cs" />
+    <Compile Include="GestorData\GestorProductos.cs" />
+    <Compile Include="GestorData\GestorColor.cs" />
+    <Compile Include="GestorData\GestorTipoPaquete.cs" />
+    <Compile Include="GestorData\GestorDistribucionesXTalla.cs" />
+    <Compile Include="GestorData\GestorTallaXGrupoTalla.cs" />
+    <Compile Include="GestorData\GestorGrupoTalla.cs" />
+    <Compile Include="GestorData\GestorLineas.cs" />
     <Compile Include="GestorData\GestorAtributosXProductos.cs" />
     <Compile Include="GestorData\GestorBancos.cs" />
     <Compile Include="GestorData\GestorColoresXProducto.cs" />
