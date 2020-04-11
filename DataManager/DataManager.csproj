@@ -56,11 +56,17 @@
     <Compile Include="Extensions\CuentasBancariasExtension.cs" />
     <Compile Include="Extensions\EmpresasExtension.cs" />
     <Compile Include="Extensions\ImagenesXProductoExtension.cs" />
+    <Compile Include="Extensions\RutasExtension.cs" />
+    <Compile Include="Extensions\RutasXAsesorExtension.cs" />
     <Compile Include="Extensions\TipoPagosExtension.cs" />
+    <Compile Include="Extensions\TipoPaqueteExtension.cs" />
     <Compile Include="ImagenesXProductoManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RutasManager.cs" />
+    <Compile Include="RutasXAsesorManager.cs" />
     <Compile Include="SizesByProductManager.cs" />
     <Compile Include="TipoPagosManager.cs" />
+    <Compile Include="TipoPaqueteManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DBData\DBData.csproj">

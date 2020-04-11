@@ -300,8 +300,11 @@
     <Compile Include="Repositories\CuentasBancariasRepository.cs" />
     <Compile Include="Repositories\EmpresasRepository.cs" />
     <Compile Include="Repositories\ImagenesXProductoRepository.cs" />
+    <Compile Include="Repositories\RutasRepository.cs" />
+    <Compile Include="Repositories\RutasXAsesorRepository.cs" />
     <Compile Include="Repositories\SizesByProductRepository.cs" />
     <Compile Include="Repositories\TipoPagosRepository.cs" />
+    <Compile Include="Repositories\TipoPaqueteRepository.cs" />
     <Compile Include="Utils\logicValidation.cs" />
   </ItemGroup>
   <ItemGroup>
