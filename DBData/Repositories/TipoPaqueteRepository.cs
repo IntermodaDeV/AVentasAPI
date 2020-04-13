@@ -1,5 +1,6 @@
 ﻿using DBData.Database;
 using DBData.Utils;
+using ExternalApiData.ApiModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -11,7 +12,7 @@ namespace DBData.Repositories
     {
         private static readonly LogicValidation logicValidation = new LogicValidation();
 
-        public async Task SendToDatabase(List<TiposdeColeccion> tipos)
+        public async Task SendToDatabase(List<TiposDeColeccionDTO> tipos)
         {
             int updateCount = 0, insertCount = 0, errorCount = 0;
             foreach (var tipo in tipos)
@@ -34,12 +35,18 @@ namespace DBData.Repositories
             logicValidation.EmailNotification("GestorTipoPaquete", counter);
         }
 
-        public async Task<int> CreandoTipoPaquete(TiposdeColeccion tipo)
+        public async Task<int> CreandoTipoPaquete(TiposDeColeccionDTO tipo)
         {
             int contador = 0;
             using (AVentasEntities context = new AVentasEntities())
             {
-                context.TiposdeColeccion.Add(tipo);
+                TiposdeColeccion nuevoTipo = new TiposdeColeccion()
+                {
+                    Descripcion = tipo.Descripcion,
+                    ColeccionTipo = tipo.ColeccionTipo,
+                    Icono = tipo.Icono,
+                };
+                context.TiposdeColeccion.Add(nuevoTipo);
 
                 try
                 {

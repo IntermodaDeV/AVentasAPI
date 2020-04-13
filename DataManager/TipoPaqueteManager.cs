@@ -1,8 +1,6 @@
 ﻿using AventasApi.Utils;
-using DataManager.Extensions;
 using DBData.Repositories;
 using ExternalApiData.GestorData;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataManager
@@ -18,7 +16,6 @@ namespace DataManager
             var listaTipos = gestorTipoPaquete.ObtenerTipoPaqueteDesdeCRMAPI().Result;
             if (logicValidation.ValidateDataCount(listaTipos.Count))
             {
-                //var tiposPaquete = listaTipos.Select(x => x.CreandoTipoColeccion()).ToList();
                 TipoPaqueteRepository tipoRepository = new TipoPaqueteRepository();
                 await tipoRepository.SendToDatabase(listaTipos);
             }

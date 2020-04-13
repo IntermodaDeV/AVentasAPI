@@ -1,20 +1,15 @@
 ﻿using ExternalApiData.Enviroments;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using RestSharp;
 using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
-using DBData.Database;
-using AventasApi.Utils;
 
 namespace ExternalApiData.GestorData
 {
     public class GestorTipoPagos
     {
         private static readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}tipopagos/imhn";
-        private static LogicValidation LogicValidation = new LogicValidation();
 
         public async Task<List<TiposPagoCRMApiModel>> ObtenerTiposDesdeCRMAPI()
         {

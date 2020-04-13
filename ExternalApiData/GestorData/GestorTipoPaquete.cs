@@ -1,15 +1,9 @@
-﻿using DBData.Database;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
-using ExternalApiData.Models.ApiModels;
 using ExternalApiData.Enviroments;
-using ExternalApiData.Models;
 using RestSharp;
 using Newtonsoft.Json;
+using ExternalApiData.ApiModels;
 
 namespace ExternalApiData.GestorData
 {
@@ -17,7 +11,7 @@ namespace ExternalApiData.GestorData
     {
         private static string UrlString = $"{Enviroment.CRMWebServiceURLApi}api/paquetes/imhn";
 
-        public async Task<List<TiposdeColeccion>> ObtenerTipoPaqueteDesdeCRMAPI()
+        public async Task<List<TiposDeColeccionDTO>> ObtenerTipoPaqueteDesdeCRMAPI()
         {
             string peticion = string.Format(UrlString);
             var restClient = new RestClient(peticion)
@@ -27,7 +21,7 @@ namespace ExternalApiData.GestorData
             var request = new RestRequest(Method.GET);
             request.AddHeader("Accept", "application/json");
             IRestResponse response = restClient.Execute(request);
-            var listaDeserializada = JsonConvert.DeserializeObject<List<TiposdeColeccion>>(response.Content);
+            var listaDeserializada = JsonConvert.DeserializeObject<List<TiposDeColeccionDTO>>(response.Content);
             return listaDeserializada;
         }
     }

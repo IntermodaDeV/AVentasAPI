@@ -1,13 +1,7 @@
-﻿using DBData.Database;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
 using ExternalApiData.Models.ApiModels;
 using ExternalApiData.Enviroments;
-using ExternalApiData.Models;
 using RestSharp;
 using Newtonsoft.Json;
 
@@ -15,7 +9,7 @@ namespace ExternalApiData.GestorData
 {
     public class GestorTallaXGrupoTalla
     {
-        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}productos/imhn/tallas";
+        private readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}productos/imhn/tallas";
         public async Task<List<TallaPorGrupoTalla>> Obtener()
         {
             string peticion = string.Format(UrlString);

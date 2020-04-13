@@ -72,6 +72,7 @@
     <Compile Include="ApiModels\CuentasBancariasCRMApiModel.cs" />
     <Compile Include="ApiModels\DistribucionXTallaApiModel.cs" />
     <Compile Include="ApiModels\EmpresasCRMApiModel.cs" />
+    <Compile Include="ApiModels\EspecificacionPagosCRMApiModel.cs" />
     <Compile Include="ApiModels\FacturasXClienteApiModel.cs" />
     <Compile Include="ApiModels\FisicoDisponibleXProductoApiModel.cs" />
     <Compile Include="ApiModels\GestorPrecioXProductoApiModel.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="GestorData\GestorAcuerdosVenta.cs" />
     <Compile Include="GestorData\GestorAsesores.cs" />
     <Compile Include="GestorData\GestorColecciones.cs" />
+    <Compile Include="GestorData\GestorEspecificacionPagos.cs" />
     <Compile Include="GestorData\GestorProductos.cs" />
     <Compile Include="GestorData\GestorColor.cs" />
     <Compile Include="GestorData\GestorDistribucionesXTalla.cs" />
@@ -116,12 +118,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DBData\DBData.csproj">
-      <Project>{C91118CB-AE36-4D15-9C12-47C5240B2612}</Project>
-      <Name>DBData</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
