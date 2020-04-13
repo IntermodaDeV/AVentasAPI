@@ -1,13 +1,19 @@
-﻿
+﻿using ExternalApiData.Enviroments;
+using ExternalApiData.Models.ApiModels;
+using Newtonsoft.Json;
+using RestSharp;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace ExternalApiData.GestorData
 {
     public class GestorMaestroRutas
     {
-        private string UrlString = $"{Enviroment.CRMWebServiceURLApi}asesor/{{0}}/{{1}}/rutas";
+        private readonly string UrlString = $"{Enviroment.CRMWebServiceURLApi}asesor/{{0}}/{{1}}/rutas";
 
         public async Task<List<RutasXAsesorApiModel>> ObtenerAtributosDesdeCRMAPI(string CodigoProducto)
         {
-            var atributos = new List<RutasXAsesorApiModel>();
+            var rutas = new List<RutasXAsesorApiModel>();
             await Task.Run(() =>
             {
                 string peticion = string.Format(UrlString, CodigoProducto);
@@ -18,10 +24,10 @@ namespace ExternalApiData.GestorData
 
                 if (response.IsSuccessful)
                 {
-                    atributos = JsonConvert.DeserializeObject<List<RutasXAsesorApiModel>>(response.Content);
+                    rutas = JsonConvert.DeserializeObject<List<RutasXAsesorApiModel>>(response.Content);
                 }
             });
-            return atributos;
+            return rutas;
         }
 
         //public async Task<List<Rutas>> ObtenerRutas()

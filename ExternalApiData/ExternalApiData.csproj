@@ -90,6 +90,7 @@
     <Compile Include="ApiModels\TallaPorGrupoTalla.cs" />
     <Compile Include="ApiModels\TallasXProductoApiModel.cs" />
     <Compile Include="ApiModels\TallaXProductoCRMApiModel.cs" />
+    <Compile Include="ApiModels\TiposDeColeccionDTO.cs" />
     <Compile Include="ApiModels\TiposPagoCRMApiModel.cs" />
     <Compile Include="Enviroments\Enviroment.cs" />
     <Compile Include="GestorData\GestorAcuerdosVenta.cs" />
