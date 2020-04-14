@@ -24,7 +24,6 @@ namespace DBData.Repositories
                     }
                     else
                     {
-                        coleccionEnBD = new ProductosxColeccion();
 
                         coleccionEnBD.IdProducto = productoAGuardar.IdProducto;
                         coleccionEnBD.CodigoProducto = productoAGuardar.CodigoProducto;

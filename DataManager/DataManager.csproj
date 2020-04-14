@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,6 +46,12 @@
   <ItemGroup>
     <Compile Include="AcuerdosManager.cs" />
     <Compile Include="ColeccionesManager.cs" />
+    <Compile Include="Extensions\TallasXGrupoExtension.cs" />
+    <Compile Include="Extensions\GrupoTallasExtension.cs" />
+    <Compile Include="Extensions\LineasExtension.cs" />
+    <Compile Include="TallasxGrupoManager.cs" />
+    <Compile Include="GrupoTallasManager.cs" />
+    <Compile Include="LineaManager.cs" />
     <Compile Include="Extensions\Colecciones.cs" />
     <Compile Include="AsesoresManager.cs" />
     <Compile Include="AtributosXProductoManager.cs" />
@@ -75,6 +84,9 @@
       <Project>{E175801B-FF18-4726-B747-CD994B9EBCC7}</Project>
       <Name>ExternalApiData</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

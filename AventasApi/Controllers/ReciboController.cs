@@ -64,7 +64,9 @@ namespace AventasApi.Controllers
                     EmpresaId = tp.EmpresaId,
 
                 }).FirstOrDefault(),
-                DetalleRecibo = rec.RecibosDetalle.Select(recDet => new RecibosDetalleViewModel
+                DetalleRecibo = rec.RecibosDetalle.Select(recDet =>
+                recDet.SubFacturasxCliente != null ?
+                new RecibosDetalleViewModel
                 {
                     IdReciboDetalle = recDet.IdReciboDetalle,
                     Factura = rec.FacturasxCliente.Factura,
@@ -75,7 +77,19 @@ namespace AventasApi.Controllers
                     ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
                     Descuento = recDet.Descuento,
                     DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0
-                }).ToList()
+                } : new RecibosDetalleViewModel
+                {
+                    IdReciboDetalle = recDet.IdReciboDetalle,
+                    Factura = "SALDO_FAVOR",
+                    Tipo = "Pago",
+                    ReciboId = recDet.ReciboId,
+                    IdSubFactura = null,
+                    Valor = recDet.Valor,
+                    ValorSinDescuento = recDet.Valor,
+                    Descuento = 0,
+                    DiasVencimiento = 0
+                }
+                ).ToList()
             }).ToList();
             var anticiposXAsesor = context.AnticiposxCliente.Where(recCli => recCli.CodigoAsesor == user.UserAccount).Select(ant => new RecibosxClienteViewModel
             {
@@ -325,7 +339,7 @@ namespace AventasApi.Controllers
                         }
                         else
                         {
-                            detalleReciboXCliente.Valor = Decimal.Parse((valorCuota + aplicadoDouble).ToString());
+                            detalleReciboXCliente.Valor = Decimal.Parse((valorCuota).ToString());
 
                             recibo.APLICADO = detalleReciboXCliente.Valor.ToString();
                             valor -= valorCuota;
@@ -361,7 +375,7 @@ namespace AventasApi.Controllers
                         pagoAplicado.Aplicado += montoAplicado;
                         pagoAplicado.Parcial += valorCuotaOriginal;
 
-                        respuestaPagoRecibo.CodigoUltimoRecibo = $"{inicialesAsesor}-1{numeroCorrelativoRecibo.ToString("D5")}";
+                        respuestaPagoRecibo.CodigoUltimoRecibo = recibo.RECIBO;
                         try
                         {
                             pagoAplicado.Parcial2 += Double.Parse(recibo.DESCUENTO);
@@ -381,6 +395,44 @@ namespace AventasApi.Controllers
                     recXPag.TOTAL_FACTURAS = totalFacturas.ToString();
                 });
                 recibos.AddRange(recibosXPago);
+            }
+            if (reciboPost.SaldoFavor > 0)
+            {
+                RespuestaFactura pagoAplicado = new RespuestaFactura
+                {
+                    IdFactura = "SALDO_FAVOR",
+                    Fecha = DateTime.Today,
+                    Dias = 0,
+                    TipoDocumento = "Pago",
+                    Aplicado = reciboPost.SaldoFavor,
+                    Parcial = reciboPost.SaldoFavor,
+                };
+                respuestaPagoRecibo.Facturas.Add(pagoAplicado);
+                respuestaPagoRecibo.Total += reciboPost.SaldoFavor;
+                var primerRecibo = recibosxCliente.FirstOrDefault();
+                primerRecibo.Valor += decimal.Parse(reciboPost.SaldoFavor.ToString());
+                primerRecibo.DetalleRecibo.Add(new RecibosDetalleViewModel
+                {
+                    Valor = decimal.Parse(reciboPost.SaldoFavor.ToString()),
+                    ValorSinDescuento = decimal.Parse(reciboPost.SaldoFavor.ToString())
+                });
+
+                //recibosxCliente.Add(new RecibosxClienteViewModel
+                //{
+                //    NumeroRecibo = recibosxCliente.FirstOrDefault().NumeroRecibo,
+                //    CodigoCliente = recibosxCliente.FirstOrDefault().CodigoCliente,
+                //    Fecha = DateTime.Now,
+                //    IdTipoPago = recibosxCliente.FirstOrDefault().IdTipoPago,
+                //    Referencia = recibosxCliente.FirstOrDefault().Referencia,
+                //    FechaPago = reciboPost.FechaPago,
+                //    IdBanco = recibosxCliente.FirstOrDefault().IdBanco,
+                //    Valor =,
+                //    IdMoneda = recibosxCliente.FirstOrDefault().IdMoneda,
+                //    Sincronizado = false,
+                //    CodigoAsesor = asesor.CodigoAsesor,
+                //    IdFactura = null,
+                //    Descuento = 0
+                //});
             }
             //return Ok(recibos);
             try
