@@ -29,7 +29,7 @@ namespace DBData.Repositories
                 //}
                 foreach (var grupoTallaAGuardar in gruposTallaAGuardar)
                 {
-                    var lineaEnBD = gruposTallasEnBD.FirstOrDefault(dis=> dis.);
+                    var lineaEnBD = gruposTallasEnBD.FirstOrDefault();
                     if (lineaEnBD == null)
                     {
                         context.DistribucionxTalla.Add(grupoTallaAGuardar);
