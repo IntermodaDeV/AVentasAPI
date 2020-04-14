@@ -2,10 +2,7 @@
 using DataManager.Extensions;
 using DBData.Repositories;
 using ExternalApiData.GestorData;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DataManager

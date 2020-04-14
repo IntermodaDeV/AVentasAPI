@@ -52,6 +52,7 @@
     <Compile Include="TallasxGrupoManager.cs" />
     <Compile Include="GrupoTallasManager.cs" />
     <Compile Include="LineaManager.cs" />
+    <Compile Include="EspecificacionPagosManager.cs" />
     <Compile Include="Extensions\Colecciones.cs" />
     <Compile Include="AsesoresManager.cs" />
     <Compile Include="AtributosXProductoManager.cs" />
@@ -66,14 +67,19 @@
     <Compile Include="Extensions\ColoresXProductoExtension.cs" />
     <Compile Include="Extensions\CuentasBancariasExtension.cs" />
     <Compile Include="Extensions\EmpresasExtension.cs" />
+    <Compile Include="Extensions\EspecificacionPagosExtension.cs" />
     <Compile Include="Extensions\ImagenesXProductoExtension.cs" />
+    <Compile Include="Extensions\RutasXAsesorExtension.cs" />
     <Compile Include="Extensions\ProductosxColeccionExtension.cs" />
     <Compile Include="Extensions\TipoPagosExtension.cs" />
+    <Compile Include="Extensions\TipoPaqueteExtension.cs" />
     <Compile Include="ImagenesXProductoManager.cs" />
     <Compile Include="ProductosXColeccionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RutasXAsesorManager.cs" />
     <Compile Include="SizesByProductManager.cs" />
     <Compile Include="TipoPagosManager.cs" />
+    <Compile Include="TipoPaqueteManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DBData\DBData.csproj">

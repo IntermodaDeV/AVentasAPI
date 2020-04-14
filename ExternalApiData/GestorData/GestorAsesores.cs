@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using ExternalApiData.Enviroments;
-using ExternalApiData.Models;
 using ExternalApiData.Models.ApiModels;
 using RestSharp;
 using Newtonsoft.Json;
-using AventasApi.Utils;
-using DBData.Database;
 
 namespace ExternalApiData.GestorData
 {

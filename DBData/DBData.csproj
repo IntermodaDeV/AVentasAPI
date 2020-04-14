@@ -307,10 +307,14 @@
     <Compile Include="Repositories\TallasxGrupoRepository .cs" />
     <Compile Include="Repositories\ImagenesXProductoRepository.cs" />
     <Compile Include="Repositories\GrupoTallasRepository.cs" />
+    <Compile Include="Repositories\EspecificacionPagosRepository.cs" />
+    <Compile Include="Repositories\ImagenesXProductoRepository.cs" />
+    <Compile Include="Repositories\RutasXAsesorRepository.cs" />
     <Compile Include="Repositories\LineasRepository.cs" />
     <Compile Include="Repositories\ProductosXColeccionRepository.cs" />
     <Compile Include="Repositories\SizesByProductRepository.cs" />
     <Compile Include="Repositories\TipoPagosRepository.cs" />
+    <Compile Include="Repositories\TipoPaqueteRepository.cs" />
     <Compile Include="Utils\logicValidation.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -338,6 +342,12 @@
       <DependentUpon>AVentas.edmx</DependentUpon>
       <LastGenOutput>AVentas.cs</LastGenOutput>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExternalApiData\ExternalApiData.csproj">
+      <Project>{e175801b-ff18-4726-b747-cd994b9ebcc7}</Project>
+      <Name>ExternalApiData</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
