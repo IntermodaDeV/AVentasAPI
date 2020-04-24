@@ -271,7 +271,7 @@ namespace AventasApi.Controllers
                         {
                             valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
                         }
-                        var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pago.CodigoTipoPago && rec.REFERENCIA == pago.Referencia);
+                        var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pago.CodigoTipoPago && rec.REFERENCIA == pago.Referencia && rec.FACTURA ==subfactura.Factura);
                         RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago && recXCli.Referencia == pago.Referencia);
                         if (recibo == null)
                         {
@@ -299,7 +299,6 @@ namespace AventasApi.Controllers
                                 DESCUENTO = "0",
                                 REF_TRANSOPEN = pago.ReferenciaTransaccionAbierta,
                             };
-                            numeroCorrelativoRecibo++;
                             recibosXPago.Add(recibo);
                         }
                         if (reciboXCliente == null)
@@ -454,6 +453,7 @@ namespace AventasApi.Controllers
                     using (AVentasEntities context = new AVentasEntities())
                     {
                         asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                        numeroCorrelativoRecibo++;
                         asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
                         context.SaveChanges();
                     }
