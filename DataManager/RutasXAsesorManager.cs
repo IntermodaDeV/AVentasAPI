@@ -2,10 +2,7 @@
 using DataManager.Extensions;
 using DBData.Repositories;
 using ExternalApiData.GestorData;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DataManager
@@ -21,7 +18,7 @@ namespace DataManager
             var rutasAsesores = gestorRutas.ObtenerRutasDesdeCRMAPI(EmpresaId ?? " ", Diario ?? " ").Result;
             if (logicValidation.ValidateDataCount(rutasAsesores.Count))
             {
-                var rutas = rutasAsesores.Select(atr => atr.CreandoRuta()).ToList();
+                var rutas = rutasAsesores.Select(atr => atr.CreandoRutaXAsesor()).ToList();
                 RutasXAsesorRepository rutasRepository = new RutasXAsesorRepository();
                 await rutasRepository.SendToDatabase(rutas, EmpresaId, Diario, CodigoAsesor);
             }

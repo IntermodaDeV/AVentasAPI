@@ -7,43 +7,40 @@ using System.Threading.Tasks;
 
 namespace DBData.Repositories
 {
-    public class LineasRepository
+    public class TallasxGrupoRepository
     {
-        public async Task<List<MaestroLinea>> ObtenerLineas()
+        public async Task<List<TallasXGrupo>> ObtenerTallasXGrupo()
         {
             using (AVentasEntities context = new AVentasEntities())
             {
-                return context.MaestroLinea.AsNoTracking().ToList();
+                return context.TallasXGrupo.AsNoTracking().ToList();
 
             }
 
         }
-        public async Task<List<MaestroLinea>> ModificarOAgregarLineas(List<MaestroLinea> lineasAGuardar)
+        public async Task<List<TallasXGrupo>> ModificarOAgregar(List<TallasXGrupo> gruposTallaAGuardar)
         {
             using (AVentasEntities context = new AVentasEntities())
             {
-                var lineasEnBD = context.MaestroLinea;
+                var gruposTallasEnBD = context.TallasXGrupo;
                 //foreach (var coleccion in coleccionesEnDB)
                 //{
                 //    coleccion.Status = false;
                 //}
-                foreach (var lineaAGuardar in lineasAGuardar)
+                foreach (var grupoTallaAGuardar in gruposTallaAGuardar)
                 {
-                    var lineaEnBD = lineasEnBD.FirstOrDefault(col => col.IdLinea == lineaAGuardar.IdLinea);
+                    var lineaEnBD = gruposTallasEnBD.FirstOrDefault(col => col.CodigoGrupoTalla == grupoTallaAGuardar.CodigoGrupoTalla && col.CodigoTalla == grupoTallaAGuardar.CodigoTalla);
                     if (lineaEnBD == null)
                     {
-                        context.MaestroLinea.Add(lineaAGuardar);
+                        context.TallasXGrupo.Add(grupoTallaAGuardar);
                     }
                     else
                     {
-                        //lineaEnBD = new MaestroLinea();
-
-                        lineaEnBD.IdLinea = lineaAGuardar.IdLinea;
-                        lineaEnBD.Linea = lineaAGuardar.Linea;
+                        lineaEnBD.Orden = grupoTallaAGuardar.Orden;
                     }
                 }
                 await context.SaveChangesAsync();
-                return lineasEnBD.AsNoTracking().ToList();
+                return gruposTallasEnBD.AsNoTracking().ToList();
             }
         }
     }

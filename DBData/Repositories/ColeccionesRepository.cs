@@ -42,7 +42,6 @@ namespace DBData.Repositories
                     }
                     else
                     {
-                        coleccionEnBD = new Colecciones();
 
                         coleccionEnBD.IdColeccion = coleccionAGuardar.IdColeccion;
                         coleccionEnBD.CodigoColeccion = coleccionAGuardar.CodigoColeccion;

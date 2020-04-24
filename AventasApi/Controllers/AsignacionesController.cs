@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
 using AventasApi.Models.ViewModels;
+using AventasApi.Services.Authentication;
 
 namespace AventasApi.Controllers
 {
@@ -19,7 +20,12 @@ namespace AventasApi.Controllers
     public class AsignacionesController : ApiController
     {
         AVentasEntities context = new AVentasEntities();
+        private readonly AuthenticationAppService _authenticationAppService;
+        public AsignacionesController()
+        {
+            _authenticationAppService = new AuthenticationAppService();
 
+        }
         [HttpGet]
         public async Task<IHttpActionResult> GetAsignacionesXRango(DateTime FechaInicio, DateTime FechaFin)
         {
@@ -27,7 +33,9 @@ namespace AventasApi.Controllers
             FechaFin = new DateTime(FechaFin.Year, FechaFin.Month, FechaFin.Day);
             FechaFin = FechaFin.AddDays(1);
             //var user = TokenService.Validate<UserAuthenticated>(Request.Headers.Authorization.Parameter);
-            var user = new { UserAccount = "gmonrroy" };
+            //var user = new { UserAccount = "gmonrroy" };
+            var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
             List<AsignacionesXFechaViewModel> asignacionesXFecha = new List<AsignacionesXFechaViewModel>();
             var asignaciones = context.AsignacionxAsesor
                 .Where(axa =>
@@ -96,7 +104,8 @@ namespace AventasApi.Controllers
         public async Task<IHttpActionResult> GetAsignacionesCorrespondientes()
         {
             //var user = TokenService.Validate<UserAuthenticated>(Request.Headers.Authorization.Parameter);
-            var user = new { UserAccount = "gmonrroy" };
+            var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+            //var user = new { UserAccount = "gmonrroy" };
             DateTime fechaFin = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day + 1);
             var asignaciones = context.AsignacionxAsesor
                 .Where(axa =>
@@ -126,7 +135,8 @@ namespace AventasApi.Controllers
         public IHttpActionResult Post([FromBody] List<AsignacionesXFechaViewModel> asignacionesNuevas)
         {
 
-            var user = new { UserAccount = "gmonrroy" };
+            var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
             //var user = TokenService.Validate<UserAuthenticated>(Request.Headers.Authorization.Parameter);
             string codigoAsesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount).CodigoAsesor;
             foreach (var asignacionNueva in asignacionesNuevas)

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web;
 using ExternalApiData.Enviroments;
-using DBData.Database;
 using ExternalApiData.Models;
 using RestSharp;
 using Newtonsoft.Json;
-using System.Globalization;
 
 namespace ExternalApiData.GestorData
 {

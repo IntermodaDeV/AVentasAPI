@@ -9,6 +9,7 @@ namespace AventasApi.Models.ViewModels
     {
         public DateTime Fecha { get; set; }
         public DateTime FechaPago { get; set; }
+        public double SaldoFavor { get; set; }
         public List<PagosReciboPostViewModel> Pagos { get; set; }
         public string Descripcion { get; set; }
         public List<int> SubFacturas { get; set; }

@@ -10,6 +10,7 @@ using DBData.Database;
 using AventasApi.Models;
 using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
+using AventasApi.Services.Authentication;
 //using IMS.Tokens.Services;
 
 namespace AventasApi.Controllers
@@ -18,7 +19,11 @@ namespace AventasApi.Controllers
     public class BitacoraVisitasClienteController : ApiController
     {
         AVentasEntities context = new AVentasEntities();
-
+        private readonly AuthenticationAppService _authenticationAppService;
+        public BitacoraVisitasClienteController()
+        {
+            _authenticationAppService = new AuthenticationAppService();
+        }
         [HttpGet]
         public IHttpActionResult Get(int id)
         {
@@ -39,7 +44,8 @@ namespace AventasApi.Controllers
         [HttpPost]
         public IHttpActionResult Post([FromBody]  BitacoraVisitasClienteViewModel bitacoraVisitasCliente)
         {
-            var user =new{UserAccount = "gmonrroy"};
+            //var user =new{UserAccount = "gmonrroy"};
+            var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
             //var user = TokenService.Validate<UserAuthenticated>(Request.Headers.Authorization.Parameter);
             string codigoAsesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount)?.CodigoAsesor;
             var bitacora = context.BitacoraVisitasCliente.FirstOrDefault(bit => bitacoraVisitasCliente.IdAsignacionxAsesor != null && bit.IdAsignacionxAsesor == bitacoraVisitasCliente.IdAsignacionxAsesor);

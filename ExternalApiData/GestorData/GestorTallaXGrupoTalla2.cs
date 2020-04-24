@@ -74,7 +74,7 @@ namespace ExternalApiData.GestorData
 
                             }
                             else
-                            {
+                            {   
                                 Debug.WriteLine("Error");
 
                             }
