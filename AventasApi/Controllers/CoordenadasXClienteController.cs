@@ -5,14 +5,17 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using AventasApi.Models;
 //using AventasApi.GestorData;
 //using AventasApi.Models.ApiModels;
 using AventasApi.Models.CustomerLocationApp;
+using DBData.Database;
 
 namespace AventasApi.Controllers
 {
     public class CoordenadasXClienteController : ApiController
     {
+        AVentasEntities context = new AVentasEntities();
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
@@ -33,9 +36,26 @@ namespace AventasApi.Controllers
                 return Ok(new List<RutaConCoordenadaViewModel>());
             }
             return StatusCode(response.StatusCode);
+        }
 
+        [HttpGet]
+        [Route("~/api/cliente/global")]
+        public List<Coordenada> GetClientes()
+        {
+            var result = context.Clientes.Where(x => x.Longitud != null && x.Latitud!=null).ToList();
+            if (result.Count > 0)
+            {
+                var clientes = result.Select(x => new Coordenada() { 
+                    ACCOUNT= x.CodigoCliente,
+                    NAME=x.Nombre,
+                    LATITUDE=x.Latitud.Value,
+                    LONGITUD=x.Longitud.Value,
+                    COMPANY = x.EmpresaId
+                }).ToList();
 
-
+                return clientes;
+            }
+            return new List<Coordenada>();
         }
     }
 }

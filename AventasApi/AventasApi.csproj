@@ -203,6 +203,7 @@
     <Compile Include="Models\Authentication\UserAuthenticated.cs" />
     <Compile Include="Models\Authentication\Usuario.cs" />
     <Compile Include="Models\BitacoraVisitasClienteViewModel.cs" />
+    <Compile Include="Models\Coordenada.cs" />
     <Compile Include="Models\CustomerLocationApp\ClientesConCoordendasViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\CoordenadasXClienteViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\RutaConCoordenadaViewModel.cs" />
