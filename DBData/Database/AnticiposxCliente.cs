@@ -33,5 +33,6 @@ namespace DBData.Database
         public string UsuarioModificacion { get; set; }
         public Nullable<decimal> Descuento { get; set; }
         public string Tipo { get; set; }
+        public string NumPedido { get; set; }
     }
 }

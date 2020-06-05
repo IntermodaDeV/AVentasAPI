@@ -6,7 +6,7 @@
     <edmx:StorageModels>
     <Schema Namespace="AventasModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Acciones">
           <Key>
             <PropertyRef Name="IdAccion" />
@@ -68,6 +68,7 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <Property Name="UsuarioModificacion" Type="varchar" MaxLength="250" />
           <Property Name="Descuento" Type="decimal" Precision="15" Scale="4" />
           <Property Name="Tipo" Type="varchar" MaxLength="250" />
+          <Property Name="NumPedido" Type="varchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="Asesores">
           <Key>
@@ -539,6 +540,7 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
           <Property Name="idMoneda" Type="varchar" MaxLength="100" />
           <Property Name="IdEstado" Type="int" />
+          <Property Name="ClienteContadoId" Type="int" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -763,7 +765,7 @@ warning 6002: The table/view 'Aventas.dbo.Acciones' does not have a primary key 
           <Property Name="Pin" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Aventas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_AtributosxColeccion">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -776,7 +778,7 @@ warning 6002: The table/view 'Aventas.dbo.vw_AtributosxColeccion' does not have 
           <Property Name="CodigoAtributo" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Aventas.dbo.vw_ClientesxRuta' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ClientesxRuta">
           <Key>
             <PropertyRef Name="CodigoCliente" />
@@ -797,7 +799,7 @@ warning 6002: The table/view 'Aventas.dbo.vw_ClientesxRuta' does not have a prim
           <Property Name="Ruta" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Aventas.dbo.vw_ColoresxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ColoresxProducto">
           <Key>
             <PropertyRef Name="IdColorxProducto" />
@@ -809,7 +811,7 @@ warning 6002: The table/view 'Aventas.dbo.vw_ColoresxProducto' does not have a p
           <Property Name="IdProducto" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Aventas.dbo.vw_FisicoDisponible' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_FisicoDisponible">
           <Key>
             <PropertyRef Name="IdFisicoDisponible" />
@@ -822,7 +824,7 @@ warning 6002: The table/view 'Aventas.dbo.vw_FisicoDisponible' does not have a p
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Aventas.dbo.vw_LineasxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'AVentas.dbo.vw_LineasxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_LineasxColeccion">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -836,7 +838,7 @@ warning 6002: The table/view 'Aventas.dbo.vw_LineasxColeccion' does not have a p
           <Property Name="Url_Imagen" Type="varchar" MaxLength="2500" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_TallasxProducto">
           <Key>
             <PropertyRef Name="IdProducto" />
@@ -1811,18 +1813,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RecibosxC__IdFac__383A4359">
-          <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
-          <End Role="RecibosxCliente" Type="Self.RecibosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="FacturasxCliente">
-              <PropertyRef Name="IdFactura" />
-            </Principal>
-            <Dependent Role="RecibosxCliente">
-              <PropertyRef Name="IdFactura" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__RutasxAse__Codig__6497E884">
           <End Role="Rutas" Type="Self.Rutas" Multiplicity="1" />
           <End Role="RutasxAsesor" Type="Self.RutasxAsesor" Multiplicity="*" />
@@ -2034,8 +2024,8 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="CodigoCliente" Type="varchar" Mode="In" />
         </Function>
         <Function Name="EstadisticaVisita" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="FechaInicio" Type="datetime" Mode="In" />
-          <Parameter Name="FechaFin" Type="datetime" Mode="In" />
+          <Parameter Name="FechaInicio" Type="date" Mode="In" />
+          <Parameter Name="FechaFin" Type="date" Mode="In" />
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="PResumenCredito" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
@@ -2529,10 +2519,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
             <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
           </AssociationSet>
-          <AssociationSet Name="FK__RecibosxC__IdFac__383A4359" Association="Self.FK__RecibosxC__IdFac__383A4359">
-            <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
-            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
-          </AssociationSet>
           <AssociationSet Name="FK__RutasxAse__Codig__6497E884" Association="Self.FK__RutasxAse__Codig__6497E884">
             <End Role="Rutas" EntitySet="Rutas" />
             <End Role="RutasxAsesor" EntitySet="RutasxAsesor" />
@@ -2642,30 +2628,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Monto" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="Saldo" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="AcuerdosxCliente" Relationship="Self.FK__Acuerdosx__Saldo__2EC5E7B8" FromRole="AcuerdosxClienteDetalle" ToRole="AcuerdosxCliente" />
-        </EntityType>
-        <EntityType Name="AnticiposxCliente">
-          <Key>
-            <PropertyRef Name="AnticipoId" />
-          </Key>
-          <Property Name="AnticipoId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="NumeroRecibo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Fecha" Type="DateTime" Precision="3" />
-          <Property Name="IdTipoPago" Type="Int32" />
-          <Property Name="Referencia" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="FechaCheque" Type="DateTime" Precision="3" />
-          <Property Name="IdBanco" Type="Int32" />
-          <Property Name="IdCuentaBancaria" Type="Int32" />
-          <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
-          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Sincronizado" Type="Boolean" />
-          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
-          <Property Name="UsuarioCreacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
-          <Property Name="UsuarioModificacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
-          <Property Name="Tipo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Asesores">
           <Key>
@@ -3009,9 +2971,8 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="MaestroLinea" Relationship="Self.FK__Facturasx__IdLin__742F31CF" FromRole="FacturasxCliente" ToRole="MaestroLinea" />
           <NavigationProperty Name="MaestroMoneda" Relationship="Self.FK__Facturasx__IdMon__733B0D96" FromRole="FacturasxCliente" ToRole="MaestroMoneda" />
           <NavigationProperty Name="TiposdePedido" Relationship="Self.FK__Facturasx__IdTip__75235608" FromRole="FacturasxCliente" ToRole="TiposdePedido" />
-          <NavigationProperty Name="RecibosxCliente" Relationship="Self.FK__RecibosxC__IdFac__00EA0E6F" FromRole="FacturasxCliente" ToRole="RecibosxCliente" />
-          <NavigationProperty Name="RecibosxCliente1" Relationship="Self.FK__RecibosxC__IdFac__383A4359" FromRole="FacturasxCliente" ToRole="RecibosxCliente" />
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK_SubFacturasxCliente_FacturasxCliente" FromRole="FacturasxCliente" ToRole="SubFacturasxCliente" />
+          <NavigationProperty Name="RecibosxCliente" Relationship="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" FromRole="FacturasxCliente" ToRole="RecibosxCliente" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -3270,6 +3231,7 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="MaestroMoneda" Relationship="Self.FK__PedidosxC__idMon__353DDB1D" FromRole="PedidosxCliente" ToRole="MaestroMoneda" />
           <NavigationProperty Name="PedidosDetalle" Relationship="Self.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosxCliente" ToRole="PedidosDetalle" />
           <NavigationProperty Name="TiposdePedido" Relationship="Self.FK__PedidosxC__IdTip__6A50C1DA" FromRole="PedidosxCliente" ToRole="TiposdePedido" />
+          <Property Name="ClienteContadoId" Type="Int32" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -3364,34 +3326,7 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
           <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK__RecibosDe__IdSub__7FF5EA36" FromRole="RecibosDetalle" ToRole="SubFacturasxCliente" />
-          <NavigationProperty Name="RecibosxCliente" Relationship="Self.FK__RecibosDe__Recib__7F01C5FD" FromRole="RecibosDetalle" ToRole="RecibosxCliente" />
-        </EntityType>
-        <EntityType Name="RecibosxCliente">
-          <Key>
-            <PropertyRef Name="ReciboId" />
-          </Key>
-          <Property Name="ReciboId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="NumeroRecibo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Fecha" Type="DateTime" Precision="3" />
-          <Property Name="IdTipoPago" Type="Int32" />
-          <Property Name="Referencia" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="FechaCheque" Type="DateTime" Precision="3" />
-          <Property Name="IdBanco" Type="Int32" />
-          <Property Name="IdCuentaBancaria" Type="Int32" />
-          <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
-          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Sincronizado" Type="Boolean" />
-          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
-          <Property Name="UsuarioCreacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
-          <Property Name="UsuarioModificacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="IdFactura" Type="Int32" />
-          <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
-          <NavigationProperty Name="FacturasxCliente" Relationship="Self.FK__RecibosxC__IdFac__00EA0E6F" FromRole="RecibosxCliente" ToRole="FacturasxCliente" />
-          <NavigationProperty Name="FacturasxCliente1" Relationship="Self.FK__RecibosxC__IdFac__383A4359" FromRole="RecibosxCliente" ToRole="FacturasxCliente" />
-          <NavigationProperty Name="RecibosDetalle" Relationship="Self.FK__RecibosDe__Recib__7F01C5FD" FromRole="RecibosxCliente" ToRole="RecibosDetalle" />
+          <NavigationProperty Name="RecibosxCliente" Relationship="AventasModel.FK__RecibosDe__Recib__7F01C5FD" FromRole="RecibosDetalle" ToRole="RecibosxCliente" />
         </EntityType>
         <EntityType Name="Rutas">
           <Key>
@@ -4378,30 +4313,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
-          <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
-          <End Role="RecibosxCliente" Type="Self.RecibosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="FacturasxCliente">
-              <PropertyRef Name="IdFactura" />
-            </Principal>
-            <Dependent Role="RecibosxCliente">
-              <PropertyRef Name="IdFactura" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__RecibosxC__IdFac__383A4359">
-          <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
-          <End Role="RecibosxCliente" Type="Self.RecibosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="FacturasxCliente">
-              <PropertyRef Name="IdFactura" />
-            </Principal>
-            <Dependent Role="RecibosxCliente">
-              <PropertyRef Name="IdFactura" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_SubFacturasxCliente_FacturasxCliente">
           <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
           <End Role="SubFacturasxCliente" Type="Self.SubFacturasxCliente" Multiplicity="*" />
@@ -4762,18 +4673,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RecibosDe__Recib__7F01C5FD">
-          <End Role="RecibosxCliente" Type="Self.RecibosxCliente" Multiplicity="0..1" />
-          <End Role="RecibosDetalle" Type="Self.RecibosDetalle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="RecibosxCliente">
-              <PropertyRef Name="ReciboId" />
-            </Principal>
-            <Dependent Role="RecibosDetalle">
-              <PropertyRef Name="ReciboId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__RutasxAse__Codig__6497E884">
           <End Role="Rutas" Type="Self.Rutas" Multiplicity="1" />
           <End Role="RutasxAsesor" Type="Self.RutasxAsesor" Multiplicity="*" />
@@ -4813,7 +4712,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
         <EntityContainer Name="AVentasEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AcuerdosxCliente" EntityType="Self.AcuerdosxCliente" />
           <EntitySet Name="AcuerdosxClienteDetalle" EntityType="Self.AcuerdosxClienteDetalle" />
-          <EntitySet Name="AnticiposxCliente" EntityType="Self.AnticiposxCliente" />
           <EntitySet Name="Asesores" EntityType="Self.Asesores" />
           <EntitySet Name="AsignacionxAsesor" EntityType="Self.AsignacionxAsesor" />
           <EntitySet Name="AsignacionxAsesorDetalle" EntityType="Self.AsignacionxAsesorDetalle" />
@@ -4860,7 +4758,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="RazonNoVentaCausa" EntityType="Self.RazonNoVentaCausa" />
           <EntitySet Name="RazonNoVentaTipo" EntityType="Self.RazonNoVentaTipo" />
           <EntitySet Name="RecibosDetalle" EntityType="Self.RecibosDetalle" />
-          <EntitySet Name="RecibosxCliente" EntityType="Self.RecibosxCliente" />
           <EntitySet Name="Rutas" EntityType="Self.Rutas" />
           <EntitySet Name="RutasxAsesor" EntityType="Self.RutasxAsesor" />
           <EntitySet Name="SubFacturasxCliente" EntityType="Self.SubFacturasxCliente" />
@@ -5128,14 +5025,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="TiposdePedido" EntitySet="TiposdePedido" />
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
           </AssociationSet>
-          <AssociationSet Name="FK__RecibosxC__IdFac__00EA0E6F" Association="Self.FK__RecibosxC__IdFac__00EA0E6F">
-            <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
-            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__RecibosxC__IdFac__383A4359" Association="Self.FK__RecibosxC__IdFac__383A4359">
-            <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
-            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
-          </AssociationSet>
           <AssociationSet Name="FK_SubFacturasxCliente_FacturasxCliente" Association="Self.FK_SubFacturasxCliente_FacturasxCliente">
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
@@ -5256,10 +5145,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
             <End Role="RecibosDetalle" EntitySet="RecibosDetalle" />
           </AssociationSet>
-          <AssociationSet Name="FK__RecibosDe__Recib__7F01C5FD" Association="Self.FK__RecibosDe__Recib__7F01C5FD">
-            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
-            <End Role="RecibosDetalle" EntitySet="RecibosDetalle" />
-          </AssociationSet>
           <AssociationSet Name="FK__RutasxAse__Codig__6497E884" Association="Self.FK__RutasxAse__Codig__6497E884">
             <End Role="Rutas" EntitySet="Rutas" />
             <End Role="RutasxAsesor" EntitySet="RutasxAsesor" />
@@ -5313,6 +5198,16 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
             <Parameter Name="new_diagramname" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
+          <EntitySet Name="AnticiposxCliente" EntityType="AventasModel.AnticiposxCliente" />
+          <EntitySet Name="RecibosxCliente" EntityType="AventasModel.RecibosxCliente" />
+          <AssociationSet Name="FK__RecibosxC__IdFac__00EA0E6F" Association="AventasModel.FK__RecibosxC__IdFac__00EA0E6F">
+            <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
+            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RecibosDe__Recib__7F01C5FD" Association="AventasModel.FK__RecibosDe__Recib__7F01C5FD">
+            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
+            <End Role="RecibosDetalle" EntitySet="RecibosDetalle" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -5378,6 +5273,81 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
           <Property Type="Int32" Name="OwnerID" Nullable="false" />
         </ComplexType>
+        <EntityType Name="AnticiposxCliente">
+          <Key>
+            <PropertyRef Name="AnticipoId" />
+          </Key>
+          <Property Name="AnticipoId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NumeroRecibo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="IdTipoPago" Type="Int32" />
+          <Property Name="Referencia" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCheque" Type="DateTime" Precision="3" />
+          <Property Name="IdBanco" Type="Int32" />
+          <Property Name="IdCuentaBancaria" Type="Int32" />
+          <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Sincronizado" Type="Boolean" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioCreacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioModificacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="Tipo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="NumPedido" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="RecibosxCliente">
+          <Key>
+            <PropertyRef Name="ReciboId" />
+          </Key>
+          <Property Name="ReciboId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NumeroRecibo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="IdTipoPago" Type="Int32" />
+          <Property Name="Referencia" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCheque" Type="DateTime" Precision="3" />
+          <Property Name="IdBanco" Type="Int32" />
+          <Property Name="IdCuentaBancaria" Type="Int32" />
+          <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Sincronizado" Type="Boolean" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioCreacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioModificacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="IdFactura" Type="Int32" />
+          <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
+          <NavigationProperty Name="FacturasxCliente" Relationship="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" FromRole="RecibosxCliente" ToRole="FacturasxCliente" />
+          <NavigationProperty Name="RecibosDetalle" Relationship="AventasModel.FK__RecibosDe__Recib__7F01C5FD" FromRole="RecibosxCliente" ToRole="RecibosDetalle" />
+        </EntityType>
+        <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
+          <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.RecibosxCliente" Role="RecibosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FacturasxCliente">
+              <PropertyRef Name="IdFactura" />
+            </Principal>
+            <Dependent Role="RecibosxCliente">
+              <PropertyRef Name="IdFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RecibosDe__Recib__7F01C5FD">
+          <End Type="AventasModel.RecibosxCliente" Role="RecibosxCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.RecibosDetalle" Role="RecibosDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RecibosxCliente">
+              <PropertyRef Name="ReciboId" />
+            </Principal>
+            <Dependent Role="RecibosDetalle">
+              <PropertyRef Name="ReciboId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5411,31 +5381,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="Fecha" ColumnName="Fecha" />
                 <ScalarProperty Name="Monto" ColumnName="Monto" />
                 <ScalarProperty Name="Saldo" ColumnName="Saldo" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AnticiposxCliente">
-            <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
-              <MappingFragment StoreEntitySet="AnticiposxCliente">
-                <ScalarProperty Name="AnticipoId" ColumnName="AnticipoId" />
-                <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
-                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
-                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
-                <ScalarProperty Name="IdTipoPago" ColumnName="IdTipoPago" />
-                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
-                <ScalarProperty Name="FechaCheque" ColumnName="FechaCheque" />
-                <ScalarProperty Name="IdBanco" ColumnName="IdBanco" />
-                <ScalarProperty Name="IdCuentaBancaria" ColumnName="IdCuentaBancaria" />
-                <ScalarProperty Name="Valor" ColumnName="Valor" />
-                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
-                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
-                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
-                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
-                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
-                <ScalarProperty Name="UsuarioModificacion" ColumnName="UsuarioModificacion" />
-                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
-                <ScalarProperty Name="Tipo" ColumnName="Tipo" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -5922,6 +5867,7 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="ClienteContadoId" ColumnName="ClienteContadoId" />
                 <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
                 <ScalarProperty Name="IdTipoPedido" ColumnName="IdTipoPedido" />
                 <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
@@ -6022,31 +5968,6 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="ReciboId" ColumnName="ReciboId" />
                 <ScalarProperty Name="IdSubFactura" ColumnName="IdSubFactura" />
                 <ScalarProperty Name="Valor" ColumnName="Valor" />
-                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RecibosxCliente">
-            <EntityTypeMapping TypeName="AventasModel.RecibosxCliente">
-              <MappingFragment StoreEntitySet="RecibosxCliente">
-                <ScalarProperty Name="ReciboId" ColumnName="ReciboId" />
-                <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
-                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
-                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
-                <ScalarProperty Name="IdTipoPago" ColumnName="IdTipoPago" />
-                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
-                <ScalarProperty Name="FechaCheque" ColumnName="FechaCheque" />
-                <ScalarProperty Name="IdBanco" ColumnName="IdBanco" />
-                <ScalarProperty Name="IdCuentaBancaria" ColumnName="IdCuentaBancaria" />
-                <ScalarProperty Name="Valor" ColumnName="Valor" />
-                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
-                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
-                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
-                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
-                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
-                <ScalarProperty Name="UsuarioModificacion" ColumnName="UsuarioModificacion" />
-                <ScalarProperty Name="IdFactura" ColumnName="IdFactura" />
                 <ScalarProperty Name="Descuento" ColumnName="Descuento" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -6375,6 +6296,57 @@ warning 6002: The table/view 'Aventas.dbo.vw_TallasxProducto' does not have a pr
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="AventasModel.Store.sp_renamediagram" />
           <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="AventasModel.Store.sp_upgraddiagrams" />
+          <EntitySetMapping Name="AnticiposxCliente">
+            <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
+              <MappingFragment StoreEntitySet="AnticiposxCliente">
+                <ScalarProperty Name="NumPedido" ColumnName="NumPedido" />
+                <ScalarProperty Name="Tipo" ColumnName="Tipo" />
+                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
+                <ScalarProperty Name="UsuarioModificacion" ColumnName="UsuarioModificacion" />
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
+                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="IdCuentaBancaria" ColumnName="IdCuentaBancaria" />
+                <ScalarProperty Name="IdBanco" ColumnName="IdBanco" />
+                <ScalarProperty Name="FechaCheque" ColumnName="FechaCheque" />
+                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
+                <ScalarProperty Name="IdTipoPago" ColumnName="IdTipoPago" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
+                <ScalarProperty Name="AnticipoId" ColumnName="AnticipoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RecibosxCliente">
+            <EntityTypeMapping TypeName="AventasModel.RecibosxCliente">
+              <MappingFragment StoreEntitySet="RecibosxCliente">
+                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
+                <ScalarProperty Name="IdFactura" ColumnName="IdFactura" />
+                <ScalarProperty Name="UsuarioModificacion" ColumnName="UsuarioModificacion" />
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
+                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="IdCuentaBancaria" ColumnName="IdCuentaBancaria" />
+                <ScalarProperty Name="IdBanco" ColumnName="IdBanco" />
+                <ScalarProperty Name="FechaCheque" ColumnName="FechaCheque" />
+                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
+                <ScalarProperty Name="IdTipoPago" ColumnName="IdTipoPago" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
+                <ScalarProperty Name="ReciboId" ColumnName="ReciboId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -15,6 +15,8 @@ namespace AventasApi.Models.ViewModels
         public List<int> SubFacturas { get; set; }
         public string CodigoCliente { get; set; }
         public string Tipo { get; set; }
+        public string NumPedido { get; set; }
+        public string EsContado { get; set; }
 
         public ReciboPostViewModel()
         {

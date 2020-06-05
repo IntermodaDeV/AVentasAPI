@@ -55,8 +55,9 @@ namespace AventasApi.Controllers
             FechaLimite.AddDays(1);
             var FechaLimiteFuturo = FechaLimite.AddDays(15);
             var creditos = context.PResumenCredito().ToList();
-            List<ClienteViewModel> clientesSinFiltrar =
-
+            var Recibos = context.AnticiposxCliente.Where(r => r.NumPedido != null).Select(a => a.NumPedido).ToList();
+            List <ClienteViewModel> clientesSinFiltrar =
+            
                     context.Clientes.Where(cli => cli.ClientesxRuta.FirstOrDefault().Rutas.RutasxAsesor.FirstOrDefault().Asesores.Usuario == user.UserAccount).Select(cli => new ClienteViewModel
                     {
                         EmpresaId = cli.EmpresaId,
@@ -84,8 +85,8 @@ namespace AventasApi.Controllers
                             Acuerdos = asa.GroupBy(acu => acu.AcuerdosxCliente).Select(acu => new FacturasXAcuerdosViewModel
                             {
                                 Acuerdo = acu.Key == null ? "" : acu.Key.IdAcuerdoxCliente,
-                                Valor = acu.Key == null ? "0" : (acu.Key.Total??0) .ToString(),
-                                Disponible = acu.Key == null ? "0" : (acu.Key.Saldo??0) .ToString(),
+                                Valor = acu.Key == null ? "0" : (acu.Key.Total??0).ToString(),
+                                Disponible = acu.Key == null ? "0" : (acu.Key.Saldo??0).ToString(),
                                 //SaldoTotal = acu.Key == null ? "0" :  acu.Key.Saldo.Value.ToString(),
                                 Facturas = acu.OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                                 {
@@ -169,10 +170,22 @@ namespace AventasApi.Controllers
                         {
                             Descripcion = lcc.Descripcion,
                             Valor = lcc.Valor ?? 0
-                        }).ToList()
+                        }).ToList(),
+                            Recibo = context.AnticiposxCliente.Where(r => r.CodigoCliente == cli.CodigoCliente && r.NumPedido != null).Select(rec => new AnticiposViewModel
+                            {
+                                NumPedido = rec.NumPedido,
+                                CodigoCliente = rec.CodigoCliente
+                            }).ToList(),
+                            Pedido = context.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.PedidoId)).Select(ped => new PedidosXClienteViewModel
+                            {
+                                PedidoId = ped.PedidoId,
+                                CodigoColeccion = ped.Colecciones.CodigoColeccion,
+                                NombreColeccion = ped.Colecciones.Nombre,
+                                FechaEntrega = ped.FechaEntrega,
+                                FechaActual = ped.Fecha,
+                                TotalXPedido = ped.TotalPedido
+                            }).ToList()
                     }).ToList();
-
-
 
             foreach (var cliente in clientesSinFiltrar)
             {

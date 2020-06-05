@@ -28,5 +28,7 @@ namespace ExternalApiData.Models.ApiModels
         public string APLICADO { get; set; }
         public string DESCUENTO { get; set; }
         public string REF_TRANSOPEN { get; set; }
+        public string ES_CONTADO { get; set; }
+        public string NUM_PEDIDO { get; set; }
     }
 }

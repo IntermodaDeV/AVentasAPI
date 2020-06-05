@@ -17,9 +17,8 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public FacturasxCliente()
         {
-            this.RecibosxCliente = new HashSet<RecibosxCliente>();
-            this.RecibosxCliente1 = new HashSet<RecibosxCliente>();
             this.SubFacturasxCliente = new HashSet<SubFacturasxCliente>();
+            this.RecibosxCliente = new HashSet<RecibosxCliente>();
         }
     
         public int IdFactura { get; set; }
@@ -49,10 +48,8 @@ namespace DBData.Database
         public virtual MaestroMoneda MaestroMoneda { get; set; }
         public virtual TiposdePedido TiposdePedido { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RecibosxCliente> RecibosxCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RecibosxCliente> RecibosxCliente1 { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubFacturasxCliente> SubFacturasxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RecibosxCliente> RecibosxCliente { get; set; }
     }
 }

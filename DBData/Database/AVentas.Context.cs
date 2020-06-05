@@ -29,7 +29,6 @@ namespace DBData.Database
     
         public virtual DbSet<AcuerdosxCliente> AcuerdosxCliente { get; set; }
         public virtual DbSet<AcuerdosxClienteDetalle> AcuerdosxClienteDetalle { get; set; }
-        public virtual DbSet<AnticiposxCliente> AnticiposxCliente { get; set; }
         public virtual DbSet<Asesores> Asesores { get; set; }
         public virtual DbSet<AsignacionxAsesor> AsignacionxAsesor { get; set; }
         public virtual DbSet<AsignacionxAsesorDetalle> AsignacionxAsesorDetalle { get; set; }
@@ -76,7 +75,6 @@ namespace DBData.Database
         public virtual DbSet<RazonNoVentaCausa> RazonNoVentaCausa { get; set; }
         public virtual DbSet<RazonNoVentaTipo> RazonNoVentaTipo { get; set; }
         public virtual DbSet<RecibosDetalle> RecibosDetalle { get; set; }
-        public virtual DbSet<RecibosxCliente> RecibosxCliente { get; set; }
         public virtual DbSet<Rutas> Rutas { get; set; }
         public virtual DbSet<RutasxAsesor> RutasxAsesor { get; set; }
         public virtual DbSet<SubFacturasxCliente> SubFacturasxCliente { get; set; }
@@ -96,6 +94,8 @@ namespace DBData.Database
         public virtual DbSet<vw_FisicoDisponible> vw_FisicoDisponible { get; set; }
         public virtual DbSet<vw_LineasxColeccion> vw_LineasxColeccion { get; set; }
         public virtual DbSet<vw_TallasxProducto> vw_TallasxProducto { get; set; }
+        public virtual DbSet<AnticiposxCliente> AnticiposxCliente { get; set; }
+        public virtual DbSet<RecibosxCliente> RecibosxCliente { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

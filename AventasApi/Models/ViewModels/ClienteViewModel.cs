@@ -28,6 +28,8 @@ namespace AventasApi.Models
         public List<string> PedidosAbierto ;
         public List<CuentaCorrienteViewModel> CuentaCorriente;
         public List<AcuerdoVentaViewModel> AcuerdosVenta;
+        public List<PedidosXClienteViewModel> Pedido;
+        public List<AnticiposViewModel> Recibo;
         public Nullable<decimal> Latitud { get; set; }
         public Nullable<decimal> Longitud { get; set; }
         public List<FacturasXClienteViewModel> Facturas;

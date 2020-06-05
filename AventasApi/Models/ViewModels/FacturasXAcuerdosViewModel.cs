@@ -18,5 +18,7 @@ namespace AventasApi.Models.ViewModels
             this.Facturas = new List<FacturasXClienteViewModel>();
 
         }
+
+        public List<PedidosXClienteViewModel> Pedidos;
     }
 }

@@ -23,6 +23,7 @@ namespace AventasApi.Models.ViewModels
         public string IdMoneda { get; set; }
         public string CodigoAsesor { get; set; }
         public string Tipo { get; set; }
+        public string NumPedido { get; set; }
 
 
 

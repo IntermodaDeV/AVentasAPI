@@ -4,10 +4,9 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1">
+      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1" ZoomLevel="77">
         <EntityTypeShape EntityType="AventasModel.AcuerdosxCliente" Width="1.5" PointX="3" PointY="41.125" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AcuerdosxClienteDetalle" Width="1.5" PointX="5.25" PointY="41.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="AventasModel.AnticiposxCliente" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.Asesores" Width="1.5" PointX="14" PointY="28.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AsignacionxAsesor" Width="1.5" PointX="10.25" PointY="46.375" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AsignacionxAsesorDetalle" Width="1.5" PointX="12.5" PointY="51.375" IsExpanded="true" />
@@ -54,7 +53,6 @@
         <EntityTypeShape EntityType="AventasModel.RazonNoVentaCausa" Width="1.5" PointX="11" PointY="37.375" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.RazonNoVentaTipo" Width="1.5" PointX="11" PointY="30.125" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.RecibosDetalle" Width="1.5" PointX="20.75" PointY="46.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="AventasModel.RecibosxCliente" Width="1.5" PointX="15.5" PointY="49" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.Rutas" Width="1.5" PointX="11" PointY="58.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.RutasxAsesor" Width="1.5" PointX="23.25" PointY="46.625" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.SubFacturasxCliente" Width="1.5" PointX="15.5" PointY="41.5" IsExpanded="true" />
@@ -136,8 +134,6 @@
         <AssociationConnector Association="AventasModel.FK__Facturasx__IdLin__742F31CF" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Facturasx__IdMon__733B0D96" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Facturasx__IdTip__75235608" ManuallyRouted="false" />
-        <AssociationConnector Association="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" ManuallyRouted="false" />
-        <AssociationConnector Association="AventasModel.FK__RecibosxC__IdFac__383A4359" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK_SubFacturasxCliente_FacturasxCliente" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__FirmasxPe__Pedid__75C27486" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__FisicoDis__MinSt__7A8729A3" ManuallyRouted="false" />
@@ -168,10 +164,13 @@
         <AssociationConnector Association="AventasModel.FK__TallasxPr__IdPro__270FB757" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__RazonNoVe__IdRaz__0ABD916C" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__RecibosDe__IdSub__7FF5EA36" ManuallyRouted="false" />
-        <AssociationConnector Association="AventasModel.FK__RecibosDe__Recib__7F01C5FD" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__RutasxAse__Codig__6497E884" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__TallasxPr__IdTal__2803DB90" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__TiposdePa__IdTip__2D67AF2B" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="AventasModel.AnticiposxCliente" Width="1.5" PointX="0.75" PointY="12.75" />
+        <EntityTypeShape EntityType="AventasModel.RecibosxCliente" Width="1.5" PointX="15.5" PointY="49" />
+        <AssociationConnector Association="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" />
+        <AssociationConnector Association="AventasModel.FK__RecibosDe__Recib__7F01C5FD" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

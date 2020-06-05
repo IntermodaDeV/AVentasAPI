@@ -175,7 +175,8 @@ namespace AventasApi.Controllers
                     IdMoneda = pago.IdMoneda,
                     CodigoAsesor = user.UserAccount,
                     Tipo = anticipoPost.Tipo,
-                    NumeroRecibo = $"{inicialesAsesor}-1{numeroCorrelativoRecibo.ToString("D5")}"
+                    NumeroRecibo = $"{inicialesAsesor}-1{numeroCorrelativoRecibo.ToString("D5")}",
+                    NumPedido = anticipoPost.NumPedido
                 };
                 var pagoBD = context.TiposdePago.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
                 var respuestapago = new RespuestaPago
@@ -210,7 +211,7 @@ namespace AventasApi.Controllers
                 context.SaveChanges();
 
                 return Ok(respuestaPagoRecibo);
-            }
+            } 
             return BadRequest();
         }
         [HttpPost]
