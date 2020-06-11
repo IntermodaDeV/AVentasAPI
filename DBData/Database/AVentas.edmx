@@ -170,6 +170,19 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IdAsignacionxAsesor" Type="int" />
           <Property Name="Observacion" Type="varchar(max)" />
         </EntityType>
+        <EntityType Name="ClienteContado">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" />
+          <Property Name="Direccion" Type="varchar" MaxLength="1024" />
+          <Property Name="RTN" Type="varchar" MaxLength="50" />
+          <Property Name="FlagClientePotencial" Type="bit" />
+          <Property Name="Telefono" Type="varchar" MaxLength="50" />
+          <Property Name="ComunidadAutonoma" Type="varchar" MaxLength="50" />
+          <Property Name="Ruta" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="Clientes">
           <Key>
             <PropertyRef Name="CodigoCliente" />
@@ -192,6 +205,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Revision" Type="bit" />
           <Property Name="LimiteCredito" Type="decimal" Precision="15" Scale="4" />
           <Property Name="CreditoDisponible" Type="decimal" Precision="15" Scale="4" />
+          <Property Name="Telefono" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -541,6 +555,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="idMoneda" Type="varchar" MaxLength="100" />
           <Property Name="IdEstado" Type="int" />
           <Property Name="ClienteContadoId" Type="int" />
+          <Property Name="ModoVenta" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -2071,6 +2086,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="Bancos" EntityType="Self.Bancos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BitacoraGeoposicion" EntityType="Self.BitacoraGeoposicion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BitacoraVisitasCliente" EntityType="Self.BitacoraVisitasCliente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ClienteContado" EntityType="Self.ClienteContado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Clientes" EntityType="Self.Clientes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientesxRuta" EntityType="Self.ClientesxRuta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Colecciones" EntityType="Self.Colecciones" Schema="dbo" store:Type="Tables" />
@@ -2788,6 +2804,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosxCliente" Relationship="Self.FK__PedidosxC__Codig__0F183235" FromRole="Clientes" ToRole="PedidosxCliente" />
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK__SubFactur__Codig__77FFC2B3" FromRole="Clientes" ToRole="SubFacturasxCliente" />
           <NavigationProperty Name="Empresa" Relationship="Self.FK_Clientes_Empresa" FromRole="Clientes" ToRole="Empresa" />
+          <Property Name="Telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -3232,6 +3249,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosDetalle" Relationship="Self.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosxCliente" ToRole="PedidosDetalle" />
           <NavigationProperty Name="TiposdePedido" Relationship="Self.FK__PedidosxC__IdTip__6A50C1DA" FromRole="PedidosxCliente" ToRole="TiposdePedido" />
           <Property Name="ClienteContadoId" Type="Int32" />
+          <Property Name="ModoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -5208,6 +5226,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
             <End Role="RecibosDetalle" EntitySet="RecibosDetalle" />
           </AssociationSet>
+          <EntitySet Name="ClienteContado" EntityType="AventasModel.ClienteContado" />
         </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -5348,6 +5367,19 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ClienteContado">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Direccion" Type="String" MaxLength="1024" FixedLength="false" Unicode="false" />
+          <Property Name="RTN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FlagClientePotencial" Type="Boolean" />
+          <Property Name="Telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ComunidadAutonoma" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Ruta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5495,6 +5527,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Clientes">
             <EntityTypeMapping TypeName="AventasModel.Clientes">
               <MappingFragment StoreEntitySet="Clientes">
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
@@ -5867,6 +5900,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="ModoVenta" ColumnName="ModoVenta" />
                 <ScalarProperty Name="ClienteContadoId" ColumnName="ClienteContadoId" />
                 <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
                 <ScalarProperty Name="IdTipoPedido" ColumnName="IdTipoPedido" />
@@ -6344,6 +6378,20 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
                 <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
                 <ScalarProperty Name="ReciboId" ColumnName="ReciboId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClienteContado">
+            <EntityTypeMapping TypeName="AventasModel.ClienteContado">
+              <MappingFragment StoreEntitySet="ClienteContado">
+                <ScalarProperty Name="Ruta" ColumnName="Ruta" />
+                <ScalarProperty Name="ComunidadAutonoma" ColumnName="ComunidadAutonoma" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="FlagClientePotencial" ColumnName="FlagClientePotencial" />
+                <ScalarProperty Name="RTN" ColumnName="RTN" />
+                <ScalarProperty Name="Direccion" ColumnName="Direccion" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
