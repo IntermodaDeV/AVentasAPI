@@ -26,6 +26,10 @@ namespace ExternalApiData.Models.ApiModels
         public string DELIVERY_ADDRESS { get; set; }
         public string OBSERVATIONS { get; set; }
         public string DISC_GROUP { get; set; }
+        public string SALES_NAME { get; set; }
+        public string FISCAL_DOCUMENT { get; set; }
+        public string PHONE { get; set; }
+        public string INCLUDE_TAX { get; set; }
 
         public List<PedidoJsonItems> PedidoJsonItems { get; set; }
     }

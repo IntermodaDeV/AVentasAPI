@@ -80,6 +80,9 @@ namespace AventasApi.Models.ViewModels
 
         //public string NombreCliente { get; set; }
 
+        public Nullable<int> ClienteContadoId { get; set; }
+        public string ModoVenta { get; set; }
+
         public string Firma { get; set; }
         public ClienteViewModel Cliente { get; set; }
 

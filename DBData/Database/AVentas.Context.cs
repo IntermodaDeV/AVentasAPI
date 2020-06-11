@@ -96,6 +96,7 @@ namespace DBData.Database
         public virtual DbSet<vw_TallasxProducto> vw_TallasxProducto { get; set; }
         public virtual DbSet<AnticiposxCliente> AnticiposxCliente { get; set; }
         public virtual DbSet<RecibosxCliente> RecibosxCliente { get; set; }
+        public virtual DbSet<ClienteContado> ClienteContado { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

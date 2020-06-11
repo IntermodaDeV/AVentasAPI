@@ -171,6 +171,7 @@
         <EntityTypeShape EntityType="AventasModel.RecibosxCliente" Width="1.5" PointX="15.5" PointY="49" />
         <AssociationConnector Association="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" />
         <AssociationConnector Association="AventasModel.FK__RecibosDe__Recib__7F01C5FD" />
+        <EntityTypeShape EntityType="AventasModel.ClienteContado" Width="1.5" PointX="8.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

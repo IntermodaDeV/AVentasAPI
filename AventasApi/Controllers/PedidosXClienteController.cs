@@ -67,6 +67,8 @@ namespace AventasApi.Controllers
                     TotalXPedido = ped.TotalPedido,
                     SubTotalXPedido = ped.Subtotal,
                     Impuesto = ped.TotalImpuesto,
+                    ClienteContadoId = ped.ClienteContadoId,
+                    ModoVenta = ped.ModoVenta,
                     Cliente = new ClienteViewModel
                     {
                         Codigo = ped.Clientes.CodigoCliente,
@@ -227,8 +229,14 @@ namespace AventasApi.Controllers
             AcuerdosxCliente acuerdoVenta;
             TiposdePedido tipoPedido;
             Clientes cliente;
+            ClienteContado clienteContado;
+            Configuraciones SyncTelContado;
+            Configuraciones SyncTelCredito;
             using (AVentasEntities context = new AVentasEntities())
             {
+                SyncTelContado = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "SynTelContado");
+                SyncTelCredito = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "SynTelCredito");
+                clienteContado = context.ClienteContado.Find(Pedido.ClienteContadoId);
                 asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
                 coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion);
                 acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
@@ -263,6 +271,8 @@ namespace AventasApi.Controllers
                 IdLinea = Pedido.Linea,
                 //idMoneda = ,
                 //IdEstado = ,
+                ClienteContadoId = Pedido.ClienteContadoId,
+                ModoVenta = Pedido.ModoVenta
             };
 
             int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
@@ -271,15 +281,15 @@ namespace AventasApi.Controllers
             string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
             var pe = new PedidoCRMApiModel
             {
-                COMPANY = "IMHN",
+                COMPANY = cliente.EmpresaId,
                 CUSTOMER_ACCOUNT = Pedido.CodigoCliente,
                 DATE_CONFIRMED_RECEIPT = fechaEntrega.ToString("dd/MM/yyyy"),
-                DELIVERY_ADDRESS = "",
+                DELIVERY_ADDRESS = string.Empty,
                 DELIVERY_MODE = "",
                 DISC_GROUP = "",
                 ID_SALES_AGREEMENT = Pedido.AcuerdoVenta,
                 LINE = Pedido.Linea,
-                OBSERVATIONS = Pedido.Observacion,
+                OBSERVATIONS = (Pedido.Observacion == null) ? "" : Pedido.Observacion,
                 PACKAGE = coleccion.CodigoColeccion,
                 PACKAGE_TYPE = coleccion.ColeccionTipo,
                 PedidoJsonItems = new List<PedidoJsonItems>(),
@@ -287,7 +297,24 @@ namespace AventasApi.Controllers
                 SALES_MANAGER = asesor.Usuario,
                 SALES_ORDER_TYPE = (coleccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
                 USER = asesor.Usuario,
+                INCLUDE_TAX = "0"
             };
+
+            if (clienteContado != null)
+            {
+                pe.SALES_NAME = clienteContado.Nombre;
+                pe.FISCAL_DOCUMENT = clienteContado.RTN;
+                pe.DELIVERY_ADDRESS = clienteContado.Direccion;
+                pe.PHONE = (SyncTelContado.Activo.Value) ? clienteContado.Telefono : "";
+            }
+            else
+            {
+                pe.SALES_NAME = "";
+                pe.FISCAL_DOCUMENT = "";
+                pe.DELIVERY_ADDRESS = "";
+                pe.PHONE = (SyncTelCredito.Activo.Value) ? cliente.Telefono : "";
+            }
+
             foreach (var detalle in Pedido.DetallePedido)
             {
                 int cantidad = 0;
@@ -327,9 +354,31 @@ namespace AventasApi.Controllers
 
             }
 
+            var empresa = cliente.EmpresaId;
+            var porcentajeImpuesto = "0.15";
+            var impuesto = "1.15";
 
-            PedidoBDAGuardar.TotalImpuesto = PedidoBDAGuardar.Subtotal.Value * decimal.Parse("0.15");
-            PedidoBDAGuardar.TotalPedido = PedidoBDAGuardar.Subtotal.Value * decimal.Parse("1.15");
+            if (empresa.Equals("IMCR"))
+            {
+                porcentajeImpuesto = "0.13";
+                impuesto = "1.13";
+            }
+
+            if (empresa.Equals("IMGT"))
+            {
+                porcentajeImpuesto = "0.12";
+                impuesto = "1.12";
+            }
+
+            if (empresa.Equals("IMHN") && Pedido.Linea.Equals("BIO"))
+            {
+                porcentajeImpuesto = "0.0";
+                impuesto = "1";
+            }
+
+
+            PedidoBDAGuardar.TotalImpuesto = PedidoBDAGuardar.Subtotal.Value * decimal.Parse(porcentajeImpuesto);
+            PedidoBDAGuardar.TotalPedido = PedidoBDAGuardar.Subtotal.Value * decimal.Parse(impuesto);
             string PEdidoID = "";
             try
             {

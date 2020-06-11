@@ -32,6 +32,9 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> TotalUnidades { get; set; }
         public Nullable<decimal> TotalXPedido { get; set; }
 
+        public Nullable<int> ClienteContadoId { get; set; }
+        public string ModoVenta { get; set; }
+
         public PedidoPostViewModel()
         {
             DetallePedido = new List<DetallePedidoPostViewModel>();

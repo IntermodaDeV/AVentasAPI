@@ -105,6 +105,9 @@
     <Compile Include="Database\BitacoraVisitasCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ClienteContado.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Clientes.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
