@@ -195,6 +195,7 @@
     <Compile Include="Controllers\TipoPedidoController.cs" />
     <Compile Include="Controllers\TiposColeccionController.cs" />
     <Compile Include="Controllers\TipoVisitaClienteController.cs" />
+    <Compile Include="Controllers\TransporteController.cs" />
     <Compile Include="Filters\Auth.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -204,12 +205,15 @@
     <Compile Include="Models\Authentication\UserAuthenticated.cs" />
     <Compile Include="Models\Authentication\Usuario.cs" />
     <Compile Include="Models\BitacoraVisitasClienteViewModel.cs" />
+    <Compile Include="Models\ComunidadAutonoma.cs" />
     <Compile Include="Models\Coordenada.cs" />
     <Compile Include="Models\CustomerLocationApp\ClientesConCoordendasViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\CoordenadasXClienteViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\RutaConCoordenadaViewModel.cs" />
+    <Compile Include="Models\EmpresaTransporte.cs" />
     <Compile Include="Models\RazonNoVentaCausaViewModel.cs" />
     <Compile Include="Models\RazonNoVentaTipoViewModel.cs" />
+    <Compile Include="Models\TransportePrecioCaja.cs" />
     <Compile Include="Models\ViewModels\AccionesViewModel.cs" />
     <Compile Include="Models\ViewModels\AcuerdosXTipoPedidoViewModel.cs" />
     <Compile Include="Models\ViewModels\AcuerdoVentaDetalleViewModel.cs" />
@@ -314,6 +318,10 @@
     <ProjectReference Include="..\ExternalApiData\ExternalApiData.csproj">
       <Project>{E175801B-FF18-4726-B747-CD994B9EBCC7}</Project>
       <Name>ExternalApiData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Proxy\Proxy.csproj">
+      <Project>{11d9f98b-c5d4-4840-a411-40d2040142d2}</Project>
+      <Name>Proxy</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

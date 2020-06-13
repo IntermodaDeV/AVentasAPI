@@ -47,6 +47,7 @@ namespace DBData.Database
         public Nullable<int> IdEstado { get; set; }
         public Nullable<int> ClienteContadoId { get; set; }
         public string ModoVenta { get; set; }
+        public Nullable<decimal> Flete { get; set; }
     
         public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }

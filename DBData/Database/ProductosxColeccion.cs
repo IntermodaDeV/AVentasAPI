@@ -36,6 +36,7 @@ namespace DBData.Database
         public Nullable<bool> BackOrder { get; set; }
         public Nullable<decimal> Multiplo { get; set; }
         public string IdEdad { get; set; }
+        public string GrupoImpuesto { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AtributosxProducto> AtributosxProducto { get; set; }

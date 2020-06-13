@@ -47,6 +47,7 @@ namespace DBData.Database
         public Nullable<decimal> LimiteCredito { get; set; }
         public Nullable<decimal> CreditoDisponible { get; set; }
         public string Telefono { get; set; }
+        public string GrupoImpuesto { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AcuerdosxCliente> AcuerdosxCliente { get; set; }

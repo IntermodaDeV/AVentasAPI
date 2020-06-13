@@ -206,6 +206,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="LimiteCredito" Type="decimal" Precision="15" Scale="4" />
           <Property Name="CreditoDisponible" Type="decimal" Precision="15" Scale="4" />
           <Property Name="Telefono" Type="varchar" MaxLength="50" />
+          <Property Name="GrupoImpuesto" Type="varchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -556,6 +557,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IdEstado" Type="int" />
           <Property Name="ClienteContadoId" Type="int" />
           <Property Name="ModoVenta" Type="varchar" MaxLength="50" />
+          <Property Name="Flete" Type="decimal" Precision="10" Scale="2" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -601,6 +603,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="BackOrder" Type="bit" />
           <Property Name="Multiplo" Type="decimal" Precision="18" Scale="2" />
           <Property Name="IdEdad" Type="varchar" MaxLength="250" />
+          <Property Name="GrupoImpuesto" Type="varchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -2805,6 +2808,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK__SubFactur__Codig__77FFC2B3" FromRole="Clientes" ToRole="SubFacturasxCliente" />
           <NavigationProperty Name="Empresa" Relationship="Self.FK_Clientes_Empresa" FromRole="Clientes" ToRole="Empresa" />
           <Property Name="Telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="GrupoImpuesto" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -3250,6 +3254,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="TiposdePedido" Relationship="Self.FK__PedidosxC__IdTip__6A50C1DA" FromRole="PedidosxCliente" ToRole="TiposdePedido" />
           <Property Name="ClienteContadoId" Type="Int32" />
           <Property Name="ModoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Flete" Type="Decimal" Precision="10" Scale="2" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -3314,6 +3319,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PrecioEspecifico" Relationship="Self.FK__PrecioEsp__IdPro__377B294A" FromRole="ProductosxColeccion" ToRole="PrecioEspecifico" />
           <NavigationProperty Name="PreciosxProducto" Relationship="Self.FK__PreciosxP__IdMon__542C7691" FromRole="ProductosxColeccion" ToRole="PreciosxProducto" />
           <NavigationProperty Name="TallasxProducto" Relationship="Self.FK__TallasxPr__IdPro__270FB757" FromRole="ProductosxColeccion" ToRole="TallasxProducto" />
+          <Property Name="GrupoImpuesto" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -5527,6 +5533,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Clientes">
             <EntityTypeMapping TypeName="AventasModel.Clientes">
               <MappingFragment StoreEntitySet="Clientes">
+                <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />
                 <ScalarProperty Name="Telefono" ColumnName="Telefono" />
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
@@ -5900,6 +5907,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="Flete" ColumnName="Flete" />
                 <ScalarProperty Name="ModoVenta" ColumnName="ModoVenta" />
                 <ScalarProperty Name="ClienteContadoId" ColumnName="ClienteContadoId" />
                 <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
@@ -5966,6 +5974,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="ProductosxColeccion">
             <EntityTypeMapping TypeName="AventasModel.ProductosxColeccion">
               <MappingFragment StoreEntitySet="ProductosxColeccion">
+                <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />
                 <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
                 <ScalarProperty Name="CodigoProducto" ColumnName="CodigoProducto" />
                 <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />

@@ -69,6 +69,7 @@ namespace AventasApi.Controllers
                     Impuesto = ped.TotalImpuesto,
                     ClienteContadoId = ped.ClienteContadoId,
                     ModoVenta = ped.ModoVenta,
+                    Flete = ped.Flete,
                     Cliente = new ClienteViewModel
                     {
                         Codigo = ped.Clientes.CodigoCliente,
@@ -272,7 +273,8 @@ namespace AventasApi.Controllers
                 //idMoneda = ,
                 //IdEstado = ,
                 ClienteContadoId = Pedido.ClienteContadoId,
-                ModoVenta = Pedido.ModoVenta
+                ModoVenta = Pedido.ModoVenta,
+                Flete = Pedido.Flete
             };
 
             int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
@@ -378,7 +380,7 @@ namespace AventasApi.Controllers
 
 
             PedidoBDAGuardar.TotalImpuesto = PedidoBDAGuardar.Subtotal.Value * decimal.Parse(porcentajeImpuesto);
-            PedidoBDAGuardar.TotalPedido = PedidoBDAGuardar.Subtotal.Value * decimal.Parse(impuesto);
+            PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value * decimal.Parse(impuesto))+Pedido.Flete;
             string PEdidoID = "";
             try
             {

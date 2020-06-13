@@ -100,6 +100,7 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> TotalXPedido { get; set; }
         public Nullable<decimal> SubTotalXPedido { get; set; }
         public Nullable<decimal> Impuesto { get; set; }
+        public Nullable<decimal> Flete { get; set; }
 
         public PedidosXClienteViewModel()
         {

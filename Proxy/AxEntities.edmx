@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="AxProduccionModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <Function Name="IMEmpresasTransporte" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="dataareaid" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="IMObtenerComunidadAutonoma" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PAIS" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="IMObtenerPrecioCaja" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="dataareaid" Type="varchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="AxProduccionModelStoreContainer" />
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AxProduccionModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="AxProduccionEntities" annotation:LazyLoadingEnabled="true" >
+          <FunctionImport Name="IMEmpresasTransporte" ReturnType="Collection(AxProduccionModel.IMEmpresasTransporte_Result)">
+            <Parameter Name="dataareaid" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="IMObtenerComunidadAutonoma" ReturnType="Collection(AxProduccionModel.IMObtenerComunidadAutonoma_Result)">
+            <Parameter Name="PAIS" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="IMObtenerPrecioCaja" ReturnType="Collection(AxProduccionModel.IMObtenerPrecioCaja_Result)">
+            <Parameter Name="dataareaid" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="IMEmpresasTransporte_Result">
+          <Property Type="String" Name="CODE" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="TXT" Nullable="false" MaxLength="60" />
+          <Property Type="Int32" Name="MULTIPLO" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="IMObtenerComunidadAutonoma_Result">
+          <Property Type="String" Name="STATEID" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="NAME" Nullable="false" MaxLength="60" />
+          <Property Type="String" Name="COUNTRYREGIONID" Nullable="false" MaxLength="10" />
+        </ComplexType>
+        <ComplexType Name="IMObtenerPrecioCaja_Result">
+          <Property Type="String" Name="CODE" Nullable="false" MaxLength="10" />
+          <Property Type="Decimal" Name="UNITVALUEBOXES" Nullable="false" Precision="32" Scale="16" />
+          <Property Type="String" Name="STATE" Nullable="false" MaxLength="10" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="AxProduccionModelStoreContainer" CdmEntityContainer="AxProduccionEntities" >
+          <FunctionImportMapping FunctionImportName="IMEmpresasTransporte" FunctionName="AxProduccionModel.Store.IMEmpresasTransporte">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AxProduccionModel.IMEmpresasTransporte_Result">
+                <ScalarProperty Name="CODE" ColumnName="CODE" />
+                <ScalarProperty Name="TXT" ColumnName="TXT" />
+                <ScalarProperty Name="MULTIPLO" ColumnName="MULTIPLO" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="IMObtenerComunidadAutonoma" FunctionName="AxProduccionModel.Store.IMObtenerComunidadAutonoma">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AxProduccionModel.IMObtenerComunidadAutonoma_Result">
+                <ScalarProperty Name="STATEID" ColumnName="STATEID" />
+                <ScalarProperty Name="NAME" ColumnName="NAME" />
+                <ScalarProperty Name="COUNTRYREGIONID" ColumnName="COUNTRYREGIONID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="IMObtenerPrecioCaja" FunctionName="AxProduccionModel.Store.IMObtenerPrecioCaja">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AxProduccionModel.IMObtenerPrecioCaja_Result">
+                <ScalarProperty Name="CODE" ColumnName="CODE" />
+                <ScalarProperty Name="UNITVALUEBOXES" ColumnName="UNITVALUEBOXES" />
+                <ScalarProperty Name="STATE" ColumnName="STATE" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
