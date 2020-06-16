@@ -72,6 +72,12 @@
     <Compile Include="IMObtenerComunidadAutonoma_Result.cs">
       <DependentUpon>AxEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="IMObtenerGrupoImpuestoArticulos_Result.cs">
+      <DependentUpon>AxEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="IMObtenerGrupoImpuestoClientes_Result.cs">
+      <DependentUpon>AxEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="IMObtenerPrecioCaja_Result.cs">
       <DependentUpon>AxEntities.tt</DependentUpon>
     </Compile>

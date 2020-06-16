@@ -50,5 +50,33 @@ namespace Proxy
                 return new List<IMObtenerComunidadAutonoma_Result>();
             }
         }
+        public static List<IMObtenerGrupoImpuestoArticulos_Result> GetGrupoImpuestoArticulos(string empresa)
+        {
+            try
+            {
+                using (var context = new AxProduccionEntities())
+                {
+                    return context.IMObtenerGrupoImpuestoArticulos(empresa).ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                return new List<IMObtenerGrupoImpuestoArticulos_Result>();
+            }
+        }
+        public static List<IMObtenerGrupoImpuestoClientes_Result> GetGrupoImpuestoClientes(string empresa)
+        {
+            try
+            {
+                using (var context = new AxProduccionEntities())
+                {
+                    return context.IMObtenerGrupoImpuestoClientes(empresa).ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                return new List<IMObtenerGrupoImpuestoClientes_Result>();
+            }
+        }
     }
 }

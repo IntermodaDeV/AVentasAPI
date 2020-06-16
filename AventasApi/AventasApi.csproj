@@ -184,6 +184,7 @@
     <Compile Include="Controllers\FisicoDisponibleController.cs" />
     <Compile Include="Controllers\GeoposicionController.cs" />
     <Compile Include="Controllers\GestorController.cs" />
+    <Compile Include="Controllers\GruposImpuestosController.cs" />
     <Compile Include="Controllers\MaestroLineaController.cs" />
     <Compile Include="Controllers\MonedaController.cs" />
     <Compile Include="Controllers\PedidosXClienteController.cs" />
@@ -211,6 +212,8 @@
     <Compile Include="Models\CustomerLocationApp\CoordenadasXClienteViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\RutaConCoordenadaViewModel.cs" />
     <Compile Include="Models\EmpresaTransporte.cs" />
+    <Compile Include="Models\GruposImpuestosArticulos.cs" />
+    <Compile Include="Models\GruposImpuestosClientes.cs" />
     <Compile Include="Models\RazonNoVentaCausaViewModel.cs" />
     <Compile Include="Models\RazonNoVentaTipoViewModel.cs" />
     <Compile Include="Models\TransportePrecioCaja.cs" />

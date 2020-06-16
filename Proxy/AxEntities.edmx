@@ -4,31 +4,42 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="AxProduccionModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="AxProduccionModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <Function Name="IMEmpresasTransporte" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="dataareaid" Type="varchar" Mode="In" />
         </Function>
         <Function Name="IMObtenerComunidadAutonoma" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="PAIS" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="IMObtenerGrupoImpuestoArticulos" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PAIS" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="IMObtenerGrupoImpuestoClientes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Pais" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="IMObtenerPrecioCaja" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="dataareaid" Type="varchar" Mode="In" />
         </Function>
         <EntityContainer Name="AxProduccionModelStoreContainer" />
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="AxProduccionModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="AxProduccionEntities" annotation:LazyLoadingEnabled="true" >
           <FunctionImport Name="IMEmpresasTransporte" ReturnType="Collection(AxProduccionModel.IMEmpresasTransporte_Result)">
-            <Parameter Name="dataareaid" Mode="In" Type="String" />
+          <Parameter Name="dataareaid" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IMObtenerComunidadAutonoma" ReturnType="Collection(AxProduccionModel.IMObtenerComunidadAutonoma_Result)">
-            <Parameter Name="PAIS" Mode="In" Type="String" />
+          <Parameter Name="PAIS" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IMObtenerPrecioCaja" ReturnType="Collection(AxProduccionModel.IMObtenerPrecioCaja_Result)">
-            <Parameter Name="dataareaid" Mode="In" Type="String" />
+          <Parameter Name="dataareaid" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="IMObtenerGrupoImpuestoArticulos" ReturnType="Collection(AxProduccionModel.IMObtenerGrupoImpuestoArticulos_Result)">
+            <Parameter Name="PAIS" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="IMObtenerGrupoImpuestoClientes" ReturnType="Collection(AxProduccionModel.IMObtenerGrupoImpuestoClientes_Result)">
+            <Parameter Name="Pais" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="IMEmpresasTransporte_Result">
@@ -45,6 +56,16 @@
           <Property Type="String" Name="CODE" Nullable="false" MaxLength="10" />
           <Property Type="Decimal" Name="UNITVALUEBOXES" Nullable="false" Precision="32" Scale="16" />
           <Property Type="String" Name="STATE" Nullable="false" MaxLength="10" />
+        </ComplexType>
+        <ComplexType Name="IMObtenerGrupoImpuestoArticulos_Result">
+          <Property Type="String" Name="TAXITEMGROUP" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="TAXCODE" Nullable="false" MaxLength="10" />
+          <Property Type="Decimal" Name="PORCENTAJE" Nullable="false" Precision="32" Scale="16" />
+        </ComplexType>
+        <ComplexType Name="IMObtenerGrupoImpuestoClientes_Result">
+          <Property Type="String" Name="TAXGROUP" Nullable="false" MaxLength="10" />
+          <Property Type="String" Name="TAXCODE" Nullable="false" MaxLength="10" />
+          <Property Type="Decimal" Name="PORCENTAJE" Nullable="false" Precision="32" Scale="16" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -76,6 +97,24 @@
                 <ScalarProperty Name="CODE" ColumnName="CODE" />
                 <ScalarProperty Name="UNITVALUEBOXES" ColumnName="UNITVALUEBOXES" />
                 <ScalarProperty Name="STATE" ColumnName="STATE" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="IMObtenerGrupoImpuestoArticulos" FunctionName="AxProduccionModel.Store.IMObtenerGrupoImpuestoArticulos">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AxProduccionModel.IMObtenerGrupoImpuestoArticulos_Result">
+                <ScalarProperty Name="TAXITEMGROUP" ColumnName="TAXITEMGROUP" />
+                <ScalarProperty Name="TAXCODE" ColumnName="TAXCODE" />
+                <ScalarProperty Name="PORCENTAJE" ColumnName="PORCENTAJE" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="IMObtenerGrupoImpuestoClientes" FunctionName="AxProduccionModel.Store.IMObtenerGrupoImpuestoClientes">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AxProduccionModel.IMObtenerGrupoImpuestoClientes_Result">
+                <ScalarProperty Name="TAXGROUP" ColumnName="TAXGROUP" />
+                <ScalarProperty Name="TAXCODE" ColumnName="TAXCODE" />
+                <ScalarProperty Name="PORCENTAJE" ColumnName="PORCENTAJE" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

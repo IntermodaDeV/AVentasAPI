@@ -54,5 +54,23 @@ namespace Proxy
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerPrecioCaja_Result>("IMObtenerPrecioCaja", dataareaidParameter);
         }
+    
+        public virtual ObjectResult<IMObtenerGrupoImpuestoArticulos_Result> IMObtenerGrupoImpuestoArticulos(string pAIS)
+        {
+            var pAISParameter = pAIS != null ?
+                new ObjectParameter("PAIS", pAIS) :
+                new ObjectParameter("PAIS", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerGrupoImpuestoArticulos_Result>("IMObtenerGrupoImpuestoArticulos", pAISParameter);
+        }
+    
+        public virtual ObjectResult<IMObtenerGrupoImpuestoClientes_Result> IMObtenerGrupoImpuestoClientes(string pais)
+        {
+            var paisParameter = pais != null ?
+                new ObjectParameter("Pais", pais) :
+                new ObjectParameter("Pais", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerGrupoImpuestoClientes_Result>("IMObtenerGrupoImpuestoClientes", paisParameter);
+        }
     }
 }
