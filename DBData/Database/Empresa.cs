@@ -28,6 +28,8 @@ namespace DBData.Database
             this.SubFacturasxCliente = new HashSet<SubFacturasxCliente>();
             this.TiposdePago = new HashSet<TiposdePago>();
             this.TiposdePagoDetalle = new HashSet<TiposdePagoDetalle>();
+            this.GrupoImpuestoArticulo = new HashSet<GrupoImpuestoArticulo>();
+            this.GrupoImpuestoCliente = new HashSet<GrupoImpuestoCliente>();
         }
     
         public string EmpresaId { get; set; }
@@ -61,5 +63,9 @@ namespace DBData.Database
         public virtual ICollection<TiposdePago> TiposdePago { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TiposdePagoDetalle> TiposdePagoDetalle { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GrupoImpuestoArticulo> GrupoImpuestoArticulo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GrupoImpuestoCliente> GrupoImpuestoCliente { get; set; }
     }
 }

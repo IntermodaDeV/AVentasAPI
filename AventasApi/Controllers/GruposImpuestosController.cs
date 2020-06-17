@@ -3,66 +3,50 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
-
+using DBData.Database;
 
 namespace AventasApi.Controllers
 {
     [RoutePrefix("api/gruposimpuestos")]
     public class GruposImpuestosController : ApiController
     {
+        AVentasEntities context = new AVentasEntities();
+
+        [HttpGet]
         [Route("{empresa}/Clientes")]
-        public IEnumerable<GruposImpuestosClientes> GetGruposImpuestosClientes(string empresa)
+        public IHttpActionResult GruposImpuestosClientes(string empresa)
         {
-            if (empresa != null)
-            {
-                var respuesta = Proxy.Proxy.GetGrupoImpuestoClientes(empresa);
-                if (respuesta != null || respuesta.Count > 0)
+            try
                 {
-                    try
+                    var clientes = context.GrupoImpuestoCliente.Where(x => x.Empresa == empresa).OrderBy(x => x.GrupoCliente).ToList();
+                    if (clientes.Count <= 0)
                     {
-                        var resp = respuesta.Select(x => new GruposImpuestosClientes
-                        {
-                            TAXGROUP = x.TAXGROUP,
-                            TAXCODE = x.TAXCODE,
-                            PORCENTAJE = x.PORCENTAJE.ToString()
-                        });
-                        return resp;
+                        return NotFound();
                     }
-                    catch (System.Exception e)
-                    {
-                        return new List<GruposImpuestosClientes>();
-                    }
+                    return Ok(clientes);
                 }
-                return new List<GruposImpuestosClientes>();
-            }
-            return new List<GruposImpuestosClientes>();
+                catch (Exception e)
+                {
+                    return BadRequest();
+                }
         }
+        [HttpGet]
         [Route("{empresa}/Articulos")]
-        public IEnumerable<GruposImpuestosArticulos> GetGruposImpuestosArticulos(string empresa)
+        public IHttpActionResult GruposImpuestosArticulos(string empresa)
         {
-            if (empresa != null)
+            try
             {
-                var respuesta = Proxy.Proxy.GetGrupoImpuestoArticulos(empresa);
-                if (respuesta != null || respuesta.Count > 0)
+                var ImpProductos = context.GrupoImpuestoArticulo.Where(x => x.Empresa == empresa).OrderBy(x => x.GrupoProducto).ToList();
+                if (ImpProductos.Count <= 0)
                 {
-                    try
-                    {
-                        var resp = respuesta.Select(x => new GruposImpuestosArticulos
-                        {
-                            TAXITEMGROUP = x.TAXITEMGROUP,
-                            TAXCODE = x.TAXCODE,
-                            PORCENTAJE = x.PORCENTAJE.ToString()
-                        });
-                        return resp;
-                    }
-                    catch (System.Exception e)
-                    {
-                        return new List<GruposImpuestosArticulos>();
-                    }
+                    return NotFound();
                 }
-                return new List<GruposImpuestosArticulos>();
+                return Ok(ImpProductos);
             }
-            return new List<GruposImpuestosArticulos>();
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
         }
     }
 }

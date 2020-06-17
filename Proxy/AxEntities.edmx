@@ -61,11 +61,13 @@
           <Property Type="String" Name="TAXITEMGROUP" Nullable="false" MaxLength="10" />
           <Property Type="String" Name="TAXCODE" Nullable="false" MaxLength="10" />
           <Property Type="Decimal" Name="PORCENTAJE" Nullable="false" Precision="32" Scale="16" />
+          <Property Type="String" Name="DATAAREAID" Nullable="false" MaxLength="4" />
         </ComplexType>
         <ComplexType Name="IMObtenerGrupoImpuestoClientes_Result">
           <Property Type="String" Name="TAXGROUP" Nullable="false" MaxLength="10" />
           <Property Type="String" Name="TAXCODE" Nullable="false" MaxLength="10" />
           <Property Type="Decimal" Name="PORCENTAJE" Nullable="false" Precision="32" Scale="16" />
+          <Property Type="String" Name="DATAAREAID" Nullable="false" MaxLength="4" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -106,6 +108,7 @@
                 <ScalarProperty Name="TAXITEMGROUP" ColumnName="TAXITEMGROUP" />
                 <ScalarProperty Name="TAXCODE" ColumnName="TAXCODE" />
                 <ScalarProperty Name="PORCENTAJE" ColumnName="PORCENTAJE" />
+                <ScalarProperty Name="DATAAREAID" ColumnName="DATAAREAID" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -115,6 +118,7 @@
                 <ScalarProperty Name="TAXGROUP" ColumnName="TAXGROUP" />
                 <ScalarProperty Name="TAXCODE" ColumnName="TAXCODE" />
                 <ScalarProperty Name="PORCENTAJE" ColumnName="PORCENTAJE" />
+                <ScalarProperty Name="DATAAREAID" ColumnName="DATAAREAID" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

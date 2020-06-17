@@ -9,7 +9,6 @@ using ExternalApiData.Enviroments;
 using DBData.Database;
 using ExternalApiData.Models;
 using ExternalApiData.Models.ApiModels;
-using ExternalApiData.Models.ViewModels;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -20,110 +19,31 @@ namespace ExternalApiData.GestorData
         private string UrlString = $"{Enviroment.CRMWebServiceURLApi}clientes/{{0}}/{{1}}";
 
 
-        public async Task<ClientesYMaestroGrupoPrecioViewModel> ObtenerClientesConRutaYMaestroGrupoPrecio(List<Rutas> rutasAsesor)
+        public async Task<List<ClientesCRMApiModel>> ObtenerClientesXAsesor(string usuarioAsesor, string empresaId)
         {
-            List<Asesores> asesores = new List<Asesores>();
-            List<Clientes> clientesConRuta = new List<Clientes>();
-            List<MaestroGrupoPrecio> gruposPrecio = new List<MaestroGrupoPrecio>();
-            List<Rutas> rutas = rutasAsesor;
 
-            using (AVentasEntities context = new AVentasEntities())
+           
+            string peticion = string.Format(UrlString, usuarioAsesor, empresaId);
+            var restClient = new RestClient(peticion);
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Accept", "application/json");
+            IRestResponse response = restClient.Execute(request);
+            if (response.IsSuccessful)
             {
-                asesores = context.Asesores.AsNoTracking().ToList();
+                var clientes = JsonConvert.DeserializeObject<List<ClientesCRMApiModel>>(response.Content);
+                if (clientes == null)
+                    clientes = new List<ClientesCRMApiModel>();
+                return clientes;
+
             }
-            Parallel.ForEach(asesores, ase =>
-            {
 
-                string peticion = string.Format(UrlString, ase.EmpresaId, ase.Usuario);
-                var restClient = new RestClient(peticion);
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("Accept", "application/json");
-                IRestResponse response = restClient.Execute(request);
 
-                if (response.IsSuccessful)
-                {
-                    var clientes = JsonConvert.DeserializeObject<List<ClientesCRMApiModel>>(response.Content);
-                    if (clientes == null)
-                        clientes = new List<ClientesCRMApiModel>();
-                    foreach (var cliente in clientes)
-                    {
-                        var clienteAAgregar = new Clientes
-                        {
-                            CodigoCliente = cliente.ACCOUNT,
-                            EmpresaId = cliente.ENTITY,
-                            Nombre = cliente.NAME,
-                            ComunidadAutonoma = cliente.AUTONOMOUS_COMMUNITY,
-                            GrupoPrecio = cliente.PRICE,
-                            GrupoCliente = cliente.CUSTOMER_GROUP,
-                            Descuento = cliente.TOTAL_DISCOUNT,
-                            Direccion = cliente.ADDRESS,
-                            IdMoneda = cliente.CURRENCY,
-                            FacturacionEntrega = cliente.BLOCKED,
-                            //Latitud = ,
-                            //Longitud = ,
-                            //Provincias = ,
-                            //Region = ,
-                            //Revision = ,
 
-                        };
-                        if (!gruposPrecio.Any(gp => gp.GrupoPrecio == cliente.PRICE))
-                        {
-                            lock (gruposPrecio)
-                            {
-                                gruposPrecio.Add(new MaestroGrupoPrecio
-                                {
-                                    GrupoPrecio = cliente.PRICE,
-                                    Descripcion = cliente.PRICE_NAME
-                                });
-                            }
-                        }
-                        var rutaAAgregar = new Rutas
-                        {
-                            CodigoRuta = cliente.ENTITY.ToLower() + "-" + cliente.SALES_AREA,
-                            EmpresaId = cliente.ENTITY,
-                            Nombre = cliente.SALES_AREA_NAME
-                        };
-                        lock (rutas)
-                        {
-                            if (!rutas.Any(rutXAgre => rutXAgre.CodigoRuta == rutaAAgregar.CodigoRuta))
-                            {
-                                rutas.Add(rutaAAgregar);
-                            }
-                        }
-                        try
-                        {
-                            clienteAAgregar.CreditoDisponible = decimal.Parse(cliente.CREDIT_AVAILABLE);
-                        }
-                        catch (Exception) { }
-                        try
-                        {
-                            clienteAAgregar.LimiteCredito = decimal.Parse(cliente.CREDIT_LIMIT);
-                        }
-                        catch (Exception) { }
-                        clienteAAgregar.ClientesxRuta.Add(new ClientesxRuta
-                        {
-                            CodigoRuta = cliente.ENTITY + "-" + cliente.SALES_AREA,
-                            CodigoCliente = cliente.ACCOUNT,
-                        });
-                        lock (clientesConRuta)
-                        {
-                            clientesConRuta.Add(clienteAAgregar);
-                        }
-                    }
-                }
-            }
-            );
-
-            return new ClientesYMaestroGrupoPrecioViewModel
-            {
-                ClientesConRuta = clientesConRuta,
-                MaestroGrupoPrecio = gruposPrecio,
-                Rutas = rutas
-            };
+            return (new List<ClientesCRMApiModel>());
         }
-        public async Task<Clientes> ObtenerClientePorId(string clienteID, string usuario, string empresaId)
+        public async Task<ClientesCRMApiModel> ObtenerClientePorId(string clienteID, string usuario, string empresaId)
         {
-            string peticion = string.Format(UrlString, empresaId, usuario)+"/"+ clienteID;
+            string peticion = string.Format(UrlString, empresaId, usuario) + "/" + clienteID;
             var restClient = new RestClient(peticion);
             var request = new RestRequest(Method.GET);
             request.AddHeader("Accept", "application/json");
@@ -135,64 +55,13 @@ namespace ExternalApiData.GestorData
                 if (clientes != null && (clientes.Count() == 1))
                 {
                     var clienteCRM = clientes[0];
-                    var cliente = new Clientes
-                    {
-                        CodigoCliente = clienteCRM.ACCOUNT,
-                        EmpresaId = clienteCRM.ENTITY,
-                        Nombre = clienteCRM.NAME,
-                        ComunidadAutonoma = clienteCRM.AUTONOMOUS_COMMUNITY,
-                        GrupoPrecio = clienteCRM.PRICE,
-                        GrupoCliente = clienteCRM.CUSTOMER_GROUP,
-                        Descuento = clienteCRM.TOTAL_DISCOUNT,
-                        Direccion = clienteCRM.ADDRESS,
-                        IdMoneda = clienteCRM.CURRENCY,
-                        FacturacionEntrega = clienteCRM.BLOCKED,
-                        //Latitud = ,
-                        //Longitud = ,
-                        //Provincias = ,
-                        //Region = ,
-                        //Revision = ,
-
-                    };
-                    try
-                    {
-                        cliente.CreditoDisponible = decimal.Parse(clienteCRM.CREDIT_AVAILABLE);
-                    }
-                    catch (Exception) { }
-                    try
-                    {
-                        cliente.LimiteCredito = decimal.Parse(clienteCRM.CREDIT_LIMIT);
-                    }
-                    catch (Exception) { }
-                    return cliente;
+                    return clienteCRM;
                 }
             }
             return null;
         }
-        public async Task GuardarRutas(List<Rutas> rutasAGuardar)
-        {
-            using (AVentasEntities context = new AVentasEntities())
-            {
-                context.Rutas.AddRange(rutasAGuardar.OrderBy(rut => rut.EmpresaId).ThenBy(rut => rut.CodigoRuta));
-                await context.SaveChangesAsync();
-            }
-        }
-        public async Task GuardarClientesConRuta(List<Clientes> clientesAAGregar)
-        {
-            clientesAAGregar.ForEach(asa => Debug.WriteLine(asa.ClientesxRuta.First().CodigoRuta));
-            using (AVentasEntities context = new AVentasEntities())
-            {
-                context.Clientes.AddRange(clientesAAGregar);
-                await context.SaveChangesAsync();
-            }
-        }
-        public async Task GuardarGrupoPrecio(List<MaestroGrupoPrecio> gruposPrecioAAgregar)
-        {
-            using (AVentasEntities context = new AVentasEntities())
-            {
-                context.MaestroGrupoPrecio.AddRange(gruposPrecioAAgregar);
-                await context.SaveChangesAsync();
-            }
-        }
+
+
+
     }
 }

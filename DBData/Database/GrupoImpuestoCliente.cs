@@ -7,15 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Proxy
+namespace DBData.Database
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class IMObtenerGrupoImpuestoArticulos_Result
+    public partial class GrupoImpuestoCliente
     {
-        public string TAXITEMGROUP { get; set; }
-        public string TAXCODE { get; set; }
-        public decimal PORCENTAJE { get; set; }
-        public string DATAAREAID { get; set; }
+        public int IdGrupoImpuesto { get; set; }
+        public string GrupoCliente { get; set; }
+        public string GrupoImpuesto { get; set; }
+        public decimal Porcentaje { get; set; }
+        public string Empresa { get; set; }
+        public bool Activo { get; set; }
+    
+        public virtual Empresa Empresa1 { get; set; }
     }
 }

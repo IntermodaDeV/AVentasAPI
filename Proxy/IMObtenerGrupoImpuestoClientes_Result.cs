@@ -16,5 +16,6 @@ namespace Proxy
         public string TAXGROUP { get; set; }
         public string TAXCODE { get; set; }
         public decimal PORCENTAJE { get; set; }
+        public string DATAAREAID { get; set; }
     }
 }

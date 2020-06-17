@@ -95,6 +95,7 @@
     <Compile Include="Enviroments\Enviroment.cs" />
     <Compile Include="GestorData\GestorAcuerdosVenta.cs" />
     <Compile Include="GestorData\GestorAsesores.cs" />
+    <Compile Include="GestorData\GestorClientes.cs" />
     <Compile Include="GestorData\GestorColecciones.cs" />
     <Compile Include="GestorData\GestorEspecificacionPagos.cs" />
     <Compile Include="GestorData\GestorProductos.cs" />

@@ -24,6 +24,7 @@ namespace DataManager.Extensions
                     Multiplo = prod.multiplo,
                     IdLinea = linea.IdLinea,
                     CodigoGrupoTalla = prod.grupoTallaId,
+                    GrupoImpuesto = prod.GrupoImpuesto
 
                 };
                 producto.IdEdad = prod.edad[0]?.codigo;

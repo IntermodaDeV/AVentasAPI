@@ -426,6 +426,28 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="CodigoColor" Type="varchar" MaxLength="50" />
           <Property Name="Principal" Type="bit" />
         </EntityType>
+        <EntityType Name="GrupoImpuestoArticulo">
+          <Key>
+            <PropertyRef Name="IdGrupoImpuesto" />
+          </Key>
+          <Property Name="IdGrupoImpuesto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GrupoProducto" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="GrupoImpuesto" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Porcentaje" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Empresa" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="GrupoImpuestoCliente">
+          <Key>
+            <PropertyRef Name="IdGrupoImpuesto" />
+          </Key>
+          <Property Name="IdGrupoImpuesto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GrupoCliente" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="GrupoImpuesto" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Porcentaje" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Empresa" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="GrupoTalla">
           <Key>
             <PropertyRef Name="CodigoGrupoTalla" />
@@ -2035,6 +2057,30 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="GrupoImpuestoArticulo_Empresa">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="1" />
+          <End Role="GrupoImpuestoArticulo" Type="Self.GrupoImpuestoArticulo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="GrupoImpuestoArticulo">
+              <PropertyRef Name="Empresa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="GrupoImpuestoCliente_Empresa">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="1" />
+          <End Role="GrupoImpuestoCliente" Type="Self.GrupoImpuestoCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="GrupoImpuestoCliente">
+              <PropertyRef Name="Empresa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Function Name="CuentaCorriente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CodigoCliente" Type="varchar" Mode="In" />
         </Function>
@@ -2109,6 +2155,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="FormularioIntroDetallexRoles" EntityType="Self.FormularioIntroDetallexRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FormularioIntroEncabezado" EntityType="Self.FormularioIntroEncabezado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FotografiasXProducto" EntityType="Self.FotografiasXProducto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GrupoImpuestoArticulo" EntityType="Self.GrupoImpuestoArticulo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GrupoImpuestoCliente" EntityType="Self.GrupoImpuestoCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoTalla" EntityType="Self.GrupoTalla" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LimiteCreditoxCliente" EntityType="Self.LimiteCreditoxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LineasxColeccion" EntityType="Self.LineasxColeccion" Schema="dbo" store:Type="Tables" />
@@ -2606,6 +2654,14 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
           </AssociationSet>
+          <AssociationSet Name="GrupoImpuestoArticulo_Empresa" Association="Self.GrupoImpuestoArticulo_Empresa">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="GrupoImpuestoArticulo" EntitySet="GrupoImpuestoArticulo" />
+          </AssociationSet>
+          <AssociationSet Name="GrupoImpuestoCliente_Empresa" Association="Self.GrupoImpuestoCliente_Empresa">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="GrupoImpuestoCliente" EntitySet="GrupoImpuestoCliente" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -2946,6 +3002,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK__SubFactur__Empre__78F3E6EC" FromRole="Empresa" ToRole="SubFacturasxCliente" />
           <NavigationProperty Name="TiposdePago" Relationship="Self.FK__TiposdePa__Empre__29971E47" FromRole="Empresa" ToRole="TiposdePago" />
           <NavigationProperty Name="TiposdePagoDetalle" Relationship="Self.FK__TiposdePa__Empre__2C738AF2" FromRole="Empresa" ToRole="TiposdePagoDetalle" />
+          <NavigationProperty Name="GrupoImpuestoArticulo" Relationship="AventasModel.GrupoImpuestoArticulo_Empresa" FromRole="Empresa" ToRole="GrupoImpuestoArticulo" />
+          <NavigationProperty Name="GrupoImpuestoCliente" Relationship="AventasModel.GrupoImpuestoCliente_Empresa" FromRole="Empresa" ToRole="GrupoImpuestoCliente" />
         </EntityType>
         <EntityType Name="Errores">
           <Key>
@@ -5233,7 +5291,17 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="RecibosDetalle" EntitySet="RecibosDetalle" />
           </AssociationSet>
           <EntitySet Name="ClienteContado" EntityType="AventasModel.ClienteContado" />
-        </EntityContainer>
+          <EntitySet Name="GrupoImpuestoArticulo" EntityType="AventasModel.GrupoImpuestoArticulo" />
+          <AssociationSet Name="GrupoImpuestoArticulo_Empresa" Association="AventasModel.GrupoImpuestoArticulo_Empresa">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="GrupoImpuestoArticulo" EntitySet="GrupoImpuestoArticulo" />
+          </AssociationSet>
+          <EntitySet Name="GrupoImpuestoCliente" EntityType="AventasModel.GrupoImpuestoCliente" />
+          <AssociationSet Name="GrupoImpuestoCliente_Empresa" Association="AventasModel.GrupoImpuestoCliente_Empresa">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="GrupoImpuestoCliente" EntitySet="GrupoImpuestoCliente" />
+          </AssociationSet>
+          </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
           <Property Type="String" Name="TipoPedido" Nullable="true" MaxLength="350" />
@@ -5386,7 +5454,55 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ComunidadAutonoma" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Ruta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
-      </Schema>
+        <EntityType Name="GrupoImpuestoArticulo">
+          <Key>
+            <PropertyRef Name="IdGrupoImpuesto" />
+          </Key>
+          <Property Name="IdGrupoImpuesto" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GrupoProducto" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="GrupoImpuesto" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Porcentaje" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="Empresa" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Empresa1" Relationship="AventasModel.GrupoImpuestoArticulo_Empresa" FromRole="GrupoImpuestoArticulo" ToRole="Empresa" />
+        </EntityType>
+        <Association Name="GrupoImpuestoArticulo_Empresa">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
+          <End Type="AventasModel.GrupoImpuestoArticulo" Role="GrupoImpuestoArticulo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="GrupoImpuestoArticulo">
+              <PropertyRef Name="Empresa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="GrupoImpuestoCliente">
+          <Key>
+            <PropertyRef Name="IdGrupoImpuesto" />
+          </Key>
+          <Property Name="IdGrupoImpuesto" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GrupoCliente" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="GrupoImpuesto" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Porcentaje" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="Empresa" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Empresa1" Relationship="AventasModel.GrupoImpuestoCliente_Empresa" FromRole="GrupoImpuestoCliente" ToRole="Empresa" />
+        </EntityType>
+        <Association Name="GrupoImpuestoCliente_Empresa">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
+          <End Type="AventasModel.GrupoImpuestoCliente" Role="GrupoImpuestoCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="GrupoImpuestoCliente">
+              <PropertyRef Name="Empresa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -6404,7 +6520,31 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-        </EntityContainerMapping>
+          <EntitySetMapping Name="GrupoImpuestoArticulo">
+            <EntityTypeMapping TypeName="AventasModel.GrupoImpuestoArticulo">
+              <MappingFragment StoreEntitySet="GrupoImpuestoArticulo">
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="Empresa" ColumnName="Empresa" />
+                <ScalarProperty Name="Porcentaje" ColumnName="Porcentaje" />
+                <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />
+                <ScalarProperty Name="GrupoProducto" ColumnName="GrupoProducto" />
+                <ScalarProperty Name="IdGrupoImpuesto" ColumnName="IdGrupoImpuesto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GrupoImpuestoCliente">
+            <EntityTypeMapping TypeName="AventasModel.GrupoImpuestoCliente">
+              <MappingFragment StoreEntitySet="GrupoImpuestoCliente">
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="Empresa" ColumnName="Empresa" />
+                <ScalarProperty Name="Porcentaje" ColumnName="Porcentaje" />
+                <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />
+                <ScalarProperty Name="GrupoCliente" ColumnName="GrupoCliente" />
+                <ScalarProperty Name="IdGrupoImpuesto" ColumnName="IdGrupoImpuesto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

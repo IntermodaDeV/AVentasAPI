@@ -172,7 +172,11 @@
         <AssociationConnector Association="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" />
         <AssociationConnector Association="AventasModel.FK__RecibosDe__Recib__7F01C5FD" />
         <EntityTypeShape EntityType="AventasModel.ClienteContado" Width="1.5" PointX="8.375" PointY="0.75" />
-      </Diagram>
+        <EntityTypeShape EntityType="AventasModel.GrupoImpuestoArticulo" Width="1.5" PointX="3" PointY="51" />
+        <AssociationConnector Association="AventasModel.GrupoImpuestoArticulo_Empresa" />
+        <EntityTypeShape EntityType="AventasModel.GrupoImpuestoCliente" Width="1.5" PointX="3" PointY="54.625" />
+        <AssociationConnector Association="AventasModel.GrupoImpuestoCliente_Empresa" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

@@ -20,10 +20,13 @@ namespace AventasApi
             ColeccionesManager manager = new ColeccionesManager();
             ProductosXColeccionManager productosManager = new ProductosXColeccionManager();
             LineaManager lineaManager = new LineaManager();
+            GrupoImpuestoClientesManager GrupoImpuestoClientesManager = new GrupoImpuestoClientesManager();
+            //ClientesManager ClientesManager = new ClientesManager();
 
             //lineaManager.IniciarProceso().Wait();
             //manager.IniciarProceso().Wait();
-            //productosManager.IniciarProceso().Wait();
+            //GrupoImpuestoClientesManager.IniciarProceso().Wait();
+            //ClientesManager.IniciarProceso().Wait();
 
 
 
