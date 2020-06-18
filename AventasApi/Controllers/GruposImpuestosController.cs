@@ -18,12 +18,18 @@ namespace AventasApi.Controllers
         {
             try
                 {
-                    var clientes = context.GrupoImpuestoCliente.Where(x => x.Empresa == empresa).OrderBy(x => x.GrupoCliente).ToList();
+                    var clientes = context.GrupoImpuestoCliente.Where(x => x.Empresa == empresa && x.Activo==true).OrderBy(x => x.GrupoCliente).ToList();
                     if (clientes.Count <= 0)
                     {
                         return NotFound();
                     }
-                    return Ok(clientes);
+
+                    var grupos = clientes.Select(x => new ClienteImpuestoModel() { 
+                        GRUPO = x.GrupoCliente.ToUpper(),
+                        IMPUESTO = (x.Porcentaje/100) }
+                    ).ToList();
+
+                    return Ok(grupos);
                 }
                 catch (Exception e)
                 {
@@ -36,12 +42,19 @@ namespace AventasApi.Controllers
         {
             try
             {
-                var ImpProductos = context.GrupoImpuestoArticulo.Where(x => x.Empresa == empresa).OrderBy(x => x.GrupoProducto).ToList();
+                var ImpProductos = context.GrupoImpuestoArticulo.Where(x => x.Empresa == empresa && x.Activo==true).OrderBy(x => x.GrupoProducto).ToList();
                 if (ImpProductos.Count <= 0)
                 {
                     return NotFound();
                 }
-                return Ok(ImpProductos);
+
+                var grupos = ImpProductos.Select(x => new ProductoImpuestoModel()
+                {
+                    GRUPO = x.GrupoProducto.ToUpper(),
+                    IMPUESTO = (x.Porcentaje/100)
+                }).ToList();
+
+                return Ok(grupos);
             }
             catch (Exception e)
             {

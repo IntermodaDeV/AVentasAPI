@@ -206,6 +206,7 @@
     <Compile Include="Models\Authentication\UserAuthenticated.cs" />
     <Compile Include="Models\Authentication\Usuario.cs" />
     <Compile Include="Models\BitacoraVisitasClienteViewModel.cs" />
+    <Compile Include="Models\ClienteImpuestoModel.cs" />
     <Compile Include="Models\ComunidadAutonoma.cs" />
     <Compile Include="Models\Coordenada.cs" />
     <Compile Include="Models\CustomerLocationApp\ClientesConCoordendasViewModel.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="Models\EmpresaTransporte.cs" />
     <Compile Include="Models\GruposImpuestosArticulos.cs" />
     <Compile Include="Models\GruposImpuestosClientes.cs" />
+    <Compile Include="Models\ProductoImpuestoModel.cs" />
     <Compile Include="Models\RazonNoVentaCausaViewModel.cs" />
     <Compile Include="Models\RazonNoVentaTipoViewModel.cs" />
     <Compile Include="Models\TransportePrecioCaja.cs" />

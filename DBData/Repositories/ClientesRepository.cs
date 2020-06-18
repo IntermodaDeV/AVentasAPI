@@ -49,8 +49,6 @@ namespace DBData.Repositories
                     }
                     else
                     {
-                        clienteEnBD = new Clientes();
-
                         clienteEnBD.CodigoCliente = clienteAGuardar.CodigoCliente;
                         clienteEnBD.EmpresaId = clienteAGuardar.EmpresaId;
                         clienteEnBD.Nombre = clienteAGuardar.Nombre;
