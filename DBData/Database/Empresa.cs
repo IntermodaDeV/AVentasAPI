@@ -24,12 +24,12 @@ namespace DBData.Database
             this.CuentasBancarias = new HashSet<CuentasBancarias>();
             this.FacturasxCliente = new HashSet<FacturasxCliente>();
             this.MonedasxEmpresa = new HashSet<MonedasxEmpresa>();
-            this.PedidosxCliente = new HashSet<PedidosxCliente>();
             this.SubFacturasxCliente = new HashSet<SubFacturasxCliente>();
             this.TiposdePago = new HashSet<TiposdePago>();
             this.TiposdePagoDetalle = new HashSet<TiposdePagoDetalle>();
             this.GrupoImpuestoArticulo = new HashSet<GrupoImpuestoArticulo>();
             this.GrupoImpuestoCliente = new HashSet<GrupoImpuestoCliente>();
+            this.PedidosxCliente = new HashSet<PedidosxCliente>();
         }
     
         public string EmpresaId { get; set; }
@@ -56,8 +56,6 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MonedasxEmpresa> MonedasxEmpresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubFacturasxCliente> SubFacturasxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TiposdePago> TiposdePago { get; set; }
@@ -67,5 +65,7 @@ namespace DBData.Database
         public virtual ICollection<GrupoImpuestoArticulo> GrupoImpuestoArticulo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<GrupoImpuestoCliente> GrupoImpuestoCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
     }
 }

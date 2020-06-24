@@ -22,6 +22,7 @@ namespace DBData.Database
         }
     
         public string PedidoId { get; set; }
+        public string NumeroPedido { get; set; }
         public Nullable<int> IdTipoPedido { get; set; }
         public Nullable<int> IdColeccion { get; set; }
         public string CodigoCliente { get; set; }

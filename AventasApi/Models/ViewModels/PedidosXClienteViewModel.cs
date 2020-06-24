@@ -77,7 +77,7 @@ namespace AventasApi.Models.ViewModels
         public System.DateTime? FechaActual { get; set; }
         public System.DateTime? FechaEntrega { get; set; }
         public string Observacion { get; set; }
-
+        public string NumeroPedido { get; set; }
         //public string NombreCliente { get; set; }
 
         public Nullable<int> ClienteContadoId { get; set; }

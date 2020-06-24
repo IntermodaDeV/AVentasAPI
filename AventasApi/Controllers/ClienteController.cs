@@ -177,14 +177,17 @@ namespace AventasApi.Controllers
                                 NumPedido = rec.NumPedido,
                                 CodigoCliente = rec.CodigoCliente
                             }).ToList(),
-                            Pedido = context.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.PedidoId)).Select(ped => new PedidosXClienteViewModel
+                            Pedido = context.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.NumeroPedido) && ped.NumeroPedido != null).Select(ped => new PedidosXClienteViewModel
                             {
                                 PedidoId = ped.PedidoId,
+                                NumeroPedido = ped.NumeroPedido,
                                 CodigoColeccion = ped.Colecciones.CodigoColeccion,
                                 NombreColeccion = ped.Colecciones.Nombre,
                                 FechaEntrega = ped.FechaEntrega,
                                 FechaActual = ped.Fecha,
-                                TotalXPedido = ped.TotalPedido
+                                TotalXPedido = ped.TotalPedido,
+                                ClienteContadoId = ped.ClienteContadoId
+
                             }).ToList()
                     }).ToList();
 

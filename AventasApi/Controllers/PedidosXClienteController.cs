@@ -233,8 +233,10 @@ namespace AventasApi.Controllers
             ClienteContado clienteContado;
             Configuraciones SyncTelContado;
             Configuraciones SyncTelCredito;
+            List<GrupoImpuestoCliente> impuestosClientes = new List<GrupoImpuestoCliente>();
             using (AVentasEntities context = new AVentasEntities())
-            {
+            { 
+                
                 SyncTelContado = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "SynTelContado");
                 SyncTelCredito = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "SynTelCredito");
                 clienteContado = context.ClienteContado.Find(Pedido.ClienteContadoId);
@@ -243,6 +245,7 @@ namespace AventasApi.Controllers
                 acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
                 tipoPedido = acuerdoVenta?.TiposdePedido;
                 cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
+                impuestosClientes = context.GrupoImpuestoCliente.Where(x => x.Empresa.ToUpper() == cliente.EmpresaId.ToUpper() && x.Activo==true).ToList();
             }
             DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
             PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
@@ -356,11 +359,11 @@ namespace AventasApi.Controllers
 
             }
 
-            var empresa = cliente.EmpresaId;
-            var porcentajeImpuesto = "0.15";
-            var impuesto = "1.15";
+            var empresa = impuestosClientes.FirstOrDefault(x => x.GrupoCliente == cliente.GrupoImpuesto);
+            var porcentajeImpuesto = empresa.Porcentaje/100;
+            var impuesto = porcentajeImpuesto+1;
 
-            if (empresa.Equals("IMCR"))
+            /*if (empresa.Equals("IMCR"))
             {
                 porcentajeImpuesto = "0.13";
                 impuesto = "1.13";
@@ -376,11 +379,11 @@ namespace AventasApi.Controllers
             {
                 porcentajeImpuesto = "0.0";
                 impuesto = "1";
-            }
+            }*/
 
 
-            PedidoBDAGuardar.TotalImpuesto = PedidoBDAGuardar.Subtotal.Value * decimal.Parse(porcentajeImpuesto);
-            PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value * decimal.Parse(impuesto))+Pedido.Flete;
+            PedidoBDAGuardar.TotalImpuesto = PedidoBDAGuardar.Subtotal.Value * decimal.Parse(porcentajeImpuesto.ToString());
+            PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value * decimal.Parse(impuesto.ToString()))+Pedido.Flete;
             string PEdidoID = "";
             try
             {
@@ -397,6 +400,7 @@ namespace AventasApi.Controllers
                     content = content.Split(' ')[0];
                     PEdidoID = content;
                     PedidoBDAGuardar.PedidoId = PEdidoID;
+                    PedidoBDAGuardar.NumeroPedido = numeroReferencia;
                 }
                 else
                 {

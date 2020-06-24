@@ -67,7 +67,6 @@ namespace DBData.Database
         public virtual DbSet<Pantallas> Pantallas { get; set; }
         public virtual DbSet<PantallasxUsuario> PantallasxUsuario { get; set; }
         public virtual DbSet<PedidosDetalle> PedidosDetalle { get; set; }
-        public virtual DbSet<PedidosxCliente> PedidosxCliente { get; set; }
         public virtual DbSet<PrecioEspecifico> PrecioEspecifico { get; set; }
         public virtual DbSet<PreciosxProducto> PreciosxProducto { get; set; }
         public virtual DbSet<PrioridadAsignacion> PrioridadAsignacion { get; set; }
@@ -99,6 +98,7 @@ namespace DBData.Database
         public virtual DbSet<ClienteContado> ClienteContado { get; set; }
         public virtual DbSet<GrupoImpuestoArticulo> GrupoImpuestoArticulo { get; set; }
         public virtual DbSet<GrupoImpuestoCliente> GrupoImpuestoCliente { get; set; }
+        public virtual DbSet<PedidosxCliente> PedidosxCliente { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
