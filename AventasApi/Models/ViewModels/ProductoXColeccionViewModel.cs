@@ -12,6 +12,7 @@ namespace AventasApi.Models.ViewModels
         public string CodigoColeccion { get; set; }
         public string NombreProducto { get; set; }
         public string GrupoTalla { get; set; }
+        public string GrupoImpuesto { get; set; }
         public LineaViewModel Linea { get; set; }
         public List<PrecioXProductoViewModel> Precio { get; set; }
         public List<TallaViewModel> ListaTalla;

@@ -234,6 +234,7 @@ namespace AventasApi.Controllers
             Configuraciones SyncTelContado;
             Configuraciones SyncTelCredito;
             List<GrupoImpuestoCliente> impuestosClientes = new List<GrupoImpuestoCliente>();
+            List<GrupoImpuestoArticulo> impuestosArticulos = new List<GrupoImpuestoArticulo>();
             using (AVentasEntities context = new AVentasEntities())
             { 
                 
@@ -246,6 +247,7 @@ namespace AventasApi.Controllers
                 tipoPedido = acuerdoVenta?.TiposdePedido;
                 cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
                 impuestosClientes = context.GrupoImpuestoCliente.Where(x => x.Empresa.ToUpper() == cliente.EmpresaId.ToUpper() && x.Activo==true).ToList();
+                impuestosArticulos = context.GrupoImpuestoArticulo.Where(x => x.Empresa.ToUpper() == cliente.EmpresaId.ToUpper() && x.Activo == true).ToList();
             }
             DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
             PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
@@ -359,27 +361,17 @@ namespace AventasApi.Controllers
 
             }
 
-            var empresa = impuestosClientes.FirstOrDefault(x => x.GrupoCliente == cliente.GrupoImpuesto);
-            var porcentajeImpuesto = empresa.Porcentaje/100;
+            var clienteImpuesto = impuestosClientes.FirstOrDefault(x => x.GrupoCliente.ToUpper() == cliente.GrupoImpuesto.ToUpper());
+            var producto = coleccion.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == Pedido.DetallePedido[0].CodigoProducto).GrupoImpuesto;
+            var productoImpuesto = impuestosArticulos.FirstOrDefault(x => x.GrupoProducto.ToUpper() == producto.ToUpper());
+            var porcentajeImpuesto =productoImpuesto.Porcentaje/100;
             var impuesto = porcentajeImpuesto+1;
 
-            /*if (empresa.Equals("IMCR"))
+            if (clienteImpuesto.Porcentaje == 0.0m)
             {
-                porcentajeImpuesto = "0.13";
-                impuesto = "1.13";
+                porcentajeImpuesto =0;
+                impuesto = porcentajeImpuesto + 1;
             }
-
-            if (empresa.Equals("IMGT"))
-            {
-                porcentajeImpuesto = "0.12";
-                impuesto = "1.12";
-            }
-
-            if (empresa.Equals("IMHN") && Pedido.Linea.Equals("BIO"))
-            {
-                porcentajeImpuesto = "0.0";
-                impuesto = "1";
-            }*/
 
 
             PedidoBDAGuardar.TotalImpuesto = PedidoBDAGuardar.Subtotal.Value * decimal.Parse(porcentajeImpuesto.ToString());

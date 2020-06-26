@@ -124,6 +124,11 @@ namespace AventasApi.Controllers
                     EmpresaId = tp.EmpresaId,
 
                 }).FirstOrDefault(),
+                Pedido = context.PedidosxCliente.Where(p => p.NumeroPedido == ant.NumPedido).Select(ped => new PedidosXClienteViewModel
+                {
+                    NumeroPedido = ped.NumeroPedido,
+                    ClienteContadoId = ped.ClienteContadoId
+                }).FirstOrDefault(),
                 DetalleRecibo = new List<RecibosDetalleViewModel> { new RecibosDetalleViewModel {
                     Valor = ant.Valor,
                     ValorSinDescuento = ant.Valor,

@@ -29,8 +29,9 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> Descuento { get; set; }
         public TipoPagoViewModel TipoPago{ get; set; }
         public ClienteViewModel Cliente { get; set; }
+        public PedidosXClienteViewModel Pedido { get; set; }
 
-        
+
         public List<RecibosDetalleViewModel> DetalleRecibo { get; set; }
     }
 }

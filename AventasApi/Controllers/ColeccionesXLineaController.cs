@@ -80,6 +80,7 @@ namespace AventasApi.Controllers
                                                       CodigoColeccion = vw_coleccion.CodigoColeccion,
                                                       CodigoProducto = pxc.IdProducto,
                                                       NombreProducto = pxc.NombreProducto,
+                                                      GrupoImpuesto=pxc.GrupoImpuesto,
                                                       Precio = pxc.PreciosxProducto.Where(preEsp => true || !filtarXGrupoPrecio).Select(precio => new PrecioXProductoViewModel
                                                       {
                                                           GrupoPrecio = precio.GrupoPrecio,
