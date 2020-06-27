@@ -72,5 +72,10 @@ namespace Proxy
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerGrupoImpuestoClientes_Result>("IMObtenerGrupoImpuestoClientes", paisParameter);
         }
+    
+        public virtual ObjectResult<IM_ObtenerEmpresas_Result> IM_ObtenerEmpresas()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IM_ObtenerEmpresas_Result>("IM_ObtenerEmpresas");
+        }
     }
 }

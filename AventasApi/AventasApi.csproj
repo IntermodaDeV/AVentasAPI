@@ -179,6 +179,7 @@
     <Compile Include="Controllers\ConfiguracionesController.cs" />
     <Compile Include="Controllers\CoordenadasXClienteController.cs" />
     <Compile Include="Controllers\CorreoController.cs" />
+    <Compile Include="Controllers\EmpresaController.cs" />
     <Compile Include="Controllers\EstadisticaVisitaController.cs" />
     <Compile Include="Controllers\FacturasXClienteController.cs" />
     <Compile Include="Controllers\FisicoDisponibleController.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="Models\CustomerLocationApp\ClientesConCoordendasViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\CoordenadasXClienteViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\RutaConCoordenadaViewModel.cs" />
+    <Compile Include="Models\Empresa.cs" />
     <Compile Include="Models\EmpresaTransporte.cs" />
     <Compile Include="Models\GruposImpuestosArticulos.cs" />
     <Compile Include="Models\GruposImpuestosClientes.cs" />

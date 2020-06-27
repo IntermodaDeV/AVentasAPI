@@ -279,7 +279,8 @@ namespace AventasApi.Controllers
                 //IdEstado = ,
                 ClienteContadoId = Pedido.ClienteContadoId,
                 ModoVenta = Pedido.ModoVenta,
-                Flete = Pedido.Flete
+                Flete = Pedido.Flete,
+                RequiereEntrega=Pedido.RequiereEntrega
             };
 
             int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;

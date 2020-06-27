@@ -207,6 +207,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="CreditoDisponible" Type="decimal" Precision="15" Scale="4" />
           <Property Name="Telefono" Type="varchar" MaxLength="50" />
           <Property Name="GrupoImpuesto" Type="varchar" MaxLength="150" />
+          <Property Name="ModoEntrega" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -581,6 +582,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="ClienteContadoId" Type="int" />
           <Property Name="ModoVenta" Type="varchar" MaxLength="50" />
           <Property Name="Flete" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="RequiereEntrega" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -2866,6 +2868,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="GrupoImpuesto" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Codig__0F183235" FromRole="Clientes" ToRole="PedidosxCliente" />
+          <Property Name="ModoEntrega" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -5383,6 +5386,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="MaestroMoneda" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D" FromRole="PedidosxCliente" ToRole="MaestroMoneda" />
           <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosxCliente" ToRole="PedidosDetalle" />
           <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA" FromRole="PedidosxCliente" ToRole="TiposdePedido" />
+          <Property Name="RequiereEntrega" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK__PedidosxC__Codig__6B44E613">
           <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="0..1" />
@@ -5651,6 +5655,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Clientes">
             <EntityTypeMapping TypeName="AventasModel.Clientes">
               <MappingFragment StoreEntitySet="Clientes">
+                <ScalarProperty Name="ModoEntrega" ColumnName="ModoEntrega" />
                 <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />
                 <ScalarProperty Name="Telefono" ColumnName="Telefono" />
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
@@ -6516,6 +6521,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="RequiereEntrega" ColumnName="RequiereEntrega" />
                 <ScalarProperty Name="Flete" ColumnName="Flete" />
                 <ScalarProperty Name="ModoVenta" ColumnName="ModoVenta" />
                 <ScalarProperty Name="ClienteContadoId" ColumnName="ClienteContadoId" />

@@ -69,6 +69,7 @@ namespace DBData.Repositories
                         clienteEnBD.CreditoDisponible = clienteAGuardar.CreditoDisponible;
                         clienteEnBD.Telefono = clienteAGuardar.Telefono;
                         clienteEnBD.GrupoImpuesto = clienteAGuardar.GrupoImpuesto;
+                        clienteEnBD.ModoEntrega = clienteAGuardar.ModoEntrega;
                         context.SaveChanges();
                     }
                 }

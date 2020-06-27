@@ -81,6 +81,9 @@
     <Compile Include="IMObtenerPrecioCaja_Result.cs">
       <DependentUpon>AxEntities.tt</DependentUpon>
     </Compile>
+    <Compile Include="IM_ObtenerEmpresas_Result.cs">
+      <DependentUpon>AxEntities.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proxy.cs" />
   </ItemGroup>

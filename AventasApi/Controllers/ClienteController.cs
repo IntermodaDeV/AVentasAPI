@@ -77,6 +77,7 @@ namespace AventasApi.Controllers
                         CreditoDisponible = cli.CreditoDisponible ?? 0,
                         Longitud = cli.Longitud,
                         GrupoImpuesto = cli.GrupoImpuesto.ToUpper(),
+                        ModoEntrega=cli.ModoEntrega,
                         //Credito =  context.PResumenCredito().Where(resCred=> resCred.codigocliente == cli.CodigoCliente).ToList(),
                         AcuerdosXTipoPedido = cli.FacturasxCliente.GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                         {

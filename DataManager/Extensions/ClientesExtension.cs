@@ -32,7 +32,8 @@ namespace DataManager.Extensions
                 IdMoneda = cliente.CURRENCY,
                 FacturacionEntrega = cliente.BLOCKED,
                 GrupoImpuesto = cliente.TAX_GROUP,
-                Telefono = cliente.PHONE
+                Telefono = cliente.PHONE,
+                ModoEntrega = cliente.DLVMODE
             };
             try
             {

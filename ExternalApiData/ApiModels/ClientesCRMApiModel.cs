@@ -27,5 +27,6 @@ namespace ExternalApiData.Models.ApiModels
         public string BLOCKED { get; set; }
         public string VENDOR { get; set; }
         public string FLAG_SEQFACT { get; set; }
+        public string DLVMODE { get; set; }
     }
 }

@@ -24,6 +24,8 @@ namespace AventasApi.Models
         public string CodigoRuta { get; set; }
         public string FacturacionEntrega { get; set; }
         public string GrupoImpuesto { get; set; }
+
+        public string ModoEntrega { get; set; }
         //public List<string> CuentaCorriente;
         public List<ContactosxClienteViewModel> Contacto ;
         public List<string> PedidosAbierto ;

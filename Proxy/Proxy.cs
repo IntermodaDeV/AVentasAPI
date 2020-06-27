@@ -78,5 +78,22 @@ namespace Proxy
                 return new List<IMObtenerGrupoImpuestoClientes_Result>();
             }
         }
+
+        public static List<IM_ObtenerEmpresas_Result> GetEmpresas()
+        {
+            try
+            {
+                using (var context = new AxProduccionEntities())
+                {
+                    var result = context.IM_ObtenerEmpresas().ToList();
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new List<IM_ObtenerEmpresas_Result>();
+            }
+        }
     }
 }
