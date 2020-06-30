@@ -45,8 +45,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AcuerdosManager.cs" />
+    <Compile Include="Extensions\FacturasExtension.cs" />
     <Compile Include="Extensions\GrupoImpuestoClientesExtension.cs" />
     <Compile Include="Extensions\GrupoImpuestoArticuloExtension.cs" />
+    <Compile Include="Extensions\SubFacturasExtension.cs" />
+    <Compile Include="FacturasManager.cs" />
     <Compile Include="GrupoImpuestoClientesManager.cs" />
     <Compile Include="GrupoImpuestoArticulosManager.cs" />
     <Compile Include="ClientesManager.cs" />
@@ -55,6 +58,7 @@
     <Compile Include="Extensions\TallasXGrupoExtension.cs" />
     <Compile Include="Extensions\GrupoTallasExtension.cs" />
     <Compile Include="Extensions\LineasExtension.cs" />
+    <Compile Include="SubfacturasManager.cs" />
     <Compile Include="TallasxGrupoManager.cs" />
     <Compile Include="GrupoTallasManager.cs" />
     <Compile Include="LineaManager.cs" />

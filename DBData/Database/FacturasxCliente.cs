@@ -40,6 +40,7 @@ namespace DBData.Database
         public string IdLinea { get; set; }
         public Nullable<int> IdTipoPedido { get; set; }
         public string IdAcuerdoxCliente { get; set; }
+        public string NumeroFEL { get; set; }
     
         public virtual AcuerdosxCliente AcuerdosxCliente { get; set; }
         public virtual Clientes Clientes { get; set; }

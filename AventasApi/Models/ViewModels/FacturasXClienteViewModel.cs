@@ -13,6 +13,7 @@ namespace AventasApi.Models.ViewModels
         }
         public int IdFactura { get; set; }
         public string Factura { get; set; }
+        public string NumeroFEL { get; set; }
         public string CodigoCliente { get; set; }
         public string EmpresaId { get; set; }
         public string IdMoneda { get; set; }

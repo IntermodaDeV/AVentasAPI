@@ -322,7 +322,7 @@ namespace AventasApi.Controllers
                 pe.DELIVERY_ADDRESS = "";
                 pe.PHONE = (SyncTelCredito.Activo.Value) ? cliente.Telefono : "";
             }
-
+            decimal impuesto = 0;
             foreach (var detalle in Pedido.DetallePedido)
             {
                 int cantidad = 0;
@@ -347,9 +347,13 @@ namespace AventasApi.Controllers
                     decimal precioUnitario = 0;
                     decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
                     PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
+                    var producto = coleccion.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == detalle.CodigoProducto);
+                    var productoImpuesto = impuestosArticulos.FirstOrDefault(x => x.GrupoProducto.ToUpper() == producto.GrupoImpuesto.ToUpper());
+                    var porcentajeImpuesto = productoImpuesto.Porcentaje / 100;
+                    impuesto += (precioUnitario * cantidad) * porcentajeImpuesto;
                     PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
                     {
-                        CodigoProducto = coleccion.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == detalle.CodigoProducto).IdProducto,
+                        CodigoProducto = producto.IdProducto,
                         CodigoColor = detalle.CodigoColor,
                         CodigoTalla = detalle.Talla,
                         Cantidad = cantidad,
@@ -363,20 +367,15 @@ namespace AventasApi.Controllers
             }
 
             var clienteImpuesto = impuestosClientes.FirstOrDefault(x => x.GrupoCliente.ToUpper() == cliente.GrupoImpuesto.ToUpper());
-            var producto = coleccion.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == Pedido.DetallePedido[0].CodigoProducto).GrupoImpuesto;
-            var productoImpuesto = impuestosArticulos.FirstOrDefault(x => x.GrupoProducto.ToUpper() == producto.ToUpper());
-            var porcentajeImpuesto =productoImpuesto.Porcentaje/100;
-            var impuesto = porcentajeImpuesto+1;
 
             if (clienteImpuesto.Porcentaje == 0.0m)
             {
-                porcentajeImpuesto =0;
-                impuesto = porcentajeImpuesto + 1;
+                impuesto = 0;
             }
 
 
-            PedidoBDAGuardar.TotalImpuesto = PedidoBDAGuardar.Subtotal.Value * decimal.Parse(porcentajeImpuesto.ToString());
-            PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value * decimal.Parse(impuesto.ToString()))+Pedido.Flete;
+            PedidoBDAGuardar.TotalImpuesto = impuesto;
+            PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(impuesto.ToString()))+Pedido.Flete;
             string PEdidoID = "";
             try
             {

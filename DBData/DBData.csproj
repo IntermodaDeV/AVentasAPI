@@ -308,6 +308,7 @@
     <Compile Include="Repositories\AsesoresRepository.cs" />
     <Compile Include="Repositories\AtributosXProductoRepository.cs" />
     <Compile Include="Repositories\BancoRepository.cs" />
+    <Compile Include="Repositories\FacturasRepository .cs" />
     <Compile Include="Repositories\GrupoImpuestoClientesRepository.cs" />
     <Compile Include="Repositories\GrupoImpuestoArticulosRepository.cs" />
     <Compile Include="Repositories\ClientesRepository.cs" />
@@ -323,9 +324,11 @@
     <Compile Include="Repositories\ProductosXColeccionRepository.cs" />
     <Compile Include="Repositories\RutasXAsesorRepository.cs" />
     <Compile Include="Repositories\SizesByProductRepository.cs" />
+    <Compile Include="Repositories\SubFacturasRepository.cs" />
     <Compile Include="Repositories\TallasxGrupoRepository .cs" />
     <Compile Include="Repositories\TipoPagosRepository.cs" />
     <Compile Include="Repositories\TipoPaqueteRepository.cs" />
+    <Compile Include="Repositories\TipoPedidoRepository.cs" />
     <Compile Include="Utils\logicValidation.cs" />
   </ItemGroup>
   <ItemGroup>

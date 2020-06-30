@@ -335,6 +335,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           </Key>
           <Property Name="IdFactura" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Factura" Type="varchar" MaxLength="250" />
+          <Property Name="NumeroFEL" Type="varchar" MaxLength="250" />
           <Property Name="CodigoCliente" Type="varchar" MaxLength="250" />
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
           <Property Name="IdMoneda" Type="varchar" MaxLength="100" />
@@ -3056,6 +3057,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="TiposdePedido" Relationship="Self.FK__Facturasx__IdTip__75235608" FromRole="FacturasxCliente" ToRole="TiposdePedido" />
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK_SubFacturasxCliente_FacturasxCliente" FromRole="FacturasxCliente" ToRole="SubFacturasxCliente" />
           <NavigationProperty Name="RecibosxCliente" Relationship="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" FromRole="FacturasxCliente" ToRole="RecibosxCliente" />
+          <Property Name="NumeroFEL" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -5813,6 +5815,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="FacturasxCliente">
             <EntityTypeMapping TypeName="AventasModel.FacturasxCliente">
               <MappingFragment StoreEntitySet="FacturasxCliente">
+                <ScalarProperty Name="NumeroFEL" ColumnName="NumeroFEL" />
                 <ScalarProperty Name="IdFactura" ColumnName="IdFactura" />
                 <ScalarProperty Name="Factura" ColumnName="Factura" />
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
