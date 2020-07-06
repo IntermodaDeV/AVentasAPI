@@ -48,7 +48,6 @@ namespace DBData.Repositories
                     else
                     {
                         //subFacturaEnBD = new SubFacturasxCliente();
-
                         subFacturaEnBD.Factura = subFacturaAGuardar.Factura;
                         subFacturaEnBD.CodigoCliente = subFacturaAGuardar.CodigoCliente;
                         subFacturaEnBD.EmpresaId = subFacturaAGuardar.EmpresaId;
@@ -69,6 +68,7 @@ namespace DBData.Repositories
                         subFacturaEnBD.ValorVencidoCuota = subFacturaAGuardar.ValorVencidoCuota;
                         subFacturaEnBD.ReferenciaCuotas = subFacturaAGuardar.ReferenciaCuotas;
                         subFacturaEnBD.IdFactura = subFacturaAGuardar.IdFactura;
+                        subFacturaEnBD.NumeroFEL = subFacturaAGuardar.NumeroFEL;
                     }
                 }
                 await context.SaveChangesAsync();

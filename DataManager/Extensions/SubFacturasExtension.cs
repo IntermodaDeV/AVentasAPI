@@ -45,7 +45,8 @@ namespace DataManager.Extensions
                 ReferenciaCuotas = subFacturaPrev.PA_REF_APSA,
                 IdMoneda = subFacturaPrev.CURRENCY_CODE,
                 IdAcuerdoxCliente = subFacturaPrev.AGREEMENT_NAME == "" ? null : subFacturaPrev.AGREEMENT_NAME,
-                IdFactura = factura.IdFactura
+                IdFactura = factura.IdFactura,
+                NumeroFEL = subFacturaPrev.FACTURACION_FEL
             };
 
             return subFacturaNext;

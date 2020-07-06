@@ -1,21 +1,19 @@
-﻿using DBData.Database;
+﻿//using AventasApi.Enviroments;
+using AventasApi.Models;
 //using AventasApi.Models.ApiModels;
 using AventasApi.Models.ViewModels;
+using AventasApi.Services.AsyncJobs;
+using AventasApi.Services.Authentication;
+using DBData.Database;
+using ExternalApiData.Enviroments;
+using ExternalApiData.Models.ApiModels;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Data.Entity;
-using AventasApi.Services.Authentication;
-using AventasApi.Services.AsyncJobs;
-//using AventasApi.Enviroments;
-using AventasApi.Models;
-using ExternalApiData.Models.ApiModels;
-using ExternalApiData.Enviroments;
 
 namespace AventasApi.Controllers
 {
@@ -70,6 +68,7 @@ namespace AventasApi.Controllers
                 {
                     IdReciboDetalle = recDet.IdReciboDetalle,
                     Factura = rec.FacturasxCliente.Factura,
+                    NumeroFel = rec.FacturasxCliente.NumeroFEL,
                     Tipo = rec.FacturasxCliente.Tipo,
                     ReciboId = recDet.ReciboId,
                     IdSubFactura = recDet.IdSubFactura,
@@ -81,6 +80,7 @@ namespace AventasApi.Controllers
                 {
                     IdReciboDetalle = recDet.IdReciboDetalle,
                     Factura = "SALDO_FAVOR",
+                    NumeroFel = "",
                     Tipo = "Pago",
                     ReciboId = recDet.ReciboId,
                     IdSubFactura = null,
@@ -419,6 +419,7 @@ namespace AventasApi.Controllers
                             pagoAplicado = new RespuestaFactura
                             {
                                 IdFactura = recibo.FACTURA,
+                                NumeroFEL = subfactura.NumeroFEL,
                                 Fecha = subfactura.FechaVencimiento.Value,
                                 Dias = dias,
                                 TipoDocumento = subfactura.FacturasxCliente.Tipo,
@@ -549,6 +550,7 @@ namespace AventasApi.Controllers
     public class RespuestaFactura
     {
         public string IdFactura { get; set; }
+        public string NumeroFEL { get; set; }
         public DateTime Fecha { get; set; }
         public double Parcial { get; set; }
         public double Aplicado { get; set; }

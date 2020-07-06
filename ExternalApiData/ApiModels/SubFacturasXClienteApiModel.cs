@@ -26,5 +26,6 @@ namespace ExternalApiData.Models.ApiModels
         public string PA_REF_APSA { get; set; }
         public string CURRENCY_CODE { get; set; }
         public string AGREEMENT_NAME { get; set; }
+        public string FACTURACION_FEL { get; set; }
     }
 }
