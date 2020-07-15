@@ -13,6 +13,7 @@ using AventasApi.Models.ViewModels;
 using System.Data.Entity;
 namespace AventasApi.Controllers
 {
+    [RoutePrefix("api/ColeccionesXLinea")]
     public class ColeccionesXLineaController : ApiController
     {
         readonly AVentasEntities context = new AVentasEntities();
@@ -24,17 +25,18 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-
-        public async Task<IHttpActionResult> GetcoleccionesXGrupoPrecio(string id)
+        [Route("{id}/{pais}")]
+        public async Task<IHttpActionResult> GetcoleccionesXGrupoPrecio(string id,string pais)
         {
-            return Ok(ObtenerColecciones(id).Result);
+            var colecciones = await ObtenerColecciones(id, pais);
+            return Ok(colecciones);
         }
         [HttpGet]
         public async Task<IHttpActionResult> Getcolecciones()
         {
-            return Ok(ObtenerColecciones(null).Result);
+            return Ok(ObtenerColecciones(null,"").Result);
         }
-        private async Task<List<ColeccionViewModel>> ObtenerColecciones(string grupoPrecio)
+        private async Task<List<ColeccionViewModel>> ObtenerColecciones(string grupoPrecio,string pais)
         {
 
             bool filtarXGrupoPrecio = grupoPrecio != null;
@@ -74,13 +76,13 @@ namespace AventasApi.Controllers
                                                   IdEdad = me.IdEdad,
                                                   Edad = me.MaestroEdad.Edad,
                                                   Orden = me.MaestroEdad.Orden,
-                                                  ProductosXEdad = context.ProductosxColeccion.Where(pxc => pxc.IdColeccion == vw_coleccion.IdColeccion && pxc.IdEdad == me.IdEdad && me.IdLinea == pxc.IdLinea).Select(pxc => new ProductoXColeccionViewModel
+                                                  ProductosXEdad = context.ProductosxColeccion.Where(pxc => pxc.EmpresaId==pais.ToUpper() && pxc.IdColeccion == vw_coleccion.IdColeccion && pxc.IdEdad == me.IdEdad && me.IdLinea == pxc.IdLinea).Select(pxc => new ProductoXColeccionViewModel
                                                   {
                                                       ProductoId = pxc.CodigoProducto,
                                                       CodigoColeccion = vw_coleccion.CodigoColeccion,
                                                       CodigoProducto = pxc.IdProducto,
                                                       NombreProducto = pxc.NombreProducto,
-                                                      GrupoImpuesto=pxc.GrupoImpuesto,
+                                                      GrupoImpuesto=(string.IsNullOrEmpty(pxc.GrupoImpuesto))?"GENERAL":pxc.GrupoImpuesto.ToUpper(),
                                                       Precio = pxc.PreciosxProducto.Where(preEsp => true || !filtarXGrupoPrecio).Select(precio => new PrecioXProductoViewModel
                                                       {
                                                           GrupoPrecio = precio.GrupoPrecio,

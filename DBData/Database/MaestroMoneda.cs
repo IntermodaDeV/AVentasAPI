@@ -23,9 +23,9 @@ namespace DBData.Database
             this.FacturasxCliente = new HashSet<FacturasxCliente>();
             this.MonedasxEmpresa = new HashSet<MonedasxEmpresa>();
             this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
-            this.PreciosxProducto = new HashSet<PreciosxProducto>();
             this.SubFacturasxCliente = new HashSet<SubFacturasxCliente>();
             this.PedidosxCliente = new HashSet<PedidosxCliente>();
+            this.PreciosxProducto = new HashSet<PreciosxProducto>();
         }
     
         public string IdMoneda { get; set; }
@@ -45,10 +45,10 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PreciosxProducto> PreciosxProducto { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubFacturasxCliente> SubFacturasxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PreciosxProducto> PreciosxProducto { get; set; }
     }
 }

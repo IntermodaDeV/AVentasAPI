@@ -231,15 +231,19 @@ namespace AventasApi.Controllers
             TiposdePedido tipoPedido;
             Clientes cliente;
             ClienteContado clienteContado;
-            Configuraciones SyncTelContado;
-            Configuraciones SyncTelCredito;
+            CONFIGURACIONE SyncTelContado;
+            CONFIGURACIONE SyncTelCredito;
             List<GrupoImpuestoCliente> impuestosClientes = new List<GrupoImpuestoCliente>();
             List<GrupoImpuestoArticulo> impuestosArticulos = new List<GrupoImpuestoArticulo>();
+
+            using(AVentasConfigEntities config=new AVentasConfigEntities()) 
+            {
+                SyncTelContado = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1201);
+                SyncTelCredito = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1202);
+            }
+
             using (AVentasEntities context = new AVentasEntities())
             { 
-                
-                SyncTelContado = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "SynTelContado");
-                SyncTelCredito = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "SynTelCredito");
                 clienteContado = context.ClienteContado.Find(Pedido.ClienteContadoId);
                 asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
                 coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion);
@@ -313,14 +317,14 @@ namespace AventasApi.Controllers
                 pe.SALES_NAME = clienteContado.Nombre;
                 pe.FISCAL_DOCUMENT = clienteContado.RTN;
                 pe.DELIVERY_ADDRESS = clienteContado.Direccion;
-                pe.PHONE = (SyncTelContado.Activo.Value) ? clienteContado.Telefono : "";
+                pe.PHONE = (SyncTelContado.VALOR=="1") ? clienteContado.Telefono : "";
             }
             else
             {
                 pe.SALES_NAME = "";
                 pe.FISCAL_DOCUMENT = "";
                 pe.DELIVERY_ADDRESS = "";
-                pe.PHONE = (SyncTelCredito.Activo.Value) ? cliente.Telefono : "";
+                pe.PHONE = (SyncTelCredito.VALOR=="1") ? cliente.Telefono : "";
             }
             decimal impuesto = 0;
             foreach (var detalle in Pedido.DetallePedido)
@@ -348,7 +352,8 @@ namespace AventasApi.Controllers
                     decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
                     PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
                     var producto = coleccion.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == detalle.CodigoProducto);
-                    var productoImpuesto = impuestosArticulos.FirstOrDefault(x => x.GrupoProducto.ToUpper() == producto.GrupoImpuesto.ToUpper());
+                    var grupo = (string.IsNullOrEmpty(producto.GrupoImpuesto)) ? "GENERAL" : producto.GrupoImpuesto;
+                    var productoImpuesto = impuestosArticulos.FirstOrDefault(x => x.GrupoProducto.ToUpper() == grupo.ToUpper());
                     var porcentajeImpuesto = productoImpuesto.Porcentaje / 100;
                     impuesto += (precioUnitario * cantidad) * porcentajeImpuesto;
                     PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle

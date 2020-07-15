@@ -1,6 +1,6 @@
 ﻿namespace AventasApi.Models
 {
-    public class TransportePrecioCaja
+    public class TransportePrecioCajaModel
     {
         public string CODE { get; set; }
         public decimal UNITVALUEBOXES { get; set; }

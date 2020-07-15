@@ -1,6 +1,6 @@
 ﻿namespace AventasApi.Models
 {
-    public class ComunidadAutonoma
+    public class ComunidadAutonomaModel
     {
         public string STATEID { get; set; }
 

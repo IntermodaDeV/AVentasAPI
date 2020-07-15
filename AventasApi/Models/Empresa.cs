@@ -1,6 +1,6 @@
 ﻿namespace AventasApi.Models
 {
-    public class Empresa
+    public class EmpresaModel
     {
         public string COMPANY_CODE { get; set; }
         public string NAME { get; set; }

@@ -12,15 +12,11 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class PreciosxProducto
+    public partial class ComunidadAutonoma
     {
-        public int IdPrecioxProducto { get; set; }
-        public string GrupoPrecio { get; set; }
-        public int IdProducto { get; set; }
-        public string IdMoneda { get; set; }
-        public Nullable<decimal> Precio { get; set; }
-    
-        public virtual MaestroMoneda MaestroMoneda { get; set; }
-        public virtual ProductosxColeccion ProductosxColeccion { get; set; }
+        public int id { get; set; }
+        public string STATEID { get; set; }
+        public string NAME { get; set; }
+        public string COUNTRYREGIONID { get; set; }
     }
 }

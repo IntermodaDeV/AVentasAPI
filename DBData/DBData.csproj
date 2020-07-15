@@ -96,6 +96,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AVentas.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Database\AVentasConfig.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AVentasConfig.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\AVentasConfig.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\AVentasConfig.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AVentasConfig.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Database\Bancos.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -123,6 +138,12 @@
     <Compile Include="Database\ColoresxProducto.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ComunidadAutonoma.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\CONFIGURACIONE.cs">
+      <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Configuraciones.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -142,6 +163,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\Empresa.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\EmpresaTransporte.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\Errores.cs">
@@ -282,6 +306,9 @@
     <Compile Include="Database\TipoVisitaCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\TransportePrecioCaja.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Usuarios.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -340,6 +367,13 @@
     <None Include="Database\AVentas.edmx.diagram">
       <DependentUpon>AVentas.edmx</DependentUpon>
     </None>
+    <EntityDeploy Include="Database\AVentasConfig.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>AVentasConfig.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Database\AVentasConfig.edmx.diagram">
+      <DependentUpon>AVentasConfig.edmx</DependentUpon>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -355,6 +389,16 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>AVentas.edmx</DependentUpon>
       <LastGenOutput>AVentas.cs</LastGenOutput>
+    </Content>
+    <Content Include="Database\AVentasConfig.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>AVentasConfig.edmx</DependentUpon>
+      <LastGenOutput>AVentasConfig.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Database\AVentasConfig.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>AVentasConfig.edmx</DependentUpon>
+      <LastGenOutput>AVentasConfig.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>

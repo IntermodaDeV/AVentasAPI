@@ -1,4 +1,5 @@
 ﻿using AventasApi.Models;
+using DBData.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,89 +10,88 @@ namespace AventasApi.Controllers
     [RoutePrefix("api/transporte")]
     public class TransporteController : ApiController
     {
+        AVentasEntities context = new AVentasEntities();
         [Route("{empresa}/empresas")]
-        public IEnumerable<EmpresaTransporte> GetEmpresasTransporte(string empresa)
+        public IEnumerable<EmpresaTransporteModel> GetEmpresasTransporte(string empresa)
         {
-            if (empresa != null)
+            try
             {
-                var respuesta = Proxy.Proxy.GetEmpresasTransporte(empresa);
-                if (respuesta != null || respuesta.Count > 0)
+                var empresas = context.EmpresaTransporte.Where(x => x.COMPANY.ToUpper() == empresa.ToUpper() && x.MULTIPLO>0).ToList();
+                if (empresas.Count <= 0)
                 {
-                    try
-                    {
-                        var resp = respuesta.Select(x => new EmpresaTransporte
-                        {
-                            CODE = x.CODE,
-                            TXT = x.TXT,
-                            MULTIPLO = x.MULTIPLO,
-                            ACTIVE = (x.MULTIPLO>0)
-                        });
-                        return resp;
-                    }
-                    catch (System.Exception e)
-                    {
-                        return new List<EmpresaTransporte>();
-                    }
+                    return new List<EmpresaTransporteModel>();
                 }
-                return new List<EmpresaTransporte>();
+
+                var grupos = empresas.Select(x => new EmpresaTransporteModel()
+                {
+                    CODE = x.CODE,
+                    TXT = x.TXT,
+                    MULTIPLO = x.MULTIPLO.Value,
+                    ACTIVE = (x.MULTIPLO > 0)
+                }
+                ).ToList();
+
+                return grupos;
             }
-            return new List<EmpresaTransporte>();
+            catch (Exception e)
+            {
+                return new List<EmpresaTransporteModel>();
+            }
+            
         }
 
         [Route("{empresa}/preciocaja")]
-        public IEnumerable<TransportePrecioCaja> GetPrecioCaja(string empresa)
+        public IEnumerable<TransportePrecioCajaModel> GetPrecioCaja(string empresa)
         {
-            if (empresa != null)
+            try
             {
-                var respuesta = Proxy.Proxy.GetTransportePrecioCaja(empresa);
-                if (respuesta != null || respuesta.Count > 0)
+                var empresas = context.TransportePrecioCaja.Where(x => x.COMPANY.ToUpper() == empresa.ToUpper()).ToList();
+                if (empresas.Count <= 0)
                 {
-                    try
-                    {
-                        var resp = respuesta.Select(x => new TransportePrecioCaja
-                        {
-                            CODE = x.CODE,
-                            STATE = x.STATE,
-                            UNITVALUEBOXES = Math.Round(x.UNITVALUEBOXES)
-                        });
-                        return resp;
-                    }
-                    catch (System.Exception e)
-                    {
-                        return new List<TransportePrecioCaja>();
-                    }
+                    return new List<TransportePrecioCajaModel>();
                 }
-                return new List<TransportePrecioCaja>();
+
+                var grupos = empresas.Select(x => new TransportePrecioCajaModel()
+                {
+                    CODE = x.CODE,
+                    STATE = x.STATE,
+                    UNITVALUEBOXES = Math.Round(x.UNITVALUEBOXES.Value)
+                }
+                ).ToList();
+
+                return grupos;
             }
-            return new List<TransportePrecioCaja>();
+            catch (Exception e)
+            {
+                return new List<TransportePrecioCajaModel>();
+            }
         }
 
         [Route("{pais}/ComunidadAutonoma")]
-        public IEnumerable<ComunidadAutonoma> GetComunidadAutonoma(string pais)
+        public IEnumerable<ComunidadAutonomaModel> GetComunidadAutonoma(string pais)
         {
-            if (pais != null)
+            try
             {
-                var respuesta = Proxy.Proxy.GetComunidadAutonoma(pais);
-                if (respuesta != null || respuesta.Count > 0)
+                var empresas = context.ComunidadAutonoma.Where(x => x.COUNTRYREGIONID.ToUpper() == pais.ToUpper()).ToList();
+                if (empresas.Count <= 0)
                 {
-                    try
-                    {
-                        var resp = respuesta.Select(x => new ComunidadAutonoma
-                        {
-                            STATEID = x.STATEID,
-                            NAME = x.NAME,
-                            COUNTRYREGIONID = x.COUNTRYREGIONID
-                        });
-                        return resp;
-                    }
-                    catch (System.Exception)
-                    {
-                        return new List<ComunidadAutonoma>();
-                    }
+                    return new List<ComunidadAutonomaModel>();
                 }
-                return new List<ComunidadAutonoma>();
+
+                var grupos = empresas.Select(x => new ComunidadAutonomaModel()
+                {
+                    STATEID = x.STATEID,
+                    NAME = x.NAME,
+                    COUNTRYREGIONID = x.COUNTRYREGIONID
+                }
+                ).ToList();
+
+                return grupos;
             }
-            return new List<ComunidadAutonoma>();
+            catch (Exception e)
+            {
+                return new List<ComunidadAutonomaModel>();
+            }
         }
     }
 }

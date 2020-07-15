@@ -30,6 +30,7 @@ namespace DBData.Database
             this.GrupoImpuestoArticulo = new HashSet<GrupoImpuestoArticulo>();
             this.GrupoImpuestoCliente = new HashSet<GrupoImpuestoCliente>();
             this.PedidosxCliente = new HashSet<PedidosxCliente>();
+            this.ProductosxColeccion = new HashSet<ProductosxColeccion>();
         }
     
         public string EmpresaId { get; set; }
@@ -40,6 +41,7 @@ namespace DBData.Database
         public string Direccion { get; set; }
         public string RegistroTributario { get; set; }
         public Nullable<bool> Revision { get; set; }
+        public string DocumentoFiscal { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AcuerdosxCliente> AcuerdosxCliente { get; set; }
@@ -67,5 +69,7 @@ namespace DBData.Database
         public virtual ICollection<GrupoImpuestoCliente> GrupoImpuestoCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProductosxColeccion> ProductosxColeccion { get; set; }
     }
 }

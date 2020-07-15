@@ -1,4 +1,5 @@
 ﻿using AventasApi.Models;
+using DBData.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,32 +12,35 @@ namespace AventasApi.Controllers
     [RoutePrefix("api/empresa")]
     public class EmpresaController : ApiController
     {
+        AVentasEntities context = new AVentasEntities();
         [Route("Empresas")]
-        public IEnumerable<Empresa> GetEmpresas()
+        public IEnumerable<EmpresaModel> GetEmpresas()
         {
-            var respuesta = Proxy.Proxy.GetEmpresas();
-            if (respuesta != null || respuesta.Count > 0)
+
+            try
             {
-                try
-                {
-                    var resp = respuesta.Select(x => new Empresa
-                    {
-                        ADDRESS = x.ADDRESS,
-                        COMPANY_CODE = x.COMPANY_CODE,
-                        NAME = x.NAME,
-                        NIFCIF = x.NIFCIF,
-                        FISCAL_DOCUMENT = x.FISCAL_DOCUMENT
-                    });
+                var empresas = context.Empresa.ToList();
 
-                    return resp;
-                }
-                catch (System.Exception)
+                if(empresas.Count <= 0)
                 {
-                    return new List<Empresa>();
+                    return new List<EmpresaModel>();
                 }
+                var resp = empresas.Select(x => new EmpresaModel
+                {
+                    ADDRESS = x.Direccion,
+                    COMPANY_CODE = x.EmpresaId,
+                    NAME = x.NombreEmpresa,
+                    NIFCIF = x.RegistroTributario,
+                    FISCAL_DOCUMENT = x.DocumentoFiscal
+                });
+
+                return resp;
             }
-
-            return new List<Empresa>();
+            catch (System.Exception)
+            {
+                return new List<EmpresaModel>();
+            }
+          
         }
     }
 }

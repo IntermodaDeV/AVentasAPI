@@ -20,6 +20,8 @@ namespace DBData.Database
         public string GrupoPrecio { get; set; }
         public Nullable<int> IdFisicoDisponible { get; set; }
         public Nullable<decimal> Precio { get; set; }
+        public Nullable<System.DateTime> Desde { get; set; }
+        public Nullable<System.DateTime> Hasta { get; set; }
     
         public virtual FisicoDisponible FisicoDisponible { get; set; }
         public virtual MaestroGrupoPrecio MaestroGrupoPrecio { get; set; }

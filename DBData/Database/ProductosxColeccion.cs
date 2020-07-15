@@ -23,8 +23,8 @@ namespace DBData.Database
             this.FotografiasXProducto = new HashSet<FotografiasXProducto>();
             this.PedidosDetalle = new HashSet<PedidosDetalle>();
             this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
-            this.PreciosxProducto = new HashSet<PreciosxProducto>();
             this.TallasxProducto = new HashSet<TallasxProducto>();
+            this.PreciosxProducto = new HashSet<PreciosxProducto>();
         }
     
         public int IdProducto { get; set; }
@@ -37,6 +37,7 @@ namespace DBData.Database
         public Nullable<decimal> Multiplo { get; set; }
         public string IdEdad { get; set; }
         public string GrupoImpuesto { get; set; }
+        public string EmpresaId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AtributosxProducto> AtributosxProducto { get; set; }
@@ -55,8 +56,9 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PreciosxProducto> PreciosxProducto { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TallasxProducto> TallasxProducto { get; set; }
+        public virtual Empresa Empresa { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PreciosxProducto> PreciosxProducto { get; set; }
     }
 }
