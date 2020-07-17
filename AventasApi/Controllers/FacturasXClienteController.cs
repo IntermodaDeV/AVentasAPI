@@ -53,6 +53,7 @@ namespace AventasApi.Controllers
             {
                 IdFactura = facCli.IdFactura,
                 Factura = facCli.Factura,
+                NumeroFEL = facCli.NumeroFEL,
                 CodigoCliente = facCli.CodigoCliente,
                 EmpresaId = facCli.EmpresaId,
                 IdMoneda = facCli.IdMoneda,

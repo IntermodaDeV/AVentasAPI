@@ -15,6 +15,7 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> Descuento { get; set; }
         public int DiasVencimiento { get; set; }
         public string Factura { get; set; }
+        public string NumeroFel { get; set; }
         public string Tipo { get; set; }
     }
 }

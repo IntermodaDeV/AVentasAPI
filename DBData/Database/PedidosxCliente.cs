@@ -22,6 +22,7 @@ namespace DBData.Database
         }
     
         public string PedidoId { get; set; }
+        public string NumeroPedido { get; set; }
         public Nullable<int> IdTipoPedido { get; set; }
         public Nullable<int> IdColeccion { get; set; }
         public string CodigoCliente { get; set; }
@@ -47,6 +48,8 @@ namespace DBData.Database
         public Nullable<int> IdEstado { get; set; }
         public Nullable<int> ClienteContadoId { get; set; }
         public string ModoVenta { get; set; }
+        public Nullable<decimal> Flete { get; set; }
+        public bool RequiereEntrega { get; set; }
     
         public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }

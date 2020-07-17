@@ -16,7 +16,7 @@ namespace DBData.Database
     {
         public int IdPrecioxProducto { get; set; }
         public string GrupoPrecio { get; set; }
-        public Nullable<int> IdProducto { get; set; }
+        public int IdProducto { get; set; }
         public string IdMoneda { get; set; }
         public Nullable<decimal> Precio { get; set; }
     

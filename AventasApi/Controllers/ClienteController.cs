@@ -76,6 +76,8 @@ namespace AventasApi.Controllers
                         LimiteCredito = cli.LimiteCredito ?? 0,
                         CreditoDisponible = cli.CreditoDisponible ?? 0,
                         Longitud = cli.Longitud,
+                        GrupoImpuesto = cli.GrupoImpuesto.ToUpper(),
+                        ModoEntrega=cli.ModoEntrega,
                         //Credito =  context.PResumenCredito().Where(resCred=> resCred.codigocliente == cli.CodigoCliente).ToList(),
                         AcuerdosXTipoPedido = cli.FacturasxCliente.GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                         {
@@ -92,6 +94,7 @@ namespace AventasApi.Controllers
                                 {
                                     IdFactura = facCli.IdFactura,
                                     Factura = facCli.Factura,
+                                    NumeroFEL = facCli.NumeroFEL,
                                     CodigoCliente = facCli.CodigoCliente,
                                     EmpresaId = facCli.EmpresaId,
                                     IdMoneda = facCli.IdMoneda,
@@ -117,6 +120,7 @@ namespace AventasApi.Controllers
                                         IdSubFactura = subFac.IdSubFactura,
                                         IdFactura = subFac.IdFactura,
                                         Factura = subFac.Factura,
+                                        NumeroFEL = subFac.NumeroFEL,
                                         CodigoCliente = subFac.CodigoCliente,
                                         EmpresaId = subFac.EmpresaId,
                                         IdMoneda = subFac.IdMoneda,
@@ -176,14 +180,17 @@ namespace AventasApi.Controllers
                                 NumPedido = rec.NumPedido,
                                 CodigoCliente = rec.CodigoCliente
                             }).ToList(),
-                            Pedido = context.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.PedidoId)).Select(ped => new PedidosXClienteViewModel
+                            Pedido = context.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.NumeroPedido) && ped.NumeroPedido != null).Select(ped => new PedidosXClienteViewModel
                             {
                                 PedidoId = ped.PedidoId,
+                                NumeroPedido = ped.NumeroPedido,
                                 CodigoColeccion = ped.Colecciones.CodigoColeccion,
                                 NombreColeccion = ped.Colecciones.Nombre,
                                 FechaEntrega = ped.FechaEntrega,
                                 FechaActual = ped.Fecha,
-                                TotalXPedido = ped.TotalPedido
+                                TotalXPedido = ped.TotalPedido,
+                                ClienteContadoId = ped.ClienteContadoId
+
                             }).ToList()
                     }).ToList();
 

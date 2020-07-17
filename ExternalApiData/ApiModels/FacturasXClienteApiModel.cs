@@ -25,5 +25,6 @@ namespace ExternalApiData.Models.ApiModels
         public string REF_TRANS { get; set; }
         public string PROD_LINE { get; set; }
         public string DOC_TYPE { get; set; }
+        public string FACTURACION_FEL { get; set; }
     }
 }

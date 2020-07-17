@@ -45,6 +45,7 @@ namespace ExternalApiData.Models.ApiModels
         public decimal  latitud { get; set; }
         public decimal  longitud { get; set; }
         public decimal  precisionGPS { get; set; } //
+        public string grupoImpuesto { get; set; }
         public List<string> rutas;
         //public List<PedidoXCliente> pedidos ;
         public List<CuentaCorrienteApiModel> listacuentacorriente ;

@@ -4,12 +4,21 @@ using DBData.Utils;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using System;
+using System.Linq;
 
 namespace DBData.Repositories
 {
     public class EmpresaRepository
     {
         private static readonly LogicValidation LogicValidation = new LogicValidation();
+
+        public async Task<List<Empresa>> ObtenerEmpresa()
+        {
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                return context.Empresa.AsNoTracking().ToList();
+            }
+        }
 
         public async Task SendToDatabase(List<Empresa> empresas)
         {

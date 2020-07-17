@@ -13,6 +13,14 @@ namespace DBData.Repositories
     {
         private static readonly LogicValidation logicValidation = new LogicValidation();
 
+        public async Task<List<Asesores>> ObtenerAsesores()
+        {
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                return context.Asesores.AsNoTracking().ToList();
+            }
+        }
+
         public async Task SendToDatabase(List<Asesores> ListaAsesores)
         {
             int updateCount = 0, insertCount = 0, errorCount = 0;

@@ -33,6 +33,7 @@ namespace DBData.Repositories
                         coleccionEnBD.BackOrder = productoAGuardar.BackOrder;
                         coleccionEnBD.Multiplo = productoAGuardar.Multiplo;
                         coleccionEnBD.IdEdad = productoAGuardar.IdEdad;
+                        coleccionEnBD.GrupoImpuesto = productoAGuardar.GrupoImpuesto;
                     }
                 }
                 await context.SaveChangesAsync();

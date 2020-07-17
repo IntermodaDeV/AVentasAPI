@@ -1,21 +1,19 @@
-﻿using DBData.Database;
+﻿//using AventasApi.Enviroments;
+using AventasApi.Models;
 //using AventasApi.Models.ApiModels;
 using AventasApi.Models.ViewModels;
+using AventasApi.Services.AsyncJobs;
+using AventasApi.Services.Authentication;
+using DBData.Database;
+using ExternalApiData.Enviroments;
+using ExternalApiData.Models.ApiModels;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Data.Entity;
-using AventasApi.Services.Authentication;
-using AventasApi.Services.AsyncJobs;
-//using AventasApi.Enviroments;
-using AventasApi.Models;
-using ExternalApiData.Models.ApiModels;
-using ExternalApiData.Enviroments;
 
 namespace AventasApi.Controllers
 {
@@ -70,6 +68,7 @@ namespace AventasApi.Controllers
                 {
                     IdReciboDetalle = recDet.IdReciboDetalle,
                     Factura = rec.FacturasxCliente.Factura,
+                    NumeroFel = rec.FacturasxCliente.NumeroFEL,
                     Tipo = rec.FacturasxCliente.Tipo,
                     ReciboId = recDet.ReciboId,
                     IdSubFactura = recDet.IdSubFactura,
@@ -81,6 +80,7 @@ namespace AventasApi.Controllers
                 {
                     IdReciboDetalle = recDet.IdReciboDetalle,
                     Factura = "SALDO_FAVOR",
+                    NumeroFel = "",
                     Tipo = "Pago",
                     ReciboId = recDet.ReciboId,
                     IdSubFactura = null,
@@ -124,6 +124,11 @@ namespace AventasApi.Controllers
                     EmpresaId = tp.EmpresaId,
 
                 }).FirstOrDefault(),
+                Pedido = context.PedidosxCliente.Where(p => p.NumeroPedido == ant.NumPedido).Select(ped => new PedidosXClienteViewModel
+                {
+                    NumeroPedido = ped.NumeroPedido,
+                    ClienteContadoId = ped.ClienteContadoId
+                }).FirstOrDefault(),
                 DetalleRecibo = new List<RecibosDetalleViewModel> { new RecibosDetalleViewModel {
                     Valor = ant.Valor,
                     ValorSinDescuento = ant.Valor,
@@ -154,64 +159,114 @@ namespace AventasApi.Controllers
             RespuestaRecibo respuestaPagoRecibo = new RespuestaRecibo();
 
             var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-            if (anticipoPost.Pagos != null && anticipoPost.Pagos.Count == 1)
+            if (anticipoPost.Pagos != null)
             {
-                var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
-                string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
-                var pago = anticipoPost.Pagos[0];
-                int.TryParse(pago.IdBanco, out int codigobanco);
-                decimal.TryParse(pago.Valor.ToString(), out decimal valorPago);
-                var anticipo = new AnticiposxCliente
+                List<ReciboApiModel> recibos = new List<ReciboApiModel>();
+                foreach (var pag in anticipoPost.Pagos)
                 {
-                    CodigoCliente = anticipoPost.CodigoCliente,
-                    Fecha = anticipoPost.Fecha,
-                    IdTipoPago = int.Parse(pago.CodigoTipoPago),
-                    Referencia = pago.Referencia,
-                    FechaCheque = anticipoPost.FechaPago,
-                    IdBanco = codigobanco,
-                    //IdCuentaBancaria = ,
-                    Valor = valorPago,
-                    IdMoneda = pago.IdMoneda,
-                    CodigoAsesor = user.UserAccount,
-                    Tipo = anticipoPost.Tipo,
-                    NumeroRecibo = $"{inicialesAsesor}-1{numeroCorrelativoRecibo.ToString("D5")}",
-                    NumPedido = anticipoPost.NumPedido
-                };
-                var pagoBD = context.TiposdePago.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
-                var respuestapago = new RespuestaPago
-                {
-                    TipoPago = pagoBD.Descripcion,
-                    Fecha = anticipoPost.Fecha,
-                    Referencia = pago.Referencia,
-                    Monto = pago.Valor,
-                };
-                var bank = context.Bancos.FirstOrDefault(ban => ban.IdBanco.ToString() == pago.IdBanco);
-                if (bank != null)
-                {
-                    respuestapago.Banco = bank.Descripcion;
+
+                    var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                    int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
+                    string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
+                    var pago = pag;
+                    int.TryParse(pago.IdBanco, out int codigobanco);
+                    decimal.TryParse(pago.Valor.ToString(), out decimal valorPago);
+                    var anticipo = new AnticiposxCliente
+                    {
+                        CodigoCliente = anticipoPost.CodigoCliente,
+                        Fecha = anticipoPost.Fecha,
+                        IdTipoPago = int.Parse(pago.CodigoTipoPago),
+                        Referencia = pago.Referencia,
+                        FechaCheque = anticipoPost.FechaPago,
+                        IdBanco = codigobanco,
+                        //IdCuentaBancaria = ,
+                        Valor = valorPago,
+                        IdMoneda = pago.IdMoneda,
+                        CodigoAsesor = user.UserAccount,
+                        Tipo = anticipoPost.Tipo,
+                        NumeroRecibo = $"{inicialesAsesor}-1{numeroCorrelativoRecibo.ToString("D5")}",
+                        NumPedido = anticipoPost.NumPedido
+                    };
+                    var pagoBD = context.TiposdePago.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
+                    var respuestapago = new RespuestaPago
+                    {
+                        TipoPago = pagoBD.Descripcion,
+                        Fecha = anticipoPost.Fecha,
+                        Referencia = pago.Referencia,
+                        Monto = pago.Valor,
+                    };
+                    var bank = context.Bancos.FirstOrDefault(ban => ban.IdBanco.ToString() == pago.IdBanco);
+                    if (bank != null)
+                    {
+                        respuestapago.Banco = bank.Descripcion;
+                    }
+                    respuestaPagoRecibo.Pagos.Add(respuestapago);
+                    context.AnticiposxCliente.Add(anticipo);
+                    asesor.CorrelativoRecibos = numeroCorrelativoRecibo + 1;
+
+                    RespuestaFactura pagoAplicado = new RespuestaFactura
+                    {
+                        IdFactura = "Anticipo",
+                        Fecha = anticipoPost.FechaPago,
+                        Dias = 0,
+                        TipoDocumento = anticipoPost.Tipo,
+                        Aplicado = pago.Valor,
+                        Parcial = pago.Valor,
+                        Parcial2 = 0,
+                    };
+                    respuestaPagoRecibo.Total = pago.Valor;
+                    respuestaPagoRecibo.CodigoUltimoRecibo = anticipo.NumeroRecibo;
+                    respuestaPagoRecibo.Facturas.Add(pagoAplicado);
+                    context.SaveChanges();
+                    ReciboApiModel anticipoAX = new ReciboApiModel
+                    {
+                        COMPANY = "IMHN",
+                        ASESOR = asesor.Usuario,
+                        ASESOR_NOMBRE = asesor.Nombre,
+                        ASESOR_DIARIO = asesor.CodigoAsesor,
+                        RECIBO = anticipo.NumeroRecibo,
+                        CLIENTE = anticipo.CodigoCliente,
+                        MONEDA = pago.IdMoneda,
+                        FECHA = DateTime.Now.ToString("dd/MM/yyyy"),//reciboPost.Fecha.ToString("dd/MM/yyyy"),
+                        DESCRIPCION = anticipoPost.Descripcion,
+                        TOTAL_RECIBO = valorPago.ToString(),
+                        TOTAL_FACTURAS = valorPago.ToString(),
+                        TOTAL_APLICADO = valorPago.ToString(),
+                        TIPO_PAGO = pago.CodigoTipoPago,
+                        //SPEC_PAGO = ? ,
+                        BANCO = pago.IdBanco,
+                        REFERENCIA = pago.Referencia,
+                        FECHA_PAGO = anticipoPost.FechaPago.ToString("dd/MM/yyyy"),
+                        FACTURA = pagoAplicado.IdFactura,
+                        APLICADO = valorPago.ToString(),
+                        DESCUENTO = "0",
+                        REF_TRANSOPEN = pago.ReferenciaTransaccionAbierta,
+                        ES_CONTADO = anticipoPost.EsContado,
+                        NUM_PEDIDO = anticipoPost.NumPedido
+                    };
+                    recibos.Add(anticipoAX);
                 }
-                respuestaPagoRecibo.Pagos.Add(respuestapago);
-                context.AnticiposxCliente.Add(anticipo);
-                asesor.CorrelativoRecibos = numeroCorrelativoRecibo + 1;
 
-                RespuestaFactura pagoAplicado = new RespuestaFactura
+                var client = new RestClient();
+                var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
                 {
-                    IdFactura = "Anticipo",
-                    Fecha = anticipoPost.FechaPago,
-                    Dias = 0,
-                    TipoDocumento = anticipoPost.Tipo,
-                    Aplicado = pago.Valor,
-                    Parcial = pago.Valor,
-                    Parcial2 = 0,
+                    RequestFormat = DataFormat.Json
                 };
-                respuestaPagoRecibo.Total = pago.Valor;
-                respuestaPagoRecibo.CodigoUltimoRecibo = anticipo.NumeroRecibo;
-                respuestaPagoRecibo.Facturas.Add(pagoAplicado);
-                context.SaveChanges();
+                request.AddHeader("Content-type", "application/json; charset=utf-8");
+                request.Parameters.Clear();
+                request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
+                //request.AddBody(recibos);
+                var respuesta = client.Execute(request);
 
-                return Ok(respuestaPagoRecibo);
-            } 
+                if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
+                {
+                    return Ok(respuestaPagoRecibo);
+                }
+                else
+                {
+                    return BadRequest(respuesta.Content);
+                }
+            }
             return BadRequest();
         }
         [HttpPost]
@@ -272,7 +327,7 @@ namespace AventasApi.Controllers
                         {
                             valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
                         }
-                        var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pago.CodigoTipoPago && rec.REFERENCIA == pago.Referencia && rec.FACTURA ==subfactura.Factura);
+                        var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pago.CodigoTipoPago && rec.REFERENCIA == pago.Referencia && rec.FACTURA == subfactura.Factura);
                         RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago && recXCli.Referencia == pago.Referencia);
                         if (recibo == null)
                         {
@@ -364,6 +419,7 @@ namespace AventasApi.Controllers
                             pagoAplicado = new RespuestaFactura
                             {
                                 IdFactura = recibo.FACTURA,
+                                NumeroFEL = subfactura.NumeroFEL,
                                 Fecha = subfactura.FechaVencimiento.Value,
                                 Dias = dias,
                                 TipoDocumento = subfactura.FacturasxCliente.Tipo,
@@ -494,6 +550,7 @@ namespace AventasApi.Controllers
     public class RespuestaFactura
     {
         public string IdFactura { get; set; }
+        public string NumeroFEL { get; set; }
         public DateTime Fecha { get; set; }
         public double Parcial { get; set; }
         public double Aplicado { get; set; }

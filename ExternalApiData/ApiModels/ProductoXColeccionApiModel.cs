@@ -18,10 +18,10 @@ namespace ExternalApiData.Models
         //public Nullable<decimal> fisicaDisponible { get; set; }
         public List<ImagenXProductoApiModel> listaImagenes;
         public List<EdadApiModel> edad;
+        public string GrupoImpuesto { get; set; }
 
-      
 
-        
+
         public ProductoXColeccionApiModel()
         {
             this.listaImagenes = new List<ImagenXProductoApiModel>();

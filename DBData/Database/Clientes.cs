@@ -24,8 +24,8 @@ namespace DBData.Database
             this.ClientesxRuta = new HashSet<ClientesxRuta>();
             this.FacturasxCliente = new HashSet<FacturasxCliente>();
             this.LimiteCreditoxCliente = new HashSet<LimiteCreditoxCliente>();
-            this.PedidosxCliente = new HashSet<PedidosxCliente>();
             this.SubFacturasxCliente = new HashSet<SubFacturasxCliente>();
+            this.PedidosxCliente = new HashSet<PedidosxCliente>();
         }
     
         public string CodigoCliente { get; set; }
@@ -47,6 +47,8 @@ namespace DBData.Database
         public Nullable<decimal> LimiteCredito { get; set; }
         public Nullable<decimal> CreditoDisponible { get; set; }
         public string Telefono { get; set; }
+        public string GrupoImpuesto { get; set; }
+        public string ModoEntrega { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AcuerdosxCliente> AcuerdosxCliente { get; set; }
@@ -65,9 +67,9 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LimiteCreditoxCliente> LimiteCreditoxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubFacturasxCliente> SubFacturasxCliente { get; set; }
         public virtual Empresa Empresa { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
     }
 }

@@ -20,8 +20,8 @@ namespace DBData.Database
             this.AsignacionxAsesor = new HashSet<AsignacionxAsesor>();
             this.BitacoraGeoposicion = new HashSet<BitacoraGeoposicion>();
             this.BitacoraVisitasCliente = new HashSet<BitacoraVisitasCliente>();
-            this.PedidosxCliente = new HashSet<PedidosxCliente>();
             this.RutasxAsesor = new HashSet<RutasxAsesor>();
+            this.PedidosxCliente = new HashSet<PedidosxCliente>();
         }
     
         public string CodigoAsesor { get; set; }
@@ -41,8 +41,8 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BitacoraVisitasCliente> BitacoraVisitasCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RutasxAsesor> RutasxAsesor { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
     }
 }

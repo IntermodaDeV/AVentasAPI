@@ -9,6 +9,13 @@ namespace DBData.Repositories
 {
     public class AcuerdosxClienteRepository
     {
+        public async Task<List<AcuerdosxCliente>> ObtnerAcuerdos()
+        {
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                return context.AcuerdosxCliente.AsNoTracking().ToList();
+            }
+        }
         public async Task GuardarAcuerdos(List<AcuerdosxCliente> acuerdosAGuardar)
         {
             using (AVentasEntities context = new AVentasEntities())

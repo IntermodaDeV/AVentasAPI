@@ -67,9 +67,7 @@ namespace DBData.Database
         public virtual DbSet<Pantallas> Pantallas { get; set; }
         public virtual DbSet<PantallasxUsuario> PantallasxUsuario { get; set; }
         public virtual DbSet<PedidosDetalle> PedidosDetalle { get; set; }
-        public virtual DbSet<PedidosxCliente> PedidosxCliente { get; set; }
         public virtual DbSet<PrecioEspecifico> PrecioEspecifico { get; set; }
-        public virtual DbSet<PreciosxProducto> PreciosxProducto { get; set; }
         public virtual DbSet<PrioridadAsignacion> PrioridadAsignacion { get; set; }
         public virtual DbSet<ProductosxColeccion> ProductosxColeccion { get; set; }
         public virtual DbSet<RazonNoVentaCausa> RazonNoVentaCausa { get; set; }
@@ -97,6 +95,13 @@ namespace DBData.Database
         public virtual DbSet<AnticiposxCliente> AnticiposxCliente { get; set; }
         public virtual DbSet<RecibosxCliente> RecibosxCliente { get; set; }
         public virtual DbSet<ClienteContado> ClienteContado { get; set; }
+        public virtual DbSet<GrupoImpuestoArticulo> GrupoImpuestoArticulo { get; set; }
+        public virtual DbSet<GrupoImpuestoCliente> GrupoImpuestoCliente { get; set; }
+        public virtual DbSet<PedidosxCliente> PedidosxCliente { get; set; }
+        public virtual DbSet<ComunidadAutonoma> ComunidadAutonoma { get; set; }
+        public virtual DbSet<EmpresaTransporte> EmpresaTransporte { get; set; }
+        public virtual DbSet<TransportePrecioCaja> TransportePrecioCaja { get; set; }
+        public virtual DbSet<PreciosxProducto> PreciosxProducto { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
