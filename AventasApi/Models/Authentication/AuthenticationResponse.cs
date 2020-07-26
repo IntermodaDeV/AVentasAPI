@@ -18,6 +18,7 @@ namespace AventasApi.Models.Authentication
         public string Token { get; set; }
         public Usuario Usuario { get; set; }
         public string Empresa { get; set; }
+        public string Nombre { get; set; }
         public List<Menu> Accesos { get; set; }
     }
 }

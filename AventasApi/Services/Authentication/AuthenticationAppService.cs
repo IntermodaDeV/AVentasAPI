@@ -103,7 +103,7 @@ namespace AventasApi.Services.Authentication
                         DueDate = DateTime.Now.AddHours(12)
                     }, secret);
 
-                    var result = new Data {  Token = token, Usuario = user,Empresa=userBD.EmpresaId };
+                    var result = new Data {  Token = token, Usuario = user,Empresa=userBD.EmpresaId,Nombre=userBD.Nombre };
                     //var result = new AuthenticationResponse { Token = token, Usuario = user };                    
                     //var result = new AuthenticationResponse { Token = token, Usuario = user, Accesos = menu };
 

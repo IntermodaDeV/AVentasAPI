@@ -35,7 +35,7 @@ namespace AventasApi.Models.ViewModels
 
         public Nullable<int> ClienteContadoId { get; set; }
         public string ModoVenta { get; set; }
-
+        public decimal Impuesto { get; set; }
         public bool RequiereEntrega { get; set; }
 
         public PedidoPostViewModel()

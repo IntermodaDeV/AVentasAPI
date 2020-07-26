@@ -44,7 +44,7 @@ namespace AventasApi.Controllers
             string urlImagenes = context.Configuraciones.FirstOrDefault(conf => conf.CodigoConfiguracion == "UrlImages")?.Valor ?? "";
             List<ColeccionViewModel> colecciones = await context.Colecciones
                 //.Include(co=>co.EdadesxColeccion)
-                .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
+                .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today && vw_coleccion.EmpresaId.ToUpper()==pais.ToUpper()).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
                            new ColeccionViewModel
                            {
                                IdColeccion = vw_coleccion.IdColeccion,
@@ -111,21 +111,6 @@ namespace AventasApi.Controllers
                                                              CodigoColor = foto.CodigoColor,
                                                              Principal = foto.Principal ?? false
                                                          }).ToList(),
-                                                      //ListaTalla = pxc.FisicoDisponible.GroupBy(fisDis => fisDis.CodigoTalla).Where(fisDisGroup => fisDisGroup.Sum(fisDis => fisDis.Disponible) > 0).Select(fisDisGroup => fisDisGroup.FirstOrDefault()).Select(fisDis => context.TallasXGrupo.Where(tallXGrup => tallXGrup.CodigoGrupoTalla == pxc.CodigoGrupoTalla).FirstOrDefault(tallXGrup => tallXGrup.CodigoTalla == fisDis.CodigoTalla)).Select(txp => new TallaViewModel
-                                                      //{
-                                                      //    Talla = txp.CodigoTalla,
-                                                      //    GrupoTallaId = txp.CodigoGrupoTalla,
-                                                      //    Orden = txp.Orden ?? 0,
-                                                      //    Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
-                                                      //    {
-                                                      //        IdDistribucion = dis.IdDistribucion,
-                                                      //        IdTallaxGrupo = dis.IdTallaxGrupo,
-                                                      //        NombreDistribucion = dis.NombreDistribucion,
-                                                      //        NombreTalla = dis.NombreTalla,
-                                                      //        Cantidad = dis.Cantidad,
-                                                      //    }).ToList(),
-
-                                                      //}).OrderBy(txp => txp.Orden).ToList(),
                                                       ListaTalla = context.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)
                                                       .Select(txp => new TallaViewModel
                                                       {
