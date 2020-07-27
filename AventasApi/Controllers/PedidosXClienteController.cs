@@ -55,11 +55,13 @@ namespace AventasApi.Controllers
 
         }
 
-        public IHttpActionResult Get()
+        [HttpGet]
+        [Route("~/api/PedidosXCliente/{asesor}")]
+        public IHttpActionResult Get(string Asesor)
         {
             using (AVentasEntities context = new AVentasEntities())
             {
-                List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
+                List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == Asesor).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
                 {
                     PedidoId = ped.PedidoId,
                     NombreColeccion = context.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
@@ -116,7 +118,7 @@ namespace AventasApi.Controllers
                                 GrupoTallaId = txp.CodigoGrupoTalla,
                                 Talla = txp.CodigoTalla,
                                 Orden = txp.Orden ?? 0,
-                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
                                 {
                                     IdDistribucion = dis.IdDistribucion,
                                     IdTallaxGrupo = dis.IdTallaxGrupo,
@@ -157,7 +159,7 @@ namespace AventasApi.Controllers
                                              GrupoTallaId = txp.CodigoGrupoTalla,
                                              Talla = txp.CodigoTalla,
                                              Orden = txp.Orden ?? 0,
-                                             Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                             Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
                                              {
                                                  IdDistribucion = dis.IdDistribucion,
                                                  IdTallaxGrupo = dis.IdTallaxGrupo,
@@ -198,7 +200,7 @@ namespace AventasApi.Controllers
 
         }
 
-        
+
         [HttpPost]
         public IHttpActionResult Post([FromBody] PedidoPostViewModel Pedido)
         {
@@ -331,8 +333,8 @@ namespace AventasApi.Controllers
                     decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
                     PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
                     var producto = coleccion.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == detalle.CodigoProducto);
-                    
-                    PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
+
+                   PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
                     {
                         CodigoProducto = producto.IdProducto,
                         CodigoColor = detalle.CodigoColor,
@@ -346,10 +348,10 @@ namespace AventasApi.Controllers
                 }
 
             }
-            
+
             PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
             PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString()))+Pedido.Flete;
-            string PEdidoID = "";
+          string PEdidoID = "";
             try
             {
                 var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");

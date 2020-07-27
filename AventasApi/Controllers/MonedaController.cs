@@ -14,10 +14,11 @@ namespace AventasApi.Controllers
     {
         AVentasEntities context = new AVentasEntities();
         [HttpGet]
-        public async Task<IHttpActionResult> GetMonedas()
+        [Route("api/Moneda/{empresa}")]
+        public async Task<IHttpActionResult> GetMonedas(string Empresa)
         {
-
-            var monedas = context.MaestroMoneda.Select(mon => new MonedaViewModel
+            var MonedaXEmpresa = context.MonedasxEmpresa.Where(m => m.EmpresaId == Empresa).Select(m => m.IdMoneda).ToList();
+            var monedas = context.MaestroMoneda.Where(m => MonedaXEmpresa.Contains(m.IdMoneda)).Select(mon => new MonedaViewModel
             {
                 IdMoneda = mon.IdMoneda,
                 Moneda = mon.Moneda

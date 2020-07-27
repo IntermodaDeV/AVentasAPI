@@ -117,7 +117,7 @@ namespace AventasApi.Controllers
                                                           Talla = txp.CodigoTalla,
                                                           GrupoTallaId = txp.CodigoGrupoTalla,
                                                           Orden = txp.Orden ?? 0,
-                                                          Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                                          Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
                                                           {
                                                               IdDistribucion = dis.IdDistribucion,
                                                               IdTallaxGrupo = dis.IdTallaxGrupo,
