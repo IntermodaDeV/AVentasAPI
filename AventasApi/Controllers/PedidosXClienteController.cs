@@ -214,8 +214,6 @@ namespace AventasApi.Controllers
             ClienteContado clienteContado;
             CONFIGURACIONE SyncTelContado;
             CONFIGURACIONE SyncTelCredito;
-            List<GrupoImpuestoCliente> impuestosClientes = new List<GrupoImpuestoCliente>();
-            List<GrupoImpuestoArticulo> impuestosArticulos = new List<GrupoImpuestoArticulo>();
 
             using(AVentasConfigEntities config=new AVentasConfigEntities()) 
             {
@@ -230,9 +228,7 @@ namespace AventasApi.Controllers
                 coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion);
                 acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
                 tipoPedido = acuerdoVenta?.TiposdePedido;
-                cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
-                impuestosClientes = context.GrupoImpuestoCliente.Where(x => x.Empresa.ToUpper() == cliente.EmpresaId.ToUpper() && x.Activo==true).ToList();
-                impuestosArticulos = context.GrupoImpuestoArticulo.Where(x => x.Empresa.ToUpper() == cliente.EmpresaId.ToUpper() && x.Activo == true).ToList();
+                cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);  
             }
             DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
             PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
@@ -331,12 +327,11 @@ namespace AventasApi.Controllers
                     PedidoBDAGuardar.TotalUnidades += cantidad;
                     decimal precioUnitario = 0;
                     decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                    PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
-                    var producto = coleccion.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == detalle.CodigoProducto);
+                    PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);                    
 
                    PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
                     {
-                        CodigoProducto = producto.IdProducto,
+                        CodigoProducto = detalle.IdProducto,
                         CodigoColor = detalle.CodigoColor,
                         CodigoTalla = detalle.Talla,
                         Cantidad = cantidad,

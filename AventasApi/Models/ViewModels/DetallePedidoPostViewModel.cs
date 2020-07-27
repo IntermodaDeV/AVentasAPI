@@ -7,6 +7,7 @@ namespace AventasApi.Models.ViewModels
 {
     public class DetallePedidoPostViewModel
     {
+        public int IdProducto { get; set; }
         public string CodigoProducto { get; set; }
         public string CodigoColor { get; set; }
         public string Cantidad { get; set; }
