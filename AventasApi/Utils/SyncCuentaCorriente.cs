@@ -122,6 +122,12 @@ namespace AventasApi.Utils
                             newEntity.FechaMaxDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             newEntity.FechaVencimientoDescuento = DateTime.TryParseExact(subFactura.LIMIT_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.LIMIT_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             newEntity.Saldo = Decimal.TryParse(subFactura.AMOUNT_CUR, out ssFactura) ? ssFactura : 0;
+
+                            if (fFactura.Saldo == 0)
+                            {
+                                newEntity.Saldo = 0;
+                            }
+
                             newEntity.SaldoDivisa = Decimal.TryParse(subFactura.AMOUNT_MST, out tFacturaDivisa) ? tFacturaDivisa : 0;
                             newEntity.Descuento = Decimal.TryParse(subFactura.DISC_AMOUNT, out sDesc) ? sDesc : 0;
                             newEntity.PendientePago = Decimal.TryParse(subFactura.PAYM_AMOUNT, out psFactura) ? psFactura : 0;
@@ -150,6 +156,10 @@ namespace AventasApi.Utils
                             entityFound.FechaMaxDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             entityFound.FechaVencimientoDescuento = DateTime.TryParseExact(subFactura.LIMIT_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.LIMIT_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             entityFound.Saldo = Decimal.TryParse(subFactura.AMOUNT_CUR, out ssFactura) ? ssFactura : 0;
+                            if (fFactura.Saldo == 0)
+                            {
+                                entityFound.Saldo = 0;
+                            }
                             entityFound.SaldoDivisa = Decimal.TryParse(subFactura.AMOUNT_MST, out tFacturaDivisa) ? tFacturaDivisa : 0;
                             entityFound.Descuento = Decimal.TryParse(subFactura.DISC_AMOUNT, out sDesc) ? sDesc : 0;
                             entityFound.PendientePago = Decimal.TryParse(subFactura.PAYM_AMOUNT, out psFactura) ? psFactura : 0;

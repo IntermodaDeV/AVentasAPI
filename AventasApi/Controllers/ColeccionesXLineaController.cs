@@ -65,7 +65,7 @@ namespace AventasApi.Controllers
                                Lineas = vw_coleccion.LineasxColeccion.Select(colXLin => colXLin.IdLinea).ToList(),
                                AtributosXColeccion = vw_coleccion.AtributosxColeccion.Select(atr => new AtributosViewModel
                                {
-                                   Descripcion = (atr.Descripcion2 == "BASE") ? atr.Descripcion1 + " - " + atr.CodigoAtributo : atr.Descripcion1,
+                                   Descripcion = (atr.Descripcion2 == "BASE") ? atr.CodigoAtributo + " - " + atr.Descripcion1 : atr.Descripcion1,
                                    Tipo = atr.Descripcion2,
                                    IdLinea = atr.IdLinea
                                }).ToList(),
