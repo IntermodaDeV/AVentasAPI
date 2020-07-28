@@ -97,7 +97,7 @@ namespace AventasApi.Controllers
                                                       },
                                                       AtributosXProducto = pxc.AtributosxProducto.Select(atr => new AtributosViewModel
                                                       {
-                                                          Descripcion = (atr.Descripcion2 == "BASE") ? atr.Descripcion1 + " - " + atr.CodigoAtributo : atr.Descripcion1,
+                                                          Descripcion = (atr.Descripcion2 == "BASE") ? atr.CodigoAtributo + " - " + atr.Descripcion1 : atr.Descripcion1,
                                                           Tipo = atr.Descripcion2,
                                                           IdLinea = pxc.IdLinea
                                                       }).ToList(),
@@ -111,7 +111,7 @@ namespace AventasApi.Controllers
                                                              CodigoColor = foto.CodigoColor,
                                                              Principal = foto.Principal ?? false
                                                          }).ToList(),
-                                                      ListaTalla = context.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)
+                                                      ListaTalla = context.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) >= 0)
                                                       .Select(txp => new TallaViewModel
                                                       {
                                                           Talla = txp.CodigoTalla,
