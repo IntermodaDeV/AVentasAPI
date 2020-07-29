@@ -272,7 +272,7 @@ namespace AventasApi.Controllers
             var codigoCliente = "";
             int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
             string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
-            var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderByDescending(subFac => subFac.FechaVencimiento).ToList();
+            var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(subFac => subFac.FechaVencimiento).ToList();
             List<ReciboApiModel> recibos = new List<ReciboApiModel>();
             foreach (PagosReciboPostViewModel pago in reciboPost.Pagos.OrderBy(pag => pag.Orden))
             {
