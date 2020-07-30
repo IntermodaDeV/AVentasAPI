@@ -168,7 +168,7 @@ namespace AventasApi.Controllers
                                 NumeroFEL = subFac.NumeroFEL,
                                 CodigoCliente = subFac.CodigoCliente,
                                 EmpresaId = subFac.EmpresaId,
-                                IdMoneda = subFac.IdMoneda,
+                                IdMoneda = context.MaestroMoneda.FirstOrDefault(x=>x.IdMoneda==subFac.IdMoneda).Moneda,
                                 IdAcuerdoxCliente = subFac.IdAcuerdoxCliente,
                                 FechaVencimiento = subFac.FechaVencimiento,
                                 FechaMaxDescuento = subFac.AcuerdosxCliente != null ? subFac.FechaMaxDescuento : subFac.FacturasxCliente.FechaMaxDescuento,
