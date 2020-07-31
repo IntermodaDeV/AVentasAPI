@@ -19,6 +19,7 @@ namespace DBData.Database
         public Nullable<int> IdSubFactura { get; set; }
         public Nullable<decimal> Valor { get; set; }
         public Nullable<decimal> Descuento { get; set; }
+        public Nullable<bool> EsAbono { get; set; }
     
         public virtual SubFacturasxCliente SubFacturasxCliente { get; set; }
         public virtual RecibosxCliente RecibosxCliente { get; set; }

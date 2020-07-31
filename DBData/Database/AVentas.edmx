@@ -389,7 +389,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IdFisicoDisponible" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CodigoColor" Type="varchar" MaxLength="50" />
           <Property Name="CodigoTalla" Type="varchar" MaxLength="250" />
-          <Property Name="IdProducto" Type="int" />
+          <Property Name="IdProducto" Type="int" Nullable="false" />
           <Property Name="Disponible" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
@@ -444,7 +444,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Codigo" Type="varchar" MaxLength="50" />
           <Property Name="Descripcion" Type="varchar" MaxLength="250" />
           <Property Name="FotografiaProducto" Type="varchar" MaxLength="500" />
-          <Property Name="IdProducto" Type="int" />
+          <Property Name="IdProducto" Type="int" Nullable="false" />
           <Property Name="CodigoColor" Type="varchar" MaxLength="50" />
           <Property Name="Principal" Type="bit" />
         </EntityType>
@@ -508,6 +508,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           </Key>
           <Property Name="GrupoPrecio" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Descripcion" Type="varchar" MaxLength="250" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="MaestroLinea">
           <Key>
@@ -611,9 +612,9 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           </Key>
           <Property Name="IdPrecioEspecifico" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdMoneda" Type="varchar" MaxLength="100" />
-          <Property Name="IdProducto" Type="int" />
+          <Property Name="IdProducto" Type="int" Nullable="false" />
           <Property Name="GrupoPrecio" Type="varchar" MaxLength="50" />
-          <Property Name="IdFisicoDisponible" Type="int" />
+          <Property Name="IdFisicoDisponible" Type="int" Nullable="false" />
           <Property Name="Precio" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Desde" Type="datetime" />
           <Property Name="Hasta" Type="datetime" />
@@ -653,6 +654,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IdEdad" Type="varchar" MaxLength="250" />
           <Property Name="GrupoImpuesto" Type="varchar" MaxLength="150" />
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+          <Property Name="VisibleParaVentas" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -678,6 +680,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IdSubFactura" Type="int" />
           <Property Name="Valor" Type="decimal" Precision="15" Scale="4" />
           <Property Name="Descuento" Type="decimal" Precision="15" Scale="4" />
+          <Property Name="EsAbono" Type="bit" />
         </EntityType>
         <EntityType Name="RecibosxCliente">
           <Key>
@@ -1472,7 +1475,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__FisicoDis__MinSt__7A8729A3">
-          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
+          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="1" />
           <End Role="FisicoDisponible" Type="Self.FisicoDisponible" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProductosxColeccion">
@@ -1532,7 +1535,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Fotografi__IdPro__190BB0C3">
-          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
+          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="1" />
           <End Role="FotografiasXProducto" Type="Self.FotografiasXProducto" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProductosxColeccion">
@@ -1736,7 +1739,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__PrecioEsp__IdFis__396371BC">
-          <End Role="FisicoDisponible" Type="Self.FisicoDisponible" Multiplicity="0..1" />
+          <End Role="FisicoDisponible" Type="Self.FisicoDisponible" Multiplicity="1" />
           <End Role="PrecioEspecifico" Type="Self.PrecioEspecifico" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="FisicoDisponible">
@@ -1760,7 +1763,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__PrecioEsp__IdPro__377B294A">
-          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
+          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="1" />
           <End Role="PrecioEspecifico" Type="Self.PrecioEspecifico" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProductosxColeccion">
@@ -2969,8 +2972,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Color" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Rgb" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ColoresxProducto" Relationship="Self.FK__ColoresxP__Codig__52793849" FromRole="Colores" ToRole="ColoresxProducto" />
-          <NavigationProperty Name="FisicoDisponible" Relationship="Self.FK__FisicoDis__Codig__7B7B4DDC" FromRole="Colores" ToRole="FisicoDisponible" />
-          <NavigationProperty Name="FotografiasXProducto" Relationship="Self.FK__Fotografi__Codig__45C948A1" FromRole="Colores" ToRole="FotografiasXProducto" />
+          <NavigationProperty Name="FisicoDisponible" Relationship="AventasModel.FK__FisicoDis__Codig__7B7B4DDC" FromRole="Colores" ToRole="FisicoDisponible" />
+          <NavigationProperty Name="FotografiasXProducto" Relationship="AventasModel.FK__Fotografi__Codig__45C948A1" FromRole="Colores" ToRole="FotografiasXProducto" />
         </EntityType>
         <EntityType Name="ColoresxProducto">
           <Key>
@@ -3123,20 +3126,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="PedidoId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__FirmasxPe__Pedid__75C27486" FromRole="FirmasxPedido" ToRole="PedidosxCliente" />
         </EntityType>
-        <EntityType Name="FisicoDisponible">
-          <Key>
-            <PropertyRef Name="IdFisicoDisponible" />
-          </Key>
-          <Property Name="IdFisicoDisponible" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CodigoColor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="CodigoTalla" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="IdProducto" Type="Int32" />
-          <Property Name="Disponible" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="MinStock" Type="Decimal" Precision="18" Scale="2" />
-          <NavigationProperty Name="Colores" Relationship="Self.FK__FisicoDis__Codig__7B7B4DDC" FromRole="FisicoDisponible" ToRole="Colores" />
-          <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__FisicoDis__MinSt__7A8729A3" FromRole="FisicoDisponible" ToRole="ProductosxColeccion" />
-          <NavigationProperty Name="PrecioEspecifico" Relationship="Self.FK__PrecioEsp__IdFis__396371BC" FromRole="FisicoDisponible" ToRole="PrecioEspecifico" />
-        </EntityType>
         <EntityType Name="FormularioIntroDetalle">
           <Key>
             <PropertyRef Name="codFormularioIntroDetalle" />
@@ -3186,20 +3175,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="FormularioIntroDetalle" Relationship="Self.FK__Formulari__codFo__0B47A151" FromRole="FormularioIntroEncabezado" ToRole="FormularioIntroDetalle" />
           <NavigationProperty Name="FormularioIntroDetallexRoles" Relationship="Self.FK__Formulari__codFo__0D2FE9C3" FromRole="FormularioIntroEncabezado" ToRole="FormularioIntroDetallexRoles" />
         </EntityType>
-        <EntityType Name="FotografiasXProducto">
-          <Key>
-            <PropertyRef Name="IdFotografia" />
-          </Key>
-          <Property Name="IdFotografia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Codigo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Descripcion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="FotografiaProducto" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="IdProducto" Type="Int32" />
-          <Property Name="CodigoColor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Principal" Type="Boolean" />
-          <NavigationProperty Name="Colores" Relationship="Self.FK__Fotografi__Codig__45C948A1" FromRole="FotografiasXProducto" ToRole="Colores" />
-          <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__Fotografi__IdPro__190BB0C3" FromRole="FotografiasXProducto" ToRole="ProductosxColeccion" />
-        </EntityType>
         <EntityType Name="GrupoTalla">
           <Key>
             <PropertyRef Name="CodigoGrupoTalla" />
@@ -3246,7 +3221,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="GrupoPrecio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Descripcion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Clientes" Relationship="Self.FK__Clientes__GrupoP__3A5795F5" FromRole="MaestroGrupoPrecio" ToRole="Clientes" />
-          <NavigationProperty Name="PrecioEspecifico" Relationship="Self.FK__PrecioEsp__Grupo__386F4D83" FromRole="MaestroGrupoPrecio" ToRole="PrecioEspecifico" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__Grupo__386F4D83" FromRole="MaestroGrupoPrecio" ToRole="PrecioEspecifico" />
         </EntityType>
         <EntityType Name="MaestroLinea">
           <Key>
@@ -3277,10 +3253,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="CuentasBancarias" Relationship="Self.FK__CuentasBa__IdMon__1B48FEF0" FromRole="MaestroMoneda" ToRole="CuentasBancarias" />
           <NavigationProperty Name="FacturasxCliente" Relationship="Self.FK__Facturasx__IdMon__733B0D96" FromRole="MaestroMoneda" ToRole="FacturasxCliente" />
           <NavigationProperty Name="MonedasxEmpresa" Relationship="Self.FK__MonedasxE__IdMon__3C89F72A" FromRole="MaestroMoneda" ToRole="MonedasxEmpresa" />
-          <NavigationProperty Name="PrecioEspecifico" Relationship="Self.FK__PrecioEsp__IdMon__36870511" FromRole="MaestroMoneda" ToRole="PrecioEspecifico" />
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK__SubFactur__IdMon__79E80B25" FromRole="MaestroMoneda" ToRole="SubFacturasxCliente" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D" FromRole="MaestroMoneda" ToRole="PedidosxCliente" />
           <NavigationProperty Name="PreciosxProducto" Relationship="AventasModel.FK__PreciosxP__IdMon__55209ACA" FromRole="MaestroMoneda" ToRole="PreciosxProducto" />
+          <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdMon__36870511" FromRole="MaestroMoneda" ToRole="PrecioEspecifico" />
         </EntityType>
         <EntityType Name="MonedasxEmpresa">
           <Key>
@@ -3333,23 +3309,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK_PedidosDetalle_ProductosxColeccion" FromRole="PedidosDetalle" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosDetalle" ToRole="PedidosxCliente" />
         </EntityType>
-        <EntityType Name="PrecioEspecifico">
-          <Key>
-            <PropertyRef Name="IdPrecioEspecifico" />
-          </Key>
-          <Property Name="IdPrecioEspecifico" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="IdProducto" Type="Int32" />
-          <Property Name="GrupoPrecio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IdFisicoDisponible" Type="Int32" />
-          <Property Name="Precio" Type="Decimal" Precision="18" Scale="2" />
-          <NavigationProperty Name="FisicoDisponible" Relationship="Self.FK__PrecioEsp__IdFis__396371BC" FromRole="PrecioEspecifico" ToRole="FisicoDisponible" />
-          <NavigationProperty Name="MaestroGrupoPrecio" Relationship="Self.FK__PrecioEsp__Grupo__386F4D83" FromRole="PrecioEspecifico" ToRole="MaestroGrupoPrecio" />
-          <NavigationProperty Name="MaestroMoneda" Relationship="Self.FK__PrecioEsp__IdMon__36870511" FromRole="PrecioEspecifico" ToRole="MaestroMoneda" />
-          <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__PrecioEsp__IdPro__377B294A" FromRole="PrecioEspecifico" ToRole="ProductosxColeccion" />
-          <Property Name="Desde" Type="DateTime" Precision="3" />
-          <Property Name="Hasta" Type="DateTime" Precision="3" />
-        </EntityType>
         <EntityType Name="PrioridadAsignacion">
           <Key>
             <PropertyRef Name="idPrioridad" />
@@ -3377,18 +3336,19 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="AtributosxProducto" Relationship="Self.FK__Atributos__IdPro__2C1E8537" FromRole="ProductosxColeccion" ToRole="AtributosxProducto" />
           <NavigationProperty Name="Colecciones" Relationship="Self.FK__Productos__IdCol__4DB4832C" FromRole="ProductosxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="ColoresxProducto" Relationship="Self.FK__ColoresxP__IdPro__536D5C82" FromRole="ProductosxColeccion" ToRole="ColoresxProducto" />
-          <NavigationProperty Name="FisicoDisponible" Relationship="Self.FK__FisicoDis__MinSt__7A8729A3" FromRole="ProductosxColeccion" ToRole="FisicoDisponible" />
-          <NavigationProperty Name="FotografiasXProducto" Relationship="Self.FK__Fotografi__IdPro__190BB0C3" FromRole="ProductosxColeccion" ToRole="FotografiasXProducto" />
           <NavigationProperty Name="GrupoTalla" Relationship="Self.FK__Productos__Codig__4F9CCB9E" FromRole="ProductosxColeccion" ToRole="GrupoTalla" />
           <NavigationProperty Name="MaestroEdad" Relationship="Self.FK__Productos__IdEda__68336F3E" FromRole="ProductosxColeccion" ToRole="MaestroEdad" />
           <NavigationProperty Name="MaestroLinea" Relationship="Self.FK__Productos__IdLin__4EA8A765" FromRole="ProductosxColeccion" ToRole="MaestroLinea" />
           <NavigationProperty Name="PedidosDetalle" Relationship="Self.FK_PedidosDetalle_ProductosxColeccion" FromRole="ProductosxColeccion" ToRole="PedidosDetalle" />
-          <NavigationProperty Name="PrecioEspecifico" Relationship="Self.FK__PrecioEsp__IdPro__377B294A" FromRole="ProductosxColeccion" ToRole="PrecioEspecifico" />
           <NavigationProperty Name="TallasxProducto" Relationship="Self.FK__TallasxPr__IdPro__270FB757" FromRole="ProductosxColeccion" ToRole="TallasxProducto" />
           <Property Name="GrupoImpuesto" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__Productos__IdEmpresa__Empresa" FromRole="ProductosxColeccion" ToRole="Empresa" />
           <NavigationProperty Name="PreciosxProducto" Relationship="AventasModel.FK__PreciosxP__IdMon__542C7691" FromRole="ProductosxColeccion" ToRole="PreciosxProducto" />
+          <Property Name="VisibleParaVentas" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="FisicoDisponible" Relationship="AventasModel.FK__FisicoDis__MinSt__7A8729A3" FromRole="ProductosxColeccion" ToRole="FisicoDisponible" />
+          <NavigationProperty Name="FotografiasXProducto" Relationship="AventasModel.FK__Fotografi__IdPro__190BB0C3" FromRole="ProductosxColeccion" ToRole="FotografiasXProducto" />
+          <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdPro__377B294A" FromRole="ProductosxColeccion" ToRole="PrecioEspecifico" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -3420,6 +3380,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK__RecibosDe__IdSub__7FF5EA36" FromRole="RecibosDetalle" ToRole="SubFacturasxCliente" />
           <NavigationProperty Name="RecibosxCliente" Relationship="AventasModel.FK__RecibosDe__Recib__7F01C5FD" FromRole="RecibosDetalle" ToRole="RecibosxCliente" />
+          <Property Name="EsAbono" Type="Boolean" />
         </EntityType>
         <EntityType Name="Rutas">
           <Key>
@@ -4155,30 +4116,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__FisicoDis__Codig__7B7B4DDC">
-          <End Role="Colores" Type="Self.Colores" Multiplicity="0..1" />
-          <End Role="FisicoDisponible" Type="Self.FisicoDisponible" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colores">
-              <PropertyRef Name="CodigoColor" />
-            </Principal>
-            <Dependent Role="FisicoDisponible">
-              <PropertyRef Name="CodigoColor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Fotografi__Codig__45C948A1">
-          <End Role="Colores" Type="Self.Colores" Multiplicity="0..1" />
-          <End Role="FotografiasXProducto" Type="Self.FotografiasXProducto" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colores">
-              <PropertyRef Name="CodigoColor" />
-            </Principal>
-            <Dependent Role="FotografiasXProducto">
-              <PropertyRef Name="CodigoColor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__ColoresxP__IdPro__536D5C82">
           <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
           <End Role="ColoresxProducto" Type="Self.ColoresxProducto" Multiplicity="*" />
@@ -4359,30 +4296,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__FisicoDis__MinSt__7A8729A3">
-          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
-          <End Role="FisicoDisponible" Type="Self.FisicoDisponible" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProductosxColeccion">
-              <PropertyRef Name="IdProducto" />
-            </Principal>
-            <Dependent Role="FisicoDisponible">
-              <PropertyRef Name="IdProducto" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PrecioEsp__IdFis__396371BC">
-          <End Role="FisicoDisponible" Type="Self.FisicoDisponible" Multiplicity="0..1" />
-          <End Role="PrecioEspecifico" Type="Self.PrecioEspecifico" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="FisicoDisponible">
-              <PropertyRef Name="IdFisicoDisponible" />
-            </Principal>
-            <Dependent Role="PrecioEspecifico">
-              <PropertyRef Name="IdFisicoDisponible" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Formulari__codFo__0B47A151">
           <End Role="FormularioIntroEncabezado" Type="Self.FormularioIntroEncabezado" Multiplicity="0..1" />
           <End Role="FormularioIntroDetalle" Type="Self.FormularioIntroDetalle" Multiplicity="*" />
@@ -4416,18 +4329,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="FormularioIntroDetallexRoles">
               <PropertyRef Name="codFormularioIntroEncabezado" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Fotografi__IdPro__190BB0C3">
-          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
-          <End Role="FotografiasXProducto" Type="Self.FotografiasXProducto" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProductosxColeccion">
-              <PropertyRef Name="IdProducto" />
-            </Principal>
-            <Dependent Role="FotografiasXProducto">
-              <PropertyRef Name="IdProducto" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4479,18 +4380,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__PrecioEsp__Grupo__386F4D83">
-          <End Role="MaestroGrupoPrecio" Type="Self.MaestroGrupoPrecio" Multiplicity="0..1" />
-          <End Role="PrecioEspecifico" Type="Self.PrecioEspecifico" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="MaestroGrupoPrecio">
-              <PropertyRef Name="GrupoPrecio" />
-            </Principal>
-            <Dependent Role="PrecioEspecifico">
-              <PropertyRef Name="GrupoPrecio" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Productos__IdLin__4EA8A765">
           <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="0..1" />
           <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="*" />
@@ -4511,18 +4400,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               <PropertyRef Name="IdMoneda" />
             </Principal>
             <Dependent Role="MonedasxEmpresa">
-              <PropertyRef Name="IdMoneda" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PrecioEsp__IdMon__36870511">
-          <End Role="MaestroMoneda" Type="Self.MaestroMoneda" Multiplicity="0..1" />
-          <End Role="PrecioEspecifico" Type="Self.PrecioEspecifico" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="MaestroMoneda">
-              <PropertyRef Name="IdMoneda" />
-            </Principal>
-            <Dependent Role="PrecioEspecifico">
               <PropertyRef Name="IdMoneda" />
             </Dependent>
           </ReferentialConstraint>
@@ -4572,18 +4449,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="PedidosDetalle">
               <PropertyRef Name="CodigoProducto" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PrecioEsp__IdPro__377B294A">
-          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
-          <End Role="PrecioEspecifico" Type="Self.PrecioEspecifico" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProductosxColeccion">
-              <PropertyRef Name="IdProducto" />
-            </Principal>
-            <Dependent Role="PrecioEspecifico">
-              <PropertyRef Name="IdProducto" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4684,11 +4549,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="EstadosPedido" EntityType="Self.EstadosPedido" />
           <EntitySet Name="FacturasxCliente" EntityType="Self.FacturasxCliente" />
           <EntitySet Name="FirmasxPedido" EntityType="Self.FirmasxPedido" />
-          <EntitySet Name="FisicoDisponible" EntityType="Self.FisicoDisponible" />
           <EntitySet Name="FormularioIntroDetalle" EntityType="Self.FormularioIntroDetalle" />
           <EntitySet Name="FormularioIntroDetallexRoles" EntityType="Self.FormularioIntroDetallexRoles" />
           <EntitySet Name="FormularioIntroEncabezado" EntityType="Self.FormularioIntroEncabezado" />
-          <EntitySet Name="FotografiasXProducto" EntityType="Self.FotografiasXProducto" />
           <EntitySet Name="GrupoTalla" EntityType="Self.GrupoTalla" />
           <EntitySet Name="LimiteCreditoxCliente" EntityType="Self.LimiteCreditoxCliente" />
           <EntitySet Name="LineasxColeccion" EntityType="Self.LineasxColeccion" />
@@ -4700,7 +4563,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="Pantallas" EntityType="Self.Pantallas" />
           <EntitySet Name="PantallasxUsuario" EntityType="Self.PantallasxUsuario" />
           <EntitySet Name="PedidosDetalle" EntityType="Self.PedidosDetalle" />
-          <EntitySet Name="PrecioEspecifico" EntityType="Self.PrecioEspecifico" />
           <EntitySet Name="PrioridadAsignacion" EntityType="Self.PrioridadAsignacion" />
           <EntitySet Name="ProductosxColeccion" EntityType="Self.ProductosxColeccion" />
           <EntitySet Name="RazonNoVentaCausa" EntityType="Self.RazonNoVentaCausa" />
@@ -4889,14 +4751,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="Colores" EntitySet="Colores" />
             <End Role="ColoresxProducto" EntitySet="ColoresxProducto" />
           </AssociationSet>
-          <AssociationSet Name="FK__FisicoDis__Codig__7B7B4DDC" Association="Self.FK__FisicoDis__Codig__7B7B4DDC">
-            <End Role="Colores" EntitySet="Colores" />
-            <End Role="FisicoDisponible" EntitySet="FisicoDisponible" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Fotografi__Codig__45C948A1" Association="Self.FK__Fotografi__Codig__45C948A1">
-            <End Role="Colores" EntitySet="Colores" />
-            <End Role="FotografiasXProducto" EntitySet="FotografiasXProducto" />
-          </AssociationSet>
           <AssociationSet Name="FK__ColoresxP__IdPro__536D5C82" Association="Self.FK__ColoresxP__IdPro__536D5C82">
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="ColoresxProducto" EntitySet="ColoresxProducto" />
@@ -4957,14 +4811,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
           </AssociationSet>
-          <AssociationSet Name="FK__FisicoDis__MinSt__7A8729A3" Association="Self.FK__FisicoDis__MinSt__7A8729A3">
-            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
-            <End Role="FisicoDisponible" EntitySet="FisicoDisponible" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PrecioEsp__IdFis__396371BC" Association="Self.FK__PrecioEsp__IdFis__396371BC">
-            <End Role="FisicoDisponible" EntitySet="FisicoDisponible" />
-            <End Role="PrecioEspecifico" EntitySet="PrecioEspecifico" />
-          </AssociationSet>
           <AssociationSet Name="FK__Formulari__codFo__0B47A151" Association="Self.FK__Formulari__codFo__0B47A151">
             <End Role="FormularioIntroEncabezado" EntitySet="FormularioIntroEncabezado" />
             <End Role="FormularioIntroDetalle" EntitySet="FormularioIntroDetalle" />
@@ -4976,10 +4822,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK__Formulari__codFo__0D2FE9C3" Association="Self.FK__Formulari__codFo__0D2FE9C3">
             <End Role="FormularioIntroEncabezado" EntitySet="FormularioIntroEncabezado" />
             <End Role="FormularioIntroDetallexRoles" EntitySet="FormularioIntroDetallexRoles" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Fotografi__IdPro__190BB0C3" Association="Self.FK__Fotografi__IdPro__190BB0C3">
-            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
-            <End Role="FotografiasXProducto" EntitySet="FotografiasXProducto" />
           </AssociationSet>
           <AssociationSet Name="FK__Productos__Codig__4F9CCB9E" Association="Self.FK__Productos__Codig__4F9CCB9E">
             <End Role="GrupoTalla" EntitySet="GrupoTalla" />
@@ -4997,10 +4839,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="MaestroEdad" EntitySet="MaestroEdad" />
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
           </AssociationSet>
-          <AssociationSet Name="FK__PrecioEsp__Grupo__386F4D83" Association="Self.FK__PrecioEsp__Grupo__386F4D83">
-            <End Role="MaestroGrupoPrecio" EntitySet="MaestroGrupoPrecio" />
-            <End Role="PrecioEspecifico" EntitySet="PrecioEspecifico" />
-          </AssociationSet>
           <AssociationSet Name="FK__Productos__IdLin__4EA8A765" Association="Self.FK__Productos__IdLin__4EA8A765">
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
@@ -5008,10 +4846,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK__MonedasxE__IdMon__3C89F72A" Association="Self.FK__MonedasxE__IdMon__3C89F72A">
             <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
             <End Role="MonedasxEmpresa" EntitySet="MonedasxEmpresa" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PrecioEsp__IdMon__36870511" Association="Self.FK__PrecioEsp__IdMon__36870511">
-            <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
-            <End Role="PrecioEspecifico" EntitySet="PrecioEspecifico" />
           </AssociationSet>
           <AssociationSet Name="FK__SubFactur__IdMon__79E80B25" Association="Self.FK__SubFactur__IdMon__79E80B25">
             <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
@@ -5028,10 +4862,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK_PedidosDetalle_ProductosxColeccion" Association="Self.FK_PedidosDetalle_ProductosxColeccion">
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PrecioEsp__IdPro__377B294A" Association="Self.FK__PrecioEsp__IdPro__377B294A">
-            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
-            <End Role="PrecioEspecifico" EntitySet="PrecioEspecifico" />
           </AssociationSet>
           <AssociationSet Name="FK__TallasxPr__IdPro__270FB757" Association="Self.FK__TallasxPr__IdPro__270FB757">
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
@@ -5175,6 +5005,41 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK__PreciosxP__IdMon__542C7691" Association="AventasModel.FK__PreciosxP__IdMon__542C7691">
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="PreciosxProducto" EntitySet="PreciosxProducto" />
+          </AssociationSet>
+          <EntitySet Name="FisicoDisponible" EntityType="AventasModel.FisicoDisponible" />
+          <AssociationSet Name="FK__FisicoDis__Codig__7B7B4DDC" Association="AventasModel.FK__FisicoDis__Codig__7B7B4DDC">
+            <End Role="Colores" EntitySet="Colores" />
+            <End Role="FisicoDisponible" EntitySet="FisicoDisponible" />
+          </AssociationSet>
+          <AssociationSet Name="FK__FisicoDis__MinSt__7A8729A3" Association="AventasModel.FK__FisicoDis__MinSt__7A8729A3">
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+            <End Role="FisicoDisponible" EntitySet="FisicoDisponible" />
+          </AssociationSet>
+          <EntitySet Name="FotografiasXProducto" EntityType="AventasModel.FotografiasXProducto" />
+          <EntitySet Name="PrecioEspecifico" EntityType="AventasModel.PrecioEspecifico" />
+          <AssociationSet Name="FK__Fotografi__Codig__45C948A1" Association="AventasModel.FK__Fotografi__Codig__45C948A1">
+            <End Role="Colores" EntitySet="Colores" />
+            <End Role="FotografiasXProducto" EntitySet="FotografiasXProducto" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PrecioEsp__IdFis__396371BC" Association="AventasModel.FK__PrecioEsp__IdFis__396371BC">
+            <End Role="FisicoDisponible" EntitySet="FisicoDisponible" />
+            <End Role="PrecioEspecifico" EntitySet="PrecioEspecifico" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Fotografi__IdPro__190BB0C3" Association="AventasModel.FK__Fotografi__IdPro__190BB0C3">
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+            <End Role="FotografiasXProducto" EntitySet="FotografiasXProducto" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PrecioEsp__Grupo__386F4D83" Association="AventasModel.FK__PrecioEsp__Grupo__386F4D83">
+            <End Role="MaestroGrupoPrecio" EntitySet="MaestroGrupoPrecio" />
+            <End Role="PrecioEspecifico" EntitySet="PrecioEspecifico" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PrecioEsp__IdMon__36870511" Association="AventasModel.FK__PrecioEsp__IdMon__36870511">
+            <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
+            <End Role="PrecioEspecifico" EntitySet="PrecioEspecifico" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PrecioEsp__IdPro__377B294A" Association="AventasModel.FK__PrecioEsp__IdPro__377B294A">
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+            <End Role="PrecioEspecifico" EntitySet="PrecioEspecifico" />
           </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -5618,6 +5483,147 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="FisicoDisponible">
+          <Key>
+            <PropertyRef Name="IdFisicoDisponible" />
+          </Key>
+          <Property Name="IdFisicoDisponible" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodigoColor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoTalla" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="IdProducto" Type="Int32" Nullable="false" />
+          <Property Name="Disponible" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="MinStock" Type="Decimal" Precision="18" Scale="2" />
+          <NavigationProperty Name="Colores" Relationship="AventasModel.FK__FisicoDis__Codig__7B7B4DDC" FromRole="FisicoDisponible" ToRole="Colores" />
+          <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__FisicoDis__MinSt__7A8729A3" FromRole="FisicoDisponible" ToRole="ProductosxColeccion" />
+          <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdFis__396371BC" FromRole="FisicoDisponible" ToRole="PrecioEspecifico" />
+        </EntityType>
+        <Association Name="FK__FisicoDis__Codig__7B7B4DDC">
+          <End Type="AventasModel.Colores" Role="Colores" Multiplicity="0..1" />
+          <End Type="AventasModel.FisicoDisponible" Role="FisicoDisponible" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colores">
+              <PropertyRef Name="CodigoColor" />
+            </Principal>
+            <Dependent Role="FisicoDisponible">
+              <PropertyRef Name="CodigoColor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FisicoDis__MinSt__7A8729A3">
+          <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="1" />
+          <End Type="AventasModel.FisicoDisponible" Role="FisicoDisponible" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductosxColeccion">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="FisicoDisponible">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="FotografiasXProducto">
+          <Key>
+            <PropertyRef Name="IdFotografia" />
+          </Key>
+          <Property Name="IdFotografia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Codigo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FotografiaProducto" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="IdProducto" Type="Int32" Nullable="false" />
+          <Property Name="CodigoColor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Principal" Type="Boolean" />
+          <NavigationProperty Name="Colores" Relationship="AventasModel.FK__Fotografi__Codig__45C948A1" FromRole="FotografiasXProducto" ToRole="Colores" />
+          <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__Fotografi__IdPro__190BB0C3" FromRole="FotografiasXProducto" ToRole="ProductosxColeccion" />
+        </EntityType>
+        <EntityType Name="PrecioEspecifico">
+          <Key>
+            <PropertyRef Name="IdPrecioEspecifico" />
+          </Key>
+          <Property Name="IdPrecioEspecifico" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="IdProducto" Type="Int32" Nullable="false" />
+          <Property Name="GrupoPrecio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IdFisicoDisponible" Type="Int32" Nullable="false" />
+          <Property Name="Precio" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Desde" Type="DateTime" Precision="3" />
+          <Property Name="Hasta" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="FisicoDisponible" Relationship="AventasModel.FK__PrecioEsp__IdFis__396371BC" FromRole="PrecioEspecifico" ToRole="FisicoDisponible" />
+          <NavigationProperty Name="MaestroGrupoPrecio" Relationship="AventasModel.FK__PrecioEsp__Grupo__386F4D83" FromRole="PrecioEspecifico" ToRole="MaestroGrupoPrecio" />
+          <NavigationProperty Name="MaestroMoneda" Relationship="AventasModel.FK__PrecioEsp__IdMon__36870511" FromRole="PrecioEspecifico" ToRole="MaestroMoneda" />
+          <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__PrecioEsp__IdPro__377B294A" FromRole="PrecioEspecifico" ToRole="ProductosxColeccion" />
+        </EntityType>
+        <Association Name="FK__Fotografi__Codig__45C948A1">
+          <End Type="AventasModel.Colores" Role="Colores" Multiplicity="0..1" />
+          <End Type="AventasModel.FotografiasXProducto" Role="FotografiasXProducto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colores">
+              <PropertyRef Name="CodigoColor" />
+            </Principal>
+            <Dependent Role="FotografiasXProducto">
+              <PropertyRef Name="CodigoColor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PrecioEsp__IdFis__396371BC">
+          <End Type="AventasModel.FisicoDisponible" Role="FisicoDisponible" Multiplicity="1" />
+          <End Type="AventasModel.PrecioEspecifico" Role="PrecioEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FisicoDisponible">
+              <PropertyRef Name="IdFisicoDisponible" />
+            </Principal>
+            <Dependent Role="PrecioEspecifico">
+              <PropertyRef Name="IdFisicoDisponible" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Fotografi__IdPro__190BB0C3">
+          <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="1" />
+          <End Type="AventasModel.FotografiasXProducto" Role="FotografiasXProducto" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductosxColeccion">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="FotografiasXProducto">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PrecioEsp__Grupo__386F4D83">
+          <End Type="AventasModel.MaestroGrupoPrecio" Role="MaestroGrupoPrecio" Multiplicity="0..1" />
+          <End Type="AventasModel.PrecioEspecifico" Role="PrecioEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroGrupoPrecio">
+              <PropertyRef Name="GrupoPrecio" />
+            </Principal>
+            <Dependent Role="PrecioEspecifico">
+              <PropertyRef Name="GrupoPrecio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PrecioEsp__IdMon__36870511">
+          <End Type="AventasModel.MaestroMoneda" Role="MaestroMoneda" Multiplicity="0..1" />
+          <End Type="AventasModel.PrecioEspecifico" Role="PrecioEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroMoneda">
+              <PropertyRef Name="IdMoneda" />
+            </Principal>
+            <Dependent Role="PrecioEspecifico">
+              <PropertyRef Name="IdMoneda" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PrecioEsp__IdPro__377B294A">
+          <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="1" />
+          <End Type="AventasModel.PrecioEspecifico" Role="PrecioEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductosxColeccion">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="PrecioEspecifico">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5956,18 +5962,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="FisicoDisponible">
-            <EntityTypeMapping TypeName="AventasModel.FisicoDisponible">
-              <MappingFragment StoreEntitySet="FisicoDisponible">
-                <ScalarProperty Name="IdFisicoDisponible" ColumnName="IdFisicoDisponible" />
-                <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
-                <ScalarProperty Name="CodigoTalla" ColumnName="CodigoTalla" />
-                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
-                <ScalarProperty Name="Disponible" ColumnName="Disponible" />
-                <ScalarProperty Name="MinStock" ColumnName="MinStock" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="FormularioIntroDetalle">
             <EntityTypeMapping TypeName="AventasModel.FormularioIntroDetalle">
               <MappingFragment StoreEntitySet="FormularioIntroDetalle">
@@ -6014,19 +6008,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="FotografiasXProducto">
-            <EntityTypeMapping TypeName="AventasModel.FotografiasXProducto">
-              <MappingFragment StoreEntitySet="FotografiasXProducto">
-                <ScalarProperty Name="IdFotografia" ColumnName="IdFotografia" />
-                <ScalarProperty Name="Codigo" ColumnName="Codigo" />
-                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
-                <ScalarProperty Name="FotografiaProducto" ColumnName="FotografiaProducto" />
-                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
-                <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
-                <ScalarProperty Name="Principal" ColumnName="Principal" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="GrupoTalla">
             <EntityTypeMapping TypeName="AventasModel.GrupoTalla">
               <MappingFragment StoreEntitySet="GrupoTalla">
@@ -6066,6 +6047,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="MaestroGrupoPrecio">
             <EntityTypeMapping TypeName="AventasModel.MaestroGrupoPrecio">
               <MappingFragment StoreEntitySet="MaestroGrupoPrecio">
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
                 <ScalarProperty Name="GrupoPrecio" ColumnName="GrupoPrecio" />
                 <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
               </MappingFragment>
@@ -6139,20 +6121,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="PrecioEspecifico">
-            <EntityTypeMapping TypeName="AventasModel.PrecioEspecifico">
-              <MappingFragment StoreEntitySet="PrecioEspecifico">
-                <ScalarProperty Name="Hasta" ColumnName="Hasta" />
-                <ScalarProperty Name="Desde" ColumnName="Desde" />
-                <ScalarProperty Name="IdPrecioEspecifico" ColumnName="IdPrecioEspecifico" />
-                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
-                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
-                <ScalarProperty Name="GrupoPrecio" ColumnName="GrupoPrecio" />
-                <ScalarProperty Name="IdFisicoDisponible" ColumnName="IdFisicoDisponible" />
-                <ScalarProperty Name="Precio" ColumnName="Precio" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="PrioridadAsignacion">
             <EntityTypeMapping TypeName="AventasModel.PrioridadAsignacion">
               <MappingFragment StoreEntitySet="PrioridadAsignacion">
@@ -6167,6 +6135,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="ProductosxColeccion">
             <EntityTypeMapping TypeName="AventasModel.ProductosxColeccion">
               <MappingFragment StoreEntitySet="ProductosxColeccion">
+                <ScalarProperty Name="VisibleParaVentas" ColumnName="VisibleParaVentas" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
                 <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />
                 <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
@@ -6201,6 +6170,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="RecibosDetalle">
             <EntityTypeMapping TypeName="AventasModel.RecibosDetalle">
               <MappingFragment StoreEntitySet="RecibosDetalle">
+                <ScalarProperty Name="EsAbono" ColumnName="EsAbono" />
                 <ScalarProperty Name="IdReciboDetalle" ColumnName="IdReciboDetalle" />
                 <ScalarProperty Name="ReciboId" ColumnName="ReciboId" />
                 <ScalarProperty Name="IdSubFactura" ColumnName="IdSubFactura" />
@@ -6698,6 +6668,45 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
                 <ScalarProperty Name="GrupoPrecio" ColumnName="GrupoPrecio" />
                 <ScalarProperty Name="IdPrecioxProducto" ColumnName="IdPrecioxProducto" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FisicoDisponible">
+            <EntityTypeMapping TypeName="AventasModel.FisicoDisponible">
+              <MappingFragment StoreEntitySet="FisicoDisponible">
+                <ScalarProperty Name="MinStock" ColumnName="MinStock" />
+                <ScalarProperty Name="Disponible" ColumnName="Disponible" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="CodigoTalla" ColumnName="CodigoTalla" />
+                <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
+                <ScalarProperty Name="IdFisicoDisponible" ColumnName="IdFisicoDisponible" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FotografiasXProducto">
+            <EntityTypeMapping TypeName="AventasModel.FotografiasXProducto">
+              <MappingFragment StoreEntitySet="FotografiasXProducto">
+                <ScalarProperty Name="Principal" ColumnName="Principal" />
+                <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="FotografiaProducto" ColumnName="FotografiaProducto" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Codigo" ColumnName="Codigo" />
+                <ScalarProperty Name="IdFotografia" ColumnName="IdFotografia" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PrecioEspecifico">
+            <EntityTypeMapping TypeName="AventasModel.PrecioEspecifico">
+              <MappingFragment StoreEntitySet="PrecioEspecifico">
+                <ScalarProperty Name="Hasta" ColumnName="Hasta" />
+                <ScalarProperty Name="Desde" ColumnName="Desde" />
+                <ScalarProperty Name="Precio" ColumnName="Precio" />
+                <ScalarProperty Name="IdFisicoDisponible" ColumnName="IdFisicoDisponible" />
+                <ScalarProperty Name="GrupoPrecio" ColumnName="GrupoPrecio" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
+                <ScalarProperty Name="IdPrecioEspecifico" ColumnName="IdPrecioEspecifico" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

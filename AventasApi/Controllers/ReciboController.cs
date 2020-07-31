@@ -77,6 +77,7 @@ namespace AventasApi.Controllers
                     Valor = recDet.Valor,
                     ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
                     Descuento = recDet.Descuento,
+                    EsAbono = recDet.EsAbono,
                     DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0
                 } : new RecibosDetalleViewModel
                 {
@@ -89,7 +90,8 @@ namespace AventasApi.Controllers
                     Valor = recDet.Valor,
                     ValorSinDescuento = recDet.Valor,
                     Descuento = 0,
-                    DiasVencimiento = 0
+                    EsAbono = true,
+                    DiasVencimiento = 0,
                 }
                 ).ToList()
             }).ToList();
@@ -368,6 +370,7 @@ namespace AventasApi.Controllers
                             detalleReciboXCliente.Valor = Decimal.Parse((valor).ToString());
                             recibo.APLICADO = (aplicadoDouble + valor).ToString();
                             subfactura.Saldo = (subfactura.Saldo ?? 0) - detalleReciboXCliente.Valor;
+                            detalleReciboXCliente.EsAbono = true;
                             montoAplicado = valor;
                             valor = 0;
                         }
@@ -384,6 +387,7 @@ namespace AventasApi.Controllers
                                 recibo.DESCUENTO = (decimal.Parse(recibo.DESCUENTO) + subfactura.Descuento).ToString();
                             }
                             subfactura.Saldo = 0;
+                            detalleReciboXCliente.EsAbono = false;
                         }
                         reciboXCliente.Descuento += detalleReciboXCliente.Descuento;
                         reciboXCliente.Valor += detalleReciboXCliente.Valor;
@@ -402,7 +406,7 @@ namespace AventasApi.Controllers
                                 Fecha = subfactura.FechaVencimiento.Value,
                                 Dias = dias,
                                 TipoDocumento = subfactura.FacturasxCliente.Tipo,
-
+                                EsAbono = detalleReciboXCliente.EsAbono,
                             };
                             respuestaPagoRecibo.Facturas.Add(pagoAplicado);
                         }
@@ -519,6 +523,7 @@ namespace AventasApi.Controllers
         public double Parcial2 { get; set; }
         public int Dias { get; set; }
         public string TipoDocumento { get; set; }
+        public bool? EsAbono { get; set; }
     }
     public class RespuestaPago
     {

@@ -135,7 +135,7 @@ namespace AventasApi.Controllers
                         Valor = acu.Key == null ? "0" : (acu.Key.Total ?? 0).ToString(),
                         Disponible = acu.Key == null ? "0" : (acu.Key.Saldo ?? 0).ToString(),
                         //SaldoTotal = acu.Key == null ? "0" :  acu.Key.Saldo.Value.ToString(),
-                        Facturas = acu.OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
+                        Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                         {
                             IdFactura = facCli.IdFactura,
                             Factura = facCli.Factura,

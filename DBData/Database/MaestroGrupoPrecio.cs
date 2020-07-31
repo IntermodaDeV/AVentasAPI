@@ -23,6 +23,7 @@ namespace DBData.Database
     
         public string GrupoPrecio { get; set; }
         public string Descripcion { get; set; }
+        public string EmpresaId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Clientes> Clientes { get; set; }

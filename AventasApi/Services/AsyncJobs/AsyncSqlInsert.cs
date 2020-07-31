@@ -70,6 +70,7 @@ namespace AventasApi.Services.AsyncJobs
                         IdSubFactura = recDet.IdSubFactura,
                         Valor = recDet.Valor,
                         Descuento = recDet.Descuento,
+                        EsAbono = recDet.EsAbono,
                     }).ToList()
                 }).ToList();
 

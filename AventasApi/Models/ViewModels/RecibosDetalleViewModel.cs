@@ -13,6 +13,7 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> Valor { get; set; }
         public Nullable<decimal> ValorSinDescuento { get; set; }
         public Nullable<decimal> Descuento { get; set; }
+        public Nullable<bool> EsAbono { get; set; }
         public int DiasVencimiento { get; set; }
         public string Factura { get; set; }
         public string NumeroFel { get; set; }

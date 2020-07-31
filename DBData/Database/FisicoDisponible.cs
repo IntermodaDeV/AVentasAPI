@@ -23,7 +23,7 @@ namespace DBData.Database
         public int IdFisicoDisponible { get; set; }
         public string CodigoColor { get; set; }
         public string CodigoTalla { get; set; }
-        public Nullable<int> IdProducto { get; set; }
+        public int IdProducto { get; set; }
         public Nullable<decimal> Disponible { get; set; }
         public Nullable<decimal> MinStock { get; set; }
     
