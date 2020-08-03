@@ -142,7 +142,7 @@ namespace AventasApi.Controllers
 
                                                       }).ToList(),
                                                       fisicaDisponible = pxc.FisicoDisponible
-                                                         .Where(f => (vw_coleccion.ColeccionTipo == "F") || f.Disponible > 0)
+                                                         /*.Where(f => (vw_coleccion.ColeccionTipo == "F") || f.Disponible >= 0)*/
                                                          .Select(f => new FisicoDisponibleViewModel
                                                          {
                                                              CodigoColor = f.CodigoColor,
