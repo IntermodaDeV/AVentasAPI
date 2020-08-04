@@ -326,8 +326,9 @@ namespace AventasApi.Controllers
                                 MONEDA = pago.IdMoneda,
                                 FECHA = DateTime.Now.ToString("dd/MM/yyyy"),
                                 DESCRIPCION = reciboPost.Descripcion,
-                                TIPO_PAGO = pago.CodigoTipoPago,
-                                BANCO = pago.IdBanco,
+                                TIPO_PAGO = pagoBD.Codigo,
+                                SPEC_PAGO = pago.TipoPagoDetalle,
+                                BANCO = bank != null ? bank.NombreBanco :"",
                                 REFERENCIA = pago.Referencia,
                                 FECHA_PAGO = reciboPost.FechaPago.ToString("dd/MM/yyyy"),
                                 FACTURA = subfactura.Factura,
@@ -336,6 +337,7 @@ namespace AventasApi.Controllers
                                 REF_TRANSOPEN = subfactura.Referencia,
                             };
                             recibosXPago.Add(recibo);
+                            numeroCorrelativoRecibo++;
                         }
                         if (reciboXCliente == null)
                         {
@@ -475,7 +477,7 @@ namespace AventasApi.Controllers
                     using (AVentasEntities context = new AVentasEntities())
                     {
                         asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                        numeroCorrelativoRecibo++;
+                        //numeroCorrelativoRecibo++;
                         asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
                         context.SaveChanges();
                     }
