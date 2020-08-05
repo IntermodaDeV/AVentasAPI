@@ -43,12 +43,13 @@ namespace AventasApi.Utils
                             newEntity.TotalFactura = Decimal.TryParse(factura.AMOUNT_CUR, out tFactura) ? tFactura : 0;
                             newEntity.PendienteFactura = Decimal.TryParse(factura.AMOUNT_PENDING, out pFactura) ? pFactura : 0;
                             newEntity.Saldo = Decimal.TryParse(factura.REMAIN_AMOUNT_CUR, out sFactura) ? sFactura : 0;
+                            newEntity.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;
 
                             if (newEntity.PendienteFactura > 0)
                             {
-                                newEntity.Saldo = newEntity.Saldo - newEntity.PendienteFactura;
+                                newEntity.Saldo = newEntity.Saldo - newEntity.PendienteFactura - newEntity.Descuento;
                             }
-                            newEntity.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;
+                            
                             newEntity.FacturaStatus = factura.STATUS;
                             newEntity.NumeroPagos = int.TryParse(factura.N_PAYMENTS, out nPagos) ? nPagos : 0;
                             newEntity.Referencia = factura.REF_TRANS;
@@ -72,13 +73,13 @@ namespace AventasApi.Utils
                             entityFound.TotalFactura = Decimal.TryParse(factura.AMOUNT_CUR, out tFactura) ? tFactura : 0;
                             entityFound.Saldo = Decimal.TryParse(factura.REMAIN_AMOUNT_CUR, out sFactura) ? sFactura : 0;
                             entityFound.PendienteFactura = Decimal.TryParse(factura.AMOUNT_PENDING, out pFactura) ? pFactura : 0;
+                            entityFound.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;
 
                             if (entityFound.PendienteFactura > 0)
                             {
-                                entityFound.Saldo = entityFound.Saldo - entityFound.PendienteFactura;
+                                entityFound.Saldo = entityFound.Saldo - entityFound.PendienteFactura - entityFound.Descuento;
                             }
 
-                            entityFound.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;
                             entityFound.FacturaStatus = factura.STATUS;
                             entityFound.NumeroPagos = int.TryParse(factura.N_PAYMENTS, out nPagos) ? nPagos : 0;
                             entityFound.Referencia = factura.REF_TRANS;

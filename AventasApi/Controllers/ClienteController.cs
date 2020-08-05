@@ -135,7 +135,7 @@ namespace AventasApi.Controllers
                         Valor = acu.Key == null ? "0" : (acu.Key.Total ?? 0).ToString(),
                         Disponible = acu.Key == null ? "0" : (acu.Key.Saldo ?? 0).ToString(),
                         //SaldoTotal = acu.Key == null ? "0" :  acu.Key.Saldo.Value.ToString(),
-                        Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
+                        Facturas = acu.Where(fac => (fac.Saldo - fac.PendienteFactura - fac.Descuento) > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                         {
                             IdFactura = facCli.IdFactura,
                             Factura = facCli.Factura,
@@ -158,7 +158,7 @@ namespace AventasApi.Controllers
                             LineaString = facCli.MaestroLinea.Linea,
                             IdTipoPedido = facCli.IdTipoPedido,
                             TipoPedidoString = facCli.TiposdePedido.TipoPedido,
-                            Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
+                            Cuotas = facCli.SubFacturasxCliente.Where(subFac => (subFac.Saldo - subFac.Descuento) > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                             {
                                 FechaFactura = subFac.FacturasxCliente.FechaFactura,
                                 TipoDocumento = subFac.FacturasxCliente.Tipo,
