@@ -19,6 +19,8 @@ namespace DBData.Database
         public int IdProducto { get; set; }
         public string IdMoneda { get; set; }
         public Nullable<decimal> Precio { get; set; }
+        public Nullable<System.DateTime> Desde { get; set; }
+        public Nullable<System.DateTime> Hasta { get; set; }
     
         public virtual MaestroMoneda MaestroMoneda { get; set; }
         public virtual ProductosxColeccion ProductosxColeccion { get; set; }

@@ -50,7 +50,7 @@ namespace AventasApi.Controllers
             var Recibos = context.AnticiposxCliente.Where(r => r.NumPedido != null).Select(a => a.NumPedido).ToList();
             List<ClienteViewModel> clientesSinFiltrar =
 
-                    context.Clientes.Where(cli => cli.ClientesxRuta.FirstOrDefault().Rutas.RutasxAsesor.FirstOrDefault().Asesores.Usuario == user.UserAccount).Select(cli => new ClienteViewModel
+                    context.Clientes.Where(cli => cli.Habilitado==true && cli.CodigoAsesor==user.UserAccount).Select(cli => new ClienteViewModel
                     {
                         EmpresaId = cli.EmpresaId,
                         Codigo = cli.CodigoCliente,

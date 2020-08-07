@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1" ZoomLevel="77">
+      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1" ZoomLevel="47">
         <EntityTypeShape EntityType="AventasModel.AcuerdosxCliente" Width="1.5" PointX="3" PointY="41.125" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AcuerdosxClienteDetalle" Width="1.5" PointX="5.25" PointY="41.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.Asesores" Width="1.5" PointX="14" PointY="28.5" IsExpanded="true" />
@@ -146,7 +146,6 @@
         <EntityTypeShape EntityType="AventasModel.RecibosxCliente" Width="1.5" PointX="15.5" PointY="49" />
         <AssociationConnector Association="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" />
         <AssociationConnector Association="AventasModel.FK__RecibosDe__Recib__7F01C5FD" />
-        <EntityTypeShape EntityType="AventasModel.ClienteContado" Width="1.5" PointX="8.375" PointY="0.75" />
         <EntityTypeShape EntityType="AventasModel.GrupoImpuestoArticulo" Width="1.5" PointX="3" PointY="51" />
         <AssociationConnector Association="AventasModel.GrupoImpuestoArticulo_Empresa" />
         <EntityTypeShape EntityType="AventasModel.GrupoImpuestoCliente" Width="1.5" PointX="3" PointY="54.625" />
@@ -180,6 +179,7 @@
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__Grupo__386F4D83" />
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdMon__36870511" />
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdPro__377B294A" />
+        <EntityTypeShape EntityType="AventasModel.ClienteContado" Width="1.5" PointX="8.375" PointY="0.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

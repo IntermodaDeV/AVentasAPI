@@ -21,6 +21,6 @@ namespace DBData.Database
         public Nullable<bool> FlagClientePotencial { get; set; }
         public string Telefono { get; set; }
         public string ComunidadAutonoma { get; set; }
-        public string Ruta { get; set; }
+        public string Asesor { get; set; }
     }
 }
