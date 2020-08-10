@@ -102,7 +102,7 @@ namespace AventasApi.Controllers
 
             foreach (var cliente in clientesSinFiltrar)
             {
-                var acuerdos = await context.AcuerdosxCliente.AsNoTracking().Where(acue => acue.CodigoCliente == cliente.Codigo).ToListAsync();
+                var acuerdos = await context.AcuerdosxCliente.Where(a=>a.Desde <= DateTime.Today && a.Hasta >= DateTime.Today).AsNoTracking().Where(acue => acue.CodigoCliente == cliente.Codigo).ToListAsync();
                 cliente.AcuerdosVenta = acuerdos.Select(axc => new AcuerdoVentaViewModel
                 {
                     IdAcuerdoxCliente = axc.IdAcuerdoxCliente,

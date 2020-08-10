@@ -87,7 +87,7 @@ namespace AventasApi.Controllers
                                                       {
                                                           GrupoPrecio = precio.GrupoPrecio,
                                                           IdMoneda = precio.IdMoneda,
-                                                          Precio = precio.Precio
+                                                          Precio = precio.Hasta == new DateTime(1900, 1, 1) ? precio.Precio : 0
                                                       }).ToList(),
                                                       GrupoTalla = pxc.CodigoGrupoTalla,
                                                       Linea = new LineaViewModel
@@ -156,7 +156,7 @@ namespace AventasApi.Controllers
                                                                  IdProducto = preEsp.IdProducto,
                                                                  GrupoPrecio = preEsp.GrupoPrecio,
                                                                  IdFisicoDisponible = preEsp.IdFisicoDisponible,
-                                                                 Precio = preEsp.Precio,
+                                                                 Precio = preEsp.Hasta == new DateTime(1900, 1, 1) ? preEsp.Precio : 0,
                                                              }).ToList(),
                                                          }).ToList()
                                                   }).ToList()

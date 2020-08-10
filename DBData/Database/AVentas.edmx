@@ -34,6 +34,8 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Facturado" Type="decimal" Precision="15" Scale="4" />
           <Property Name="Entregado" Type="decimal" Precision="15" Scale="4" />
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
+          <Property Name="Desde" Type="datetime" />
+          <Property Name="Hasta" Type="datetime" />
         </EntityType>
         <EntityType Name="AcuerdosxClienteDetalle">
           <Key>
@@ -2756,6 +2758,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="Clientes" Relationship="Self.FK__Acuerdosx__Total__290D0E62" FromRole="AcuerdosxCliente" ToRole="Clientes" />
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK__SubFactur__IdAcu__7ADC2F5E" FromRole="AcuerdosxCliente" ToRole="SubFacturasxCliente" />
           <NavigationProperty Name="FacturasxCliente" Relationship="Self.FK_FacturasxCliente_AcuerdosxCliente" FromRole="AcuerdosxCliente" ToRole="FacturasxCliente" />
+          <Property Name="Desde" Type="DateTime" Precision="3" />
+          <Property Name="Hasta" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="AcuerdosxClienteDetalle">
           <Key>
@@ -5641,6 +5645,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="AcuerdosxCliente">
             <EntityTypeMapping TypeName="AventasModel.AcuerdosxCliente">
               <MappingFragment StoreEntitySet="AcuerdosxCliente">
+                <ScalarProperty Name="Hasta" ColumnName="Hasta" />
+                <ScalarProperty Name="Desde" ColumnName="Desde" />
                 <ScalarProperty Name="IdAcuerdoxCliente" ColumnName="IdAcuerdoxCliente" />
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
                 <ScalarProperty Name="IdTipoPedido" ColumnName="IdTipoPedido" />
