@@ -114,6 +114,7 @@ namespace AventasApi.Controllers
                     TipoPago = axc.TipoPago,
                     Total = axc.Total,
                     Saldo = axc.Saldo,
+                    Linea = axc.IdLinea,
                     Liberado = axc.Liberado,
                     Facturado = axc.Facturado,
                     Entregado = axc.Entregado,
