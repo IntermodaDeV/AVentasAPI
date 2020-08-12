@@ -71,6 +71,8 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Descuento" Type="decimal" Precision="15" Scale="4" />
           <Property Name="Tipo" Type="varchar" MaxLength="250" />
           <Property Name="NumPedido" Type="varchar" MaxLength="150" />
+          <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
         </EntityType>
         <EntityType Name="Asesores">
           <Key>
@@ -711,6 +713,8 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="UsuarioModificacion" Type="varchar" MaxLength="250" />
           <Property Name="IdFactura" Type="int" />
           <Property Name="Descuento" Type="decimal" Precision="15" Scale="4" />
+          <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
         </EntityType>
         <EntityType Name="Rutas">
           <Key>
@@ -5140,6 +5144,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
           <Property Name="Tipo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="NumPedido" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
         </EntityType>
         <EntityType Name="RecibosxCliente">
           <Key>
@@ -5166,6 +5172,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
           <NavigationProperty Name="FacturasxCliente" Relationship="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" FromRole="RecibosxCliente" ToRole="FacturasxCliente" />
           <NavigationProperty Name="RecibosDetalle" Relationship="AventasModel.FK__RecibosDe__Recib__7F01C5FD" FromRole="RecibosxCliente" ToRole="RecibosDetalle" />
+          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
         </EntityType>
         <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
           <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
@@ -6523,6 +6531,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="AnticiposxCliente">
             <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
               <MappingFragment StoreEntitySet="AnticiposxCliente">
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
                 <ScalarProperty Name="NumPedido" ColumnName="NumPedido" />
                 <ScalarProperty Name="Tipo" ColumnName="Tipo" />
                 <ScalarProperty Name="Descuento" ColumnName="Descuento" />
@@ -6549,6 +6559,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="RecibosxCliente">
             <EntityTypeMapping TypeName="AventasModel.RecibosxCliente">
               <MappingFragment StoreEntitySet="RecibosxCliente">
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
                 <ScalarProperty Name="Descuento" ColumnName="Descuento" />
                 <ScalarProperty Name="IdFactura" ColumnName="IdFactura" />
                 <ScalarProperty Name="UsuarioModificacion" ColumnName="UsuarioModificacion" />

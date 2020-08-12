@@ -27,6 +27,8 @@ namespace AventasApi.Models.ViewModels
         public string CodigoAsesor { get; set; }
         public Nullable<int> IdFactura { get; set; }
         public Nullable<decimal> Descuento { get; set; }
+        public Nullable<decimal> Latitude { get; set; }
+        public Nullable<decimal> Longitude { get; set; }
         public TipoPagoViewModel TipoPago{ get; set; }
         public ClienteViewModel Cliente { get; set; }
         public PedidosXClienteViewModel Pedido { get; set; }

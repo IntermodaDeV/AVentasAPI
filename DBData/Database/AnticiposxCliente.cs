@@ -34,5 +34,7 @@ namespace DBData.Database
         public Nullable<decimal> Descuento { get; set; }
         public string Tipo { get; set; }
         public string NumPedido { get; set; }
+        public Nullable<decimal> Latitude { get; set; }
+        public Nullable<decimal> Longitude { get; set; }
     }
 }
