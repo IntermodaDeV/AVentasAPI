@@ -46,6 +46,8 @@ namespace AventasApi.Controllers
                 Sincronizado = rec.Sincronizado,
                 CodigoAsesor = rec.CodigoAsesor,
                 IdFactura = rec.IdFactura,
+                Longitude = rec.Longitude,
+                Latitude = rec.Latitude,
                 DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == rec.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
                 Descuento = rec.Descuento,
                 Cliente = context.Clientes.Where(cli => cli.CodigoCliente == rec.CodigoCliente).Select(cli => new ClienteViewModel
@@ -110,6 +112,8 @@ namespace AventasApi.Controllers
                 Sincronizado = ant.Sincronizado,
                 CodigoAsesor = ant.CodigoAsesor,
                 IdFactura = 0,
+                Latitude=ant.Latitude,
+                Longitude = ant.Longitude,
                 DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == ant.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
                 Descuento = ant.Descuento,
                 Cliente = context.Clientes.Where(cli => cli.CodigoCliente == ant.CodigoCliente).Select(cli => new ClienteViewModel
