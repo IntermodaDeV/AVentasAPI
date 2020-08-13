@@ -10,6 +10,7 @@ namespace AventasApi.Models.ViewModels
         public int IdReciboDetalle { get; set; }
         public Nullable<int> ReciboId { get; set; }
         public Nullable<int> IdSubFactura { get; set; }
+        public Nullable<System.DateTime> FechaFactura { get; set; }
         public Nullable<decimal> Valor { get; set; }
         public Nullable<decimal> ValorSinDescuento { get; set; }
         public Nullable<decimal> Descuento { get; set; }
