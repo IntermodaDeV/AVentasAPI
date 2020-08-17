@@ -125,7 +125,7 @@ namespace AventasApi.Controllers
                         Saldo = axcd.Saldo
                     }).ToList()
                 }).ToList();
-                cliente.AcuerdosXTipoPedido = context.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
+                cliente.AcuerdosXTipoPedido = context.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && (x.Saldo - x.PendienteFactura - x.Descuento) > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                 {
                     IdTipoPedido = asa.Key.IdTipoPedido,
                     TipoPedido = asa.Key.TipoPedido,
