@@ -65,7 +65,6 @@
         <EntityTypeShape EntityType="AventasModel.vw_ClientesxRuta" Width="1.5" PointX="6.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.vw_ColoresxProducto" Width="1.5" PointX="8.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.vw_FisicoDisponible" Width="1.5" PointX="10.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="AventasModel.vw_LineasxColeccion" Width="1.5" PointX="11.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.vw_TallasxProducto" Width="1.5" PointX="11.75" PointY="3.75" IsExpanded="true" />
         <AssociationConnector Association="AventasModel.FK__Acuerdosx__Empre__2BE97B0D" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Acuerdosx__IdLin__17786E0C" ManuallyRouted="false" />

@@ -87,7 +87,6 @@ namespace DBData.Database
         public virtual DbSet<vw_ClientesxRuta> vw_ClientesxRuta { get; set; }
         public virtual DbSet<vw_ColoresxProducto> vw_ColoresxProducto { get; set; }
         public virtual DbSet<vw_FisicoDisponible> vw_FisicoDisponible { get; set; }
-        public virtual DbSet<vw_LineasxColeccion> vw_LineasxColeccion { get; set; }
         public virtual DbSet<vw_TallasxProducto> vw_TallasxProducto { get; set; }
         public virtual DbSet<AnticiposxCliente> AnticiposxCliente { get; set; }
         public virtual DbSet<RecibosxCliente> RecibosxCliente { get; set; }

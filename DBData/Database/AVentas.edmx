@@ -56,13 +56,14 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="CodigoCliente" Type="varchar" MaxLength="250" />
           <Property Name="Fecha" Type="datetime" />
           <Property Name="IdTipoPago" Type="int" />
+          <Property Name="SpecPago" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Referencia" Type="varchar(max)" />
           <Property Name="FechaCheque" Type="datetime" />
           <Property Name="IdBanco" Type="int" />
           <Property Name="IdCuentaBancaria" Type="int" />
           <Property Name="Valor" Type="decimal" Precision="15" Scale="4" />
           <Property Name="IdMoneda" Type="varchar" MaxLength="100" />
-          <Property Name="Sincronizado" Type="bit" />
+          <Property Name="Sincronizado" Type="bit" Nullable="false" />
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
           <Property Name="FechaCreacion" Type="datetime" />
           <Property Name="UsuarioCreacion" Type="varchar" MaxLength="250" />
@@ -700,6 +701,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="CodigoCliente" Type="varchar" MaxLength="250" />
           <Property Name="Fecha" Type="datetime" />
           <Property Name="IdTipoPago" Type="int" />
+          <Property Name="SpecPago" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Referencia" Type="varchar(max)" />
           <Property Name="FechaCheque" Type="datetime" />
           <Property Name="IdBanco" Type="int" />
@@ -855,6 +857,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           </Key>
           <Property Name="IdUsuario" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Pin" Type="int" />
+          <Property Name="Password" Type="varchar(max)" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -914,20 +917,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a p
           <Property Name="IdProducto" Type="int" />
           <Property Name="Disponible" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
-        </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_LineasxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="vw_LineasxColeccion">
-          <Key>
-            <PropertyRef Name="IdColeccion" />
-            <PropertyRef Name="IdLinea" />
-          </Key>
-          <Property Name="IdColeccion" Type="int" Nullable="false" />
-          <Property Name="CodigoColeccion" Type="varchar" MaxLength="250" />
-          <Property Name="Nombre" Type="varchar(max)" />
-          <Property Name="IdLinea" Type="varchar" MaxLength="250" Nullable="false" />
-          <Property Name="Linea" Type="varchar" MaxLength="250" />
-          <Property Name="Url_Imagen" Type="varchar" MaxLength="2500" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1089,7 +1078,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Atributos__IdCol__5AC46587">
+        <Association Name="FK__Atributos__IdCol__6DF7358C">
           <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
           <End Role="AtributosxColeccion" Type="Self.AtributosxColeccion" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1101,7 +1090,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Atributos__IdLin__5BB889C0">
+        <Association Name="FK__Atributos__IdLin__6EEB59C5">
           <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="0..1" />
           <End Role="AtributosxColeccion" Type="Self.AtributosxColeccion" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1365,7 +1354,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__EdadesxCo__IdCol__795DFB40">
+        <Association Name="FK__EdadesxCo__IdCol__6932806F">
           <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
           <End Role="EdadesxColeccion" Type="Self.EdadesxColeccion" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1377,7 +1366,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__EdadesxCo__IdEda__7869D707">
+        <Association Name="FK__EdadesxCo__IdEda__6A26A4A8">
           <End Role="MaestroEdad" Type="Self.MaestroEdad" Multiplicity="0..1" />
           <End Role="EdadesxColeccion" Type="Self.EdadesxColeccion" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1389,7 +1378,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__EdadesxCo__IdLin__09946309">
+        <Association Name="FK__EdadesxCo__IdLin__6B1AC8E1">
           <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="0..1" />
           <End Role="EdadesxColeccion" Type="Self.EdadesxColeccion" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1569,7 +1558,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__LineasxCo__IdCol__442B18F2">
+        <Association Name="FK__LineasxCo__IdCol__71C7C670">
           <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
           <End Role="LineasxColeccion" Type="Self.LineasxColeccion" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1581,7 +1570,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__LineasxCo__IdLin__4336F4B9">
+        <Association Name="FK__LineasxCo__IdLin__72BBEAA9">
           <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="0..1" />
           <End Role="LineasxColeccion" Type="Self.LineasxColeccion" Multiplicity="*" />
           <ReferentialConstraint>
@@ -2312,16 +2301,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
     [vw_FisicoDisponible].[MinStock] AS [MinStock]
     FROM [dbo].[vw_FisicoDisponible] AS [vw_FisicoDisponible]</DefiningQuery>
           </EntitySet>
-          <EntitySet Name="vw_LineasxColeccion" EntityType="Self.vw_LineasxColeccion" store:Type="Views" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [vw_LineasxColeccion].[IdColeccion] AS [IdColeccion], 
-    [vw_LineasxColeccion].[CodigoColeccion] AS [CodigoColeccion], 
-    [vw_LineasxColeccion].[Nombre] AS [Nombre], 
-    [vw_LineasxColeccion].[IdLinea] AS [IdLinea], 
-    [vw_LineasxColeccion].[Linea] AS [Linea], 
-    [vw_LineasxColeccion].[Url_Imagen] AS [Url_Imagen]
-    FROM [dbo].[vw_LineasxColeccion] AS [vw_LineasxColeccion]</DefiningQuery>
-          </EntitySet>
           <EntitySet Name="vw_TallasxProducto" EntityType="Self.vw_TallasxProducto" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [vw_TallasxProducto].[IdProducto] AS [IdProducto], 
@@ -2381,11 +2360,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="TipoVisitaCliente" EntitySet="TipoVisitaCliente" />
             <End Role="AsignacionxAsesorDetalle" EntitySet="AsignacionxAsesorDetalle" />
           </AssociationSet>
-          <AssociationSet Name="FK__Atributos__IdCol__5AC46587" Association="Self.FK__Atributos__IdCol__5AC46587">
+          <AssociationSet Name="FK__Atributos__IdCol__6DF7358C" Association="Self.FK__Atributos__IdCol__6DF7358C">
             <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="AtributosxColeccion" EntitySet="AtributosxColeccion" />
           </AssociationSet>
-          <AssociationSet Name="FK__Atributos__IdLin__5BB889C0" Association="Self.FK__Atributos__IdLin__5BB889C0">
+          <AssociationSet Name="FK__Atributos__IdLin__6EEB59C5" Association="Self.FK__Atributos__IdLin__6EEB59C5">
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="AtributosxColeccion" EntitySet="AtributosxColeccion" />
           </AssociationSet>
@@ -2473,15 +2452,15 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="TallasXGrupo" EntitySet="TallasXGrupo" />
             <End Role="DistribucionxTalla" EntitySet="DistribucionxTalla" />
           </AssociationSet>
-          <AssociationSet Name="FK__EdadesxCo__IdCol__795DFB40" Association="Self.FK__EdadesxCo__IdCol__795DFB40">
+          <AssociationSet Name="FK__EdadesxCo__IdCol__6932806F" Association="Self.FK__EdadesxCo__IdCol__6932806F">
             <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="EdadesxColeccion" EntitySet="EdadesxColeccion" />
           </AssociationSet>
-          <AssociationSet Name="FK__EdadesxCo__IdEda__7869D707" Association="Self.FK__EdadesxCo__IdEda__7869D707">
+          <AssociationSet Name="FK__EdadesxCo__IdEda__6A26A4A8" Association="Self.FK__EdadesxCo__IdEda__6A26A4A8">
             <End Role="MaestroEdad" EntitySet="MaestroEdad" />
             <End Role="EdadesxColeccion" EntitySet="EdadesxColeccion" />
           </AssociationSet>
-          <AssociationSet Name="FK__EdadesxCo__IdLin__09946309" Association="Self.FK__EdadesxCo__IdLin__09946309">
+          <AssociationSet Name="FK__EdadesxCo__IdLin__6B1AC8E1" Association="Self.FK__EdadesxCo__IdLin__6B1AC8E1">
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="EdadesxColeccion" EntitySet="EdadesxColeccion" />
           </AssociationSet>
@@ -2541,11 +2520,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="Clientes" EntitySet="Clientes" />
             <End Role="LimiteCreditoxCliente" EntitySet="LimiteCreditoxCliente" />
           </AssociationSet>
-          <AssociationSet Name="FK__LineasxCo__IdCol__442B18F2" Association="Self.FK__LineasxCo__IdCol__442B18F2">
+          <AssociationSet Name="FK__LineasxCo__IdCol__71C7C670" Association="Self.FK__LineasxCo__IdCol__71C7C670">
             <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="LineasxColeccion" EntitySet="LineasxColeccion" />
           </AssociationSet>
-          <AssociationSet Name="FK__LineasxCo__IdLin__4336F4B9" Association="Self.FK__LineasxCo__IdLin__4336F4B9">
+          <AssociationSet Name="FK__LineasxCo__IdLin__72BBEAA9" Association="Self.FK__LineasxCo__IdLin__72BBEAA9">
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="LineasxColeccion" EntitySet="LineasxColeccion" />
           </AssociationSet>
@@ -3551,6 +3530,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="IdUsuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Pin" Type="Int32" />
           <NavigationProperty Name="PantallasxUsuario" Relationship="Self.FK__Pantallas__IdUsu__0504B816" FromRole="Usuarios" ToRole="PantallasxUsuario" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Acciones">
           <Key>
@@ -3612,18 +3592,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="IdProducto" Type="Int32" />
           <Property Name="Disponible" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="Decimal" Precision="18" Scale="2" />
-        </EntityType>
-        <EntityType Name="vw_LineasxColeccion">
-          <Key>
-            <PropertyRef Name="IdColeccion" />
-            <PropertyRef Name="IdLinea" />
-          </Key>
-          <Property Name="IdColeccion" Type="Int32" Nullable="false" />
-          <Property Name="CodigoColeccion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Nombre" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Linea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Url_Imagen" Type="String" MaxLength="2500" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="vw_TallasxProducto">
           <Key>
@@ -4600,7 +4568,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="vw_ClientesxRuta" EntityType="Self.vw_ClientesxRuta" />
           <EntitySet Name="vw_ColoresxProducto" EntityType="Self.vw_ColoresxProducto" />
           <EntitySet Name="vw_FisicoDisponible" EntityType="Self.vw_FisicoDisponible" />
-          <EntitySet Name="vw_LineasxColeccion" EntityType="Self.vw_LineasxColeccion" />
           <EntitySet Name="vw_TallasxProducto" EntityType="Self.vw_TallasxProducto" />
           <AssociationSet Name="FK__Acuerdosx__Empre__2BE97B0D" Association="Self.FK__Acuerdosx__Empre__2BE97B0D">
             <End Role="Empresa" EntitySet="Empresa" />
@@ -5136,7 +5103,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="IdCuentaBancaria" Type="Int32" />
           <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
           <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Sincronizado" Type="Boolean" />
+          <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
           <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
           <Property Name="UsuarioCreacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
@@ -5147,6 +5114,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="NumPedido" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="SpecPago" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="RecibosxCliente">
           <Key>
@@ -5175,6 +5143,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="RecibosDetalle" Relationship="AventasModel.FK__RecibosDe__Recib__7F01C5FD" FromRole="RecibosxCliente" ToRole="RecibosDetalle" />
           <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="SpecPago" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
           <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
@@ -6341,6 +6310,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Usuarios">
             <EntityTypeMapping TypeName="AventasModel.Usuarios">
               <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
                 <ScalarProperty Name="Pin" ColumnName="Pin" />
               </MappingFragment>
@@ -6409,18 +6379,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
                 <ScalarProperty Name="Disponible" ColumnName="Disponible" />
                 <ScalarProperty Name="MinStock" ColumnName="MinStock" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="vw_LineasxColeccion">
-            <EntityTypeMapping TypeName="AventasModel.vw_LineasxColeccion">
-              <MappingFragment StoreEntitySet="vw_LineasxColeccion">
-                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
-                <ScalarProperty Name="CodigoColeccion" ColumnName="CodigoColeccion" />
-                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
-                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
-                <ScalarProperty Name="Linea" ColumnName="Linea" />
-                <ScalarProperty Name="Url_Imagen" ColumnName="Url_Imagen" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -6533,6 +6491,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="AnticiposxCliente">
             <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
               <MappingFragment StoreEntitySet="AnticiposxCliente">
+                <ScalarProperty Name="SpecPago" ColumnName="SpecPago" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />
                 <ScalarProperty Name="NumPedido" ColumnName="NumPedido" />
@@ -6561,6 +6520,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="RecibosxCliente">
             <EntityTypeMapping TypeName="AventasModel.RecibosxCliente">
               <MappingFragment StoreEntitySet="RecibosxCliente">
+                <ScalarProperty Name="SpecPago" ColumnName="SpecPago" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />
                 <ScalarProperty Name="Descuento" ColumnName="Descuento" />
