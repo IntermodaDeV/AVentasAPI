@@ -50,6 +50,7 @@ namespace DBData.Database
         public string ModoVenta { get; set; }
         public Nullable<decimal> Flete { get; set; }
         public bool RequiereEntrega { get; set; }
+        public bool Sincronizado { get; set; }
     
         public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }

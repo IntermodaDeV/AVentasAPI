@@ -607,6 +607,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
           <Property Name="idMoneda" Type="varchar" MaxLength="100" />
           <Property Name="IdEstado" Type="int" />
+          <Property Name="Sincronizado" Type="bit" Nullable="false" />
           <Property Name="ClienteContadoId" Type="int" />
           <Property Name="ModoVenta" Type="varchar" MaxLength="50" />
           <Property Name="Flete" Type="decimal" Precision="10" Scale="2" />
@@ -5290,6 +5291,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosxCliente" ToRole="PedidosDetalle" />
           <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA" FromRole="PedidosxCliente" ToRole="TiposdePedido" />
           <Property Name="RequiereEntrega" Type="Boolean" Nullable="false" />
+          <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK__PedidosxC__Codig__6B44E613">
           <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="0..1" />
@@ -6610,6 +6612,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
                 <ScalarProperty Name="RequiereEntrega" ColumnName="RequiereEntrega" />
                 <ScalarProperty Name="Flete" ColumnName="Flete" />
                 <ScalarProperty Name="ModoVenta" ColumnName="ModoVenta" />

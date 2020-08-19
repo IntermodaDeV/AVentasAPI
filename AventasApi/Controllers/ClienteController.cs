@@ -86,10 +86,10 @@ namespace AventasApi.Controllers
                             NumPedido = rec.NumPedido,
                             CodigoCliente = rec.CodigoCliente
                         }).ToList(),
-                        Pedido = context.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.NumeroPedido) && ped.NumeroPedido != null).Select(ped => new PedidosXClienteViewModel
+                        Pedido = context.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.PedidoId) && ped.PedidoId != null && ped.Sincronizado==true).Select(ped => new PedidosXClienteViewModel
                         {
-                            PedidoId = ped.PedidoId,
-                            NumeroPedido = ped.NumeroPedido,
+                            PedidoId = ped.NumeroPedido,
+                            NumeroPedido = ped.PedidoId,
                             CodigoColeccion = ped.Colecciones.CodigoColeccion,
                             NombreColeccion = ped.Colecciones.Nombre,
                             FechaEntrega = ped.FechaEntrega,

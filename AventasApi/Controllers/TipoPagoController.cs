@@ -14,10 +14,11 @@ namespace AventasApi.Controllers
     {
         AVentasEntities context = new AVentasEntities();
         [HttpGet]
-        public async Task<IHttpActionResult> GetTiposPago()
+        [Route("api/TipoPago/{empresa}")]
+        public async Task<IHttpActionResult> GetTiposPago(string empresa)
         {
 
-            var tiposPago = context.TiposdePago.Select(tipoPago => new TipoPagoViewModel
+            var tiposPago = context.TiposdePago.Where(e=>e.EmpresaId.ToUpper()==empresa.ToUpper()).Select(tipoPago => new TipoPagoViewModel
             {
                 IdTipoPago = tipoPago.IdTipoPago,
                 Codigo = tipoPago.Codigo,

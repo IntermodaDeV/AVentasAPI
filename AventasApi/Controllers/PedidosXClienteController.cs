@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using AventasApi.Filters;
-//using AventasApi.GestorData;
 using DBData.Database;
-//using AventasApi.Models.ApiModels;
-using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
-//using IMS.Extensions;
-//using IMS.Tokens.Services;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-//using Responses;
 using RestSharp;
 using System.Data.Entity;
 using AventasApi.Services.AsyncJobs;
@@ -22,7 +13,6 @@ using AventasApi.Models;
 using AventasApi.Services.Authentication;
 using ExternalApiData.Models.ApiModels;
 using ExternalApiData.Enviroments;
-//using AventasApi.Enviroments;
 
 namespace AventasApi.Controllers
 {
@@ -53,6 +43,17 @@ namespace AventasApi.Controllers
                 });
             }
 
+        }
+
+        private bool EnLinea(string empresa,string asesor)
+        {
+            var client = new RestClient(Enviroment.CRMWebServiceURLApi);
+            client.Authenticator = new RestSharp.Authenticators.NtlmAuthenticator();
+            var request = new RestRequest($"asesor/{empresa}/{asesor}", Method.GET);
+            client.Timeout = 6000;
+            IRestResponse<List<AsesorApiModel>> respuesta = client.Execute<List<AsesorApiModel>>(request);
+
+            return respuesta.IsSuccessful;
         }
 
         [HttpGet]
@@ -347,34 +348,43 @@ namespace AventasApi.Controllers
             PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
             PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString()))+Pedido.Flete;
           string PEdidoID = "";
-            try
+            if(EnLinea(cliente.EmpresaId, asesor.Usuario))
             {
-                var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
-                client.Timeout = 480 * (1000);
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("Accept", "application/json");
-                request.AddJsonBody(pe);
-                IRestResponse response = client.Execute(request);
-                string content = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(response.Content);
-                if (content.StartsWith("Success"))
+                try
                 {
-                    content = content.Remove(0, 8);
-                    content = content.Split(' ')[0];
-                    PEdidoID = content;
-                    PedidoBDAGuardar.PedidoId = PEdidoID;
-                    PedidoBDAGuardar.NumeroPedido = numeroReferencia;
-                }
-                else
-                {
-                    return BadRequest(content);
-                    //Random random = new Random();
-                    //pedidoAGuardar.EncabezadoPedido.PedidoId = random.Next(1000).ToString();
-                }
+                    var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
+                    client.Timeout = 480 * (1000);
+                    var request = new RestRequest(Method.POST);
+                    request.AddHeader("Accept", "application/json");
+                    request.AddJsonBody(pe);
+                    IRestResponse response = client.Execute(request);
+                    string content = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(response.Content);
+                    if (content.StartsWith("Success"))
+                    {
+                        content = content.Remove(0, 8);
+                        content = content.Split(' ')[0];
+                        PEdidoID = numeroReferencia;
+                        PedidoBDAGuardar.PedidoId = numeroReferencia;
+                        PedidoBDAGuardar.Sincronizado = true;
+                        PedidoBDAGuardar.NumeroPedido = content;
+                    }
+                    else
+                    {
+                        return BadRequest(content);
+                    }
 
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(Newtonsoft.Json.JsonConvert.SerializeObject(e));
+                }
             }
-            catch (Exception e)
+            else
             {
-                return BadRequest(Newtonsoft.Json.JsonConvert.SerializeObject(e));
+                PEdidoID = numeroReferencia;
+                PedidoBDAGuardar.PedidoId = numeroReferencia;
+                PedidoBDAGuardar.NumeroPedido = "";
+                PedidoBDAGuardar.Sincronizado = false;
             }
 
             using (AVentasEntities context = new AVentasEntities())
