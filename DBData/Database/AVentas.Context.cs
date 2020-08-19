@@ -32,6 +32,7 @@ namespace DBData.Database
         public virtual DbSet<Asesores> Asesores { get; set; }
         public virtual DbSet<AsignacionxAsesor> AsignacionxAsesor { get; set; }
         public virtual DbSet<AsignacionxAsesorDetalle> AsignacionxAsesorDetalle { get; set; }
+        public virtual DbSet<AtributosxColeccion> AtributosxColeccion { get; set; }
         public virtual DbSet<AtributosxProducto> AtributosxProducto { get; set; }
         public virtual DbSet<Bancos> Bancos { get; set; }
         public virtual DbSet<BitacoraGeoposicion> BitacoraGeoposicion { get; set; }
@@ -44,6 +45,7 @@ namespace DBData.Database
         public virtual DbSet<Configuraciones> Configuraciones { get; set; }
         public virtual DbSet<CuentasBancarias> CuentasBancarias { get; set; }
         public virtual DbSet<DistribucionxTalla> DistribucionxTalla { get; set; }
+        public virtual DbSet<EdadesxColeccion> EdadesxColeccion { get; set; }
         public virtual DbSet<Empresa> Empresa { get; set; }
         public virtual DbSet<Errores> Errores { get; set; }
         public virtual DbSet<EstadosPedido> EstadosPedido { get; set; }
@@ -54,6 +56,7 @@ namespace DBData.Database
         public virtual DbSet<FormularioIntroEncabezado> FormularioIntroEncabezado { get; set; }
         public virtual DbSet<GrupoTalla> GrupoTalla { get; set; }
         public virtual DbSet<LimiteCreditoxCliente> LimiteCreditoxCliente { get; set; }
+        public virtual DbSet<LineasxColeccion> LineasxColeccion { get; set; }
         public virtual DbSet<MaestroEdad> MaestroEdad { get; set; }
         public virtual DbSet<MaestroGrupoPrecio> MaestroGrupoPrecio { get; set; }
         public virtual DbSet<MaestroLinea> MaestroLinea { get; set; }
@@ -99,9 +102,6 @@ namespace DBData.Database
         public virtual DbSet<FotografiasXProducto> FotografiasXProducto { get; set; }
         public virtual DbSet<PrecioEspecifico> PrecioEspecifico { get; set; }
         public virtual DbSet<ClienteContado> ClienteContado { get; set; }
-        public virtual DbSet<EdadesxColeccion> EdadesxColeccion { get; set; }
-        public virtual DbSet<LineasxColeccion> LineasxColeccion { get; set; }
-        public virtual DbSet<AtributosxColeccion> AtributosxColeccion { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

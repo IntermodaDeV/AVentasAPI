@@ -18,7 +18,10 @@ namespace DBData.Database
         public MaestroLinea()
         {
             this.AcuerdosxCliente = new HashSet<AcuerdosxCliente>();
+            this.AtributosxColeccion = new HashSet<AtributosxColeccion>();
+            this.EdadesxColeccion = new HashSet<EdadesxColeccion>();
             this.FacturasxCliente = new HashSet<FacturasxCliente>();
+            this.LineasxColeccion = new HashSet<LineasxColeccion>();
             this.ProductosxColeccion = new HashSet<ProductosxColeccion>();
             this.PedidosxCliente = new HashSet<PedidosxCliente>();
         }
@@ -32,7 +35,13 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AcuerdosxCliente> AcuerdosxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AtributosxColeccion> AtributosxColeccion { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EdadesxColeccion> EdadesxColeccion { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FacturasxCliente> FacturasxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LineasxColeccion> LineasxColeccion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductosxColeccion> ProductosxColeccion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

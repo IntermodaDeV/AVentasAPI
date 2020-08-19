@@ -10,6 +10,7 @@
         <EntityTypeShape EntityType="AventasModel.Asesores" Width="1.5" PointX="14" PointY="28.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AsignacionxAsesor" Width="1.5" PointX="10.25" PointY="46.375" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AsignacionxAsesorDetalle" Width="1.5" PointX="12.5" PointY="51.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.AtributosxColeccion" Width="1.5" PointX="5.25" PointY="34.375" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AtributosxProducto" Width="1.5" PointX="12.5" PointY="33.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.Bancos" Width="1.5" PointX="3" PointY="47.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.BitacoraGeoposicion" Width="1.5" PointX="18.5" PointY="53.25" IsExpanded="true" />
@@ -22,6 +23,7 @@
         <EntityTypeShape EntityType="AventasModel.Configuraciones" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.CuentasBancarias" Width="1.5" PointX="5.25" PointY="44.625" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.DistribucionxTalla" Width="1.5" PointX="21.5" PointY="32.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.EdadesxColeccion" Width="1.5" PointX="8.25" PointY="36.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.Empresa" Width="1.5" PointX="0.75" PointY="42.25" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.Errores" Width="1.5" PointX="0.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.EstadosPedido" Width="1.5" PointX="14" PointY="26" IsExpanded="true" />
@@ -32,6 +34,7 @@
         <EntityTypeShape EntityType="AventasModel.FormularioIntroEncabezado" Width="1.5" PointX="2.75" PointY="5.25" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.GrupoTalla" Width="1.5" PointX="8" PointY="49.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.LimiteCreditoxCliente" Width="1.5" PointX="10.25" PointY="55.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="AventasModel.LineasxColeccion" Width="1.5" PointX="8.25" PointY="33.625" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.MaestroEdad" Width="1.5" PointX="6" PointY="26.625" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.MaestroGrupoPrecio" Width="1.5" PointX="21.5" PointY="50.125" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.MaestroLinea" Width="1.5" PointX="6" PointY="30" IsExpanded="true" />
@@ -82,6 +85,8 @@
         <AssociationConnector Association="AventasModel.FK__Asignacio__idTip__26EFBBC6" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__BitacoraG__IdAsi__4C214075" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Asignacio__idTip__5634BA94" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Atributos__IdCol__5AC46587" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__Atributos__IdLin__5BB889C0" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Atributos__IdPro__2C1E8537" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Bancos__EmpresaI__168449D3" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__CuentasBa__IdBan__1A54DAB7" ManuallyRouted="false" />
@@ -99,12 +104,16 @@
         <AssociationConnector Association="AventasModel.FK__Clientesx__Codig__5B0E7E4A" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Coleccion__Colec__6A3BB341" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Coleccion__FotoP__405A880E" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__EdadesxCo__IdCol__795DFB40" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__LineasxCo__IdCol__442B18F2" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Productos__IdCol__4DB4832C" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__ColoresxP__Codig__52793849" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__ColoresxP__IdPro__536D5C82" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__CuentasBa__Empre__1C3D2329" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__CuentasBa__IdMon__1B48FEF0" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Distribuc__IdTal__0E7913B7" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__EdadesxCo__IdEda__7869D707" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__EdadesxCo__IdLin__09946309" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Facturasx__Empre__7246E95D" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__MonedasxE__Empre__3D7E1B63" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__SubFactur__Empre__78F3E6EC" ManuallyRouted="false" />
@@ -119,6 +128,7 @@
         <AssociationConnector Association="AventasModel.FK__Formulari__codFo__0D2FE9C3" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Productos__Codig__4F9CCB9E" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__TallasXGr__Codig__4AD81681" ManuallyRouted="false" />
+        <AssociationConnector Association="AventasModel.FK__LineasxCo__IdLin__4336F4B9" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Productos__IdEda__68336F3E" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__Productos__IdLin__4EA8A765" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__MonedasxE__IdMon__3C89F72A" ManuallyRouted="false" />
@@ -170,11 +180,6 @@
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdMon__36870511" />
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdPro__377B294A" />
         <EntityTypeShape EntityType="AventasModel.ClienteContado" Width="1.5" PointX="8.375" PointY="0.75" />
-        <AssociationConnector Association="AventasModel.FK_RecibosxCliente_TipoPagoDetalle" />
-        <AssociationConnector Association="AventasModel.FK_RecibosxClientes_TipoPagoDetalle" />
-        <EntityTypeShape EntityType="AventasModel.EdadesxColeccion" Width="1.5" PointX="13.375" PointY="10.75" />
-        <EntityTypeShape EntityType="AventasModel.LineasxColeccion" Width="1.5" PointX="13.375" PointY="13.75" />
-        <EntityTypeShape EntityType="AventasModel.AtributosxColeccion" Width="1.5" PointX="13.375" PointY="7.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
