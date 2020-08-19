@@ -17,9 +17,6 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Colecciones()
         {
-            this.AtributosxColeccion = new HashSet<AtributosxColeccion>();
-            this.EdadesxColeccion = new HashSet<EdadesxColeccion>();
-            this.LineasxColeccion = new HashSet<LineasxColeccion>();
             this.ProductosxColeccion = new HashSet<ProductosxColeccion>();
             this.PedidosxCliente = new HashSet<PedidosxCliente>();
         }
@@ -40,14 +37,8 @@ namespace DBData.Database
         public Nullable<System.DateTime> VentaFinal { get; set; }
         public string FotoPortada { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AtributosxColeccion> AtributosxColeccion { get; set; }
         public virtual TiposdeColeccion TiposdeColeccion { get; set; }
         public virtual Empresa Empresa { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EdadesxColeccion> EdadesxColeccion { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LineasxColeccion> LineasxColeccion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductosxColeccion> ProductosxColeccion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

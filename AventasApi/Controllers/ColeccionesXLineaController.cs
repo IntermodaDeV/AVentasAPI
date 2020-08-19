@@ -42,6 +42,9 @@ namespace AventasApi.Controllers
             bool filtarXGrupoPrecio = grupoPrecio != null;
             //var atributosXColeccionList = context.vw_AtributosxColeccion.ToList();
             string urlImagenes = context.Configuraciones.FirstOrDefault(conf => conf.CodigoConfiguracion == "UrlImages")?.Valor ?? "";
+            var lstLineas = context.LineasxColeccion.ToList();
+            var lstEdades = context.EdadesxColeccion.ToList();
+            var lstAtr = context.AtributosxColeccion.ToList();
             List<ColeccionViewModel> colecciones = await context.Colecciones
                 //.Include(co=>co.EdadesxColeccion)
                 .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today && vw_coleccion.EmpresaId.ToUpper()==pais.ToUpper()).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
@@ -62,20 +65,20 @@ namespace AventasApi.Controllers
                                ProduccionFinal = vw_coleccion.ProduccionFinal,
                                VentaInicio = vw_coleccion.VentaInicio,
                                VentaFinal = vw_coleccion.VentaFinal,
-                               Lineas = vw_coleccion.LineasxColeccion.Select(colXLin => colXLin.IdLinea).ToList(),
-                               AtributosXColeccion = vw_coleccion.AtributosxColeccion.Select(atr => new AtributosViewModel
+                               Lineas = lstLineas.Where(x => x.IdColeccion == vw_coleccion.IdColeccion).Select(x => x.IdLinea).ToList(),
+                               AtributosXColeccion = lstAtr.Where(x => x.IdColeccion == vw_coleccion.IdColeccion).Select(atr => new AtributosViewModel
                                {
                                    Descripcion = (atr.Descripcion2 == "BASE") ? atr.CodigoAtributo + " - " + atr.Descripcion1 : atr.Descripcion1,
                                    Tipo = atr.Descripcion2,
                                    IdLinea = atr.IdLinea
                                }).ToList(),
-                               Edades = vw_coleccion.EdadesxColeccion
-                               .OrderBy(me => me.MaestroEdad.Orden).Select(me =>
+                               Edades = lstEdades
+                               .OrderBy(me => me.Orden).Select(me =>
                                               new EdadesViewModel
                                               {
                                                   IdEdad = me.IdEdad,
-                                                  Edad = me.MaestroEdad.Edad,
-                                                  Orden = me.MaestroEdad.Orden,
+                                                  Edad = me.Edad,
+                                                  Orden = me.Orden,
                                                   ProductosXEdad = context.ProductosxColeccion.Where(pxc => pxc.EmpresaId==pais.ToUpper() && pxc.IdColeccion == vw_coleccion.IdColeccion && pxc.IdEdad == me.IdEdad && me.IdLinea == pxc.IdLinea && pxc.VisibleParaVentas == true).Select(pxc => new ProductoXColeccionViewModel
                                                   {
                                                       ProductoId = pxc.CodigoProducto,

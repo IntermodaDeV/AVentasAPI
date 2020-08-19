@@ -37,6 +37,8 @@ namespace AventasApi.Controllers
             //}).ToList(),
             List<ColeccionViewModel> colecciones = new List<ColeccionViewModel>();
             var coleccionesDB = context.Colecciones.Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today).OrderBy(vw_coleccion => vw_coleccion.VentaFinal);
+            var lstLineas = context.LineasxColeccion.ToList();
+            var lstEdades = context.EdadesxColeccion.ToList();
             Parallel.ForEach(coleccionesDB, coleccionDB =>
             {
                 ColeccionViewModel coleccion = new ColeccionViewModel
@@ -56,18 +58,18 @@ namespace AventasApi.Controllers
                     ProduccionFinal = coleccionDB.ProduccionFinal,
                     VentaInicio = coleccionDB.VentaInicio,
                     VentaFinal = coleccionDB.VentaFinal,
-                    Lineas = coleccionDB.LineasxColeccion.Select(colXLin => colXLin.IdLinea).ToList(),
+                    Lineas = lstLineas.Where(x => x.IdColeccion == coleccionDB.IdColeccion).Select(x => x.IdLinea).ToList(),
                     Edades = new List<EdadesViewModel>()
                 };
-                Parallel.ForEach(coleccionDB.EdadesxColeccion, edadXColeccion =>
+                Parallel.ForEach(lstEdades, edadXColeccion =>
                 {
                     lock (coleccion.Edades)
                     {
                         coleccion.Edades.Add(new EdadesViewModel
                         {
                             IdEdad = edadXColeccion.IdEdad,
-                            Edad = edadXColeccion.MaestroEdad.Edad,
-                            Orden = edadXColeccion.MaestroEdad.Orden
+                            Edad = edadXColeccion.Edad,
+                            Orden = edadXColeccion.Orden
                         });
                     }
                 });

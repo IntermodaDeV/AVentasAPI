@@ -17,7 +17,6 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public MaestroEdad()
         {
-            this.EdadesxColeccion = new HashSet<EdadesxColeccion>();
             this.ProductosxColeccion = new HashSet<ProductosxColeccion>();
         }
     
@@ -25,8 +24,6 @@ namespace DBData.Database
         public string Edad { get; set; }
         public Nullable<int> Orden { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EdadesxColeccion> EdadesxColeccion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductosxColeccion> ProductosxColeccion { get; set; }
     }

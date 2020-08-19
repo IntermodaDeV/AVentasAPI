@@ -18,9 +18,7 @@ namespace DBData.Database
         public string IdEdad { get; set; }
         public Nullable<int> IdColeccion { get; set; }
         public string IdLinea { get; set; }
-    
-        public virtual Colecciones Colecciones { get; set; }
-        public virtual MaestroEdad MaestroEdad { get; set; }
-        public virtual MaestroLinea MaestroLinea { get; set; }
+        public string Edad { get; set; }
+        public Nullable<int> Orden { get; set; }
     }
 }

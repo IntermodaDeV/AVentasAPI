@@ -14,6 +14,13 @@ namespace DBData.Database
     
     public partial class TiposdePagoDetalle
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TiposdePagoDetalle()
+        {
+            this.AnticiposxCliente = new HashSet<AnticiposxCliente>();
+            this.RecibosxCliente = new HashSet<RecibosxCliente>();
+        }
+    
         public int IdTipoPagoDetalle { get; set; }
         public string Codigo { get; set; }
         public string CodigoDetalle { get; set; }
@@ -23,5 +30,9 @@ namespace DBData.Database
     
         public virtual Empresa Empresa { get; set; }
         public virtual TiposdePago TiposdePago { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AnticiposxCliente> AnticiposxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RecibosxCliente> RecibosxCliente { get; set; }
     }
 }
