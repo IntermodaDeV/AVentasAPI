@@ -149,7 +149,7 @@ namespace AventasApi.Controllers
                             FechaVencimiento = facCli.FechaVencimiento,
                             FechaMaxDescuento = facCli.FechaMaxDescuento,
                             TotalFactura = facCli.TotalFactura,
-                            Saldo = facCli.Saldo,
+                            Saldo = facCli.Saldo - facCli.PendienteFactura,
                             PendienteFactura = facCli.PendienteFactura,
                             Descuento = facCli.Descuento,
                             FacturaStatus = facCli.FacturaStatus,
@@ -159,7 +159,7 @@ namespace AventasApi.Controllers
                             LineaString = facCli.MaestroLinea.Linea,
                             IdTipoPedido = facCli.IdTipoPedido,
                             TipoPedidoString = facCli.TiposdePedido.TipoPedido,
-                            Cuotas = facCli.SubFacturasxCliente.Where(subFac => (subFac.Saldo - subFac.Descuento) > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
+                            Cuotas = facCli.SubFacturasxCliente.Where(subFac => (subFac.Saldo - subFac.Descuento - facCli.PendienteFactura) > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                             {
                                 FechaFactura = subFac.FacturasxCliente.FechaFactura,
                                 TipoDocumento = subFac.FacturasxCliente.Tipo,
@@ -174,7 +174,7 @@ namespace AventasApi.Controllers
                                 FechaVencimiento = subFac.FechaVencimiento,
                                 FechaMaxDescuento = subFac.AcuerdosxCliente != null ? subFac.FechaMaxDescuento : subFac.FacturasxCliente.FechaMaxDescuento,
                                 FechaVencimientoDescuento = subFac.FechaVencimientoDescuento,
-                                Saldo = subFac.Saldo,
+                                Saldo = subFac.Saldo - facCli.PendienteFactura,
                                 SaldoDivisa = subFac.SaldoDivisa,
                                 Descuento = subFac.Descuento,
                                 PendientePago = subFac.PendientePago,

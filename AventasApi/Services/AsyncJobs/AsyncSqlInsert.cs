@@ -65,6 +65,7 @@ namespace AventasApi.Services.AsyncJobs
                     Descuento = rec.Descuento,
                     Longitude = rec.Longitude,
                     Latitude = rec.Latitude,
+                    SpecPago = rec.SpecPago,
                     RecibosDetalle = rec.DetalleRecibo.Select(recDet => new RecibosDetalle
                     {
                         IdReciboDetalle = recDet.IdReciboDetalle,

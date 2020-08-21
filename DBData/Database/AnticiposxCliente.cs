@@ -37,5 +37,6 @@ namespace DBData.Database
         public Nullable<decimal> Latitude { get; set; }
         public Nullable<decimal> Longitude { get; set; }
         public string SpecPago { get; set; }
+        public bool EsContado { get; set; }
     }
 }

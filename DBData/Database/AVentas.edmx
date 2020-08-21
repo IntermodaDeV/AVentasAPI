@@ -71,6 +71,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="UsuarioModificacion" Type="varchar" MaxLength="250" />
           <Property Name="Descuento" Type="decimal" Precision="15" Scale="4" />
           <Property Name="Tipo" Type="varchar" MaxLength="250" />
+          <Property Name="EsContado" Type="bit" Nullable="false" />
           <Property Name="NumPedido" Type="varchar" MaxLength="150" />
           <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
@@ -5115,6 +5116,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="SpecPago" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="EsContado" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="RecibosxCliente">
           <Key>
@@ -6491,6 +6493,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="AnticiposxCliente">
             <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
               <MappingFragment StoreEntitySet="AnticiposxCliente">
+                <ScalarProperty Name="EsContado" ColumnName="EsContado" />
                 <ScalarProperty Name="SpecPago" ColumnName="SpecPago" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />

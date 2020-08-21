@@ -32,8 +32,10 @@ namespace AventasApi.Models.ViewModels
         public TipoPagoViewModel TipoPago{ get; set; }
         public ClienteViewModel Cliente { get; set; }
         public PedidosXClienteViewModel Pedido { get; set; }
+        public string SpecPago { get; set; }
 
 
         public List<RecibosDetalleViewModel> DetalleRecibo { get; set; }
+
     }
 }

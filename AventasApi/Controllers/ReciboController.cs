@@ -197,7 +197,9 @@ namespace AventasApi.Controllers
                         NumeroRecibo = $"{inicialesAsesor}-1{numeroCorrelativoRecibo.ToString("D5")}",
                         NumPedido = anticipoPost.NumPedido,
                         Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
-                        Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null
+                        Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
+                        SpecPago = pago.TipoPagoDetalle,
+                        EsContado =Convert.ToBoolean(anticipoPost.EsContado)
                     };
                     var pagoBD = context.TiposdePago.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
                     var respuestapago = new RespuestaPago
@@ -244,7 +246,8 @@ namespace AventasApi.Controllers
                         TOTAL_RECIBO = valorPago.ToString(),
                         TOTAL_FACTURAS = valorPago.ToString(),
                         TOTAL_APLICADO = valorPago.ToString(),
-                        TIPO_PAGO = pago.CodigoTipoPago,
+                        TIPO_PAGO = pagoBD.Codigo,
+                        SPEC_PAGO = pago.TipoPagoDetalle,
                         BANCO = pago.IdBanco,
                         REFERENCIA = pago.Referencia,
                         FECHA_PAGO = anticipoPost.FechaPago.ToString("dd/MM/yyyy"),
@@ -280,11 +283,14 @@ namespace AventasApi.Controllers
                         return BadRequest(respuesta.Content);
                     }
                 }
+                else
+                {
+
+                    context.SaveChanges();
+                    return Ok(respuestaPagoRecibo);
+                }
             }
-            else {
-                context.SaveChanges();
-                return Ok(respuestaPagoRecibo);
-            }
+            
             return BadRequest();
         }
         [HttpPost]
@@ -302,6 +308,7 @@ namespace AventasApi.Controllers
             int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
             string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
             var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(subFac => subFac.FechaVencimiento).ToList();
+            
             List<ReciboApiModel> recibos = new List<ReciboApiModel>();
             var isOnline = EnLinea(asesor.EmpresaId, asesor.CodigoAsesor);
             foreach (PagosReciboPostViewModel pago in reciboPost.Pagos.OrderBy(pag => pag.Orden))
@@ -327,6 +334,8 @@ namespace AventasApi.Controllers
                     double montoAplicado = 0;
                     double valorCuota = Decimal.ToDouble(subfactura.Saldo ?? 0);
                     double valorCuotaOriginal = Decimal.ToDouble(subfactura.Saldo ?? 0);
+                    var Factura = context.FacturasxCliente.Where(fa => fa.Factura == subfactura.Factura).FirstOrDefault();
+                    Factura.PendienteFactura = Decimal.Parse((valor).ToString());
                     if ((valor > 0) && (valorCuota > 0))
                     {
                         bool aplicaDescuento = false;
@@ -387,7 +396,8 @@ namespace AventasApi.Controllers
                                 IdFactura = subfactura.IdFactura,
                                 Descuento = 0,
                                 Latitude = (reciboPost.location != null) ? reciboPost.location.latitude:null,
-                                Longitude= (reciboPost.location != null) ? reciboPost.location.longitude:null
+                                Longitude= (reciboPost.location != null) ? reciboPost.location.longitude:null,
+                                SpecPago = pago.TipoPagoDetalle
                             };
                             recibosxCliente.Add(reciboXCliente);
                         }
@@ -422,6 +432,8 @@ namespace AventasApi.Controllers
                             subfactura.Saldo = 0;
                             detalleReciboXCliente.EsAbono = false;
                         }
+                        context.SaveChanges();
+
                         reciboXCliente.Descuento += detalleReciboXCliente.Descuento;
                         reciboXCliente.Valor += detalleReciboXCliente.Valor;
                         reciboXCliente.DetalleRecibo.Add(detalleReciboXCliente);
@@ -537,7 +549,7 @@ namespace AventasApi.Controllers
                 
                 using (AVentasEntities context = new AVentasEntities())
                 {
-                    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);                  
                     if (reciboPost.Pagos.Count() == 1)
                         numeroCorrelativoRecibo++;
                     asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
