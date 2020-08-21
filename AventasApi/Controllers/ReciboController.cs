@@ -122,14 +122,14 @@ namespace AventasApi.Controllers
                 FechaPago = ant.FechaCheque,
                 IdBanco = ant.IdBanco,
                 Valor = ant.Valor,
-                IdMoneda = ant.IdMoneda,
+                IdMoneda = context.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == ant.IdMoneda).Moneda,
                 Sincronizado = ant.Sincronizado,
                 CodigoAsesor = ant.CodigoAsesor,
                 IdFactura = 0,
                 Latitude=ant.Latitude,
                 Longitude = ant.Longitude,
                 DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == ant.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
-                Descuento = ant.Descuento,
+                Descuento = 0,
                 Cliente = context.Clientes.Where(cli => cli.CodigoCliente == ant.CodigoCliente).Select(cli => new ClienteViewModel
                 {
                     Codigo = cli.CodigoCliente,
@@ -157,11 +157,14 @@ namespace AventasApi.Controllers
                     DiasVencimiento = 0,
                     Tipo = ant.Tipo,
                     Factura = "Anticipo",
+                    Descuento=0,
+                    FechaFactura=ant.Fecha
                 } }
             }).ToList();
             recibosXAsesor.AddRange(anticiposXAsesor);
             return Ok(recibosXAsesor);
         }
+
         [Route("api/Recibo/Anticipo")]
         [HttpPost]
         public async Task<IHttpActionResult> PostAnticipo(ReciboPostViewModel anticipoPost)
@@ -199,7 +202,8 @@ namespace AventasApi.Controllers
                         Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
                         Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
                         SpecPago = pago.TipoPagoDetalle,
-                        EsContado =Convert.ToBoolean(anticipoPost.EsContado)
+                        EsContado =Convert.ToBoolean(anticipoPost.EsContado),
+                        Descuento=0
                     };
                     var pagoBD = context.TiposdePago.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
                     var respuestapago = new RespuestaPago

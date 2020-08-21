@@ -65,6 +65,8 @@ namespace AventasApi.Controllers
                 List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == Asesor).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
                 {
                     PedidoId = ped.PedidoId,
+                    NumeroPedido = ped.NumeroPedido,
+                    Sincronizado= ped.Sincronizado,
                     NombreColeccion = context.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
                     TotalUnidades = ped.TotalUnidades,
                     TotalXPedido = ped.TotalPedido,
