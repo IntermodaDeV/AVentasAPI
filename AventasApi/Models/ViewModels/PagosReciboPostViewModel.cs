@@ -8,6 +8,7 @@ namespace AventasApi.Models.ViewModels
     public class PagosReciboPostViewModel
     {
         public string  CodigoTipoPago { get; set; }
+        public string  TipoPagoDetalle { get; set; }
         public string IdBanco { get; set; }
         public int Orden { get; set; }
         public double Valor { get; set; }

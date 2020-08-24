@@ -63,6 +63,9 @@ namespace AventasApi.Services.AsyncJobs
                     CodigoAsesor = rec.CodigoAsesor,
                     IdFactura = rec.IdFactura,
                     Descuento = rec.Descuento,
+                    Longitude = rec.Longitude,
+                    Latitude = rec.Latitude,
+                    SpecPago = rec.SpecPago,
                     RecibosDetalle = rec.DetalleRecibo.Select(recDet => new RecibosDetalle
                     {
                         IdReciboDetalle = recDet.IdReciboDetalle,
@@ -70,6 +73,7 @@ namespace AventasApi.Services.AsyncJobs
                         IdSubFactura = recDet.IdSubFactura,
                         Valor = recDet.Valor,
                         Descuento = recDet.Descuento,
+                        EsAbono = recDet.EsAbono,
                     }).ToList()
                 }).ToList();
 

@@ -18,6 +18,8 @@ namespace AventasApi.Models.ViewModels
         public string NumPedido { get; set; }
         public string EsContado { get; set; }
 
+        public Location location = new Location();
+
         public ReciboPostViewModel()
         {
             Pagos = new List<PagosReciboPostViewModel>();

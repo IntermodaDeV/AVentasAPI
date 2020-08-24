@@ -43,6 +43,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BCrypt.Net, Version=0.1.4141.31969, Culture=neutral, PublicKeyToken=f3bc8f8c31beeb49, processorArchitecture=MSIL">
+      <HintPath>..\packages\BCrypt.Net.0.1.0\lib\net35\BCrypt.Net.dll</HintPath>
+    </Reference>
     <Reference Include="BulkInsert, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Rmb.Sql.Extension.BulkInsert.0.0.4\lib\net461\BulkInsert.dll</HintPath>
     </Reference>
@@ -290,6 +293,7 @@
     <Compile Include="Singleton\GestorManager.cs" />
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
     <Compile Include="Utils\logicValidation.cs" />
+    <Compile Include="Utils\SyncCuentaCorriente.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

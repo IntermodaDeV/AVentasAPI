@@ -35,6 +35,8 @@ namespace DBData.Database
         public Nullable<decimal> Facturado { get; set; }
         public Nullable<decimal> Entregado { get; set; }
         public string IdLinea { get; set; }
+        public Nullable<System.DateTime> Desde { get; set; }
+        public Nullable<System.DateTime> Hasta { get; set; }
     
         public virtual Empresa Empresa { get; set; }
         public virtual MaestroLinea MaestroLinea { get; set; }

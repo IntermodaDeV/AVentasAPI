@@ -51,11 +51,9 @@ namespace DBData.Database
         public virtual DbSet<EstadosPedido> EstadosPedido { get; set; }
         public virtual DbSet<FacturasxCliente> FacturasxCliente { get; set; }
         public virtual DbSet<FirmasxPedido> FirmasxPedido { get; set; }
-        public virtual DbSet<FisicoDisponible> FisicoDisponible { get; set; }
         public virtual DbSet<FormularioIntroDetalle> FormularioIntroDetalle { get; set; }
         public virtual DbSet<FormularioIntroDetallexRoles> FormularioIntroDetallexRoles { get; set; }
         public virtual DbSet<FormularioIntroEncabezado> FormularioIntroEncabezado { get; set; }
-        public virtual DbSet<FotografiasXProducto> FotografiasXProducto { get; set; }
         public virtual DbSet<GrupoTalla> GrupoTalla { get; set; }
         public virtual DbSet<LimiteCreditoxCliente> LimiteCreditoxCliente { get; set; }
         public virtual DbSet<LineasxColeccion> LineasxColeccion { get; set; }
@@ -67,7 +65,6 @@ namespace DBData.Database
         public virtual DbSet<Pantallas> Pantallas { get; set; }
         public virtual DbSet<PantallasxUsuario> PantallasxUsuario { get; set; }
         public virtual DbSet<PedidosDetalle> PedidosDetalle { get; set; }
-        public virtual DbSet<PrecioEspecifico> PrecioEspecifico { get; set; }
         public virtual DbSet<PrioridadAsignacion> PrioridadAsignacion { get; set; }
         public virtual DbSet<ProductosxColeccion> ProductosxColeccion { get; set; }
         public virtual DbSet<RazonNoVentaCausa> RazonNoVentaCausa { get; set; }
@@ -90,11 +87,9 @@ namespace DBData.Database
         public virtual DbSet<vw_ClientesxRuta> vw_ClientesxRuta { get; set; }
         public virtual DbSet<vw_ColoresxProducto> vw_ColoresxProducto { get; set; }
         public virtual DbSet<vw_FisicoDisponible> vw_FisicoDisponible { get; set; }
-        public virtual DbSet<vw_LineasxColeccion> vw_LineasxColeccion { get; set; }
         public virtual DbSet<vw_TallasxProducto> vw_TallasxProducto { get; set; }
         public virtual DbSet<AnticiposxCliente> AnticiposxCliente { get; set; }
         public virtual DbSet<RecibosxCliente> RecibosxCliente { get; set; }
-        public virtual DbSet<ClienteContado> ClienteContado { get; set; }
         public virtual DbSet<GrupoImpuestoArticulo> GrupoImpuestoArticulo { get; set; }
         public virtual DbSet<GrupoImpuestoCliente> GrupoImpuestoCliente { get; set; }
         public virtual DbSet<PedidosxCliente> PedidosxCliente { get; set; }
@@ -102,6 +97,10 @@ namespace DBData.Database
         public virtual DbSet<EmpresaTransporte> EmpresaTransporte { get; set; }
         public virtual DbSet<TransportePrecioCaja> TransportePrecioCaja { get; set; }
         public virtual DbSet<PreciosxProducto> PreciosxProducto { get; set; }
+        public virtual DbSet<FisicoDisponible> FisicoDisponible { get; set; }
+        public virtual DbSet<FotografiasXProducto> FotografiasXProducto { get; set; }
+        public virtual DbSet<PrecioEspecifico> PrecioEspecifico { get; set; }
+        public virtual DbSet<ClienteContado> ClienteContado { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

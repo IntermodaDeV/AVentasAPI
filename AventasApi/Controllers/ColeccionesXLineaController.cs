@@ -44,7 +44,7 @@ namespace AventasApi.Controllers
             string urlImagenes = context.Configuraciones.FirstOrDefault(conf => conf.CodigoConfiguracion == "UrlImages")?.Valor ?? "";
             List<ColeccionViewModel> colecciones = await context.Colecciones
                 //.Include(co=>co.EdadesxColeccion)
-                .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
+                .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today && vw_coleccion.EmpresaId.ToUpper()==pais.ToUpper()).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
                            new ColeccionViewModel
                            {
                                IdColeccion = vw_coleccion.IdColeccion,
@@ -65,7 +65,7 @@ namespace AventasApi.Controllers
                                Lineas = vw_coleccion.LineasxColeccion.Select(colXLin => colXLin.IdLinea).ToList(),
                                AtributosXColeccion = vw_coleccion.AtributosxColeccion.Select(atr => new AtributosViewModel
                                {
-                                   Descripcion = (atr.Descripcion2 == "BASE") ? atr.Descripcion1 + " - " + atr.CodigoAtributo : atr.Descripcion1,
+                                   Descripcion = (atr.Descripcion2 == "BASE") ? atr.CodigoAtributo + " - " + atr.Descripcion1 : atr.Descripcion1,
                                    Tipo = atr.Descripcion2,
                                    IdLinea = atr.IdLinea
                                }).ToList(),
@@ -76,7 +76,7 @@ namespace AventasApi.Controllers
                                                   IdEdad = me.IdEdad,
                                                   Edad = me.MaestroEdad.Edad,
                                                   Orden = me.MaestroEdad.Orden,
-                                                  ProductosXEdad = context.ProductosxColeccion.Where(pxc => pxc.EmpresaId==pais.ToUpper() && pxc.IdColeccion == vw_coleccion.IdColeccion && pxc.IdEdad == me.IdEdad && me.IdLinea == pxc.IdLinea).Select(pxc => new ProductoXColeccionViewModel
+                                                  ProductosXEdad = context.ProductosxColeccion.Where(pxc => pxc.EmpresaId==pais.ToUpper() && pxc.IdColeccion == vw_coleccion.IdColeccion && pxc.IdEdad == me.IdEdad && me.IdLinea == pxc.IdLinea && pxc.VisibleParaVentas == true).Select(pxc => new ProductoXColeccionViewModel
                                                   {
                                                       ProductoId = pxc.CodigoProducto,
                                                       CodigoColeccion = vw_coleccion.CodigoColeccion,
@@ -87,7 +87,7 @@ namespace AventasApi.Controllers
                                                       {
                                                           GrupoPrecio = precio.GrupoPrecio,
                                                           IdMoneda = precio.IdMoneda,
-                                                          Precio = precio.Precio
+                                                          Precio = precio.Hasta == new DateTime(1900, 1, 1) ? precio.Precio : 0
                                                       }).ToList(),
                                                       GrupoTalla = pxc.CodigoGrupoTalla,
                                                       Linea = new LineaViewModel
@@ -97,7 +97,7 @@ namespace AventasApi.Controllers
                                                       },
                                                       AtributosXProducto = pxc.AtributosxProducto.Select(atr => new AtributosViewModel
                                                       {
-                                                          Descripcion = (atr.Descripcion2 == "BASE") ? atr.Descripcion1 + " - " + atr.CodigoAtributo : atr.Descripcion1,
+                                                          Descripcion = (atr.Descripcion2 == "BASE") ? atr.CodigoAtributo + " - " + atr.Descripcion1 : atr.Descripcion1,
                                                           Tipo = atr.Descripcion2,
                                                           IdLinea = pxc.IdLinea
                                                       }).ToList(),
@@ -111,28 +111,13 @@ namespace AventasApi.Controllers
                                                              CodigoColor = foto.CodigoColor,
                                                              Principal = foto.Principal ?? false
                                                          }).ToList(),
-                                                      //ListaTalla = pxc.FisicoDisponible.GroupBy(fisDis => fisDis.CodigoTalla).Where(fisDisGroup => fisDisGroup.Sum(fisDis => fisDis.Disponible) > 0).Select(fisDisGroup => fisDisGroup.FirstOrDefault()).Select(fisDis => context.TallasXGrupo.Where(tallXGrup => tallXGrup.CodigoGrupoTalla == pxc.CodigoGrupoTalla).FirstOrDefault(tallXGrup => tallXGrup.CodigoTalla == fisDis.CodigoTalla)).Select(txp => new TallaViewModel
-                                                      //{
-                                                      //    Talla = txp.CodigoTalla,
-                                                      //    GrupoTallaId = txp.CodigoGrupoTalla,
-                                                      //    Orden = txp.Orden ?? 0,
-                                                      //    Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
-                                                      //    {
-                                                      //        IdDistribucion = dis.IdDistribucion,
-                                                      //        IdTallaxGrupo = dis.IdTallaxGrupo,
-                                                      //        NombreDistribucion = dis.NombreDistribucion,
-                                                      //        NombreTalla = dis.NombreTalla,
-                                                      //        Cantidad = dis.Cantidad,
-                                                      //    }).ToList(),
-
-                                                      //}).OrderBy(txp => txp.Orden).ToList(),
-                                                      ListaTalla = context.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)
+                                                      ListaTalla = context.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) >= 0)
                                                       .Select(txp => new TallaViewModel
                                                       {
                                                           Talla = txp.CodigoTalla,
                                                           GrupoTallaId = txp.CodigoGrupoTalla,
                                                           Orden = txp.Orden ?? 0,
-                                                          Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                                          Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
                                                           {
                                                               IdDistribucion = dis.IdDistribucion,
                                                               IdTallaxGrupo = dis.IdTallaxGrupo,
@@ -157,7 +142,7 @@ namespace AventasApi.Controllers
 
                                                       }).ToList(),
                                                       fisicaDisponible = pxc.FisicoDisponible
-                                                         .Where(f => (vw_coleccion.ColeccionTipo == "F") || f.Disponible > 0)
+                                                         /*.Where(f => (vw_coleccion.ColeccionTipo == "F") || f.Disponible >= 0)*/
                                                          .Select(f => new FisicoDisponibleViewModel
                                                          {
                                                              CodigoColor = f.CodigoColor,
@@ -171,7 +156,7 @@ namespace AventasApi.Controllers
                                                                  IdProducto = preEsp.IdProducto,
                                                                  GrupoPrecio = preEsp.GrupoPrecio,
                                                                  IdFisicoDisponible = preEsp.IdFisicoDisponible,
-                                                                 Precio = preEsp.Precio,
+                                                                 Precio = preEsp.Hasta == new DateTime(1900, 1, 1) ? preEsp.Precio : 0,
                                                              }).ToList(),
                                                          }).ToList()
                                                   }).ToList()

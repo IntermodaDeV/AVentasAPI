@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace AventasApi.Controllers
@@ -56,21 +54,21 @@ namespace AventasApi.Controllers
             }
         }
         [HttpGet]
-        [Route("{ruta}")]
-        public IHttpActionResult ClienteContadoList(string ruta)
+        [Route("{asesor}")]
+        public List<ClienteContado> ClienteContadoList(string asesor)
         {
             try
             {
-                var clientes = context.ClienteContado.Where(x => x.Ruta == ruta).OrderBy(x => x.Nombre).ToList();
+                var clientes = context.ClienteContado.Where(x => x.Asesor == asesor).OrderBy(x => x.Nombre).ToList();
                 if (clientes.Count <= 0)
                 {
-                    return NotFound();
+                    return new List<ClienteContado>();
                 }
-                return Ok(clientes);
+                return clientes;
             }
             catch (Exception e)
             {
-                return BadRequest();
+                return new List<ClienteContado>();
             }
         }
     }

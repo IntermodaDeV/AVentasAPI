@@ -11,7 +11,7 @@ namespace DataManager.Extensions
         {
             FotografiasXProducto nuevaImagen = new FotografiasXProducto
             {
-                IdProducto = null,
+                IdProducto = 1,
                 Codigo = imagen.ITEM_CODE,
                 CodigoColor = imagen.ITEM_COLOR,
                 Descripcion = null,

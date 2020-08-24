@@ -1,10 +1,6 @@
 ﻿using DBData.Database;
 using AventasApi.Models.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -14,13 +10,15 @@ namespace AventasApi.Controllers
     {
         AVentasEntities context = new AVentasEntities();
         [HttpGet]
-        public async Task<IHttpActionResult> GetMonedas()
+        [Route("api/Moneda/{empresa}")]
+        public async Task<IHttpActionResult> GetMonedas(string Empresa)
         {
-
-            var monedas = context.MaestroMoneda.Select(mon => new MonedaViewModel
+            var MonedaXEmpresa = context.MonedasxEmpresa.Where(m => m.EmpresaId == Empresa).Select(m => m.IdMoneda).ToList();
+            var monedas = context.MaestroMoneda.Where(m => MonedaXEmpresa.Contains(m.IdMoneda)).Select(mon => new MonedaViewModel
             {
                 IdMoneda = mon.IdMoneda,
-                Moneda = mon.Moneda
+                Moneda = mon.Moneda,
+                Abreviacion=mon.Abreviacion
             }).ToList();
             return Ok(monedas);
         }

@@ -19,12 +19,12 @@ namespace DBData.Database
         {
             this.AtributosxProducto = new HashSet<AtributosxProducto>();
             this.ColoresxProducto = new HashSet<ColoresxProducto>();
-            this.FisicoDisponible = new HashSet<FisicoDisponible>();
-            this.FotografiasXProducto = new HashSet<FotografiasXProducto>();
             this.PedidosDetalle = new HashSet<PedidosDetalle>();
-            this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
             this.TallasxProducto = new HashSet<TallasxProducto>();
             this.PreciosxProducto = new HashSet<PreciosxProducto>();
+            this.FisicoDisponible = new HashSet<FisicoDisponible>();
+            this.FotografiasXProducto = new HashSet<FotografiasXProducto>();
+            this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
         }
     
         public int IdProducto { get; set; }
@@ -38,27 +38,28 @@ namespace DBData.Database
         public string IdEdad { get; set; }
         public string GrupoImpuesto { get; set; }
         public string EmpresaId { get; set; }
+        public bool VisibleParaVentas { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AtributosxProducto> AtributosxProducto { get; set; }
         public virtual Colecciones Colecciones { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ColoresxProducto> ColoresxProducto { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FisicoDisponible> FisicoDisponible { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FotografiasXProducto> FotografiasXProducto { get; set; }
         public virtual GrupoTalla GrupoTalla { get; set; }
         public virtual MaestroEdad MaestroEdad { get; set; }
         public virtual MaestroLinea MaestroLinea { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosDetalle> PedidosDetalle { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TallasxProducto> TallasxProducto { get; set; }
         public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PreciosxProducto> PreciosxProducto { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FisicoDisponible> FisicoDisponible { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FotografiasXProducto> FotografiasXProducto { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
     }
 }

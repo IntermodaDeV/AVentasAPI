@@ -324,9 +324,6 @@
     <Compile Include="Database\vw_FisicoDisponible.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
-    <Compile Include="Database\vw_LineasxColeccion.cs">
-      <DependentUpon>AVentas.tt</DependentUpon>
-    </Compile>
     <Compile Include="Database\vw_TallasxProducto.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

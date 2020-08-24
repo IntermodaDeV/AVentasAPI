@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using AventasApi.Filters;
-//using AventasApi.GestorData;
 using DBData.Database;
-//using AventasApi.Models.ApiModels;
-using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
-//using IMS.Extensions;
-//using IMS.Tokens.Services;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-//using Responses;
 using RestSharp;
 using System.Data.Entity;
 using AventasApi.Services.AsyncJobs;
@@ -22,7 +13,6 @@ using AventasApi.Models;
 using AventasApi.Services.Authentication;
 using ExternalApiData.Models.ApiModels;
 using ExternalApiData.Enviroments;
-//using AventasApi.Enviroments;
 
 namespace AventasApi.Controllers
 {
@@ -55,13 +45,28 @@ namespace AventasApi.Controllers
 
         }
 
-        public IHttpActionResult Get()
+        private bool EnLinea(string empresa,string asesor)
+        {
+            var client = new RestClient(Enviroment.CRMWebServiceURLApi);
+            client.Authenticator = new RestSharp.Authenticators.NtlmAuthenticator();
+            var request = new RestRequest($"asesor/{empresa}/{asesor}", Method.GET);
+            client.Timeout = 6000;
+            IRestResponse<List<AsesorApiModel>> respuesta = client.Execute<List<AsesorApiModel>>(request);
+
+            return respuesta.IsSuccessful;
+        }
+
+        [HttpGet]
+        [Route("~/api/PedidosXCliente/{asesor}")]
+        public IHttpActionResult Get(string Asesor)
         {
             using (AVentasEntities context = new AVentasEntities())
             {
-                List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
+                List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == Asesor).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
                 {
                     PedidoId = ped.PedidoId,
+                    NumeroPedido = ped.NumeroPedido,
+                    Sincronizado= ped.Sincronizado,
                     NombreColeccion = context.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
                     TotalUnidades = ped.TotalUnidades,
                     TotalXPedido = ped.TotalPedido,
@@ -94,7 +99,7 @@ namespace AventasApi.Controllers
                     AcuerdoVenta = ped.AcuerdoVenta,
                     EmpresaId = ped.EmpresaId,
                     FechaActual = ped.Fecha,
-                    Usuario = context.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == ped.CodigoAsesor).Usuario,
+                    Usuario = context.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == ped.CodigoAsesor).Nombre,
                     FechaEntrega = ped.FechaEntrega,
                     Observacion = ped.Observacion,
                     location = new Location
@@ -116,7 +121,7 @@ namespace AventasApi.Controllers
                                 GrupoTallaId = txp.CodigoGrupoTalla,
                                 Talla = txp.CodigoTalla,
                                 Orden = txp.Orden ?? 0,
-                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
                                 {
                                     IdDistribucion = dis.IdDistribucion,
                                     IdTallaxGrupo = dis.IdTallaxGrupo,
@@ -157,7 +162,7 @@ namespace AventasApi.Controllers
                                              GrupoTallaId = txp.CodigoGrupoTalla,
                                              Talla = txp.CodigoTalla,
                                              Orden = txp.Orden ?? 0,
-                                             Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo).Select(dis => new DistribucionXTallaViewModel
+                                             Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
                                              {
                                                  IdDistribucion = dis.IdDistribucion,
                                                  IdTallaxGrupo = dis.IdTallaxGrupo,
@@ -198,27 +203,6 @@ namespace AventasApi.Controllers
 
         }
 
-        //[HttpGet]
-        //public IHttpActionResult GetImagen(string id)
-        //{
-        //    string imagenB64 = "";
-        //    using (AVentasEntities context = new AVentasEntities())
-        //    {
-        //        var firma = context.FirmasxPedido.FirstOrDefault();
-        //        if (firma != null)
-        //        {
-        //            try
-        //            {
-        //                imagenB64 = "data:image/png;base64," + Convert.ToBase64String(firma.Firma);
-        //            }
-        //            catch (Exception e)
-        //            {
-
-        //            }
-        //        }
-        //    }
-        //    return Ok(imagenB64);
-        //}
 
         [HttpPost]
         public IHttpActionResult Post([FromBody] PedidoPostViewModel Pedido)
@@ -233,8 +217,6 @@ namespace AventasApi.Controllers
             ClienteContado clienteContado;
             CONFIGURACIONE SyncTelContado;
             CONFIGURACIONE SyncTelCredito;
-            List<GrupoImpuestoCliente> impuestosClientes = new List<GrupoImpuestoCliente>();
-            List<GrupoImpuestoArticulo> impuestosArticulos = new List<GrupoImpuestoArticulo>();
 
             using(AVentasConfigEntities config=new AVentasConfigEntities()) 
             {
@@ -249,9 +231,7 @@ namespace AventasApi.Controllers
                 coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion);
                 acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
                 tipoPedido = acuerdoVenta?.TiposdePedido;
-                cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
-                impuestosClientes = context.GrupoImpuestoCliente.Where(x => x.Empresa.ToUpper() == cliente.EmpresaId.ToUpper() && x.Activo==true).ToList();
-                impuestosArticulos = context.GrupoImpuestoArticulo.Where(x => x.Empresa.ToUpper() == cliente.EmpresaId.ToUpper() && x.Activo == true).ToList();
+                cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);  
             }
             DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
             PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
@@ -275,8 +255,8 @@ namespace AventasApi.Controllers
                 //Mocked = ,
                 //Accuracy = ,
                 //Altitude = ,
-                //Latitude = ,
-                //Longitude = ,
+                Latitude  = (Pedido.location !=null)?Pedido.location.latitude:null,
+                Longitude = (Pedido.location !=null)?Pedido.location.longitude:null,
                 //Error = ,
                 IdLinea = Pedido.Linea,
                 //idMoneda = ,
@@ -326,7 +306,7 @@ namespace AventasApi.Controllers
                 pe.DELIVERY_ADDRESS = "";
                 pe.PHONE = (SyncTelCredito.VALOR=="1") ? cliente.Telefono : "";
             }
-            decimal impuesto = 0;
+
             foreach (var detalle in Pedido.DetallePedido)
             {
                 int cantidad = 0;
@@ -350,15 +330,11 @@ namespace AventasApi.Controllers
                     PedidoBDAGuardar.TotalUnidades += cantidad;
                     decimal precioUnitario = 0;
                     decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                    PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
-                    var producto = coleccion.ProductosxColeccion.FirstOrDefault(prod => prod.CodigoProducto == detalle.CodigoProducto);
-                    var grupo = (string.IsNullOrEmpty(producto.GrupoImpuesto)) ? "GENERAL" : producto.GrupoImpuesto;
-                    var productoImpuesto = impuestosArticulos.FirstOrDefault(x => x.GrupoProducto.ToUpper() == grupo.ToUpper());
-                    var porcentajeImpuesto = productoImpuesto.Porcentaje / 100;
-                    impuesto += (precioUnitario * cantidad) * porcentajeImpuesto;
-                    PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
+                    PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);                    
+
+                   PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
                     {
-                        CodigoProducto = producto.IdProducto,
+                        CodigoProducto = detalle.IdProducto,
                         CodigoColor = detalle.CodigoColor,
                         CodigoTalla = detalle.Talla,
                         Cantidad = cantidad,
@@ -371,45 +347,46 @@ namespace AventasApi.Controllers
 
             }
 
-            var clienteImpuesto = impuestosClientes.FirstOrDefault(x => x.GrupoCliente.ToUpper() == cliente.GrupoImpuesto.ToUpper());
-
-            if (clienteImpuesto.Porcentaje == 0.0m)
+            PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
+            PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString()))+Pedido.Flete;
+          string PEdidoID = "";
+            if(EnLinea(cliente.EmpresaId, asesor.Usuario))
             {
-                impuesto = 0;
-            }
-
-
-            PedidoBDAGuardar.TotalImpuesto = impuesto;
-            PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(impuesto.ToString()))+Pedido.Flete;
-            string PEdidoID = "";
-            try
-            {
-                var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
-                client.Timeout = 480 * (1000);
-                var request = new RestRequest(Method.POST);
-                request.AddHeader("Accept", "application/json");
-                request.AddJsonBody(pe);
-                IRestResponse response = client.Execute(request);
-                string content = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(response.Content);
-                if (content.StartsWith("Success"))
+                try
                 {
-                    content = content.Remove(0, 8);
-                    content = content.Split(' ')[0];
-                    PEdidoID = content;
-                    PedidoBDAGuardar.PedidoId = PEdidoID;
-                    PedidoBDAGuardar.NumeroPedido = numeroReferencia;
-                }
-                else
-                {
-                    return BadRequest(content);
-                    //Random random = new Random();
-                    //pedidoAGuardar.EncabezadoPedido.PedidoId = random.Next(1000).ToString();
-                }
+                    var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
+                    client.Timeout = 480 * (1000);
+                    var request = new RestRequest(Method.POST);
+                    request.AddHeader("Accept", "application/json");
+                    request.AddJsonBody(pe);
+                    IRestResponse response = client.Execute(request);
+                    string content = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(response.Content);
+                    if (content.StartsWith("Success"))
+                    {
+                        content = content.Remove(0, 8);
+                        content = content.Split(' ')[0];
+                        PEdidoID = numeroReferencia;
+                        PedidoBDAGuardar.PedidoId = numeroReferencia;
+                        PedidoBDAGuardar.Sincronizado = true;
+                        PedidoBDAGuardar.NumeroPedido = content;
+                    }
+                    else
+                    {
+                        return BadRequest(content);
+                    }
 
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(Newtonsoft.Json.JsonConvert.SerializeObject(e));
+                }
             }
-            catch (Exception e)
+            else
             {
-                return BadRequest(Newtonsoft.Json.JsonConvert.SerializeObject(e));
+                PEdidoID = numeroReferencia;
+                PedidoBDAGuardar.PedidoId = numeroReferencia;
+                PedidoBDAGuardar.NumeroPedido = "";
+                PedidoBDAGuardar.Sincronizado = false;
             }
 
             using (AVentasEntities context = new AVentasEntities())

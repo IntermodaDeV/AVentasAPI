@@ -15,10 +15,11 @@ namespace AventasApi.Controllers
     {
         AVentasEntities context = new AVentasEntities();
         [HttpGet]
-        public async Task<IHttpActionResult> GetBancos()
+        [Route("api/banco/{empresa}")]
+        public async Task<IHttpActionResult> GetBancos(string empresa)
         {
 
-            var bancos = context.Bancos.Select(banco => new BancoViewModel
+            var bancos = context.Bancos.Where(b => b.EmpresaId == empresa).Select(banco => new BancoViewModel
             {
                 IdBanco = banco.IdBanco,
                 NombreBanco = banco.NombreBanco,
