@@ -19,12 +19,12 @@ namespace DBData.Database
         {
             this.AtributosxProducto = new HashSet<AtributosxProducto>();
             this.ColoresxProducto = new HashSet<ColoresxProducto>();
-            this.PedidosDetalle = new HashSet<PedidosDetalle>();
             this.TallasxProducto = new HashSet<TallasxProducto>();
             this.PreciosxProducto = new HashSet<PreciosxProducto>();
             this.FisicoDisponible = new HashSet<FisicoDisponible>();
             this.FotografiasXProducto = new HashSet<FotografiasXProducto>();
             this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
+            this.PedidosDetalle = new HashSet<PedidosDetalle>();
         }
     
         public int IdProducto { get; set; }
@@ -49,8 +49,6 @@ namespace DBData.Database
         public virtual MaestroEdad MaestroEdad { get; set; }
         public virtual MaestroLinea MaestroLinea { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosDetalle> PedidosDetalle { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TallasxProducto> TallasxProducto { get; set; }
         public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -61,5 +59,7 @@ namespace DBData.Database
         public virtual ICollection<FotografiasXProducto> FotografiasXProducto { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosDetalle> PedidosDetalle { get; set; }
     }
 }

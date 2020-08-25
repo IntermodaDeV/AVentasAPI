@@ -66,7 +66,7 @@ namespace AventasApi.Controllers
                 {
                     PedidoId = ped.PedidoId,
                     NumeroPedido = ped.NumeroPedido,
-                    Sincronizado= ped.Sincronizado,
+                    Sincronizado = ped.Sincronizado,
                     NombreColeccion = context.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
                     TotalUnidades = ped.TotalUnidades,
                     TotalXPedido = ped.TotalPedido,
@@ -111,12 +111,11 @@ namespace AventasApi.Controllers
                         longitude = ped.Longitude,
                         error = ped.Error
                     },
-                    gruposXDetPed = ped.PedidosDetalle.GroupBy(gruposXDetPed => gruposXDetPed.ProductosxColeccion.CodigoGrupoTalla)
-                        .Select(gruposXDetPed => new GruposTallaXDetPed
-                        {
+                    gruposXDetPed = ped.PedidosDetalle.GroupBy(gruposXDetPed => gruposXDetPed.ProductosxColeccion.CodigoGrupoTalla).Select(gruposXDetPed => new GruposTallaXDetPed
+                    {
                             GrupoTalla = gruposXDetPed.Key,
                             // prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoProducto)
-                            ListaTalla = gruposXDetPed.GroupBy(pedDet=> pedDet.CodigoTalla).Select(pedDet=> pedDet.Key).SelectMany(pedDet=>  context.TallasXGrupo.Where(txp=> txp.CodigoTalla == pedDet &&txp.CodigoGrupoTalla == gruposXDetPed.Key) ).Select(txp => new TallaViewModel
+                            ListaTalla = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoTalla).Select(pedDet => pedDet.Key).SelectMany(pedDet => context.TallasXGrupo.Where(txp => txp.CodigoTalla == pedDet && txp.CodigoGrupoTalla == gruposXDetPed.Key)).Select(txp => new TallaViewModel
                             {
                                 GrupoTallaId = txp.CodigoGrupoTalla,
                                 Talla = txp.CodigoTalla,
@@ -130,16 +129,15 @@ namespace AventasApi.Controllers
                                     Cantidad = dis.Cantidad,
                                 }).ToList()
                             }).OrderBy(txp => txp.Orden).ToList(),
-                            prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoProducto)
-                        .Select(pedDet => new ProductosXDetPed
+                        prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoProducto).Select(pedDet => new ProductosXDetPed
                         {
-                            IdProducto = pedDet.Key,
-                            CodigoProducto = pedDet.FirstOrDefault().ProductosxColeccion.CodigoProducto,
+                            IdProducto = pedDet.FirstOrDefault().ProductosxColeccion.IdProducto,
+                            CodigoProducto = pedDet.Key,
                             NombreProducto = pedDet.FirstOrDefault().ProductosxColeccion.NombreProducto,
                             Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
                             CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
                             TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
-                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod=> colXprod.Sum(det=> det.Cantidad)>0).Select(colXprod =>
+                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod => colXprod.Sum(det => det.Cantidad) > 0).Select(colXprod =>
                                  new ColoresXProdXDetPed
                                  {
                                      CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
@@ -152,7 +150,6 @@ namespace AventasApi.Controllers
                                          IdRegistro = detPed.IdPedidoDetalle,
                                          PedidoId = detPed.PedidoId,
                                          Cantidad = detPed.Cantidad,
-
                                          Linea = detPed.Linea,
                                          MontoLinea = detPed.MontoLinea,
                                          PrecioUnitario = detPed.PrecioUnitario,
@@ -169,14 +166,13 @@ namespace AventasApi.Controllers
                                                  NombreDistribucion = dis.NombreDistribucion,
                                                  NombreTalla = dis.NombreTalla,
                                                  Cantidad = dis.Cantidad,
+
                                              }).ToList()
                                          }).FirstOrDefault()
                                      }).ToList()
-
                                  }).ToList()
                         }).ToList()
-                        }).ToList()
-
+                    }).ToList()
                 }).ToList();
                 foreach (var pedido in pedidos)
                 {
@@ -334,7 +330,8 @@ namespace AventasApi.Controllers
 
                    PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
                     {
-                        CodigoProducto = detalle.IdProducto,
+                        IdProducto = detalle.IdProducto,
+                        CodigoProducto = detalle.CodigoProducto,
                         CodigoColor = detalle.CodigoColor,
                         CodigoTalla = detalle.Talla,
                         Cantidad = cantidad,

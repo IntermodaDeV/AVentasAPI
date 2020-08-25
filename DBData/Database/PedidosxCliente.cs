@@ -61,8 +61,8 @@ namespace DBData.Database
         public virtual ICollection<FirmasxPedido> FirmasxPedido { get; set; }
         public virtual MaestroLinea MaestroLinea { get; set; }
         public virtual MaestroMoneda MaestroMoneda { get; set; }
+        public virtual TiposdePedido TiposdePedido { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosDetalle> PedidosDetalle { get; set; }
-        public virtual TiposdePedido TiposdePedido { get; set; }
     }
 }

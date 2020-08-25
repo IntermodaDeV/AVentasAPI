@@ -19,6 +19,7 @@ namespace DBData.Database
         {
             this.ProductosxColeccion = new HashSet<ProductosxColeccion>();
             this.TallasXGrupo = new HashSet<TallasXGrupo>();
+            this.PedidosDetalle = new HashSet<PedidosDetalle>();
         }
     
         public string CodigoGrupoTalla { get; set; }
@@ -28,5 +29,7 @@ namespace DBData.Database
         public virtual ICollection<ProductosxColeccion> ProductosxColeccion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TallasXGrupo> TallasXGrupo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosDetalle> PedidosDetalle { get; set; }
     }
 }

@@ -16,7 +16,8 @@ namespace DBData.Database
     {
         public int IdPedidoDetalle { get; set; }
         public string PedidoId { get; set; }
-        public Nullable<int> CodigoProducto { get; set; }
+        public Nullable<int> IdProducto { get; set; }
+        public string CodigoProducto { get; set; }
         public string CodigoColor { get; set; }
         public string CodigoTalla { get; set; }
         public Nullable<int> Linea { get; set; }
@@ -25,8 +26,10 @@ namespace DBData.Database
         public Nullable<decimal> MontoLinea { get; set; }
         public Nullable<System.DateTime> Fecha { get; set; }
         public string CodigoAsesor { get; set; }
+        public string CodigoGrupoTalla { get; set; }
     
-        public virtual ProductosxColeccion ProductosxColeccion { get; set; }
         public virtual PedidosxCliente PedidosxCliente { get; set; }
+        public virtual ProductosxColeccion ProductosxColeccion { get; set; }
+        public virtual GrupoTalla GrupoTalla { get; set; }
     }
 }
