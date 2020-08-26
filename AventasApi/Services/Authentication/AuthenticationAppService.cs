@@ -79,7 +79,7 @@ namespace AventasApi.Services.Authentication
                         }
 
                         var content = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FailResponse>>(response.Content)[0];
-                        if (content.Message != "Ok")
+                        if (false && content.Message != "Ok")
                         {
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
                         }

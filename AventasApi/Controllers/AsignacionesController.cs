@@ -13,6 +13,7 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using AventasApi.Models.ViewModels;
 using AventasApi.Services.Authentication;
+using AventasApi.Models;
 
 namespace AventasApi.Controllers
 {
@@ -177,6 +178,32 @@ namespace AventasApi.Controllers
             }
 
             return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [HttpPost]
+        [Route("~/api/asignaciones/checkin")]
+        public IHttpActionResult PostCheckin([FromBody] CheckInViewModel model)
+        {
+            var asignacion = context.AsignacionxAsesor.FirstOrDefault(x => x.IdAsignacionxAsesor == model.IdAsignacionxAsesor);
+            asignacion.latitudeCheckIn = (model.location != null) ? model.location.latitude : null;
+            asignacion.longitudeCheckIn = (model.location != null) ? model.location.longitude : null;
+            asignacion.fechaCheckIn = model.Fecha;
+
+            var result = context.SaveChanges();
+            return Ok(result > 0);
+        }
+
+        [HttpPost]
+        [Route("~/api/asignaciones/checkout")]
+        public IHttpActionResult PostCheckout([FromBody] CheckInViewModel model)
+        {
+            var asignacion = context.AsignacionxAsesor.FirstOrDefault(x => x.IdAsignacionxAsesor == model.IdAsignacionxAsesor);
+            asignacion.latitudeCheckOut = (model.location != null) ? model.location.latitude : null;
+            asignacion.longitudeCheckOut = (model.location != null) ? model.location.longitude : null;
+            asignacion.fechaCheckOut = model.Fecha;
+
+            var result = context.SaveChanges();
+            return Ok(result > 0);
         }
     }
 }
