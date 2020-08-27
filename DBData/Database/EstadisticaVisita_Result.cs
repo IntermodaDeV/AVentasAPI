@@ -21,5 +21,6 @@ namespace DBData.Database
         public int PorcentajeEjecucion { get; set; }
         public Nullable<int> ClienteCancelo { get; set; }
         public Nullable<int> Efectivas { get; set; }
+        public Nullable<int> Productivas { get; set; }
     }
 }

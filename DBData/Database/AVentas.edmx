@@ -700,6 +700,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Valor" Type="decimal" Precision="15" Scale="4" />
           <Property Name="Descuento" Type="decimal" Precision="15" Scale="4" />
           <Property Name="EsAbono" Type="bit" />
+          <Property Name="ValorFactura" Type="decimal" Precision="15" Scale="4" />
         </EntityType>
         <EntityType Name="RecibosxCliente">
           <Key>
@@ -3389,6 +3390,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK__RecibosDe__IdSub__7FF5EA36" FromRole="RecibosDetalle" ToRole="SubFacturasxCliente" />
           <NavigationProperty Name="RecibosxCliente" Relationship="AventasModel.FK__RecibosDe__Recib__7F01C5FD" FromRole="RecibosDetalle" ToRole="RecibosxCliente" />
           <Property Name="EsAbono" Type="Boolean" />
+          <Property Name="ValorFactura" Type="Decimal" Precision="15" Scale="4" />
         </EntityType>
         <EntityType Name="Rutas">
           <Key>
@@ -5073,6 +5075,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="Int32" Name="PorcentajeEjecucion" Nullable="false" />
           <Property Type="Int32" Name="ClienteCancelo" Nullable="true" />
           <Property Type="Int32" Name="Efectivas" Nullable="true" />
+          <Property Type="Int32" Name="Productivas" Nullable="true" />
         </ComplexType>
         <ComplexType Name="PResumenCredito_Result">
           <Property Type="Int32" Name="Id" Nullable="true" />
@@ -6206,6 +6209,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="RecibosDetalle">
             <EntityTypeMapping TypeName="AventasModel.RecibosDetalle">
               <MappingFragment StoreEntitySet="RecibosDetalle">
+                <ScalarProperty Name="ValorFactura" ColumnName="ValorFactura" />
                 <ScalarProperty Name="EsAbono" ColumnName="EsAbono" />
                 <ScalarProperty Name="IdReciboDetalle" ColumnName="IdReciboDetalle" />
                 <ScalarProperty Name="ReciboId" ColumnName="ReciboId" />
@@ -6489,6 +6493,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="PorcentajeEjecucion" ColumnName="PorcentajeEjecucion" />
                 <ScalarProperty Name="ClienteCancelo" ColumnName="ClienteCancelo" />
                 <ScalarProperty Name="Efectivas" ColumnName="Efectivas" />
+                <ScalarProperty Name="Productivas" ColumnName="Productivas" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

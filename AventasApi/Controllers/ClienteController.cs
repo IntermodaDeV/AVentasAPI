@@ -125,7 +125,7 @@ namespace AventasApi.Controllers
                         Saldo = axcd.Saldo
                     }).ToList()
                 }).ToList();
-                cliente.AcuerdosXTipoPedido = context.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && (x.Saldo - x.PendienteFactura - x.Descuento) > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
+                cliente.AcuerdosXTipoPedido = context.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo  > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                 {
                     IdTipoPedido = asa.Key.IdTipoPedido,
                     TipoPedido = asa.Key.TipoPedido,
@@ -136,7 +136,7 @@ namespace AventasApi.Controllers
                         Valor = acu.Key == null ? "0" : (acu.Key.Total ?? 0).ToString(),
                         Disponible = acu.Key == null ? "0" : (acu.Key.Saldo ?? 0).ToString(),
                         //SaldoTotal = acu.Key == null ? "0" :  acu.Key.Saldo.Value.ToString(),
-                        Facturas = acu.Where(fac => (fac.Saldo - fac.PendienteFactura - fac.Descuento) > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
+                        Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                         {
                             IdFactura = facCli.IdFactura,
                             Factura = facCli.Factura,
@@ -149,7 +149,7 @@ namespace AventasApi.Controllers
                             FechaVencimiento = facCli.FechaVencimiento,
                             FechaMaxDescuento = facCli.FechaMaxDescuento,
                             TotalFactura = facCli.TotalFactura,
-                            Saldo = facCli.Saldo - facCli.PendienteFactura,
+                            Saldo = facCli.Saldo,
                             PendienteFactura = facCli.PendienteFactura,
                             Descuento = facCli.Descuento,
                             FacturaStatus = facCli.FacturaStatus,
@@ -159,7 +159,7 @@ namespace AventasApi.Controllers
                             LineaString = facCli.MaestroLinea.Linea,
                             IdTipoPedido = facCli.IdTipoPedido,
                             TipoPedidoString = facCli.TiposdePedido.TipoPedido,
-                            Cuotas = facCli.SubFacturasxCliente.Where(subFac => (subFac.Saldo - subFac.Descuento - facCli.PendienteFactura) > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
+                            Cuotas = facCli.SubFacturasxCliente.Where(subFac => (subFac.Saldo - subFac.Descuento) > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                             {
                                 FechaFactura = subFac.FacturasxCliente.FechaFactura,
                                 TipoDocumento = subFac.FacturasxCliente.Tipo,
@@ -174,7 +174,7 @@ namespace AventasApi.Controllers
                                 FechaVencimiento = subFac.FechaVencimiento,
                                 FechaMaxDescuento = subFac.AcuerdosxCliente != null ? subFac.FechaMaxDescuento : subFac.FacturasxCliente.FechaMaxDescuento,
                                 FechaVencimientoDescuento = subFac.FechaVencimientoDescuento,
-                                Saldo = subFac.Saldo - facCli.PendienteFactura,
+                                Saldo = subFac.Saldo,
                                 SaldoDivisa = subFac.SaldoDivisa,
                                 Descuento = subFac.Descuento,
                                 PendientePago = subFac.PendientePago,
