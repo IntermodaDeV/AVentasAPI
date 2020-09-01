@@ -14,6 +14,7 @@ using System.Web.Http.Results;
 using AventasApi.Models.ViewModels;
 using AventasApi.Services.Authentication;
 using AventasApi.Models;
+using System.Globalization;
 
 namespace AventasApi.Controllers
 {
@@ -55,7 +56,9 @@ namespace AventasApi.Controllers
                         idPrioridad = axa.idPrioridad,
                         idTipoVisita = axa.idTipoVisita,
                         Observacion = axa.Observacion,
-                        PrioridadAsignacion = axa.PrioridadAsignacion
+                        PrioridadAsignacion = axa.PrioridadAsignacion,
+                        Checkin=axa.fechaCheckIn!=null,
+                        Checkout=axa.fechaCheckOut!=null
                     })
                 .OrderBy(axa => axa.HoraInicio).ToList();
 
@@ -80,7 +83,9 @@ namespace AventasApi.Controllers
                         IdPrioridad = asignacion.idPrioridad,
                         IdTipoVisita = asignacion.idTipoVisita,
                         Observacion = asignacion.Observacion,
-                        ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno
+                        ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
+                        Checkin=asignacion.Checkin,
+                        Checkout=asignacion.Checkout
                     });
                     asignacionesXFecha.Add(nuevaAsignacionXFecha);
                 }
@@ -95,7 +100,9 @@ namespace AventasApi.Controllers
                         IdPrioridad = asignacion.idPrioridad,
                         IdTipoVisita = asignacion.idTipoVisita,
                         Observacion = asignacion.Observacion,
-                        ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno
+                        ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
+                        Checkin = asignacion.Checkin,
+                        Checkout = asignacion.Checkout
                     });
                 }
             }
@@ -119,7 +126,9 @@ namespace AventasApi.Controllers
                        HoraInicio = axa.HoraInicio,
                        HoraFin = axa.HoraFinal,
                        IdPrioridad = axa.idPrioridad,
-                       IdTipoVisita = axa.idTipoVisita
+                       IdTipoVisita = axa.idTipoVisita,
+                       Checkin = axa.fechaCheckIn != null,
+                       Checkout = axa.fechaCheckOut != null
                    })
                 .OrderBy(axa => axa.HoraInicio).ToList();
 
@@ -182,28 +191,87 @@ namespace AventasApi.Controllers
 
         [HttpPost]
         [Route("~/api/asignaciones/checkin")]
-        public IHttpActionResult PostCheckin([FromBody] CheckInViewModel model)
+        public async Task<IHttpActionResult> PostCheckin([FromBody] CheckInViewModel model)
         {
-            var asignacion = context.AsignacionxAsesor.FirstOrDefault(x => x.IdAsignacionxAsesor == model.IdAsignacionxAsesor);
-            asignacion.latitudeCheckIn = (model.location != null) ? model.location.latitude : null;
-            asignacion.longitudeCheckIn = (model.location != null) ? model.location.longitude : null;
-            asignacion.fechaCheckIn = model.Fecha;
+            try
+            {
+                if (model == null)
+                {
+                    return BadRequest("No se puede registrar el checkin ya que los datos se encuentran vacios.");
+                }
 
-            var result = context.SaveChanges();
-            return Ok(result > 0);
+                using (var ctx = new AVentasEntities())
+                {
+                    var asignacion = ctx.AsignacionxAsesor.FirstOrDefault(x => x.IdAsignacionxAsesor == model.IdAsignacionxAsesor);
+                    asignacion.latitudeCheckIn = (model.location != null) ? model.location.latitude : null;
+                    asignacion.longitudeCheckIn = (model.location != null) ? model.location.longitude : null;
+                    asignacion.fechaCheckIn = model.Fecha;
+
+                    await ctx.SaveChangesAsync();
+                    var response = new { Message = "Se ha registrado el checkin con exito." };
+                    return Ok(response);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest("Ocurrio un error, no se pudo registrar el checkin.");
+            }
         }
 
         [HttpPost]
         [Route("~/api/asignaciones/checkout")]
-        public IHttpActionResult PostCheckout([FromBody] CheckInViewModel model)
+        public async Task<IHttpActionResult> PostCheckout([FromBody] CheckInViewModel model)
         {
-            var asignacion = context.AsignacionxAsesor.FirstOrDefault(x => x.IdAsignacionxAsesor == model.IdAsignacionxAsesor);
-            asignacion.latitudeCheckOut = (model.location != null) ? model.location.latitude : null;
-            asignacion.longitudeCheckOut = (model.location != null) ? model.location.longitude : null;
-            asignacion.fechaCheckOut = model.Fecha;
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var asignacion = ctx.AsignacionxAsesor.FirstOrDefault(x => x.IdAsignacionxAsesor == model.IdAsignacionxAsesor);
+                    asignacion.latitudeCheckOut = (model.location != null) ? model.location.latitude : null;
+                    asignacion.longitudeCheckOut = (model.location != null) ? model.location.longitude : null;
+                    asignacion.fechaCheckOut = model.Fecha;
 
-            var result = context.SaveChanges();
-            return Ok(result > 0);
+                    await ctx.SaveChangesAsync();
+                    var response = new { Message = "Se ha registrado el checkout con exito." };
+                    return Ok(response);
+                }
+                }catch(Exception e)
+            {
+                return BadRequest("Ocurrio un error, no se pudo registrar el checkout.");
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/asignaciones/cargar")]
+        public async Task<IHttpActionResult> CargarAsignaciones([FromBody] IEnumerable<AsignacionViewModel> model)
+        {
+            try
+            {
+                if(model==null || model.Count() == 0)
+                {
+                    return BadRequest("No se puede registrar una lista vacia.");
+                }
+
+                using(var ctx=new AVentasEntities())
+                {
+                    var listaDominio = model.Select(x => new AsignacionxAsesor() {
+                        Fecha = DateTime.Parse(x.FechaAsignacion),
+                        FechaAsignacion = DateTime.Parse(x.FechaAsignacion),
+                        CodigoAsesor = x.CodigoAsesor,
+                        idPrioridad = x.idPrioridad,
+                        HoraInicio = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraInicio}", "yyyy-MM-dd hh:mm tt", null),
+                        HoraFinal = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraFinal}", "yyyy-MM-dd hh:mm tt", null),
+                        CodigoCliente = x.CodigoCliente
+                    });
+
+                    ctx.AsignacionxAsesor.AddRange(listaDominio);
+                    var result = await ctx.SaveChangesAsync();
+                    var response = new { Message = $"Se han registrado {result} asignaciones."};
+                    return Ok(response);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest("Ha ocurrido un error y no se pudo registar las asignaciones.");
+            }
         }
     }
 }
