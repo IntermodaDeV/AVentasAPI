@@ -5076,6 +5076,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="Int32" Name="ClienteCancelo" Nullable="true" />
           <Property Type="Int32" Name="Efectivas" Nullable="true" />
           <Property Type="Int32" Name="Productivas" Nullable="true" />
+          <Property Type="Int32" Name="Pedidos" Nullable="true" />
+          <Property Type="Int32" Name="Recibos" Nullable="true" />
+          <Property Type="Decimal" Name="TotalPedidos" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="Decimal" Name="TotalRecibos" Nullable="true" Precision="38" Scale="4" />
         </ComplexType>
         <ComplexType Name="PResumenCredito_Result">
           <Property Type="Int32" Name="Id" Nullable="true" />
@@ -6494,6 +6498,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="ClienteCancelo" ColumnName="ClienteCancelo" />
                 <ScalarProperty Name="Efectivas" ColumnName="Efectivas" />
                 <ScalarProperty Name="Productivas" ColumnName="Productivas" />
+                <ScalarProperty Name="Pedidos" ColumnName="Pedidos" />
+                <ScalarProperty Name="Recibos" ColumnName="Recibos" />
+                <ScalarProperty Name="TotalPedidos" ColumnName="TotalPedidos" />
+                <ScalarProperty Name="TotalRecibos" ColumnName="TotalRecibos" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

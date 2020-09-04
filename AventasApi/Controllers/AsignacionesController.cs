@@ -57,8 +57,8 @@ namespace AventasApi.Controllers
                         idTipoVisita = axa.idTipoVisita,
                         Observacion = axa.Observacion,
                         PrioridadAsignacion = axa.PrioridadAsignacion,
-                        Checkin=axa.fechaCheckIn!=null,
-                        Checkout=axa.fechaCheckOut!=null
+                        Checkin = axa.fechaCheckIn != null,
+                        Checkout = axa.fechaCheckOut != null
                     })
                 .OrderBy(axa => axa.HoraInicio).ToList();
 
@@ -84,8 +84,8 @@ namespace AventasApi.Controllers
                         IdTipoVisita = asignacion.idTipoVisita,
                         Observacion = asignacion.Observacion,
                         ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
-                        Checkin=asignacion.Checkin,
-                        Checkout=asignacion.Checkout
+                        Checkin = asignacion.Checkin,
+                        Checkout = asignacion.Checkout
                     });
                     asignacionesXFecha.Add(nuevaAsignacionXFecha);
                 }
@@ -146,7 +146,7 @@ namespace AventasApi.Controllers
         {
 
             var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-
+            List<AsignacionxAsesor> ListAsignaciones = new List<AsignacionxAsesor>();
             //var user = TokenService.Validate<UserAuthenticated>(Request.Headers.Authorization.Parameter);
             string codigoAsesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount).CodigoAsesor;
             foreach (var asignacionNueva in asignacionesNuevas)
@@ -156,8 +156,9 @@ namespace AventasApi.Controllers
                 DateTime FechaFin = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,
                     asignacionNueva.fecha.Value.Day);
                 FechaFin = FechaFin.AddDays(1);
-                List<AsignacionxAsesor> asignaciones =
-                    asignacionNueva.asignaciones.Select(asi => new AsignacionxAsesor
+                var asignacionesDB = context.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount).CodigoAsesor 
+                                                                        && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).ToList();
+                List<AsignacionxAsesor> asignaciones = asignacionNueva.asignaciones.Select(asi => new AsignacionxAsesor
                     {
                         Fecha = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
                         FechaAsignacion = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
@@ -169,19 +170,21 @@ namespace AventasApi.Controllers
                         idTipoVisita = asi.IdTipoVisita,
                         Observacion = asi.Observacion
                     }).ToList();
-                var asignacionesDB = context.AsignacionxAsesor
-                        .Where(axa =>
-                            axa.CodigoAsesor == context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount).CodigoAsesor && axa.FechaAsignacion >= FechaInicio &&
-                            axa.FechaAsignacion < FechaFin);
-                if (asignacionesDB.Count() > 0)
-                {
 
-                    context.AsignacionxAsesor.RemoveRange(asignacionesDB);
+                foreach (var asignacion in asignaciones)
+                {
+                    var ListAsignacionesDB = asignacionesDB.Where(axa => axa.HoraInicio == asignacion.HoraInicio && axa.HoraFinal == asignacion.HoraFinal).ToList();
+
+                    if (ListAsignacionesDB.Count == 0)
+                    {
+                        ListAsignaciones.Add(asignacion);
+                    }
                 }
-                if (asignaciones.Count() > 0)
+
+                if (ListAsignaciones.Count() > 0)
                 {
 
-                    context.AsignacionxAsesor.AddRange(asignaciones);
+                    context.AsignacionxAsesor.AddRange(ListAsignaciones);
                 }
                 context.SaveChanges();
             }
@@ -234,26 +237,27 @@ namespace AventasApi.Controllers
                     var response = new { Message = "Se ha registrado el checkout con exito." };
                     return Ok(response);
                 }
-                }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest("Ocurrio un error, no se pudo registrar el checkout.");
             }
         }
-
         [HttpPost]
         [Route("~/api/asignaciones/cargar")]
         public async Task<IHttpActionResult> CargarAsignaciones([FromBody] IEnumerable<AsignacionViewModel> model)
         {
             try
             {
-                if(model==null || model.Count() == 0)
+                if (model == null || model.Count() == 0)
                 {
                     return BadRequest("No se puede registrar una lista vacia.");
                 }
 
-                using(var ctx=new AVentasEntities())
+                using (var ctx = new AVentasEntities())
                 {
-                    var listaDominio = model.Select(x => new AsignacionxAsesor() {
+                    var listaDominio = model.Select(x => new AsignacionxAsesor()
+                    {
                         Fecha = DateTime.Parse(x.FechaAsignacion),
                         FechaAsignacion = DateTime.Parse(x.FechaAsignacion),
                         CodigoAsesor = x.CodigoAsesor,
@@ -265,10 +269,11 @@ namespace AventasApi.Controllers
 
                     ctx.AsignacionxAsesor.AddRange(listaDominio);
                     var result = await ctx.SaveChangesAsync();
-                    var response = new { Message = $"Se han registrado {result} asignaciones."};
+                    var response = new { Message = $"Se han registrado {result} asignaciones." };
                     return Ok(response);
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest("Ha ocurrido un error y no se pudo registar las asignaciones.");
             }
