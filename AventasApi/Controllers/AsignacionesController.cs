@@ -258,12 +258,12 @@ namespace AventasApi.Controllers
                 {
                     var listaDominio = model.Select(x => new AsignacionxAsesor()
                     {
-                        Fecha = DateTime.Parse(x.FechaAsignacion),
-                        FechaAsignacion = DateTime.Parse(x.FechaAsignacion),
+                        Fecha = DateTime.ParseExact(x.FechaAsignacion, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                        FechaAsignacion = DateTime.ParseExact(x.FechaAsignacion, "dd/MM/yyyy", CultureInfo.InvariantCulture),
                         CodigoAsesor = x.CodigoAsesor,
                         idPrioridad = x.idPrioridad,
-                        HoraInicio = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraInicio}", "yyyy-MM-dd hh:mm tt", null),
-                        HoraFinal = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraFinal}", "yyyy-MM-dd hh:mm tt", null),
+                        HoraInicio = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraInicio}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
+                        HoraFinal = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraFinal}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
                         CodigoCliente = x.CodigoCliente
                     });
 
