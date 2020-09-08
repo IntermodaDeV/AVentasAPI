@@ -130,7 +130,7 @@ namespace AventasApi.Controllers
                                     Cantidad = dis.Cantidad,
                                 }).ToList()
                             }).OrderBy(txp => txp.Orden).ToList(),
-                            prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoProducto)
+                            prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.IdProducto)
                         .Select(pedDet => new ProductosXDetPed
                         {
                             IdProducto = pedDet.Key,
@@ -334,7 +334,7 @@ namespace AventasApi.Controllers
 
                    PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
                     {
-                        CodigoProducto = detalle.IdProducto,
+                        IdProducto = detalle.IdProducto,
                         CodigoColor = detalle.CodigoColor,
                         CodigoTalla = detalle.Talla,
                         Cantidad = cantidad,

@@ -33,6 +33,12 @@ namespace DBData.Database
         public Nullable<int> idPrioridad { get; set; }
         public Nullable<int> idTipoVisita { get; set; }
         public string Observacion { get; set; }
+        public Nullable<decimal> latitudeCheckIn { get; set; }
+        public Nullable<decimal> longitudeCheckIn { get; set; }
+        public Nullable<System.DateTime> fechaCheckIn { get; set; }
+        public Nullable<decimal> latitudeCheckOut { get; set; }
+        public Nullable<decimal> longitudeCheckOut { get; set; }
+        public Nullable<System.DateTime> fechaCheckOut { get; set; }
     
         public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }
