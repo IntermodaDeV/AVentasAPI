@@ -39,6 +39,7 @@ namespace DBData.Database
         public Nullable<System.DateTime> VentaInicio { get; set; }
         public Nullable<System.DateTime> VentaFinal { get; set; }
         public string FotoPortada { get; set; }
+        public Nullable<System.DateTime> FechaUltSincronizacion { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AtributosxColeccion> AtributosxColeccion { get; set; }

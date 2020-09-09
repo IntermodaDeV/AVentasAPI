@@ -24,8 +24,8 @@ namespace AventasApi.Controllers
         {
             string nombreCliente = context.Clientes.FirstOrDefault(cli => cli.CodigoCliente== correo.CodigoCliente).Nombre;
 
-            var email = "aaron.lemus@cit.hn";
-            var ps = "Karr9526";
+            var email = "soportecrmweb@gmail.com";
+            var ps = "Intermoda1234";
             MailMessage msg = new MailMessage();
 
             if (correo.pdf.Length > 0)
@@ -38,10 +38,7 @@ namespace AventasApi.Controllers
                 msg.Attachments.Add(new Attachment( new MemoryStream(imagenBytes),"pedido.pdf"));
             }
             msg.From = new MailAddress(email);
-            msg.To.Add(new MailAddress("aaron.lemus@cit.hn"));
-            msg.To.Add(new MailAddress("gustavo.martinez@cit.hn"));
-            msg.To.Add(new MailAddress("gabriela.guerrero@cit.hn"));
-            msg.To.Add(new MailAddress("carlos.morales@cit.hn"));
+            msg.To.Add(new MailAddress("soportecrmweb@gmail.com"));
             msg.Subject = "Recibo Intermoda";
             msg.Body = "Estimado(a) Señor(a):"  +nombreCliente+", "+
                        Environment.NewLine+
@@ -53,7 +50,7 @@ namespace AventasApi.Controllers
             client.UseDefaultCredentials = false;
             client.Credentials = new System.Net.NetworkCredential(email, ps);
             client.Port = 587; // 
-            client.Host = "smtp.live.com";
+            client.Host = "smtp.gmail.com";
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.EnableSsl = true;
             client.Send(msg);
@@ -64,8 +61,8 @@ namespace AventasApi.Controllers
             //Email Sender Info
             //var email = context.Configuraciones.FirstOrDefault(x => x.NombreConfiguracion == "email").Valor;
             //var ps = context.Configuraciones.FirstOrDefault(x => x.NombreConfiguracion == "emailps").Valor;
-            var email = "aaron.lemus@cit.hn";
-            var ps = "Karr9526";
+            var email = "soportecrmweb@gmail.com";
+            var ps = "Intermoda1234";
             MailMessage msg = new MailMessage();
             foreach (var item in ListRecievers)
             {
@@ -81,7 +78,7 @@ namespace AventasApi.Controllers
             client.UseDefaultCredentials = false;
             client.Credentials = new System.Net.NetworkCredential(email, ps);
             client.Port = 587; // 
-            client.Host = "smtp.live.com";
+            client.Host = "smtp.gmail.com";
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.EnableSsl = true;
             client.Send(msg);

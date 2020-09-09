@@ -176,10 +176,9 @@
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdMon__36870511" />
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdPro__377B294A" />
         <EntityTypeShape EntityType="AventasModel.ClienteContado" Width="1.5" PointX="8.375" PointY="0.75" />
-        <EntityTypeShape EntityType="AventasModel.PedidosDetalle" Width="1.5" PointX="26.75" PointY="35.75" />
+        <EntityTypeShape EntityType="AventasModel.PedidosDetalle" Width="1.5" PointX="26.75" PointY="35.875" />
         <AssociationConnector Association="AventasModel.FK__PedidosDe__Pedid__70099B30" />
         <AssociationConnector Association="AventasModel.FK_PedidosDetalle_ProductosxColeccion" />
-        <AssociationConnector Association="AventasModel.FK__PedidosDe__Codig__17ED6F58" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

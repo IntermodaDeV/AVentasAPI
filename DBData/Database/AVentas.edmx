@@ -250,6 +250,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="VentaInicio" Type="datetime" />
           <Property Name="VentaFinal" Type="datetime" />
           <Property Name="FotoPortada" Type="varchar" MaxLength="2500" />
+          <Property Name="FechaUltSincronizacion" Type="datetime" />
         </EntityType>
         <EntityType Name="Colores">
           <Key>
@@ -577,7 +578,6 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IdPedidoDetalle" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PedidoId" Type="varchar" MaxLength="250" />
           <Property Name="IdProducto" Type="int" />
-          <Property Name="CodigoProducto" Type="varchar" MaxLength="150" />
           <Property Name="CodigoColor" Type="varchar" MaxLength="50" />
           <Property Name="CodigoTalla" Type="varchar" MaxLength="250" />
           <Property Name="Linea" Type="int" />
@@ -586,7 +586,6 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="MontoLinea" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Fecha" Type="datetime" />
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
-          <Property Name="CodigoGrupoTalla" Type="varchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="PedidosxCliente">
           <Key>
@@ -1640,18 +1639,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__PedidosDe__Codig__17ED6F58">
-          <End Role="GrupoTalla" Type="Self.GrupoTalla" Multiplicity="0..1" />
-          <End Role="PedidosDetalle" Type="Self.PedidosDetalle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="GrupoTalla">
-              <PropertyRef Name="CodigoGrupoTalla" />
-            </Principal>
-            <Dependent Role="PedidosDetalle">
-              <PropertyRef Name="CodigoGrupoTalla" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__PedidosDe__Pedid__70099B30">
           <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="0..1" />
           <End Role="PedidosDetalle" Type="Self.PedidosDetalle" Multiplicity="*" />
@@ -2566,10 +2553,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="PantallasxUsuario" EntitySet="PantallasxUsuario" />
           </AssociationSet>
-          <AssociationSet Name="FK__PedidosDe__Codig__17ED6F58" Association="Self.FK__PedidosDe__Codig__17ED6F58">
-            <End Role="GrupoTalla" EntitySet="GrupoTalla" />
-            <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
-          </AssociationSet>
           <AssociationSet Name="FK__PedidosDe__Pedid__70099B30" Association="Self.FK__PedidosDe__Pedid__70099B30">
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
             <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
@@ -2989,6 +2972,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="LineasxColeccion" Relationship="Self.FK__LineasxCo__IdCol__442B18F2" FromRole="Colecciones" ToRole="LineasxColeccion" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__Productos__IdCol__4DB4832C" FromRole="Colecciones" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="Colecciones" ToRole="PedidosxCliente" />
+          <Property Name="FechaUltSincronizacion" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Colores">
           <Key>
@@ -3209,7 +3193,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Descripcion" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__Productos__Codig__4F9CCB9E" FromRole="GrupoTalla" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="TallasXGrupo" Relationship="Self.FK__TallasXGr__Codig__4AD81681" FromRole="GrupoTalla" ToRole="TallasXGrupo" />
-          <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK__PedidosDe__Codig__17ED6F58" FromRole="GrupoTalla" ToRole="PedidosDetalle" />
         </EntityType>
         <EntityType Name="LimiteCreditoxCliente">
           <Key>
@@ -5027,10 +5010,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
           </AssociationSet>
-          <AssociationSet Name="FK__PedidosDe__Codig__17ED6F58" Association="AventasModel.FK__PedidosDe__Codig__17ED6F58">
-            <End Role="GrupoTalla" EntitySet="GrupoTalla" />
-            <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
-          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -5075,11 +5054,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="Int32" Name="PorcentajeEjecucion" Nullable="false" />
           <Property Type="Int32" Name="ClienteCancelo" Nullable="true" />
           <Property Type="Int32" Name="Efectivas" Nullable="true" />
-          <Property Type="Int32" Name="Productivas" Nullable="true" />
-          <Property Type="Int32" Name="Pedidos" Nullable="true" />
-          <Property Type="Int32" Name="Recibos" Nullable="true" />
-          <Property Type="Decimal" Name="TotalPedidos" Nullable="true" Precision="38" Scale="2" />
-          <Property Type="Decimal" Name="TotalRecibos" Nullable="true" Precision="38" Scale="4" />
         </ComplexType>
         <ComplexType Name="PResumenCredito_Result">
           <Property Type="Int32" Name="Id" Nullable="true" />
@@ -5624,7 +5598,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="IdPedidoDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="PedidoId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="IdProducto" Type="Int32" />
-          <Property Name="CodigoProducto" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="CodigoColor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="CodigoTalla" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Linea" Type="Int32" />
@@ -5635,8 +5608,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosDetalle" ToRole="PedidosxCliente" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion" FromRole="PedidosDetalle" ToRole="ProductosxColeccion" />
-          <Property Name="CodigoGrupoTalla" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="GrupoTalla" Relationship="AventasModel.FK__PedidosDe__Codig__17ED6F58" FromRole="PedidosDetalle" ToRole="GrupoTalla" />
         </EntityType>
         <Association Name="FK__PedidosDe__Pedid__70099B30">
           <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="0..1" />
@@ -5659,18 +5630,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="PedidosDetalle">
               <PropertyRef Name="IdProducto" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosDe__Codig__17ED6F58">
-          <End Type="AventasModel.GrupoTalla" Role="GrupoTalla" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosDetalle" Role="PedidosDetalle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="GrupoTalla">
-              <PropertyRef Name="CodigoGrupoTalla" />
-            </Principal>
-            <Dependent Role="PedidosDetalle">
-              <PropertyRef Name="CodigoGrupoTalla" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -5867,6 +5826,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Colecciones">
             <EntityTypeMapping TypeName="AventasModel.Colecciones">
               <MappingFragment StoreEntitySet="Colecciones">
+                <ScalarProperty Name="FechaUltSincronizacion" ColumnName="FechaUltSincronizacion" />
                 <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
                 <ScalarProperty Name="CodigoColeccion" ColumnName="CodigoColeccion" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
@@ -6497,11 +6457,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="PorcentajeEjecucion" ColumnName="PorcentajeEjecucion" />
                 <ScalarProperty Name="ClienteCancelo" ColumnName="ClienteCancelo" />
                 <ScalarProperty Name="Efectivas" ColumnName="Efectivas" />
-                <ScalarProperty Name="Productivas" ColumnName="Productivas" />
-                <ScalarProperty Name="Pedidos" ColumnName="Pedidos" />
-                <ScalarProperty Name="Recibos" ColumnName="Recibos" />
-                <ScalarProperty Name="TotalPedidos" ColumnName="TotalPedidos" />
-                <ScalarProperty Name="TotalRecibos" ColumnName="TotalRecibos" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -6761,7 +6716,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="PedidosDetalle">
             <EntityTypeMapping TypeName="AventasModel.PedidosDetalle">
               <MappingFragment StoreEntitySet="PedidosDetalle">
-                <ScalarProperty Name="CodigoGrupoTalla" ColumnName="CodigoGrupoTalla" />
                 <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
                 <ScalarProperty Name="Fecha" ColumnName="Fecha" />
                 <ScalarProperty Name="MontoLinea" ColumnName="MontoLinea" />
@@ -6770,7 +6724,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="Linea" ColumnName="Linea" />
                 <ScalarProperty Name="CodigoTalla" ColumnName="CodigoTalla" />
                 <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
-                <ScalarProperty Name="CodigoProducto" ColumnName="CodigoProducto" />
                 <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
                 <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
                 <ScalarProperty Name="IdPedidoDetalle" ColumnName="IdPedidoDetalle" />
