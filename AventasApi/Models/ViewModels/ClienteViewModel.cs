@@ -70,6 +70,7 @@ namespace AventasApi.Models
         public string FacturacionEntrega { get; set; }
         public string GrupoImpuesto { get; set; }
         public string ModoEntrega { get; set; }
+        public List<CuentaCorrienteViewModel> CuentaCorriente;
 
         public List<AcuerdoVentaViewModel> AcuerdosVenta;
         public Nullable<decimal> LimiteCredito { get; set; }
@@ -78,6 +79,7 @@ namespace AventasApi.Models
         public ClientePedidoViewModel()
         {
             this.Credito = new List<PResumenCredito_Result>();
+            this.CuentaCorriente = new List<CuentaCorrienteViewModel>();
         }
     }
 

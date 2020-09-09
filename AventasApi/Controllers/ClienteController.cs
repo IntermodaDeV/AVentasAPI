@@ -311,7 +311,12 @@ namespace AventasApi.Controllers
                         CreditoDisponible = cli.CreditoDisponible ?? 0,
                         GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
                         ModoEntrega = cli.ModoEntrega,
-                        FacturacionEntrega = cli.FacturacionEntrega
+                        FacturacionEntrega = cli.FacturacionEntrega,
+                        CuentaCorriente = ctx.LimiteCreditoxCliente.Where(lcc => lcc.CodigoCliente == cli.CodigoCliente).Select(lcc => new CuentaCorrienteViewModel
+                        {
+                            Descripcion = lcc.Descripcion,
+                            Valor = lcc.Valor ?? 0
+                        }).ToList()
                     }).ToListAsync();
 
                     foreach (var cliente in clientes)

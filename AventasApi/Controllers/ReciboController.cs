@@ -204,7 +204,7 @@ namespace AventasApi.Controllers
                         Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
                         Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
                         SpecPago = pago.TipoPagoDetalle,
-                        EsContado =Convert.ToBoolean(anticipoPost.EsContado),
+                        EsContado = anticipoPost.EsContado == "1" ? true: false,
                         Descuento=0
                     };
                     var pagoBD = context.TiposdePago.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
