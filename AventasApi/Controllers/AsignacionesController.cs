@@ -58,7 +58,7 @@ namespace AventasApi.Controllers
                         Observacion = axa.Observacion,
                         PrioridadAsignacion = axa.PrioridadAsignacion,
                         Checkin = axa.fechaCheckIn != null,
-                        Checkout = axa.fechaCheckOut != null
+                        Checkout = axa.fechaCheckIn == null? (axa.fechaCheckIn == null):(axa.fechaCheckOut!=null)
                     })
                 .OrderBy(axa => axa.HoraInicio).ToList();
 
