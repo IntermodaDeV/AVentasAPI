@@ -21,5 +21,7 @@ namespace DBData.Database
         public bool FINALIZADO { get; set; }
         public string USUARIO { get; set; }
         public Nullable<System.DateTime> FECHA { get; set; }
+    
+        public virtual GESTORES GESTORES { get; set; }
     }
 }

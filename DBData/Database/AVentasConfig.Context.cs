@@ -12,6 +12,8 @@ namespace DBData.Database
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class AVentasConfigEntities : DbContext
     {
@@ -26,5 +28,23 @@ namespace DBData.Database
         }
     
         public virtual DbSet<CONFIGURACIONE> CONFIGURACIONES { get; set; }
+        public virtual DbSet<GESTORES> GESTORES { get; set; }
+        public virtual DbSet<LISTA_EJECUCION> LISTA_EJECUCION { get; set; }
+        public virtual DbSet<LISTA_EJECUCION_MANUAL> LISTA_EJECUCION_MANUAL { get; set; }
+        public virtual DbSet<LOG_EJECUCION> LOG_EJECUCION { get; set; }
+        public virtual DbSet<MODULOS> MODULOS { get; set; }
+    
+        public virtual ObjectResult<SP_POST_LISTA_EJECUCION_MANUAL_Result> SP_POST_LISTA_EJECUCION_MANUAL(Nullable<int> iD_GESTOR, string uSUARIO)
+        {
+            var iD_GESTORParameter = iD_GESTOR.HasValue ?
+                new ObjectParameter("ID_GESTOR", iD_GESTOR) :
+                new ObjectParameter("ID_GESTOR", typeof(int));
+    
+            var uSUARIOParameter = uSUARIO != null ?
+                new ObjectParameter("USUARIO", uSUARIO) :
+                new ObjectParameter("USUARIO", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_POST_LISTA_EJECUCION_MANUAL_Result>("SP_POST_LISTA_EJECUCION_MANUAL", iD_GESTORParameter, uSUARIOParameter);
+        }
     }
 }

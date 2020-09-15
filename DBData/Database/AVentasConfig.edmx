@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="AVentasConfigModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="AVentasConfigModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="CONFIGURACIONES">
           <Key>
             <PropertyRef Name="ROWID" />
@@ -15,11 +15,182 @@
           <Property Name="MODULO" Type="varchar" MaxLength="150" />
           <Property Name="ROWID" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
+        <EntityType Name="GESTORES">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="varchar" MaxLength="100" />
+          <Property Name="DESCRIPCION" Type="varchar" MaxLength="250" />
+          <Property Name="ID_GP" Type="int" />
+          <Property Name="STATUS" Type="bit" />
+          <Property Name="ROWID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ULT_SINCRONIZACION" Type="datetime" />
+          <Property Name="T_MIN_SINC" Type="int" Nullable="false" />
+          <Property Name="FORZAR" Type="bit" Nullable="false" />
+          <Property Name="NIVEL_PRIORIDAD" Type="int" Nullable="false" />
+          <Property Name="GRUPO" Type="int" />
+          <Property Name="ORDEN" Type="int" />
+          <Property Name="ID_MODULO" Type="int" />
+          <Property Name="ETIQUETA" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="LISTA_EJECUCION">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_GESTOR" Type="int" />
+          <Property Name="EN_ESPERA" Type="bit" Nullable="false" />
+          <Property Name="EN_EJECUCION" Type="bit" Nullable="false" />
+          <Property Name="FINALIZADO" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LISTA_EJECUCION_MANUAL">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_GESTOR" Type="int" />
+          <Property Name="EN_ESPERA" Type="bit" Nullable="false" />
+          <Property Name="EN_EJECUCION" Type="bit" Nullable="false" />
+          <Property Name="FINALIZADO" Type="bit" Nullable="false" />
+          <Property Name="USUARIO" Type="varchar" MaxLength="50" />
+          <Property Name="FECHA" Type="datetime" />
+        </EntityType>
+        <EntityType Name="LOG_EJECUCION">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_LISTA_EJECUCION" Type="int" />
+          <Property Name="STATUS" Type="int" Nullable="false" />
+          <Property Name="MENSAJE" Type="text" Nullable="false" />
+          <Property Name="FECHA_INICIO" Type="datetime" Nullable="false" />
+          <Property Name="FECHA_FINAL" Type="datetime" Nullable="false" />
+          <Property Name="REG_OBTENIDOS" Type="int" Nullable="false" />
+          <Property Name="REG_NUE" Type="int" Nullable="false" />
+          <Property Name="REG_ACT" Type="int" Nullable="false" />
+          <Property Name="REG_ELI" Type="int" Nullable="false" />
+          <Property Name="FECHA_CREACION" Type="datetime" Nullable="false" />
+          <Property Name="REG_PROCESADOS" Type="int" Nullable="false" />
+          <Property Name="REG_CORRECTOS" Type="int" Nullable="false" />
+          <Property Name="REG_INCORRECTOS" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MODULOS">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NOMBRE" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <Association Name="FK__GESTORES__ID_GP__412EB0B6">
+          <End Role="GESTORES" Type="Self.GESTORES" Multiplicity="0..1" />
+          <End Role="GESTORES1" Type="Self.GESTORES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GESTORES1">
+              <PropertyRef Name="ID_GP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__GESTORES__ID_MOD__75A278F5">
+          <End Role="MODULOS" Type="Self.MODULOS" Multiplicity="0..1" />
+          <End Role="GESTORES" Type="Self.GESTORES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MODULOS">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GESTORES">
+              <PropertyRef Name="ID_MODULO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LISTA_EJE__ID_GE__14270015">
+          <End Role="GESTORES" Type="Self.GESTORES" Multiplicity="0..1" />
+          <End Role="LISTA_EJECUCION_MANUAL" Type="Self.LISTA_EJECUCION_MANUAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION_MANUAL">
+              <PropertyRef Name="ID_GESTOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LISTA_EJE__ID_GE__4222D4EF">
+          <End Role="GESTORES" Type="Self.GESTORES" Multiplicity="0..1" />
+          <End Role="LISTA_EJECUCION" Type="Self.LISTA_EJECUCION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION">
+              <PropertyRef Name="ID_GESTOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LISTA_EJE__ID_GE__6FE99F9F">
+          <End Role="GESTORES" Type="Self.GESTORES" Multiplicity="0..1" />
+          <End Role="LISTA_EJECUCION" Type="Self.LISTA_EJECUCION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION">
+              <PropertyRef Name="ID_GESTOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LOG_EJECU__ID_LI__4316F928">
+          <End Role="LISTA_EJECUCION" Type="Self.LISTA_EJECUCION" Multiplicity="0..1" />
+          <End Role="LOG_EJECUCION" Type="Self.LOG_EJECUCION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LISTA_EJECUCION">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LOG_EJECUCION">
+              <PropertyRef Name="ID_LISTA_EJECUCION" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="SP_POST_LISTA_EJECUCION_MANUAL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID_GESTOR" Type="int" Mode="In" />
+          <Parameter Name="USUARIO" Type="varchar" Mode="In" />
+        </Function>
         <EntityContainer Name="AVentasConfigModelStoreContainer">
           <EntitySet Name="CONFIGURACIONES" EntityType="Self.CONFIGURACIONES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GESTORES" EntityType="Self.GESTORES" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LISTA_EJECUCION" EntityType="Self.LISTA_EJECUCION" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LISTA_EJECUCION_MANUAL" EntityType="Self.LISTA_EJECUCION_MANUAL" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LOG_EJECUCION" EntityType="Self.LOG_EJECUCION" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MODULOS" EntityType="Self.MODULOS" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__GESTORES__ID_GP__412EB0B6" Association="Self.FK__GESTORES__ID_GP__412EB0B6">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="GESTORES1" EntitySet="GESTORES" />
+          </AssociationSet>
+          <AssociationSet Name="FK__GESTORES__ID_MOD__75A278F5" Association="Self.FK__GESTORES__ID_MOD__75A278F5">
+            <End Role="MODULOS" EntitySet="MODULOS" />
+            <End Role="GESTORES" EntitySet="GESTORES" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__14270015" Association="Self.FK__LISTA_EJE__ID_GE__14270015">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION_MANUAL" EntitySet="LISTA_EJECUCION_MANUAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__4222D4EF" Association="Self.FK__LISTA_EJE__ID_GE__4222D4EF">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION" EntitySet="LISTA_EJECUCION" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__6FE99F9F" Association="Self.FK__LISTA_EJE__ID_GE__6FE99F9F">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION" EntitySet="LISTA_EJECUCION" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LOG_EJECU__ID_LI__4316F928" Association="Self.FK__LOG_EJECU__ID_LI__4316F928">
+            <End Role="LISTA_EJECUCION" EntitySet="LISTA_EJECUCION" />
+            <End Role="LOG_EJECUCION" EntitySet="LOG_EJECUCION" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="AVentasConfigModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -35,7 +206,194 @@
         </EntityType>
         <EntityContainer Name="AVentasConfigEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="CONFIGURACIONES" EntityType="Self.CONFIGURACIONE" />
+          <EntitySet Name="GESTORES" EntityType="AVentasConfigModel.GESTORES" />
+          <EntitySet Name="LISTA_EJECUCION" EntityType="AVentasConfigModel.LISTA_EJECUCION" />
+          <EntitySet Name="LISTA_EJECUCION_MANUAL" EntityType="AVentasConfigModel.LISTA_EJECUCION_MANUAL" />
+          <EntitySet Name="LOG_EJECUCION" EntityType="AVentasConfigModel.LOG_EJECUCION" />
+          <EntitySet Name="MODULOS" EntityType="AVentasConfigModel.MODULOS" />
+          <AssociationSet Name="FK__GESTORES__ID_GP__412EB0B6" Association="AVentasConfigModel.FK__GESTORES__ID_GP__412EB0B6">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="GESTORES1" EntitySet="GESTORES" />
+          </AssociationSet>
+          <AssociationSet Name="FK__GESTORES__ID_MOD__75A278F5" Association="AVentasConfigModel.FK__GESTORES__ID_MOD__75A278F5">
+            <End Role="MODULOS" EntitySet="MODULOS" />
+            <End Role="GESTORES" EntitySet="GESTORES" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__4222D4EF" Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__4222D4EF">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION" EntitySet="LISTA_EJECUCION" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__6FE99F9F" Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__6FE99F9F">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION" EntitySet="LISTA_EJECUCION" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LOG_EJECU__ID_LI__4316F928" Association="AVentasConfigModel.FK__LOG_EJECU__ID_LI__4316F928">
+            <End Role="LISTA_EJECUCION" EntitySet="LISTA_EJECUCION" />
+            <End Role="LOG_EJECUCION" EntitySet="LOG_EJECUCION" />
+          </AssociationSet>
+          <FunctionImport Name="SP_POST_LISTA_EJECUCION_MANUAL" ReturnType="Collection(AVentasConfigModel.SP_POST_LISTA_EJECUCION_MANUAL_Result)">
+            <Parameter Name="ID_GESTOR" Mode="In" Type="Int32" />
+            <Parameter Name="USUARIO" Mode="In" Type="String" />
+          </FunctionImport>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__14270015" Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__14270015">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION_MANUAL" EntitySet="LISTA_EJECUCION_MANUAL" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="GESTORES">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="DESCRIPCION" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="ID_GP" Type="Int32" />
+          <Property Name="STATUS" Type="Boolean" />
+          <Property Name="ROWID" Type="Guid" Nullable="false" />
+          <Property Name="ULT_SINCRONIZACION" Type="DateTime" Precision="3" />
+          <Property Name="T_MIN_SINC" Type="Int32" Nullable="false" />
+          <Property Name="FORZAR" Type="Boolean" Nullable="false" />
+          <Property Name="NIVEL_PRIORIDAD" Type="Int32" Nullable="false" />
+          <Property Name="GRUPO" Type="Int32" />
+          <Property Name="ORDEN" Type="Int32" />
+          <Property Name="ID_MODULO" Type="Int32" />
+          <NavigationProperty Name="GESTORES1" Relationship="AVentasConfigModel.FK__GESTORES__ID_GP__412EB0B6" FromRole="GESTORES" ToRole="GESTORES1" />
+          <NavigationProperty Name="GESTORES2" Relationship="AVentasConfigModel.FK__GESTORES__ID_GP__412EB0B6" FromRole="GESTORES1" ToRole="GESTORES" />
+          <NavigationProperty Name="MODULOS" Relationship="AVentasConfigModel.FK__GESTORES__ID_MOD__75A278F5" FromRole="GESTORES" ToRole="MODULOS" />
+          <NavigationProperty Name="LISTA_EJECUCION" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__4222D4EF" FromRole="GESTORES" ToRole="LISTA_EJECUCION" />
+          <NavigationProperty Name="LISTA_EJECUCION1" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__6FE99F9F" FromRole="GESTORES" ToRole="LISTA_EJECUCION" />
+          <Property Name="ETIQUETA" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="LISTA_EJECUCION_MANUAL" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__14270015" FromRole="GESTORES" ToRole="LISTA_EJECUCION_MANUAL" />
+        </EntityType>
+        <EntityType Name="LISTA_EJECUCION">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_GESTOR" Type="Int32" />
+          <Property Name="EN_ESPERA" Type="Boolean" Nullable="false" />
+          <Property Name="EN_EJECUCION" Type="Boolean" Nullable="false" />
+          <Property Name="FINALIZADO" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="GESTORES" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__4222D4EF" FromRole="LISTA_EJECUCION" ToRole="GESTORES" />
+          <NavigationProperty Name="GESTORES1" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__6FE99F9F" FromRole="LISTA_EJECUCION" ToRole="GESTORES" />
+          <NavigationProperty Name="LOG_EJECUCION" Relationship="AVentasConfigModel.FK__LOG_EJECU__ID_LI__4316F928" FromRole="LISTA_EJECUCION" ToRole="LOG_EJECUCION" />
+        </EntityType>
+        <EntityType Name="LISTA_EJECUCION_MANUAL">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_GESTOR" Type="Int32" />
+          <Property Name="EN_ESPERA" Type="Boolean" Nullable="false" />
+          <Property Name="EN_EJECUCION" Type="Boolean" Nullable="false" />
+          <Property Name="FINALIZADO" Type="Boolean" Nullable="false" />
+          <Property Name="USUARIO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FECHA" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="GESTORES" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__14270015" FromRole="LISTA_EJECUCION_MANUAL" ToRole="GESTORES" />
+        </EntityType>
+        <EntityType Name="LOG_EJECUCION">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_LISTA_EJECUCION" Type="Int32" />
+          <Property Name="STATUS" Type="Int32" Nullable="false" />
+          <Property Name="MENSAJE" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FECHA_INICIO" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FECHA_FINAL" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="REG_OBTENIDOS" Type="Int32" Nullable="false" />
+          <Property Name="REG_NUE" Type="Int32" Nullable="false" />
+          <Property Name="REG_ACT" Type="Int32" Nullable="false" />
+          <Property Name="REG_ELI" Type="Int32" Nullable="false" />
+          <Property Name="FECHA_CREACION" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="REG_PROCESADOS" Type="Int32" Nullable="false" />
+          <Property Name="REG_CORRECTOS" Type="Int32" Nullable="false" />
+          <Property Name="REG_INCORRECTOS" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="LISTA_EJECUCION" Relationship="AVentasConfigModel.FK__LOG_EJECU__ID_LI__4316F928" FromRole="LOG_EJECUCION" ToRole="LISTA_EJECUCION" />
+        </EntityType>
+        <EntityType Name="MODULOS">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NOMBRE" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="GESTORES" Relationship="AVentasConfigModel.FK__GESTORES__ID_MOD__75A278F5" FromRole="MODULOS" ToRole="GESTORES" />
+        </EntityType>
+        <Association Name="FK__GESTORES__ID_GP__412EB0B6">
+          <End Type="AVentasConfigModel.GESTORES" Role="GESTORES" Multiplicity="0..1" />
+          <End Type="AVentasConfigModel.GESTORES" Role="GESTORES1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GESTORES1">
+              <PropertyRef Name="ID_GP" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__GESTORES__ID_MOD__75A278F5">
+          <End Type="AVentasConfigModel.MODULOS" Role="MODULOS" Multiplicity="0..1" />
+          <End Type="AVentasConfigModel.GESTORES" Role="GESTORES" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MODULOS">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GESTORES">
+              <PropertyRef Name="ID_MODULO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LISTA_EJE__ID_GE__4222D4EF">
+          <End Type="AVentasConfigModel.GESTORES" Role="GESTORES" Multiplicity="0..1" />
+          <End Type="AVentasConfigModel.LISTA_EJECUCION" Role="LISTA_EJECUCION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION">
+              <PropertyRef Name="ID_GESTOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LISTA_EJE__ID_GE__6FE99F9F">
+          <End Type="AVentasConfigModel.GESTORES" Role="GESTORES" Multiplicity="0..1" />
+          <End Type="AVentasConfigModel.LISTA_EJECUCION" Role="LISTA_EJECUCION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION">
+              <PropertyRef Name="ID_GESTOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LOG_EJECU__ID_LI__4316F928">
+          <End Type="AVentasConfigModel.LISTA_EJECUCION" Role="LISTA_EJECUCION" Multiplicity="0..1" />
+          <End Type="AVentasConfigModel.LOG_EJECUCION" Role="LOG_EJECUCION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LISTA_EJECUCION">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LOG_EJECUCION">
+              <PropertyRef Name="ID_LISTA_EJECUCION" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="SP_POST_LISTA_EJECUCION_MANUAL_Result">
+          <Property Type="String" Name="Resultado" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <Association Name="FK__LISTA_EJE__ID_GE__14270015">
+          <End Type="AVentasConfigModel.GESTORES" Role="GESTORES" Multiplicity="0..1" />
+          <End Type="AVentasConfigModel.LISTA_EJECUCION_MANUAL" Role="LISTA_EJECUCION_MANUAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION_MANUAL">
+              <PropertyRef Name="ID_GESTOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -53,6 +411,85 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="GESTORES">
+            <EntityTypeMapping TypeName="AVentasConfigModel.GESTORES">
+              <MappingFragment StoreEntitySet="GESTORES">
+                <ScalarProperty Name="ETIQUETA" ColumnName="ETIQUETA" />
+                <ScalarProperty Name="ID_MODULO" ColumnName="ID_MODULO" />
+                <ScalarProperty Name="ORDEN" ColumnName="ORDEN" />
+                <ScalarProperty Name="GRUPO" ColumnName="GRUPO" />
+                <ScalarProperty Name="NIVEL_PRIORIDAD" ColumnName="NIVEL_PRIORIDAD" />
+                <ScalarProperty Name="FORZAR" ColumnName="FORZAR" />
+                <ScalarProperty Name="T_MIN_SINC" ColumnName="T_MIN_SINC" />
+                <ScalarProperty Name="ULT_SINCRONIZACION" ColumnName="ULT_SINCRONIZACION" />
+                <ScalarProperty Name="ROWID" ColumnName="ROWID" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="ID_GP" ColumnName="ID_GP" />
+                <ScalarProperty Name="DESCRIPCION" ColumnName="DESCRIPCION" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LISTA_EJECUCION">
+            <EntityTypeMapping TypeName="AVentasConfigModel.LISTA_EJECUCION">
+              <MappingFragment StoreEntitySet="LISTA_EJECUCION">
+                <ScalarProperty Name="FINALIZADO" ColumnName="FINALIZADO" />
+                <ScalarProperty Name="EN_EJECUCION" ColumnName="EN_EJECUCION" />
+                <ScalarProperty Name="EN_ESPERA" ColumnName="EN_ESPERA" />
+                <ScalarProperty Name="ID_GESTOR" ColumnName="ID_GESTOR" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LISTA_EJECUCION_MANUAL">
+            <EntityTypeMapping TypeName="AVentasConfigModel.LISTA_EJECUCION_MANUAL">
+              <MappingFragment StoreEntitySet="LISTA_EJECUCION_MANUAL">
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+                <ScalarProperty Name="USUARIO" ColumnName="USUARIO" />
+                <ScalarProperty Name="FINALIZADO" ColumnName="FINALIZADO" />
+                <ScalarProperty Name="EN_EJECUCION" ColumnName="EN_EJECUCION" />
+                <ScalarProperty Name="EN_ESPERA" ColumnName="EN_ESPERA" />
+                <ScalarProperty Name="ID_GESTOR" ColumnName="ID_GESTOR" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LOG_EJECUCION">
+            <EntityTypeMapping TypeName="AVentasConfigModel.LOG_EJECUCION">
+              <MappingFragment StoreEntitySet="LOG_EJECUCION">
+                <ScalarProperty Name="REG_INCORRECTOS" ColumnName="REG_INCORRECTOS" />
+                <ScalarProperty Name="REG_CORRECTOS" ColumnName="REG_CORRECTOS" />
+                <ScalarProperty Name="REG_PROCESADOS" ColumnName="REG_PROCESADOS" />
+                <ScalarProperty Name="FECHA_CREACION" ColumnName="FECHA_CREACION" />
+                <ScalarProperty Name="REG_ELI" ColumnName="REG_ELI" />
+                <ScalarProperty Name="REG_ACT" ColumnName="REG_ACT" />
+                <ScalarProperty Name="REG_NUE" ColumnName="REG_NUE" />
+                <ScalarProperty Name="REG_OBTENIDOS" ColumnName="REG_OBTENIDOS" />
+                <ScalarProperty Name="FECHA_FINAL" ColumnName="FECHA_FINAL" />
+                <ScalarProperty Name="FECHA_INICIO" ColumnName="FECHA_INICIO" />
+                <ScalarProperty Name="MENSAJE" ColumnName="MENSAJE" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="ID_LISTA_EJECUCION" ColumnName="ID_LISTA_EJECUCION" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MODULOS">
+            <EntityTypeMapping TypeName="AVentasConfigModel.MODULOS">
+              <MappingFragment StoreEntitySet="MODULOS">
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_POST_LISTA_EJECUCION_MANUAL" FunctionName="AVentasConfigModel.Store.SP_POST_LISTA_EJECUCION_MANUAL" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AVentasConfigModel.SP_POST_LISTA_EJECUCION_MANUAL_Result">
+                <ScalarProperty Name="Resultado" ColumnName="Resultado" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -67,7 +504,7 @@
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
         <DesignerProperty Name="UseLegacyProvider" Value="false" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
