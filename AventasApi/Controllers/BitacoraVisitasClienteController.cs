@@ -76,7 +76,10 @@ namespace AventasApi.Controllers
                 context.SaveChanges();
             }
 
-
+            var asignacion = context.AsignacionxAsesor.FirstOrDefault(x=>x.IdAsignacionxAsesor == bitacoraVisitasCliente.IdAsignacionxAsesor);
+            asignacion.BloqueoCheckin = true;
+            asignacion.Cancelada = true;
+            context.SaveChanges();
 
             return StatusCode(HttpStatusCode.NoContent);
         }

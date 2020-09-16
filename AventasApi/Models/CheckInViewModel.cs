@@ -8,5 +8,8 @@ namespace AventasApi.Models
         public int IdAsignacionxAsesor { get; set; }
         public Location location = new Location();
         public DateTime Fecha { get; set; }
+        public DateTime Inicio { get; set; }
+        public DateTime Fin { get; set; }
+        public string Asesor { get; set; }
     }
 }

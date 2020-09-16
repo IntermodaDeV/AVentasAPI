@@ -356,6 +356,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62630</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:62630/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

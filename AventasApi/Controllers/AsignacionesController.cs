@@ -15,6 +15,7 @@ using AventasApi.Models.ViewModels;
 using AventasApi.Services.Authentication;
 using AventasApi.Models;
 using System.Globalization;
+using System.Data.Entity;
 
 namespace AventasApi.Controllers
 {
@@ -57,8 +58,8 @@ namespace AventasApi.Controllers
                         idTipoVisita = axa.idTipoVisita,
                         Observacion = axa.Observacion,
                         PrioridadAsignacion = axa.PrioridadAsignacion,
-                        Checkin = axa.fechaCheckIn != null,
-                        Checkout = axa.fechaCheckIn == null? (axa.fechaCheckIn == null):(axa.fechaCheckOut!=null)
+                        Checkin = axa.BloqueoCheckin,
+                        Checkout = axa.BloqueoCheckout
                     })
                 .OrderBy(axa => axa.HoraInicio).ToList();
 
@@ -168,7 +169,9 @@ namespace AventasApi.Controllers
                         HoraFinal = asi.HoraFin,
                         idPrioridad = asi.IdPrioridad,
                         idTipoVisita = asi.IdTipoVisita,
-                        Observacion = asi.Observacion
+                        Observacion = asi.Observacion,
+                        BloqueoCheckin =false,
+                        BloqueoCheckout=true
                     }).ToList();
 
                 foreach (var asignacion in asignaciones)
@@ -209,8 +212,30 @@ namespace AventasApi.Controllers
                     asignacion.latitudeCheckIn = (model.location != null) ? model.location.latitude : null;
                     asignacion.longitudeCheckIn = (model.location != null) ? model.location.longitude : null;
                     asignacion.fechaCheckIn = model.Fecha;
+                    asignacion.BloqueoCheckin = true;
+                    asignacion.BloqueoCheckout = false;
 
                     await ctx.SaveChangesAsync();
+
+                    var FechaInicio = new DateTime(model.Inicio.Year, model.Inicio.Month, model.Inicio.Day);
+                    var FechaFin = new DateTime(model.Fin.Year, model.Fin.Month, model.Fin.Day);
+                    FechaFin = FechaFin.AddDays(1);
+
+                    var asignaciones = await ctx.AsignacionxAsesor.Where(axa =>
+                        axa.CodigoAsesor == model.Asesor 
+                        && axa.FechaAsignacion >= FechaInicio 
+                        && axa.FechaAsignacion < FechaFin 
+                        && axa.IdAsignacionxAsesor != model.IdAsignacionxAsesor
+                        && axa.fechaCheckIn == null
+                        && axa.Cancelada == false
+                    ).ToListAsync();
+
+                    foreach (var tarea in asignaciones)
+                    {
+                        tarea.BloqueoCheckin = true;
+                        await ctx.SaveChangesAsync();
+                    }
+
                     var response = new { Message = "Se ha registrado el checkin con exito." };
                     return Ok(response);
                 }
@@ -232,8 +257,29 @@ namespace AventasApi.Controllers
                     asignacion.latitudeCheckOut = (model.location != null) ? model.location.latitude : null;
                     asignacion.longitudeCheckOut = (model.location != null) ? model.location.longitude : null;
                     asignacion.fechaCheckOut = model.Fecha;
+                    asignacion.BloqueoCheckout = true;
 
                     await ctx.SaveChangesAsync();
+
+                    var FechaInicio = new DateTime(model.Inicio.Year, model.Inicio.Month, model.Inicio.Day);
+                    var FechaFin = new DateTime(model.Fin.Year, model.Fin.Month, model.Fin.Day);
+                    FechaFin = FechaFin.AddDays(1);
+
+                    var asignaciones = await ctx.AsignacionxAsesor.Where(axa =>
+                        axa.CodigoAsesor == model.Asesor 
+                        && axa.FechaAsignacion >= FechaInicio 
+                        && axa.FechaAsignacion < FechaFin 
+                        && axa.IdAsignacionxAsesor!=model.IdAsignacionxAsesor
+                        && axa.fechaCheckIn==null
+                        && axa.Cancelada == false
+                    ).ToListAsync();
+
+                    foreach (var tarea in asignaciones)
+                    {
+                        tarea.BloqueoCheckin = false;
+                        await ctx.SaveChangesAsync();
+                    }
+
                     var response = new { Message = "Se ha registrado el checkout con exito." };
                     return Ok(response);
                 }
@@ -264,8 +310,40 @@ namespace AventasApi.Controllers
                         idPrioridad = x.idPrioridad,
                         HoraInicio = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraInicio}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
                         HoraFinal = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraFinal}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
-                        CodigoCliente = x.CodigoCliente
-                    });
+                        CodigoCliente = x.CodigoCliente,
+                        BloqueoCheckin=false,
+                        BloqueoCheckout=true
+                    }).ToList();
+
+                    for(int x = 0;x< listaDominio.Count(); x++)
+                    {
+                        var asignacion = listaDominio[x];
+                        var entityFound = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacion.CodigoCliente && cli.CodigoAsesor==asignacion.CodigoAsesor);
+
+                        if (entityFound == null)
+                        {
+                            return BadRequest($"El cliente no existe o no esta asignado al asesor. En asignacion {x+1}");
+                        }
+
+                        if (asignacion.Fecha < DateTime.Today)
+                        {
+                            return BadRequest($"Una o más asignaciones no se pueden crear ya que pertenecen a una fecha anterior. En asignacion {x+1}");
+                        }
+
+                        for(int y = 0; y < listaDominio.Count(); y++)
+                        {
+
+                            if ((asignacion.HoraInicio>listaDominio[y].HoraInicio) && (asignacion.HoraInicio < listaDominio[y].HoraFinal) && asignacion.CodigoAsesor== listaDominio[y].CodigoAsesor)
+                            {
+                                return BadRequest("Una o más asignaciones tienen conflicto de horarios.");
+                            }
+
+                            if ((asignacion.HoraFinal > listaDominio[y].HoraInicio) && (asignacion.HoraFinal < listaDominio[y].HoraFinal) && asignacion.CodigoAsesor == listaDominio[y].CodigoAsesor)
+                            {
+                                return BadRequest("Una o más asignaciones tienen conflicto de horarios.");
+                            }
+                        }
+                    }
 
                     ctx.AsignacionxAsesor.AddRange(listaDominio);
                     var result = await ctx.SaveChangesAsync();
