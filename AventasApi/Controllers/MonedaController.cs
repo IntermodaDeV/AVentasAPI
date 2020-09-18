@@ -22,5 +22,18 @@ namespace AventasApi.Controllers
             }).ToList();
             return Ok(monedas);
         }
+
+        [HttpGet]
+        [Route("api/Moneda")]
+        public async Task<IHttpActionResult> GetMonedasAbreviacion()
+        {
+            var monedas = context.MaestroMoneda.Select(mon => new MonedaViewModel
+            {
+                IdMoneda = mon.IdMoneda,
+                Moneda = mon.Moneda,
+                Abreviacion = mon.Abreviacion
+            }).ToList();
+            return Ok(monedas);
+        }
     }
 }
