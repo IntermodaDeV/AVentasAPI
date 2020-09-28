@@ -178,6 +178,40 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/cliente/asignacion")]
+        public async Task<IHttpActionResult> GetClientesAsignacion()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                    List<ClienteAgendaViewModel> clientes = await ctx.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoAsesor == user.UserAccount).Select(cli => new ClienteAgendaViewModel
+                    {
+                        EmpresaId = cli.EmpresaId,
+                        Codigo = cli.CodigoCliente,
+                        Nombre = cli.Nombre,
+                        Zona = cli.Zona,
+                        ComunidadAutonoma = cli.ComunidadAutonoma,
+                        Direccion = cli.Direccion,
+                        Moneda = cli.IdMoneda,
+                        Ruta = cli.ClientesxRuta.FirstOrDefault().Rutas.Nombre,
+                        CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
+                        Latitud = cli.Latitud,
+                        Longitud = cli.Longitud                    
+                    }).ToListAsync();
+
+                    return Ok(clientes);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
         [Route("~/api/cliente/agenda")]
         public async Task<IHttpActionResult> GetClientesAgenda()
         {
@@ -207,7 +241,6 @@ namespace AventasApi.Controllers
                         NumeroFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo),
                         MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,
                     }).ToListAsync();
-
 
                     foreach(var cliente in clientes)
                     {

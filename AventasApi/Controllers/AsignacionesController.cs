@@ -289,6 +289,7 @@ namespace AventasApi.Controllers
                 return BadRequest("Ocurrio un error, no se pudo registrar el checkout.");
             }
         }
+
         [HttpPost]
         [Route("~/api/asignaciones/cargar")]
         public async Task<IHttpActionResult> CargarAsignaciones([FromBody] IEnumerable<AsignacionViewModel> model)
@@ -302,50 +303,70 @@ namespace AventasApi.Controllers
 
                 using (var ctx = new AVentasEntities())
                 {
-                    var listaDominio = model.Select(x => new AsignacionxAsesor()
-                    {
-                        Fecha = DateTime.ParseExact(x.FechaAsignacion, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                        FechaAsignacion = DateTime.ParseExact(x.FechaAsignacion, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                        CodigoAsesor = x.CodigoAsesor,
-                        idPrioridad = x.idPrioridad,
-                        HoraInicio = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraInicio}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
-                        HoraFinal = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraFinal}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
-                        CodigoCliente = x.CodigoCliente,
-                        BloqueoCheckin=false,
-                        BloqueoCheckout=true
-                    }).ToList();
+                    var listaDominio  = ConvertirListaAsignacion(model);
+                    var asesores = listaDominio.Select(x => x.CodigoAsesor).Distinct().ToList(); 
+                    List<AsignacionxAsesor> listaGuardadas = new List<AsignacionxAsesor>();
 
-                    for(int x = 0;x< listaDominio.Count(); x++)
+                    foreach(var asesor in asesores)
                     {
-                        var asignacion = listaDominio[x];
-                        var entityFound = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacion.CodigoCliente && cli.CodigoAsesor==asignacion.CodigoAsesor);
+                        var entityFound = await ctx.Asesores.FirstOrDefaultAsync(cli => cli.CodigoAsesor == asesor);
 
                         if (entityFound == null)
                         {
-                            return BadRequest($"El cliente no existe o no esta asignado al asesor. En asignacion {x+1}");
+                            return BadRequest($"El codigo de asesor no existe.");
+                        }
+
+                        var listaAsignacionPorAsesor = await ctx.AsignacionxAsesor
+                            .Where(x=>x.CodigoAsesor== asesor)
+                            .OrderByDescending(x => x.FechaAsignacion)
+                            .Take(50)
+                            .ToListAsync();
+
+                        if (listaAsignacionPorAsesor.Count() > 0)
+                        {
+                            listaGuardadas.AddRange(listaAsignacionPorAsesor);
+                        }
+ 
+                    }
+
+                    listaDominio.AddRange(listaGuardadas);
+ 
+                    for(int x = 0; x < listaDominio.Count(); x++)
+                    {
+                        var asignacion = listaDominio[x];
+
+                        var entityFound = await ctx.Clientes.FirstOrDefaultAsync(cli => cli.CodigoCliente == asignacion.CodigoCliente && cli.CodigoAsesor == asignacion.CodigoAsesor);
+
+                        if (entityFound == null)
+                        {
+                            return BadRequest($"El cliente no existe o no esta asignado al asesor. En asignacion {x + 1}");
                         }
 
                         if (asignacion.Fecha < DateTime.Today)
                         {
-                            return BadRequest($"Una o más asignaciones no se pueden crear ya que pertenecen a una fecha anterior. En asignacion {x+1}");
+                            return BadRequest($"Una o más asignaciones no se pueden crear ya que pertenecen a una fecha anterior. En asignacion {x + 1}");
                         }
 
-                        for(int y = 0; y < listaDominio.Count(); y++)
+                        var listaComparacion = listaDominio;
+                        listaComparacion.RemoveAt(x);
+
+                        for (int y = 0; y < listaComparacion.Count(); y++)
                         {
 
-                            if ((asignacion.HoraInicio>listaDominio[y].HoraInicio) && (asignacion.HoraInicio < listaDominio[y].HoraFinal) && asignacion.CodigoAsesor== listaDominio[y].CodigoAsesor)
+                            if ((asignacion.HoraInicio >= listaComparacion[y].HoraInicio) && (asignacion.HoraInicio <= listaComparacion[y].HoraFinal) && asignacion.CodigoAsesor == listaComparacion[y].CodigoAsesor)
                             {
                                 return BadRequest("Una o más asignaciones tienen conflicto de horarios.");
                             }
 
-                            if ((asignacion.HoraFinal > listaDominio[y].HoraInicio) && (asignacion.HoraFinal < listaDominio[y].HoraFinal) && asignacion.CodigoAsesor == listaDominio[y].CodigoAsesor)
+                            if ((asignacion.HoraFinal >= listaComparacion[y].HoraInicio) && (asignacion.HoraFinal <= listaComparacion[y].HoraFinal) && asignacion.CodigoAsesor == listaComparacion[y].CodigoAsesor)
                             {
                                 return BadRequest("Una o más asignaciones tienen conflicto de horarios.");
                             }
                         }
                     }
 
-                    ctx.AsignacionxAsesor.AddRange(listaDominio);
+                    var listaGuardar = ConvertirListaAsignacion(model);
+                    ctx.AsignacionxAsesor.AddRange(listaGuardar);
                     var result = await ctx.SaveChangesAsync();
                     var response = new { Message = $"Se han registrado {result} asignaciones." };
                     return Ok(response);
@@ -355,6 +376,22 @@ namespace AventasApi.Controllers
             {
                 return BadRequest("Ha ocurrido un error y no se pudo registar las asignaciones.");
             }
+        }
+
+        private List<AsignacionxAsesor> ConvertirListaAsignacion(IEnumerable<AsignacionViewModel> model)
+        {
+            return model.Select(x => new AsignacionxAsesor()
+            {
+                Fecha = DateTime.ParseExact(x.FechaAsignacion, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                FechaAsignacion = DateTime.ParseExact(x.FechaAsignacion, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                CodigoAsesor = x.CodigoAsesor,
+                idPrioridad = x.idPrioridad,
+                HoraInicio = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraInicio}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
+                HoraFinal = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraFinal}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
+                CodigoCliente = x.CodigoCliente,
+                BloqueoCheckin = false,
+                BloqueoCheckout = true
+            }).ToList();
         }
     }
 }
