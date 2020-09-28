@@ -307,7 +307,24 @@ namespace AventasApi.Controllers
                     var asesores = listaDominio.Select(x => x.CodigoAsesor).Distinct().ToList(); 
                     List<AsignacionxAsesor> listaGuardadas = new List<AsignacionxAsesor>();
 
-                    foreach(var asesor in asesores)
+                    for (int x = 0; x < listaDominio.Count(); x++)
+                    {
+                        var asignacion = listaDominio[x];
+
+                        var entityFound = await ctx.Clientes.FirstOrDefaultAsync(cli => cli.CodigoCliente == asignacion.CodigoCliente && cli.CodigoAsesor == asignacion.CodigoAsesor);
+
+                        if (entityFound == null)
+                        {
+                            return BadRequest($"El cliente no existe o no esta asignado al asesor. En asignacion {x + 1}");
+                        }
+
+                        if (asignacion.Fecha < DateTime.Today)
+                        {
+                            return BadRequest($"Una o más asignaciones no se pueden crear ya que pertenecen a una fecha anterior. En asignacion {x + 1}");
+                        }
+                    }
+
+                    foreach (var asesor in asesores)
                     {
                         var entityFound = await ctx.Asesores.FirstOrDefaultAsync(cli => cli.CodigoAsesor == asesor);
 
@@ -334,19 +351,6 @@ namespace AventasApi.Controllers
                     for(int x = 0; x < listaDominio.Count(); x++)
                     {
                         var asignacion = listaDominio[x];
-
-                        var entityFound = await ctx.Clientes.FirstOrDefaultAsync(cli => cli.CodigoCliente == asignacion.CodigoCliente && cli.CodigoAsesor == asignacion.CodigoAsesor);
-
-                        if (entityFound == null)
-                        {
-                            return BadRequest($"El cliente no existe o no esta asignado al asesor. En asignacion {x + 1}");
-                        }
-
-                        if (asignacion.Fecha < DateTime.Today)
-                        {
-                            return BadRequest($"Una o más asignaciones no se pueden crear ya que pertenecen a una fecha anterior. En asignacion {x + 1}");
-                        }
-
                         var listaComparacion = listaDominio;
                         listaComparacion.RemoveAt(x);
 
