@@ -120,7 +120,8 @@ namespace AventasApi.Controllers
                                                               NombreDistribucion = dis.NombreDistribucion,
                                                               NombreTalla = dis.NombreTalla,
                                                               Cantidad = dis.Cantidad,
-                                                          }).ToList(),
+                                                              Orden = dis.Orden,
+                                                          }).OrderBy(or => or.Orden).ToList(),
 
                                                       }).OrderBy(txp => txp.Orden).ToList(),
                                                       ListaColores = pxc.ColoresxProducto.Where(cpp => (vw_coleccion.ColeccionTipo == "F") || cpp.Colores.FisicoDisponible.Where(f => f.IdProducto == pxc.IdProducto).Sum(f => f.Disponible) > 0).OrderBy(cpp => cpp.Colores.Color).Select(cpp => new ColorViewModel
@@ -223,15 +224,12 @@ namespace AventasApi.Controllers
                     string urlImagenes = ctx.Configuraciones.FirstOrDefault(conf => conf.CodigoConfiguracion == "UrlImages")?.Valor ?? "";
                     bool filtarXGrupoPrecio = grupoprecio != null;
                     List<ColeccionViewModel> colecciones = await ctx.Colecciones
-                        .Where(vw_coleccion => 
-                               vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()
-                               && vw_coleccion.CodigoColeccion==coleccion.ToUpper())
+                        .Where(vw_coleccion =>vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()&& vw_coleccion.CodigoColeccion==coleccion.ToUpper())
                         .Select(vw_coleccion =>
                              new ColeccionViewModel
                              {
                                 Edades = vw_coleccion.EdadesxColeccion
-                               .OrderBy(me => me.MaestroEdad.Orden).Select(me =>
-                                              new EdadesViewModel
+                               .OrderBy(me => me.MaestroEdad.Orden).Select(me => new EdadesViewModel
                                               {
                                                   IdEdad = me.IdEdad,
                                                   Edad = me.MaestroEdad.Edad,
@@ -243,7 +241,7 @@ namespace AventasApi.Controllers
                                                       CodigoProducto = pxc.IdProducto,
                                                       NombreProducto = pxc.NombreProducto,
                                                       GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
-                                                      Precio = pxc.PreciosxProducto.Where(preEsp => true || !filtarXGrupoPrecio).Select(precio => new PrecioXProductoViewModel
+                                                      Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                                       {
                                                           GrupoPrecio = precio.GrupoPrecio,
                                                           IdMoneda = precio.IdMoneda,
@@ -284,7 +282,8 @@ namespace AventasApi.Controllers
                                                                 NombreDistribucion = dis.NombreDistribucion,
                                                                 NombreTalla = dis.NombreTalla,
                                                                 Cantidad = dis.Cantidad,
-                                                            }).ToList(),
+                                                                Orden = dis.Orden,
+                                                            }).OrderBy(or => or.Orden).ToList(),
 
                                                         }).OrderBy(txp => txp.Orden).ToList(),
                                                       ListaColores = pxc.ColoresxProducto.Where(cpp => (vw_coleccion.ColeccionTipo == "F") || cpp.Colores.FisicoDisponible.Where(f => f.IdProducto == pxc.IdProducto).Sum(f => f.Disponible) > 0).OrderBy(cpp => cpp.Colores.Color).Select(cpp => new ColorViewModel

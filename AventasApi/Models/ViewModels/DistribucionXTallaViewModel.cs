@@ -13,5 +13,6 @@ namespace AventasApi.Models.ViewModels
         public string NombreDistribucion { get; set; }
         public string NombreTalla { get; set; }
         public string Cantidad { get; set; }
+        public decimal? Orden { get; set; }
     }
 }

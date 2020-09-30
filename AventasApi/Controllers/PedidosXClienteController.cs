@@ -57,12 +57,22 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/PedidosXCliente/{asesor}")]
-        public IHttpActionResult Get(string Asesor)
+        [Route("~/api/PedidosXCliente/{asesor}/{FechaInicio}/{FechaFin}")]
+        public IHttpActionResult Get(string Asesor, DateTime FechaInicio, DateTime FechaFin)
         {
             using (AVentasEntities context = new AVentasEntities())
-            {
-                List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == Asesor).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
+            { 
+                if(FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
+                {
+                    FechaInicio = DateTime.Today.AddDays(-7);
+                    FechaFin = DateTime.Today;
+                }
+                else
+                {
+                    FechaFin = FechaFin.AddDays(1);
+                }
+                
+                List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == Asesor && p.Fecha >= FechaInicio && p.Fecha < FechaFin).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
                 {
                     PedidoId = ped.PedidoId,
                     NumeroPedido = ped.NumeroPedido,
