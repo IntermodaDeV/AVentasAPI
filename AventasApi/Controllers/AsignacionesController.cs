@@ -304,6 +304,7 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var listaDominio  = ConvertirListaAsignacion(model);
+                    var listaGuardar = ConvertirListaAsignacion(model);
                     var asesores = listaDominio.Select(x => x.CodigoAsesor).Distinct().ToList(); 
                     List<AsignacionxAsesor> listaGuardadas = new List<AsignacionxAsesor>();
 
@@ -345,31 +346,38 @@ namespace AventasApi.Controllers
                         }
  
                     }
-
-                    listaDominio.AddRange(listaGuardadas);
  
                     for(int x = 0; x < listaDominio.Count(); x++)
                     {
                         var asignacion = listaDominio[x];
-                        var listaComparacion = listaDominio;
-                        listaComparacion.RemoveAt(x);
+                        var listaComparacion = listaGuardadas.Where(cli=>cli.CodigoAsesor==asignacion.CodigoAsesor).ToList();
+                        listaDominio.RemoveAt(x);
+                        var asignacionesAsesor = listaDominio.Where(cli => cli.CodigoAsesor == asignacion.CodigoAsesor);
+                        listaComparacion.AddRange(asignacionesAsesor);
+
+                        var indice = listaGuardar.FindIndex(cli => cli.CodigoAsesor == asignacion.CodigoAsesor 
+                            && cli.CodigoCliente==asignacion.CodigoCliente
+                            && cli.HoraInicio==asignacion.HoraInicio
+                            && cli.HoraFinal==asignacion.HoraFinal
+                        );
 
                         for (int y = 0; y < listaComparacion.Count(); y++)
                         {
 
                             if ((asignacion.HoraInicio >= listaComparacion[y].HoraInicio) && (asignacion.HoraInicio <= listaComparacion[y].HoraFinal) && asignacion.CodigoAsesor == listaComparacion[y].CodigoAsesor)
                             {
-                                return BadRequest("Una o más asignaciones tienen conflicto de horarios.");
+                                var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacion.CodigoCliente);
+                                return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
                             }
 
                             if ((asignacion.HoraFinal >= listaComparacion[y].HoraInicio) && (asignacion.HoraFinal <= listaComparacion[y].HoraFinal) && asignacion.CodigoAsesor == listaComparacion[y].CodigoAsesor)
                             {
-                                return BadRequest("Una o más asignaciones tienen conflicto de horarios.");
+                                var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacion.CodigoCliente);
+                                return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
                             }
                         }
                     }
 
-                    var listaGuardar = ConvertirListaAsignacion(model);
                     ctx.AsignacionxAsesor.AddRange(listaGuardar);
                     var result = await ctx.SaveChangesAsync();
                     var response = new { Message = $"Se han registrado {result} asignaciones." };
