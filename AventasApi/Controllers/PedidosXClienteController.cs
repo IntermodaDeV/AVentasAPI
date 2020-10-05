@@ -64,8 +64,8 @@ namespace AventasApi.Controllers
             { 
                 if(FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
                 {
-                    FechaInicio = DateTime.Today.AddDays(-7);
-                    FechaFin = DateTime.Today;
+                    FechaInicio = DateTime.Today.AddDays(-30);
+                    FechaFin = DateTime.Today.AddDays(1);
                 }
                 else
                 {
@@ -120,73 +120,7 @@ namespace AventasApi.Controllers
                         latitude = ped.Latitude,
                         longitude = ped.Longitude,
                         error = ped.Error
-                    },
-                    gruposXDetPed = ped.PedidosDetalle.GroupBy(gruposXDetPed => gruposXDetPed.ProductosxColeccion.CodigoGrupoTalla)
-                        .Select(gruposXDetPed => new GruposTallaXDetPed
-                        {
-                            GrupoTalla = gruposXDetPed.Key,
-                            // prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoProducto)
-                            ListaTalla = gruposXDetPed.GroupBy(pedDet=> pedDet.CodigoTalla).Select(pedDet=> pedDet.Key).SelectMany(pedDet=>  context.TallasXGrupo.Where(txp=> txp.CodigoTalla == pedDet &&txp.CodigoGrupoTalla == gruposXDetPed.Key) ).Select(txp => new TallaViewModel
-                            {
-                                GrupoTallaId = txp.CodigoGrupoTalla,
-                                Talla = txp.CodigoTalla,
-                                Orden = txp.Orden ?? 0,
-                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
-                                {
-                                    IdDistribucion = dis.IdDistribucion,
-                                    IdTallaxGrupo = dis.IdTallaxGrupo,
-                                    NombreDistribucion = dis.NombreDistribucion,
-                                    NombreTalla = dis.NombreTalla,
-                                    Cantidad = dis.Cantidad,
-                                }).ToList()
-                            }).OrderBy(txp => txp.Orden).ToList(),
-                            prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.IdProducto)
-                        .Select(pedDet => new ProductosXDetPed
-                        {
-                            IdProducto = pedDet.Key,
-                            CodigoProducto = pedDet.FirstOrDefault().ProductosxColeccion.CodigoProducto,
-                            NombreProducto = pedDet.FirstOrDefault().ProductosxColeccion.NombreProducto,
-                            Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
-                            CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
-                            TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
-                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod=> colXprod.Sum(det=> det.Cantidad)>0).Select(colXprod =>
-                                 new ColoresXProdXDetPed
-                                 {
-                                     CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
-                                     TotalXColor = colXprod.Sum(cant => cant.MontoLinea),
-                                     PrecioXColor = colXprod.FirstOrDefault().PrecioUnitario,
-                                     IdColor = colXprod.Key,
-                                     NombreColor = context.Colores.FirstOrDefault(color => color.CodigoColor == colXprod.Key).Color,
-                                     DetallesXPedido = colXprod.Select(detPed => new DetalleXPedidoViewModel
-                                     {
-                                         IdRegistro = detPed.IdPedidoDetalle,
-                                         PedidoId = detPed.PedidoId,
-                                         Cantidad = detPed.Cantidad,
-
-                                         Linea = detPed.Linea,
-                                         MontoLinea = detPed.MontoLinea,
-                                         PrecioUnitario = detPed.PrecioUnitario,
-                                         Talla = detPed.CodigoTalla,
-                                         TallaObject = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == detPed.ProductosxColeccion.CodigoGrupoTalla && txp.CodigoTalla == detPed.CodigoTalla).Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0)).Select(txp => new TallaViewModel
-                                         {
-                                             GrupoTallaId = txp.CodigoGrupoTalla,
-                                             Talla = txp.CodigoTalla,
-                                             Orden = txp.Orden ?? 0,
-                                             Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
-                                             {
-                                                 IdDistribucion = dis.IdDistribucion,
-                                                 IdTallaxGrupo = dis.IdTallaxGrupo,
-                                                 NombreDistribucion = dis.NombreDistribucion,
-                                                 NombreTalla = dis.NombreTalla,
-                                                 Cantidad = dis.Cantidad,
-                                             }).ToList()
-                                         }).FirstOrDefault()
-                                     }).ToList()
-
-                                 }).ToList()
-                        }).ToList()
-                        }).ToList()
-
+                    }
                 }).ToList();
                 foreach (var pedido in pedidos)
                 {
@@ -209,6 +143,87 @@ namespace AventasApi.Controllers
                     }
                 }
                 return Ok(pedidos);
+            }
+
+        }
+
+
+
+
+        [HttpGet]
+        [Route("~/api/PedidoDetalle/{CodigoPedido}")]
+        public IHttpActionResult GetPedidoDetalle(string CodigoPedido)
+        {
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.PedidoId == CodigoPedido).Select(ped => new PedidosXClienteViewModel
+                {
+                    gruposXDetPed = ped.PedidosDetalle.GroupBy(gruposXDetPed => gruposXDetPed.ProductosxColeccion.CodigoGrupoTalla)
+                        .Select(gruposXDetPed => new GruposTallaXDetPed
+                        {
+                            GrupoTalla = gruposXDetPed.Key,
+                            ListaTalla = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoTalla).Select(pedDet => pedDet.Key).SelectMany(pedDet => context.TallasXGrupo.Where(txp => txp.CodigoTalla == pedDet && txp.CodigoGrupoTalla == gruposXDetPed.Key)).Select(txp => new TallaViewModel
+                            {
+                                GrupoTallaId = txp.CodigoGrupoTalla,
+                                Talla = txp.CodigoTalla,
+                                Orden = txp.Orden ?? 0,
+                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                {
+                                    IdDistribucion = dis.IdDistribucion,
+                                    IdTallaxGrupo = dis.IdTallaxGrupo,
+                                    NombreDistribucion = dis.NombreDistribucion,
+                                    NombreTalla = dis.NombreTalla,
+                                    Cantidad = dis.Cantidad,
+                                }).ToList()
+                            }).OrderBy(txp => txp.Orden).ToList(),
+                            prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.IdProducto)
+                        .Select(pedDet => new ProductosXDetPed
+                        {
+                            IdProducto = pedDet.Key,
+                            CodigoProducto = pedDet.FirstOrDefault().ProductosxColeccion.CodigoProducto,
+                            NombreProducto = pedDet.FirstOrDefault().ProductosxColeccion.NombreProducto,
+                            Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
+                            CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
+                            TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
+                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod => colXprod.Sum(det => det.Cantidad) > 0).Select(colXprod =>
+                                     new ColoresXProdXDetPed
+                                     {
+                                         CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
+                                         TotalXColor = colXprod.Sum(cant => cant.MontoLinea),
+                                         PrecioXColor = colXprod.FirstOrDefault().PrecioUnitario,
+                                         IdColor = colXprod.Key,
+                                         NombreColor = context.Colores.FirstOrDefault(color => color.CodigoColor == colXprod.Key).Color,
+                                         DetallesXPedido = colXprod.Select(detPed => new DetalleXPedidoViewModel
+                                         {
+                                             IdRegistro = detPed.IdPedidoDetalle,
+                                             PedidoId = detPed.PedidoId,
+                                             Cantidad = detPed.Cantidad,
+
+                                             Linea = detPed.Linea,
+                                             MontoLinea = detPed.MontoLinea,
+                                             PrecioUnitario = detPed.PrecioUnitario,
+                                             Talla = detPed.CodigoTalla,
+                                             TallaObject = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == detPed.ProductosxColeccion.CodigoGrupoTalla && txp.CodigoTalla == detPed.CodigoTalla)/*.Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0))*/.Select(txp => new TallaViewModel
+                                             {
+                                                 GrupoTallaId = txp.CodigoGrupoTalla,
+                                                 Talla = txp.CodigoTalla,
+                                                 Orden = txp.Orden ?? 0,
+                                                 Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                                 {
+                                                     IdDistribucion = dis.IdDistribucion,
+                                                     IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                     NombreDistribucion = dis.NombreDistribucion,
+                                                     NombreTalla = dis.NombreTalla,
+                                                     Cantidad = dis.Cantidad,
+                                                 }).ToList()
+                                             }).FirstOrDefault()
+                                         }).ToList()
+
+                                     }).ToList()
+                            }).ToList()
+                        }).ToList()
+                }).ToList();
+                return Ok(pedidos[0].gruposXDetPed);
             }
 
         }
@@ -406,8 +421,23 @@ namespace AventasApi.Controllers
                 context.SaveChanges();
             }
             AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
-
+            ReducirStock(PedidoBDAGuardar);
             return Ok(new { EncabezadoPedido = new { PedidoId = PEdidoID } });
+        }
+
+
+        private async void ReducirStock(PedidosxCliente pedido)
+        {
+            using (var ctx = new AVentasEntities())
+            {
+                var lineasPedido = pedido.PedidosDetalle;
+                foreach (var linea in lineasPedido)
+                {
+                    var fisico = await ctx.FisicoDisponible.FirstOrDefaultAsync(x => x.CodigoColor == linea.CodigoColor && x.CodigoTalla == linea.CodigoTalla && x.IdProducto == linea.IdProducto);
+                    fisico.Disponible = fisico.Disponible - linea.Cantidad;
+                    await ctx.SaveChangesAsync();
+                }
+            }
         }
 
 
