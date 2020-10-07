@@ -243,14 +243,14 @@ namespace AventasApi.Controllers
             CONFIGURACIONE SyncTelContado;
             CONFIGURACIONE SyncTelCredito;
 
-            using(AVentasConfigEntities config=new AVentasConfigEntities()) 
+            using (AVentasConfigEntities config = new AVentasConfigEntities())
             {
                 SyncTelContado = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1201);
                 SyncTelCredito = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1202);
             }
 
             using (AVentasEntities context = new AVentasEntities())
-            { 
+            {
                 clienteContado = context.ClienteContado.Find(Pedido.ClienteContadoId);
                 asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
                 acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
@@ -280,8 +280,8 @@ namespace AventasApi.Controllers
                 //Mocked = ,
                 //Accuracy = ,
                 //Altitude = ,
-                Latitude  = (Pedido.location !=null)?Pedido.location.latitude:null,
-                Longitude = (Pedido.location !=null)?Pedido.location.longitude:null,
+                Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
+                Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
                 //Error = ,
                 IdLinea = Pedido.Linea,
                 //idMoneda = ,
@@ -289,7 +289,7 @@ namespace AventasApi.Controllers
                 ClienteContadoId = Pedido.ClienteContadoId,
                 ModoVenta = Pedido.ModoVenta,
                 Flete = Pedido.Flete,
-                RequiereEntrega=Pedido.RequiereEntrega
+                RequiereEntrega = Pedido.RequiereEntrega
             };
 
             int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
@@ -322,14 +322,14 @@ namespace AventasApi.Controllers
                 pe.SALES_NAME = clienteContado.Nombre;
                 pe.FISCAL_DOCUMENT = clienteContado.RTN;
                 pe.DELIVERY_ADDRESS = clienteContado.Direccion;
-                pe.PHONE = (SyncTelContado.VALOR=="1") ? clienteContado.Telefono : "";
+                pe.PHONE = (SyncTelContado.VALOR == "1") ? clienteContado.Telefono : "";
             }
             else
             {
                 pe.SALES_NAME = "";
                 pe.FISCAL_DOCUMENT = "";
                 pe.DELIVERY_ADDRESS = "";
-                pe.PHONE = (SyncTelCredito.VALOR=="1") ? cliente.Telefono : "";
+                pe.PHONE = (SyncTelCredito.VALOR == "1") ? cliente.Telefono : "";
             }
 
             foreach (var detalle in Pedido.DetallePedido)
@@ -355,9 +355,9 @@ namespace AventasApi.Controllers
                     PedidoBDAGuardar.TotalUnidades += cantidad;
                     decimal precioUnitario = 0;
                     decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                    PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);                    
+                    PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
 
-                   PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
+                    PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
                     {
                         IdProducto = detalle.IdProducto,
                         CodigoColor = detalle.CodigoColor,
@@ -373,9 +373,9 @@ namespace AventasApi.Controllers
             }
 
             PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
-            PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString()))+Pedido.Flete;
-          string PEdidoID = "";
-            if(EnLinea(cliente.EmpresaId, asesor.Usuario))
+            PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+            string PEdidoID = "";
+            if (EnLinea(cliente.EmpresaId, asesor.Usuario))
             {
                 try
                 {
@@ -414,17 +414,23 @@ namespace AventasApi.Controllers
                 PedidoBDAGuardar.Sincronizado = false;
             }
 
+
+            PResumenCredito_Result resultado;
             using (AVentasEntities context = new AVentasEntities())
             {
                 asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
                 asesor.CorrelativoPedidos = numeroCorelativo + 1;
                 context.SaveChanges();
+                resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
             }
             AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
 
-            if(cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+            if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
             {
-                 ReducirStock(PedidoBDAGuardar);
+                if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                {
+                    ReducirStock(PedidoBDAGuardar);
+                }
             }
          
             return Ok(new { EncabezadoPedido = new { PedidoId = PEdidoID } });
