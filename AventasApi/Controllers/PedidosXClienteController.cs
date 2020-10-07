@@ -421,7 +421,12 @@ namespace AventasApi.Controllers
                 context.SaveChanges();
             }
             AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
-            ReducirStock(PedidoBDAGuardar);
+
+            if(cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+            {
+                 ReducirStock(PedidoBDAGuardar);
+            }
+         
             return Ok(new { EncabezadoPedido = new { PedidoId = PEdidoID } });
         }
 

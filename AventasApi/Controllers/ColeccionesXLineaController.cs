@@ -315,7 +315,7 @@ namespace AventasApi.Controllers
                                                                    IdProducto = preEsp.IdProducto,
                                                                    GrupoPrecio = preEsp.GrupoPrecio,
                                                                    IdFisicoDisponible = preEsp.IdFisicoDisponible,
-                                                                   Precio = preEsp.Hasta == new DateTime(1900, 1, 1) ? preEsp.Precio : 0,
+                                                                   Precio = preEsp.Hasta == new DateTime(1900, 1, 1) ? preEsp.Precio : pxc.PreciosxProducto.FirstOrDefault(pre =>pre.GrupoPrecio == grupoprecio && pre.IdProducto==preEsp.IdProducto).Precio,
                                                                }).ToList(),
                                                            }).ToList()
                                                   }).ToList()
