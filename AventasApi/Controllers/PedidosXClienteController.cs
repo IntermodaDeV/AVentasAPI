@@ -60,91 +60,95 @@ namespace AventasApi.Controllers
         [Route("~/api/PedidosXCliente/{asesor}/{FechaInicio}/{FechaFin}")]
         public IHttpActionResult Get(string Asesor, DateTime FechaInicio, DateTime FechaFin)
         {
-            using (AVentasEntities context = new AVentasEntities())
-            { 
-                if(FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
+            try {
+                using (AVentasEntities context = new AVentasEntities())
                 {
-                    FechaInicio = DateTime.Today.AddDays(-30);
-                    FechaFin = DateTime.Today.AddDays(1);
-                }
-                else
-                {
-                    FechaFin = FechaFin.AddDays(1);
-                }
-                
-                List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == Asesor && p.Fecha >= FechaInicio && p.Fecha < FechaFin).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
-                {
-                    PedidoId = ped.PedidoId,
-                    NumeroPedido = ped.NumeroPedido,
-                    Sincronizado= ped.Sincronizado,
-                    NombreColeccion = context.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
-                    TotalUnidades = ped.TotalUnidades,
-                    TotalXPedido = ped.TotalPedido,
-                    SubTotalXPedido = ped.Subtotal,
-                    Impuesto = ped.TotalImpuesto,
-                    ClienteContadoId = ped.ClienteContadoId,
-                    ModoVenta = ped.ModoVenta,
-                    Flete = ped.Flete,
-                    Cliente = new ClienteViewModel
+                    if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
                     {
-                        Codigo = ped.Clientes.CodigoCliente,
-                        Nombre = ped.Clientes.Nombre,
-                        Direccion = ped.Clientes.Direccion,
-                        Moneda = ped.Clientes.IdMoneda
-                    },
-                    Linea = context.MaestroLinea.Select(ml => new LineaViewModel
-                    {
-                        IdLinea = ml.IdLinea,
-                        Linea = ml.Linea,
-                    }).FirstOrDefault(ml => ml.IdLinea == ped.IdLinea),
-                    TipoPedido = context.TiposdePedido.Select(tp => new TipoPedidoViewModel
-                    {
-                        IdTipoPedido = tp.IdTipoPedido,
-                        TipoPedido = tp.TipoPedido,
-                        HabilitaEstilos = tp.HabilitaEstilos ?? false,
-                        Imagen = tp.Url_Imagen,
-                        Aplica_Todos = tp.Aplica_Todos ?? false,
-                        Restrictivo = tp.Restrictivo ?? false
-                    }).FirstOrDefault(tp => tp.IdTipoPedido == ped.IdTipoPedido),
-                    AcuerdoVenta = ped.AcuerdoVenta,
-                    EmpresaId = ped.EmpresaId,
-                    FechaActual = ped.Fecha,
-                    Usuario = context.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == ped.CodigoAsesor).Nombre,
-                    FechaEntrega = ped.FechaEntrega,
-                    Observacion = ped.Observacion,
-                    location = new Location
-                    {
-                        mocked = ped.Mocked ?? false,
-                        accuracy = ped.Accuracy,
-                        altitude = ped.Altitude,
-                        latitude = ped.Latitude,
-                        longitude = ped.Longitude,
-                        error = ped.Error
+                        FechaInicio = DateTime.Today.AddDays(-30);
+                        FechaFin = DateTime.Today.AddDays(1);
                     }
-                }).ToList();
-                foreach (var pedido in pedidos)
-                {
-                    string imagenB64 = "";
-
-                    var firma = context.FirmasxPedido.FirstOrDefault(fir => pedido.PedidoId == fir.PedidoId);
-                    if (firma != null)
+                    else
                     {
-                        try
-                        {
-                            imagenB64 = "data:image/png;base64," + Convert.ToBase64String(firma.Firma);
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
-
-                        pedido.Firma = imagenB64;
-
+                        FechaFin = FechaFin.AddDays(1);
                     }
-                }
-                return Ok(pedidos);
-            }
 
+                    List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == Asesor && p.Fecha >= FechaInicio && p.Fecha < FechaFin).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
+                    {
+                        PedidoId = ped.PedidoId,
+                        NumeroPedido = ped.NumeroPedido,
+                        Sincronizado = ped.Sincronizado,
+                        NombreColeccion = context.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
+                        TotalUnidades = ped.TotalUnidades,
+                        TotalXPedido = ped.TotalPedido,
+                        SubTotalXPedido = ped.Subtotal,
+                        Impuesto = ped.TotalImpuesto,
+                        ClienteContadoId = ped.ClienteContadoId,
+                        ModoVenta = ped.ModoVenta,
+                        Flete = ped.Flete,
+                        Cliente = new ClienteViewModel
+                        {
+                            Codigo = ped.Clientes.CodigoCliente,
+                            Nombre = ped.Clientes.Nombre,
+                            Direccion = ped.Clientes.Direccion,
+                            Moneda = ped.Clientes.IdMoneda
+                        },
+                        Linea = context.MaestroLinea.Select(ml => new LineaViewModel
+                        {
+                            IdLinea = ml.IdLinea,
+                            Linea = ml.Linea,
+                        }).FirstOrDefault(ml => ml.IdLinea == ped.IdLinea),
+                        TipoPedido = context.TiposdePedido.Select(tp => new TipoPedidoViewModel
+                        {
+                            IdTipoPedido = tp.IdTipoPedido,
+                            TipoPedido = tp.TipoPedido,
+                            HabilitaEstilos = tp.HabilitaEstilos ?? false,
+                            Imagen = tp.Url_Imagen,
+                            Aplica_Todos = tp.Aplica_Todos ?? false,
+                            Restrictivo = tp.Restrictivo ?? false
+                        }).FirstOrDefault(tp => tp.IdTipoPedido == ped.IdTipoPedido),
+                        AcuerdoVenta = ped.AcuerdoVenta,
+                        EmpresaId = ped.EmpresaId,
+                        FechaActual = ped.Fecha,
+                        Usuario = context.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == ped.CodigoAsesor).Nombre,
+                        FechaEntrega = ped.FechaEntrega,
+                        Observacion = ped.Observacion,
+                        location = new Location
+                        {
+                            mocked = ped.Mocked ?? false,
+                            accuracy = ped.Accuracy,
+                            altitude = ped.Altitude,
+                            latitude = ped.Latitude,
+                            longitude = ped.Longitude,
+                            error = ped.Error
+                        }
+                    }).ToList();
+                    foreach (var pedido in pedidos)
+                    {
+                        string imagenB64 = "";
+
+                        var firma = context.FirmasxPedido.FirstOrDefault(fir => pedido.PedidoId == fir.PedidoId);
+                        if (firma != null)
+                        {
+                            try
+                            {
+                                imagenB64 = "data:image/png;base64," + Convert.ToBase64String(firma.Firma);
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+
+                            pedido.Firma = imagenB64;
+
+                        }
+                    }
+                    return Ok(pedidos);
+                }
+                }catch(Exception e)
+                {
+                    return BadRequest(e.ToString());
+                }
         }
 
 
@@ -154,76 +158,83 @@ namespace AventasApi.Controllers
         [Route("~/api/PedidoDetalle/{CodigoPedido}")]
         public IHttpActionResult GetPedidoDetalle(string CodigoPedido)
         {
-            using (AVentasEntities context = new AVentasEntities())
+            try
             {
-                List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.PedidoId == CodigoPedido).Select(ped => new PedidosXClienteViewModel
+                using (AVentasEntities context = new AVentasEntities())
                 {
-                    gruposXDetPed = ped.PedidosDetalle.GroupBy(gruposXDetPed => gruposXDetPed.ProductosxColeccion.CodigoGrupoTalla)
-                        .Select(gruposXDetPed => new GruposTallaXDetPed
-                        {
-                            GrupoTalla = gruposXDetPed.Key,
-                            ListaTalla = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoTalla).Select(pedDet => pedDet.Key).SelectMany(pedDet => context.TallasXGrupo.Where(txp => txp.CodigoTalla == pedDet && txp.CodigoGrupoTalla == gruposXDetPed.Key)).Select(txp => new TallaViewModel
+                    List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.PedidoId == CodigoPedido).Select(ped => new PedidosXClienteViewModel
+                    {
+                        gruposXDetPed = ped.PedidosDetalle.GroupBy(gruposXDetPed => gruposXDetPed.ProductosxColeccion.CodigoGrupoTalla)
+                            .Select(gruposXDetPed => new GruposTallaXDetPed
                             {
-                                GrupoTallaId = txp.CodigoGrupoTalla,
-                                Talla = txp.CodigoTalla,
-                                Orden = txp.Orden ?? 0,
-                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                GrupoTalla = gruposXDetPed.Key,
+                                ListaTalla = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoTalla).Select(pedDet => pedDet.Key).SelectMany(pedDet => context.TallasXGrupo.Where(txp => txp.CodigoTalla == pedDet && txp.CodigoGrupoTalla == gruposXDetPed.Key)).Select(txp => new TallaViewModel
                                 {
-                                    IdDistribucion = dis.IdDistribucion,
-                                    IdTallaxGrupo = dis.IdTallaxGrupo,
-                                    NombreDistribucion = dis.NombreDistribucion,
-                                    NombreTalla = dis.NombreTalla,
-                                    Cantidad = dis.Cantidad,
-                                }).ToList()
-                            }).OrderBy(txp => txp.Orden).ToList(),
-                            prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.IdProducto)
-                        .Select(pedDet => new ProductosXDetPed
-                        {
-                            IdProducto = pedDet.Key,
-                            CodigoProducto = pedDet.FirstOrDefault().ProductosxColeccion.CodigoProducto,
-                            NombreProducto = pedDet.FirstOrDefault().ProductosxColeccion.NombreProducto,
-                            Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
-                            CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
-                            TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
-                            coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod => colXprod.Sum(det => det.Cantidad) > 0).Select(colXprod =>
-                                     new ColoresXProdXDetPed
-                                     {
-                                         CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
-                                         TotalXColor = colXprod.Sum(cant => cant.MontoLinea),
-                                         PrecioXColor = colXprod.FirstOrDefault().PrecioUnitario,
-                                         IdColor = colXprod.Key,
-                                         NombreColor = context.Colores.FirstOrDefault(color => color.CodigoColor == colXprod.Key).Color,
-                                         DetallesXPedido = colXprod.Select(detPed => new DetalleXPedidoViewModel
+                                    GrupoTallaId = txp.CodigoGrupoTalla,
+                                    Talla = txp.CodigoTalla,
+                                    Orden = txp.Orden ?? 0,
+                                    Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                    {
+                                        IdDistribucion = dis.IdDistribucion,
+                                        IdTallaxGrupo = dis.IdTallaxGrupo,
+                                        NombreDistribucion = dis.NombreDistribucion,
+                                        NombreTalla = dis.NombreTalla,
+                                        Cantidad = dis.Cantidad,
+                                    }).ToList()
+                                }).OrderBy(txp => txp.Orden).ToList(),
+                                prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.IdProducto)
+                            .Select(pedDet => new ProductosXDetPed
+                            {
+                                IdProducto = pedDet.Key,
+                                CodigoProducto = pedDet.FirstOrDefault().ProductosxColeccion.CodigoProducto,
+                                NombreProducto = pedDet.FirstOrDefault().ProductosxColeccion.NombreProducto,
+                                Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
+                                CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
+                                TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
+                                coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod => colXprod.Sum(det => det.Cantidad) > 0).Select(colXprod =>
+                                         new ColoresXProdXDetPed
                                          {
-                                             IdRegistro = detPed.IdPedidoDetalle,
-                                             PedidoId = detPed.PedidoId,
-                                             Cantidad = detPed.Cantidad,
-
-                                             Linea = detPed.Linea,
-                                             MontoLinea = detPed.MontoLinea,
-                                             PrecioUnitario = detPed.PrecioUnitario,
-                                             Talla = detPed.CodigoTalla,
-                                             TallaObject = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == detPed.ProductosxColeccion.CodigoGrupoTalla && txp.CodigoTalla == detPed.CodigoTalla)/*.Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0))*/.Select(txp => new TallaViewModel
+                                             CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
+                                             TotalXColor = colXprod.Sum(cant => cant.MontoLinea),
+                                             PrecioXColor = colXprod.FirstOrDefault().PrecioUnitario,
+                                             IdColor = colXprod.Key,
+                                             NombreColor = context.Colores.FirstOrDefault(color => color.CodigoColor == colXprod.Key).Color,
+                                             DetallesXPedido = colXprod.Select(detPed => new DetalleXPedidoViewModel
                                              {
-                                                 GrupoTallaId = txp.CodigoGrupoTalla,
-                                                 Talla = txp.CodigoTalla,
-                                                 Orden = txp.Orden ?? 0,
-                                                 Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
-                                                 {
-                                                     IdDistribucion = dis.IdDistribucion,
-                                                     IdTallaxGrupo = dis.IdTallaxGrupo,
-                                                     NombreDistribucion = dis.NombreDistribucion,
-                                                     NombreTalla = dis.NombreTalla,
-                                                     Cantidad = dis.Cantidad,
-                                                 }).ToList()
-                                             }).FirstOrDefault()
-                                         }).ToList()
+                                                 IdRegistro = detPed.IdPedidoDetalle,
+                                                 PedidoId = detPed.PedidoId,
+                                                 Cantidad = detPed.Cantidad,
 
-                                     }).ToList()
+                                                 Linea = detPed.Linea,
+                                                 MontoLinea = detPed.MontoLinea,
+                                                 PrecioUnitario = detPed.PrecioUnitario,
+                                                 Talla = detPed.CodigoTalla,
+                                                 TallaObject = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == detPed.ProductosxColeccion.CodigoGrupoTalla && txp.CodigoTalla == detPed.CodigoTalla)/*.Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0))*/.Select(txp => new TallaViewModel
+                                                 {
+                                                     GrupoTallaId = txp.CodigoGrupoTalla,
+                                                     Talla = txp.CodigoTalla,
+                                                     Orden = txp.Orden ?? 0,
+                                                     Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                                     {
+                                                         IdDistribucion = dis.IdDistribucion,
+                                                         IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                         NombreDistribucion = dis.NombreDistribucion,
+                                                         NombreTalla = dis.NombreTalla,
+                                                         Cantidad = dis.Cantidad,
+                                                     }).ToList()
+                                                 }).FirstOrDefault()
+                                             }).ToList()
+
+                                         }).ToList()
                             }).ToList()
-                        }).ToList()
-                }).ToList();
-                return Ok(pedidos[0].gruposXDetPed);
+                            }).ToList()
+                    }).ToList();
+                    return Ok(pedidos[0].gruposXDetPed);
+
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
             }
 
         }
@@ -232,208 +243,214 @@ namespace AventasApi.Controllers
         [HttpPost]
         public IHttpActionResult Post([FromBody] PedidoPostViewModel Pedido)
         {
-            var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-            //var user = new { UserAccount = "gmonrroy" };
-            Asesores asesor;
-            Colecciones coleccion;
-            AcuerdosxCliente acuerdoVenta;
-            TiposdePedido tipoPedido;
-            Clientes cliente;
-            ClienteContado clienteContado;
-            CONFIGURACIONE SyncTelContado;
-            CONFIGURACIONE SyncTelCredito;
+            try
+            {
+                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                //var user = new { UserAccount = "gmonrroy" };
+                Asesores asesor;
+                Colecciones coleccion;
+                AcuerdosxCliente acuerdoVenta;
+                TiposdePedido tipoPedido;
+                Clientes cliente;
+                ClienteContado clienteContado;
+                CONFIGURACIONE SyncTelContado;
+                CONFIGURACIONE SyncTelCredito;
 
-            using (AVentasConfigEntities config = new AVentasConfigEntities())
-            {
-                SyncTelContado = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1201);
-                SyncTelCredito = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1202);
-            }
-
-            using (AVentasEntities context = new AVentasEntities())
-            {
-                clienteContado = context.ClienteContado.Find(Pedido.ClienteContadoId);
-                asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
-                tipoPedido = acuerdoVenta?.TiposdePedido;
-                cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
-                coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
-            }
-            DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
-            PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
-            {
-                //PedidoId = ,
-                IdTipoPedido = tipoPedido?.IdTipoPedido,
-                IdColeccion = coleccion.IdColeccion,
-                CodigoCliente = cliente.CodigoCliente,
-                AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
-                EmpresaId = cliente.EmpresaId,
-                Fecha = DateTime.Now,
-                FechaEntrega = fechaEntrega,
-                CodigoAsesor = asesor.CodigoAsesor,
-                Observacion = Pedido.Observacion,
-                TotalUnidades = 0,
-                PedidosDetalle = new List<PedidosDetalle>(),
-                Subtotal = 0,
-                //TotalImpuesto = ,
-                //TotalDescuento = ,
-                //TotalPedido = ,
-                //Mocked = ,
-                //Accuracy = ,
-                //Altitude = ,
-                Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
-                Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
-                //Error = ,
-                IdLinea = Pedido.Linea,
-                //idMoneda = ,
-                //IdEstado = ,
-                ClienteContadoId = Pedido.ClienteContadoId,
-                ModoVenta = Pedido.ModoVenta,
-                Flete = Pedido.Flete,
-                RequiereEntrega = Pedido.RequiereEntrega
-            };
-
-            int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
-            string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
-
-            string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
-            var pe = new PedidoCRMApiModel
-            {
-                COMPANY = cliente.EmpresaId,
-                CUSTOMER_ACCOUNT = Pedido.CodigoCliente,
-                DATE_CONFIRMED_RECEIPT = fechaEntrega.ToString("dd/MM/yyyy"),
-                DELIVERY_ADDRESS = string.Empty,
-                DELIVERY_MODE = "",
-                DISC_GROUP = "",
-                ID_SALES_AGREEMENT = Pedido.AcuerdoVenta,
-                LINE = Pedido.Linea,
-                OBSERVATIONS = (Pedido.Observacion == null) ? "" : Pedido.Observacion,
-                PACKAGE = coleccion.CodigoColeccion,
-                PACKAGE_TYPE = coleccion.ColeccionTipo,
-                PedidoJsonItems = new List<PedidoJsonItems>(),
-                REFERENCE = numeroReferencia,
-                SALES_MANAGER = asesor.Usuario,
-                SALES_ORDER_TYPE = (coleccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
-                USER = asesor.Usuario,
-                INCLUDE_TAX = "0"
-            };
-
-            if (clienteContado != null)
-            {
-                pe.SALES_NAME = clienteContado.Nombre;
-                pe.FISCAL_DOCUMENT = clienteContado.RTN;
-                pe.DELIVERY_ADDRESS = clienteContado.Direccion;
-                pe.PHONE = (SyncTelContado.VALOR == "1") ? clienteContado.Telefono : "";
-            }
-            else
-            {
-                pe.SALES_NAME = "";
-                pe.FISCAL_DOCUMENT = "";
-                pe.DELIVERY_ADDRESS = "";
-                pe.PHONE = (SyncTelCredito.VALOR == "1") ? cliente.Telefono : "";
-            }
-
-            foreach (var detalle in Pedido.DetallePedido)
-            {
-                int cantidad = 0;
-                int.TryParse(detalle.Cantidad, out cantidad);
-                if (cantidad > 0)
+                using (AVentasConfigEntities config = new AVentasConfigEntities())
                 {
-                    pe.PedidoJsonItems.Add(
-                            new PedidoJsonItems
-                            {
-                                COLOR = detalle.CodigoColor,
-                                DELIVERY_ADDRESS = "",
-                                DISC_PERCENTAGE = "0.00",
-                                ITEM_CODE = detalle.CodigoProducto,
-                                LOT_NUMBER = coleccion.CodigoColeccion,
-                                QUANTITY = detalle.Cantidad,
-                                REFERENCE = numeroReferencia,
-                                SIZE = detalle.Talla,
-                                UNIT = "Und",
-                                UNIT_PRICE = detalle.PrecioUnitario
-                            });
-                    PedidoBDAGuardar.TotalUnidades += cantidad;
-                    decimal precioUnitario = 0;
-                    decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                    PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
-
-                    PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
-                    {
-                        IdProducto = detalle.IdProducto,
-                        CodigoColor = detalle.CodigoColor,
-                        CodigoTalla = detalle.Talla,
-                        Cantidad = cantidad,
-                        MontoLinea = (precioUnitario * cantidad),
-                        Fecha = DateTime.Now,
-                        CodigoAsesor = asesor.CodigoAsesor,
-                        PrecioUnitario = precioUnitario
-                    });
+                    SyncTelContado = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1201);
+                    SyncTelCredito = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1202);
                 }
 
-            }
-
-            PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
-            PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
-            string PEdidoID = "";
-            if (EnLinea(cliente.EmpresaId, asesor.Usuario))
-            {
-                try
+                using (AVentasEntities context = new AVentasEntities())
                 {
-                    var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
-                    client.Timeout = 480 * (1000);
-                    var request = new RestRequest(Method.POST);
-                    request.AddHeader("Accept", "application/json");
-                    request.AddJsonBody(pe);
-                    IRestResponse response = client.Execute(request);
-                    string content = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(response.Content);
-                    if (content.StartsWith("Success"))
+                    clienteContado = context.ClienteContado.Find(Pedido.ClienteContadoId);
+                    asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                    acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
+                    tipoPedido = acuerdoVenta?.TiposdePedido;
+                    cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
+                    coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
+                }
+                DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
+                PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
+                {
+                    //PedidoId = ,
+                    IdTipoPedido = tipoPedido?.IdTipoPedido,
+                    IdColeccion = coleccion.IdColeccion,
+                    CodigoCliente = cliente.CodigoCliente,
+                    AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
+                    EmpresaId = cliente.EmpresaId,
+                    Fecha = DateTime.Now,
+                    FechaEntrega = fechaEntrega,
+                    CodigoAsesor = asesor.CodigoAsesor,
+                    Observacion = Pedido.Observacion,
+                    TotalUnidades = 0,
+                    PedidosDetalle = new List<PedidosDetalle>(),
+                    Subtotal = 0,
+                    //TotalImpuesto = ,
+                    //TotalDescuento = ,
+                    //TotalPedido = ,
+                    //Mocked = ,
+                    //Accuracy = ,
+                    //Altitude = ,
+                    Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
+                    Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
+                    //Error = ,
+                    IdLinea = Pedido.Linea,
+                    //idMoneda = ,
+                    //IdEstado = ,
+                    ClienteContadoId = Pedido.ClienteContadoId,
+                    ModoVenta = Pedido.ModoVenta,
+                    Flete = Pedido.Flete,
+                    RequiereEntrega = Pedido.RequiereEntrega
+                };
+
+                int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
+
+                string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                var pe = new PedidoCRMApiModel
+                {
+                    COMPANY = cliente.EmpresaId,
+                    CUSTOMER_ACCOUNT = Pedido.CodigoCliente,
+                    DATE_CONFIRMED_RECEIPT = fechaEntrega.ToString("dd/MM/yyyy"),
+                    DELIVERY_ADDRESS = string.Empty,
+                    DELIVERY_MODE = "",
+                    DISC_GROUP = "",
+                    ID_SALES_AGREEMENT = Pedido.AcuerdoVenta,
+                    LINE = Pedido.Linea,
+                    OBSERVATIONS = (Pedido.Observacion == null) ? "" : Pedido.Observacion,
+                    PACKAGE = coleccion.CodigoColeccion,
+                    PACKAGE_TYPE = coleccion.ColeccionTipo,
+                    PedidoJsonItems = new List<PedidoJsonItems>(),
+                    REFERENCE = numeroReferencia,
+                    SALES_MANAGER = asesor.Usuario,
+                    SALES_ORDER_TYPE = (coleccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
+                    USER = asesor.Usuario,
+                    INCLUDE_TAX = "0"
+                };
+
+                if (clienteContado != null)
+                {
+                    pe.SALES_NAME = clienteContado.Nombre;
+                    pe.FISCAL_DOCUMENT = clienteContado.RTN;
+                    pe.DELIVERY_ADDRESS = clienteContado.Direccion;
+                    pe.PHONE = (SyncTelContado.VALOR == "1") ? clienteContado.Telefono : "";
+                }
+                else
+                {
+                    pe.SALES_NAME = "";
+                    pe.FISCAL_DOCUMENT = "";
+                    pe.DELIVERY_ADDRESS = "";
+                    pe.PHONE = (SyncTelCredito.VALOR == "1") ? cliente.Telefono : "";
+                }
+
+                foreach (var detalle in Pedido.DetallePedido)
+                {
+                    int cantidad = 0;
+                    int.TryParse(detalle.Cantidad, out cantidad);
+                    if (cantidad > 0)
                     {
-                        content = content.Remove(0, 8);
-                        content = content.Split(' ')[0];
-                        PEdidoID = numeroReferencia;
-                        PedidoBDAGuardar.PedidoId = numeroReferencia;
-                        PedidoBDAGuardar.Sincronizado = true;
-                        PedidoBDAGuardar.NumeroPedido = content;
-                    }
-                    else
-                    {
-                        return BadRequest(content);
+                        pe.PedidoJsonItems.Add(
+                                new PedidoJsonItems
+                                {
+                                    COLOR = detalle.CodigoColor,
+                                    DELIVERY_ADDRESS = "",
+                                    DISC_PERCENTAGE = "0.00",
+                                    ITEM_CODE = detalle.CodigoProducto,
+                                    LOT_NUMBER = coleccion.CodigoColeccion,
+                                    QUANTITY = detalle.Cantidad,
+                                    REFERENCE = numeroReferencia,
+                                    SIZE = detalle.Talla,
+                                    UNIT = "Und",
+                                    UNIT_PRICE = detalle.PrecioUnitario
+                                });
+                        PedidoBDAGuardar.TotalUnidades += cantidad;
+                        decimal precioUnitario = 0;
+                        decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
+                        PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
+
+                        PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
+                        {
+                            IdProducto = detalle.IdProducto,
+                            CodigoColor = detalle.CodigoColor,
+                            CodigoTalla = detalle.Talla,
+                            Cantidad = cantidad,
+                            MontoLinea = (precioUnitario * cantidad),
+                            Fecha = DateTime.Now,
+                            CodigoAsesor = asesor.CodigoAsesor,
+                            PrecioUnitario = precioUnitario
+                        });
                     }
 
                 }
-                catch (Exception e)
+
+                PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
+                PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                string PEdidoID = "";
+                if (EnLinea(cliente.EmpresaId, asesor.Usuario))
                 {
-                    return BadRequest(Newtonsoft.Json.JsonConvert.SerializeObject(e));
+                    try
+                    {
+                        var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
+                        client.Timeout = 480 * (1000);
+                        var request = new RestRequest(Method.POST);
+                        request.AddHeader("Accept", "application/json");
+                        request.AddJsonBody(pe);
+                        IRestResponse response = client.Execute(request);
+                        string content = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(response.Content);
+                        if (content.StartsWith("Success"))
+                        {
+                            content = content.Remove(0, 8);
+                            content = content.Split(' ')[0];
+                            PEdidoID = numeroReferencia;
+                            PedidoBDAGuardar.PedidoId = numeroReferencia;
+                            PedidoBDAGuardar.Sincronizado = true;
+                            PedidoBDAGuardar.NumeroPedido = content;
+                        }
+                        else
+                        {
+                            return BadRequest(content);
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        return BadRequest(Newtonsoft.Json.JsonConvert.SerializeObject(e));
+                    }
                 }
-            }
-            else
-            {
-                PEdidoID = numeroReferencia;
-                PedidoBDAGuardar.PedidoId = numeroReferencia;
-                PedidoBDAGuardar.NumeroPedido = "";
-                PedidoBDAGuardar.Sincronizado = false;
-            }
-
-
-            PResumenCredito_Result resultado;
-            using (AVentasEntities context = new AVentasEntities())
-            {
-                asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                asesor.CorrelativoPedidos = numeroCorelativo + 1;
-                context.SaveChanges();
-                resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
-            }
-            AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
-
-            if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
-            {
-                if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                else
                 {
-                    ReducirStock(PedidoBDAGuardar);
+                    PEdidoID = numeroReferencia;
+                    PedidoBDAGuardar.PedidoId = numeroReferencia;
+                    PedidoBDAGuardar.NumeroPedido = "";
+                    PedidoBDAGuardar.Sincronizado = false;
                 }
+
+
+                PResumenCredito_Result resultado;
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                    asesor.CorrelativoPedidos = numeroCorelativo + 1;
+                    context.SaveChanges();
+                    resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
+                }
+                AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
+
+                if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
+                {
+                    if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                    {
+                        ReducirStock(PedidoBDAGuardar);
+                    }
+                }
+
+                return Ok(new { EncabezadoPedido = new { PedidoId = PEdidoID } });
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
             }
-         
-            return Ok(new { EncabezadoPedido = new { PedidoId = PEdidoID } });
         }
 
 

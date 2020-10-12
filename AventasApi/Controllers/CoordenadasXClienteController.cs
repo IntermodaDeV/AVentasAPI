@@ -42,20 +42,28 @@ namespace AventasApi.Controllers
         [Route("~/api/cliente/global")]
         public List<Coordenada> GetClientes()
         {
-            var result = context.Clientes.Where(x => x.Longitud != null && x.Latitud!=null).ToList();
-            if (result.Count > 0)
+            try
             {
-                var clientes = result.Select(x => new Coordenada() { 
-                    ACCOUNT= x.CodigoCliente,
-                    NAME=x.Nombre,
-                    LATITUDE=x.Latitud.Value,
-                    LONGITUD=x.Longitud.Value,
-                    COMPANY = x.EmpresaId
-                }).ToList();
+                var result = context.Clientes.Where(x => x.Longitud != null && x.Latitud != null).ToList();
+                if (result.Count > 0)
+                {
+                    var clientes = result.Select(x => new Coordenada()
+                    {
+                        ACCOUNT = x.CodigoCliente,
+                        NAME = x.Nombre,
+                        LATITUDE = x.Latitud.Value,
+                        LONGITUD = x.Longitud.Value,
+                        COMPANY = x.EmpresaId
+                    }).ToList();
 
-                return clientes;
+                    return clientes;
+                }
+                return new List<Coordenada>();
             }
-            return new List<Coordenada>();
+            catch(Exception e)
+            {
+                return new List<Coordenada>();
+            }
         }
     }
 }

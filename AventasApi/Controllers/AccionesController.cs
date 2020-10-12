@@ -22,15 +22,21 @@ namespace AventasApi.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
-            var acciones = context.Acciones.Select(acc => new AccionesViewModel
+            try {
+                var acciones = context.Acciones.Select(acc => new AccionesViewModel
+                {
+                    IdAccion = acc.IdAccion,
+                    Accion = acc.Accion,
+                    UrlRedirect = acc.UrlRedirect,
+                    Estado = acc.Estado,
+                    Orden = acc.Orden
+                }).ToList();
+                return Ok(acciones);
+            }
+            catch(Exception e)
             {
-                IdAccion = acc.IdAccion,
-                Accion = acc.Accion,
-                UrlRedirect = acc.UrlRedirect,
-                Estado = acc.Estado,
-                Orden = acc.Orden
-            }).ToList();
-            return Ok(acciones);
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

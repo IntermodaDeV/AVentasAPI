@@ -18,26 +18,31 @@ namespace AventasApi.Controllers
         [Route("api/banco/{empresa}")]
         public async Task<IHttpActionResult> GetBancos(string empresa)
         {
-
-            var bancos = context.Bancos.Where(b => b.EmpresaId == empresa).Select(banco => new BancoViewModel
+            try
             {
-                IdBanco = banco.IdBanco,
-                NombreBanco = banco.NombreBanco,
-                Descripcion = banco.Descripcion,
-                EmpresaId = banco.EmpresaId,
-                CuentasBancarias = banco.CuentasBancarias.Select(cuentBanc => new CuentaBancariaViewModel
+                var bancos = context.Bancos.Where(b => b.EmpresaId == empresa).Select(banco => new BancoViewModel
                 {
-                    IdCuentaBancaria = cuentBanc.IdCuentaBancaria,
-                    NombreBanco = cuentBanc.NombreBanco,
-                    NumeroCuenta = cuentBanc.NumeroCuenta,
-                    Descripcion = cuentBanc.Descripcion,
-                    GrupoBanco = cuentBanc.GrupoBanco,
-                    IdBanco = cuentBanc.IdBanco,
-                    IdMoneda = cuentBanc.IdMoneda,
-                    EmpresaId = cuentBanc.EmpresaId,
-                }).ToList(),
-            }).ToList();
-            return Ok(bancos);
+                    IdBanco = banco.IdBanco,
+                    NombreBanco = banco.NombreBanco,
+                    Descripcion = banco.Descripcion,
+                    EmpresaId = banco.EmpresaId,
+                    CuentasBancarias = banco.CuentasBancarias.Select(cuentBanc => new CuentaBancariaViewModel
+                    {
+                        IdCuentaBancaria = cuentBanc.IdCuentaBancaria,
+                        NombreBanco = cuentBanc.NombreBanco,
+                        NumeroCuenta = cuentBanc.NumeroCuenta,
+                        Descripcion = cuentBanc.Descripcion,
+                        GrupoBanco = cuentBanc.GrupoBanco,
+                        IdBanco = cuentBanc.IdBanco,
+                        IdMoneda = cuentBanc.IdMoneda,
+                        EmpresaId = cuentBanc.EmpresaId,
+                    }).ToList(),
+                }).ToList();
+                return Ok(bancos);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

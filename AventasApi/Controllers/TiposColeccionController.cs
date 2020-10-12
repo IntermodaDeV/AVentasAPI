@@ -17,13 +17,19 @@ namespace AventasApi.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> GetTiposColeccion()
         {
-            List<TiposdeColeccionViewModel> tiposColecciones = context.TiposdeColeccion.Select(tipCol => new TiposdeColeccionViewModel
+            try
             {
-                ColeccionTipo = tipCol.ColeccionTipo,
-                Descripcion = tipCol.Descripcion,
-                Icono = tipCol.Icono
-            }).ToList();
-            return Ok(tiposColecciones);
+                List<TiposdeColeccionViewModel> tiposColecciones = context.TiposdeColeccion.Select(tipCol => new TiposdeColeccionViewModel
+                {
+                    ColeccionTipo = tipCol.ColeccionTipo,
+                    Descripcion = tipCol.Descripcion,
+                    Icono = tipCol.Icono
+                }).ToList();
+                return Ok(tiposColecciones);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }
