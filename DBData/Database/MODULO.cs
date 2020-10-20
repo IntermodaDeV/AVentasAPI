@@ -12,15 +12,18 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class DistribucionxTalla
+    public partial class MODULO
     {
-        public int IdDistribucion { get; set; }
-        public Nullable<int> IdTallaxGrupo { get; set; }
-        public string NombreDistribucion { get; set; }
-        public string NombreTalla { get; set; }
-        public string Cantidad { get; set; }
-        public Nullable<decimal> Orden { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public MODULO()
+        {
+            this.GESTORES = new HashSet<GESTORE>();
+        }
     
-        public virtual TallasXGrupo TallasXGrupo { get; set; }
+        public int ID { get; set; }
+        public string NOMBRE { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<GESTORE> GESTORES { get; set; }
     }
 }

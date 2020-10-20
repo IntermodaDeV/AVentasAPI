@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using AventasApi.Models.ViewModels;
+using System.Data.Entity;
 
 namespace AventasApi.Controllers
 {
@@ -22,13 +21,19 @@ namespace AventasApi.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Getcolecciones()
         {
-            List<LineaViewModel> lineas = context.MaestroLinea.Where(ml=> ml.Visible.Value).Select(ml => new LineaViewModel
+            try
             {
-                IdLinea= ml.IdLinea,
-                Linea =  ml.Linea,
-                Imagen = ml.Url_Imagen
-            }).ToList();
-            return Ok(lineas);
+                List<LineaViewModel> lineas = await context.MaestroLinea.Where(ml => ml.Visible.Value).Select(ml => new LineaViewModel
+                {
+                    IdLinea = ml.IdLinea,
+                    Linea = ml.Linea,
+                    Imagen = ml.Url_Imagen
+                }).ToListAsync();
+                return Ok(lineas);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

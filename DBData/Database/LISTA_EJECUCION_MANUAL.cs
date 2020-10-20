@@ -12,15 +12,16 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class DistribucionxTalla
+    public partial class LISTA_EJECUCION_MANUAL
     {
-        public int IdDistribucion { get; set; }
-        public Nullable<int> IdTallaxGrupo { get; set; }
-        public string NombreDistribucion { get; set; }
-        public string NombreTalla { get; set; }
-        public string Cantidad { get; set; }
-        public Nullable<decimal> Orden { get; set; }
+        public int ID { get; set; }
+        public Nullable<int> ID_GESTOR { get; set; }
+        public bool EN_ESPERA { get; set; }
+        public bool EN_EJECUCION { get; set; }
+        public bool FINALIZADO { get; set; }
+        public string USUARIO { get; set; }
+        public Nullable<System.DateTime> FECHA { get; set; }
     
-        public virtual TallasXGrupo TallasXGrupo { get; set; }
+        public virtual GESTORES GESTORES { get; set; }
     }
 }

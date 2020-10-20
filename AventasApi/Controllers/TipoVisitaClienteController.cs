@@ -17,14 +17,20 @@ namespace AventasApi.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> GetTiposVisitaCliente()
         {
-            var tiposVisitaCliente = context.TipoVisitaCliente.Where(tvc => tvc.Estatus.Value).Select(tvc=> new TipoVisitaClienteViewModel
+            try
             {
-                idTipoVisita = tvc.idTipoVisita,
-                Nombre = tvc.Nombre,
-                Descripcion = tvc.Descripcion,
-                Estatus = tvc.Estatus.Value
-            });
-            return Ok(tiposVisitaCliente);
+                var tiposVisitaCliente = context.TipoVisitaCliente.Where(tvc => tvc.Estatus.Value).Select(tvc => new TipoVisitaClienteViewModel
+                {
+                    idTipoVisita = tvc.idTipoVisita,
+                    Nombre = tvc.Nombre,
+                    Descripcion = tvc.Descripcion,
+                    Estatus = tvc.Estatus.Value
+                });
+                return Ok(tiposVisitaCliente);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

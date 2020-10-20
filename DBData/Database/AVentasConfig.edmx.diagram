@@ -6,6 +6,17 @@
     <edmx:Diagrams>
       <Diagram DiagramId="791412c11b1d4630bf75333b1e335a23" Name="Diagram1">
         <EntityTypeShape EntityType="AVentasConfigModel.CONFIGURACIONE" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="AVentasConfigModel.GESTORES" Width="1.5" PointX="6" PointY="1" />
+        <EntityTypeShape EntityType="AVentasConfigModel.LISTA_EJECUCION" Width="1.5" PointX="8.25" PointY="2" />
+        <EntityTypeShape EntityType="AVentasConfigModel.LISTA_EJECUCION_MANUAL" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="AVentasConfigModel.LOG_EJECUCION" Width="1.5" PointX="10.5" PointY="1.375" />
+        <EntityTypeShape EntityType="AVentasConfigModel.MODULOS" Width="1.5" PointX="3.75" PointY="2.5" />
+        <AssociationConnector Association="AVentasConfigModel.FK__GESTORES__ID_GP__412EB0B6" />
+        <AssociationConnector Association="AVentasConfigModel.FK__GESTORES__ID_MOD__75A278F5" />
+        <AssociationConnector Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__4222D4EF" />
+        <AssociationConnector Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__6FE99F9F" />
+        <AssociationConnector Association="AVentasConfigModel.FK__LOG_EJECU__ID_LI__4316F928" />
+        <AssociationConnector Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__14270015" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -21,21 +21,27 @@ namespace AventasApi.Controllers
         [HttpPost]
         public IHttpActionResult Post([FromBody] GoeposicionXAsesorViewModel geoposicion)
         {
-            var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-
-            context.BitacoraGeoposicion.Add(new BitacoraGeoposicion
+            try
             {
-                IdAsignacionxAsesor=geoposicion.IdAsignacionxAsesor,
-                Mocked=geoposicion.Mocked,
-                Accuracy=geoposicion.Accuracy,
-                Altitude=geoposicion.Altitude,
-                Latitude=geoposicion.Latitude,
-                Longitude=geoposicion.Longitude,
-                CodigoAsesor=user.UserAccount,
-                Fecha = DateTime.Now
-            });
-            context.SaveChanges();
-            return Ok();
+                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                context.BitacoraGeoposicion.Add(new BitacoraGeoposicion
+                {
+                    IdAsignacionxAsesor = geoposicion.IdAsignacionxAsesor,
+                    Mocked = geoposicion.Mocked,
+                    Accuracy = geoposicion.Accuracy,
+                    Altitude = geoposicion.Altitude,
+                    Latitude = geoposicion.Latitude,
+                    Longitude = geoposicion.Longitude,
+                    CodigoAsesor = user.UserAccount,
+                    Fecha = DateTime.Now
+                });
+                context.SaveChanges();
+                return Ok();
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

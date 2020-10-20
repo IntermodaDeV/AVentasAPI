@@ -15,5 +15,7 @@ namespace AventasApi.Models.ViewModels
         public Nullable<int> IdTipoVisita { get; set; }
         public string Observacion { get; set; }
        public string ColorRelleno { get; set; }
+        public bool Checkin { get; set; }
+        public bool Checkout { get; set; }
     }
 }

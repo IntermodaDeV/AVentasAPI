@@ -135,7 +135,7 @@ namespace AventasApi.Utils
                             newEntity.Referencia = subFactura.REF_TRANSOPEN;
                             newEntity.ReferenciaFacturas = subFactura.REF_CUSTTRANS;
                             newEntity.ReferenciaAcuerdo = subFactura.AGREEMENT_NUM;
-                            newEntity.NumeroCuota = int.TryParse(subFactura.PA_PAYM_AMOUNT, out snCuota) ? snCuota : 0;
+                            newEntity.NumeroCuota = int.TryParse(subFactura.PA_PAYM_NUM, out snCuota) ? snCuota : 0;
                             newEntity.ValorCuota = Decimal.TryParse(subFactura.PA_PAYM_AMOUNT, out svCuota) ? svCuota : 0;
                             newEntity.ValorVencidoCuota = Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out svVencidoCuota) ? svVencidoCuota : 0;
                             newEntity.ReferenciaCuotas = subFactura.PA_REF_APSA;
@@ -167,7 +167,7 @@ namespace AventasApi.Utils
                             entityFound.Referencia = subFactura.REF_TRANSOPEN;
                             entityFound.ReferenciaFacturas = subFactura.REF_CUSTTRANS;
                             entityFound.ReferenciaAcuerdo = subFactura.AGREEMENT_NUM;
-                            entityFound.NumeroCuota = int.TryParse(subFactura.PA_PAYM_AMOUNT, out snCuota) ? snCuota : 0;
+                            entityFound.NumeroCuota = int.TryParse(subFactura.PA_PAYM_NUM, out snCuota) ? snCuota : 0;
                             entityFound.ValorCuota = Decimal.TryParse(subFactura.PA_PAYM_AMOUNT, out svCuota) ? svCuota : 0;
                             entityFound.ValorVencidoCuota = Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out svVencidoCuota) ? svVencidoCuota : 0;
                             entityFound.ReferenciaCuotas = subFactura.PA_REF_APSA;

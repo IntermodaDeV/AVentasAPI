@@ -17,24 +17,30 @@ namespace AventasApi.Controllers
         [Route("api/TipoPago/{empresa}")]
         public async Task<IHttpActionResult> GetTiposPago(string empresa)
         {
-
-            var tiposPago = context.TiposdePago.Where(e=>e.EmpresaId.ToUpper()==empresa.ToUpper()).Select(tipoPago => new TipoPagoViewModel
+            try
             {
-                IdTipoPago = tipoPago.IdTipoPago,
-                Codigo = tipoPago.Codigo,
-                Descripcion = tipoPago.Descripcion,
-                Tipo = tipoPago.Tipo,
-                EmpresaId = tipoPago.EmpresaId,
-                TiposdePagoDetalle = tipoPago.TiposdePagoDetalle.Select(tipoPagoDetalle=> new TipoPagoDetalleViewModel{
-                    IdTipoPagoDetalle = tipoPagoDetalle.IdTipoPagoDetalle,
-                    Codigo = tipoPagoDetalle.Codigo,
-                    CodigoDetalle = tipoPagoDetalle.CodigoDetalle,
-                    Descripcion = tipoPagoDetalle.Descripcion,
-                    EmpresaId = tipoPagoDetalle.EmpresaId,
-                    IdTipoPago = tipoPagoDetalle.IdTipoPago,
-                }).ToList(),
-            }).ToList();
-            return Ok(tiposPago);
+                var tiposPago = context.TiposdePago.Where(e => e.EmpresaId.ToUpper() == empresa.ToUpper()).Select(tipoPago => new TipoPagoViewModel
+                {
+                    IdTipoPago = tipoPago.IdTipoPago,
+                    Codigo = tipoPago.Codigo,
+                    Descripcion = tipoPago.Descripcion,
+                    Tipo = tipoPago.Tipo,
+                    EmpresaId = tipoPago.EmpresaId,
+                    TiposdePagoDetalle = tipoPago.TiposdePagoDetalle.Select(tipoPagoDetalle => new TipoPagoDetalleViewModel
+                    {
+                        IdTipoPagoDetalle = tipoPagoDetalle.IdTipoPagoDetalle,
+                        Codigo = tipoPagoDetalle.Codigo,
+                        CodigoDetalle = tipoPagoDetalle.CodigoDetalle,
+                        Descripcion = tipoPagoDetalle.Descripcion,
+                        EmpresaId = tipoPagoDetalle.EmpresaId,
+                        IdTipoPago = tipoPagoDetalle.IdTipoPago,
+                    }).ToList(),
+                }).ToList();
+                return Ok(tiposPago);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

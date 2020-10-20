@@ -15,18 +15,24 @@ namespace AventasApi.Controllers
         [HttpGet]
         public IHttpActionResult GetAsesores()
         {
-            var razones = context.RazonNoVentaTipo.Select(razonNoVentaTipo => new RazonNoVentaTipoViewModel
+            try
             {
-                IdRazonNoVentaTipo = razonNoVentaTipo.IdRazonNoVentaTipo,
-                Tipo = razonNoVentaTipo.Tipo,
-                RazonesNoVenta = razonNoVentaTipo.RazonNoVentaCausa.Select(razonNoVentaCausa => new RazonNoVentaCausaViewModel
+                var razones = context.RazonNoVentaTipo.Select(razonNoVentaTipo => new RazonNoVentaTipoViewModel
                 {
-                    IdRazonNoVentaCausa = razonNoVentaCausa.IdRazonNoVentaCausa,
-                    IdRazonNoVentaTipo = razonNoVentaCausa.IdRazonNoVentaTipo,
-                    Causa = razonNoVentaCausa.Causa,
-                }).ToList()
-            }).ToList();
-            return Ok(razones);
+                    IdRazonNoVentaTipo = razonNoVentaTipo.IdRazonNoVentaTipo,
+                    Tipo = razonNoVentaTipo.Tipo,
+                    RazonesNoVenta = razonNoVentaTipo.RazonNoVentaCausa.Select(razonNoVentaCausa => new RazonNoVentaCausaViewModel
+                    {
+                        IdRazonNoVentaCausa = razonNoVentaCausa.IdRazonNoVentaCausa,
+                        IdRazonNoVentaTipo = razonNoVentaCausa.IdRazonNoVentaTipo,
+                        Causa = razonNoVentaCausa.Causa,
+                    }).ToList()
+                }).ToList();
+                return Ok(razones);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

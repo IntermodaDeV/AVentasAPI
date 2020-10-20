@@ -15,7 +15,7 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress />
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -196,6 +196,7 @@
     <Compile Include="Controllers\PruebaColeccionesXLineaController.cs" />
     <Compile Include="Controllers\RazonNoVentaController.cs" />
     <Compile Include="Controllers\ReciboController.cs" />
+    <Compile Include="Controllers\SincronizacionListaController.cs" />
     <Compile Include="Controllers\TipoPagoController.cs" />
     <Compile Include="Controllers\TipoPedidoController.cs" />
     <Compile Include="Controllers\TiposColeccionController.cs" />
@@ -205,11 +206,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AsignacionViewModel.cs" />
     <Compile Include="Models\Authentication\AuthenticationResponse.cs" />
     <Compile Include="Models\Authentication\Menu.cs" />
     <Compile Include="Models\Authentication\UserAuthenticated.cs" />
     <Compile Include="Models\Authentication\Usuario.cs" />
     <Compile Include="Models\BitacoraVisitasClienteViewModel.cs" />
+    <Compile Include="Models\CheckInViewModel.cs" />
     <Compile Include="Models\ClienteImpuestoModel.cs" />
     <Compile Include="Models\ComunidadAutonoma.cs" />
     <Compile Include="Models\Coordenada.cs" />
@@ -218,8 +221,11 @@
     <Compile Include="Models\CustomerLocationApp\RutaConCoordenadaViewModel.cs" />
     <Compile Include="Models\Empresa.cs" />
     <Compile Include="Models\EmpresaTransporte.cs" />
+    <Compile Include="Models\GestorModel.cs" />
     <Compile Include="Models\GruposImpuestosArticulos.cs" />
     <Compile Include="Models\GruposImpuestosClientes.cs" />
+    <Compile Include="Models\ListaEjecucionManualModel.cs" />
+    <Compile Include="Models\ModuloModel.cs" />
     <Compile Include="Models\ProductoImpuestoModel.cs" />
     <Compile Include="Models\RazonNoVentaCausaViewModel.cs" />
     <Compile Include="Models\RazonNoVentaTipoViewModel.cs" />
@@ -350,7 +356,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62630</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:62631/</IISUrl>
+          <IISUrl>http://localhost:62630/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

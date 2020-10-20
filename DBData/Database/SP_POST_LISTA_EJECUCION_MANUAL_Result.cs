@@ -10,17 +10,9 @@
 namespace DBData.Database
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class DistribucionxTalla
+    public partial class SP_POST_LISTA_EJECUCION_MANUAL_Result
     {
-        public int IdDistribucion { get; set; }
-        public Nullable<int> IdTallaxGrupo { get; set; }
-        public string NombreDistribucion { get; set; }
-        public string NombreTalla { get; set; }
-        public string Cantidad { get; set; }
-        public Nullable<decimal> Orden { get; set; }
-    
-        public virtual TallasXGrupo TallasXGrupo { get; set; }
+        public string Resultado { get; set; }
     }
 }

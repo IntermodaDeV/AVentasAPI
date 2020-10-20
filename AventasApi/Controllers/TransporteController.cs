@@ -67,12 +67,12 @@ namespace AventasApi.Controllers
             }
         }
 
-        [Route("{pais}/ComunidadAutonoma")]
-        public IEnumerable<ComunidadAutonomaModel> GetComunidadAutonoma(string pais)
+        [Route("ComunidadAutonoma")]
+        public IEnumerable<ComunidadAutonomaModel> GetComunidadAutonoma()
         {
             try
             {
-                var empresas = context.ComunidadAutonoma.Where(x => x.COUNTRYREGIONID.ToUpper() == pais.ToUpper()).ToList();
+                var empresas = context.ComunidadAutonoma.ToList();
                 if (empresas.Count <= 0)
                 {
                     return new List<ComunidadAutonomaModel>();

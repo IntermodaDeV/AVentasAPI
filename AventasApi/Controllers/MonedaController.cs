@@ -3,6 +3,8 @@ using AventasApi.Models.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System;
+using System.Data.Entity;
 
 namespace AventasApi.Controllers
 {
@@ -13,14 +15,39 @@ namespace AventasApi.Controllers
         [Route("api/Moneda/{empresa}")]
         public async Task<IHttpActionResult> GetMonedas(string Empresa)
         {
-            var MonedaXEmpresa = context.MonedasxEmpresa.Where(m => m.EmpresaId == Empresa).Select(m => m.IdMoneda).ToList();
-            var monedas = context.MaestroMoneda.Where(m => MonedaXEmpresa.Contains(m.IdMoneda)).Select(mon => new MonedaViewModel
+            try
             {
-                IdMoneda = mon.IdMoneda,
-                Moneda = mon.Moneda,
-                Abreviacion=mon.Abreviacion
-            }).ToList();
-            return Ok(monedas);
+                var MonedaXEmpresa = await context.MonedasxEmpresa.Where(m => m.EmpresaId == Empresa).Select(m => m.IdMoneda).ToListAsync();
+                var monedas = await context.MaestroMoneda.Where(m => MonedaXEmpresa.Contains(m.IdMoneda)).Select(mon => new MonedaViewModel
+                {
+                    IdMoneda = mon.IdMoneda,
+                    Moneda = mon.Moneda,
+                    Abreviacion = mon.Abreviacion
+                }).ToListAsync();
+                return Ok(monedas);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("api/Moneda")]
+        public async Task<IHttpActionResult> GetMonedasAbreviacion()
+        {
+            try
+            {
+                var monedas = await context.MaestroMoneda.Select(mon => new MonedaViewModel
+                {
+                    IdMoneda = mon.IdMoneda,
+                    Moneda = mon.Moneda,
+                    Abreviacion = mon.Abreviacion
+                }).ToListAsync();
+                return Ok(monedas);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

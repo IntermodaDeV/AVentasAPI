@@ -112,6 +112,9 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="latitudeCheckOut" Type="decimal" Precision="18" Scale="15" />
           <Property Name="longitudeCheckOut" Type="decimal" Precision="18" Scale="15" />
           <Property Name="fechaCheckOut" Type="datetime" />
+          <Property Name="BloqueoCheckin" Type="bit" Nullable="false" />
+          <Property Name="BloqueoCheckout" Type="bit" Nullable="false" />
+          <Property Name="Cancelada" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="AsignacionxAsesorDetalle">
           <Key>
@@ -315,6 +318,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="NombreDistribucion" Type="varchar" MaxLength="250" />
           <Property Name="NombreTalla" Type="varchar" MaxLength="250" />
           <Property Name="Cantidad" Type="varchar" MaxLength="250" />
+          <Property Name="Orden" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="EdadesxColeccion">
           <Key>
@@ -2812,6 +2816,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="latitudeCheckOut" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="longitudeCheckOut" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="fechaCheckOut" Type="DateTime" Precision="3" />
+          <Property Name="BloqueoCheckin" Type="Boolean" Nullable="false" />
+          <Property Name="BloqueoCheckout" Type="Boolean" Nullable="false" />
+          <Property Name="Cancelada" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="AsignacionxAsesorDetalle">
           <Key>
@@ -3037,6 +3044,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="NombreTalla" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="Cantidad" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="TallasXGrupo" Relationship="Self.FK__Distribuc__IdTal__0E7913B7" FromRole="DistribucionxTalla" ToRole="TallasXGrupo" />
+          <Property Name="Orden" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="EdadesxColeccion">
           <Key>
@@ -5054,6 +5062,12 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="Int32" Name="PorcentajeEjecucion" Nullable="false" />
           <Property Type="Int32" Name="ClienteCancelo" Nullable="true" />
           <Property Type="Int32" Name="Efectivas" Nullable="true" />
+          <Property Type="Int32" Name="NoAtendidas" Nullable="true" />
+          <Property Type="Int32" Name="Productivas" Nullable="true" />
+          <Property Type="Int32" Name="Pedidos" Nullable="true" />
+          <Property Type="Int32" Name="Recibos" Nullable="true" />
+          <Property Type="Decimal" Name="TotalPedidos" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="Decimal" Name="TotalRecibos" Nullable="true" Precision="38" Scale="4" />
         </ComplexType>
         <ComplexType Name="PResumenCredito_Result">
           <Property Type="Int32" Name="Id" Nullable="true" />
@@ -5689,6 +5703,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="AsignacionxAsesor">
             <EntityTypeMapping TypeName="AventasModel.AsignacionxAsesor">
               <MappingFragment StoreEntitySet="AsignacionxAsesor">
+                <ScalarProperty Name="Cancelada" ColumnName="Cancelada" />
+                <ScalarProperty Name="BloqueoCheckout" ColumnName="BloqueoCheckout" />
+                <ScalarProperty Name="BloqueoCheckin" ColumnName="BloqueoCheckin" />
                 <ScalarProperty Name="fechaCheckOut" ColumnName="fechaCheckOut" />
                 <ScalarProperty Name="longitudeCheckOut" ColumnName="longitudeCheckOut" />
                 <ScalarProperty Name="latitudeCheckOut" ColumnName="latitudeCheckOut" />
@@ -5897,6 +5914,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="DistribucionxTalla">
             <EntityTypeMapping TypeName="AventasModel.DistribucionxTalla">
               <MappingFragment StoreEntitySet="DistribucionxTalla">
+                <ScalarProperty Name="Orden" ColumnName="Orden" />
                 <ScalarProperty Name="IdDistribucion" ColumnName="IdDistribucion" />
                 <ScalarProperty Name="IdTallaxGrupo" ColumnName="IdTallaxGrupo" />
                 <ScalarProperty Name="NombreDistribucion" ColumnName="NombreDistribucion" />
@@ -6457,6 +6475,12 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="PorcentajeEjecucion" ColumnName="PorcentajeEjecucion" />
                 <ScalarProperty Name="ClienteCancelo" ColumnName="ClienteCancelo" />
                 <ScalarProperty Name="Efectivas" ColumnName="Efectivas" />
+                <ScalarProperty Name="NoAtendidas" ColumnName="NoAtendidas" />
+                <ScalarProperty Name="Productivas" ColumnName="Productivas" />
+                <ScalarProperty Name="Pedidos" ColumnName="Pedidos" />
+                <ScalarProperty Name="Recibos" ColumnName="Recibos" />
+                <ScalarProperty Name="TotalPedidos" ColumnName="TotalPedidos" />
+                <ScalarProperty Name="TotalRecibos" ColumnName="TotalRecibos" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

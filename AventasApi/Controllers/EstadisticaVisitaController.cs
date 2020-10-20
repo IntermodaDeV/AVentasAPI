@@ -15,8 +15,14 @@ namespace AventasApi.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> GetEstadistica(DateTime FechaInicio, DateTime FechaFin)
         {
-            var estadistica = context.EstadisticaVisita(FechaInicio, FechaFin);
-            return Ok(estadistica);
+            try
+            {
+                var estadistica = context.EstadisticaVisita(FechaInicio, FechaFin);
+                return Ok(estadistica);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

@@ -39,6 +39,9 @@ namespace DBData.Database
         public Nullable<decimal> latitudeCheckOut { get; set; }
         public Nullable<decimal> longitudeCheckOut { get; set; }
         public Nullable<System.DateTime> fechaCheckOut { get; set; }
+        public bool BloqueoCheckin { get; set; }
+        public bool BloqueoCheckout { get; set; }
+        public bool Cancelada { get; set; }
     
         public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }

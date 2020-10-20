@@ -198,6 +198,9 @@
     <Compile Include="Database\FotografiasXProducto.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\GESTORES.cs">
+      <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\GrupoImpuestoArticulo.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -213,6 +216,15 @@
     <Compile Include="Database\LineasxColeccion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\LISTA_EJECUCION.cs">
+      <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\LISTA_EJECUCION_MANUAL.cs">
+      <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\LOG_EJECUCION.cs">
+      <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\MaestroEdad.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -224,6 +236,9 @@
     </Compile>
     <Compile Include="Database\MaestroMoneda.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\MODULOS.cs">
+      <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\MonedasxEmpresa.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
@@ -278,6 +293,9 @@
     </Compile>
     <Compile Include="Database\sp_helpdiagrams_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\SP_POST_LISTA_EJECUCION_MANUAL_Result.cs">
+      <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\SubFacturasxCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>

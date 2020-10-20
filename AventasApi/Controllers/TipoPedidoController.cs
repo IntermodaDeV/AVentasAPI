@@ -22,17 +22,23 @@ namespace AventasApi.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Get()
         {
-            List<TipoPedidoViewModel> pedidos = context.TiposdePedido.Select(tp => new TipoPedidoViewModel
+            try
             {
-                IdTipoPedido = tp.IdTipoPedido,
-                TipoPedido = tp.TipoPedido,
-                HabilitaEstilos = tp.HabilitaEstilos??false,
-                Imagen = tp.Url_Imagen,
-                Aplica_Todos = tp.Aplica_Todos??false,
-                Restrictivo = tp.Restrictivo??false
-            }).ToList();
+                List<TipoPedidoViewModel> pedidos = context.TiposdePedido.Select(tp => new TipoPedidoViewModel
+                {
+                    IdTipoPedido = tp.IdTipoPedido,
+                    TipoPedido = tp.TipoPedido,
+                    HabilitaEstilos = tp.HabilitaEstilos ?? false,
+                    Imagen = tp.Url_Imagen,
+                    Aplica_Todos = tp.Aplica_Todos ?? false,
+                    Restrictivo = tp.Restrictivo ?? false
+                }).ToList();
 
-            return Ok(pedidos);
+                return Ok(pedidos);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

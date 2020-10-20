@@ -16,10 +16,16 @@ namespace AventasApi.Controllers
 
         public async Task<IHttpActionResult> Get()
         {
-            var configuraciones = context.Configuraciones.ToDictionary(conf => conf.CodigoConfiguracion,
-                conf => conf.Valor
-            );
-            return Ok(configuraciones);
+            try
+            {
+                var configuraciones = context.Configuraciones.ToDictionary(conf => conf.CodigoConfiguracion,
+                    conf => conf.Valor
+                );
+                return Ok(configuraciones);
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }
