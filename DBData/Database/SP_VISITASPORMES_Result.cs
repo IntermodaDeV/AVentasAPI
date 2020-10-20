@@ -10,16 +10,12 @@
 namespace DBData.Database
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class vw_TallasxProducto
+    public partial class SP_VISITASPORMES_Result
     {
-        public int IdProducto { get; set; }
-        public int IdColeccion { get; set; }
-        public string CodigoProducto { get; set; }
-        public string CodigoTalla { get; set; }
-        public Nullable<decimal> orden { get; set; }
-        public string Descripcion { get; set; }
-        public string CodigoGrupoTalla { get; set; }
+        public Nullable<int> ANIO { get; set; }
+        public int M { get; set; }
+        public int VISITAS { get; set; }
+        public Nullable<System.DateTime> FECHA { get; set; }
     }
 }
