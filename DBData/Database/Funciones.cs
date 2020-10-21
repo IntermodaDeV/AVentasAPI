@@ -12,24 +12,22 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class FisicoDisponible
+    public partial class Funciones
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public FisicoDisponible()
+        public Funciones()
         {
-            this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
+            this.Funciones_Roles = new HashSet<Funciones_Roles>();
+            this.Pantallas_Funciones = new HashSet<Pantallas_Funciones>();
         }
     
-        public int IdFisicoDisponible { get; set; }
-        public string CodigoColor { get; set; }
-        public string CodigoTalla { get; set; }
-        public int IdProducto { get; set; }
-        public Nullable<decimal> Disponible { get; set; }
-        public Nullable<decimal> MinStock { get; set; }
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public bool Status { get; set; }
     
-        public virtual Colores Colores { get; set; }
-        public virtual ProductosxColeccion ProductosxColeccion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
+        public virtual ICollection<Funciones_Roles> Funciones_Roles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Pantallas_Funciones> Pantallas_Funciones { get; set; }
     }
 }

@@ -198,6 +198,12 @@
     <Compile Include="Database\FotografiasXProducto.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Funciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Funciones_Roles.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\GESTORES.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
@@ -249,6 +255,9 @@
     <Compile Include="Database\PantallasxUsuario.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Pantallas_Funciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\PedidosDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -280,6 +289,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\RecibosxCliente.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Roles.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\Rutas.cs">

@@ -12,13 +12,13 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class vw_FisicoDisponible
+    public partial class Pantallas_Funciones
     {
-        public int IdFisicoDisponible { get; set; }
-        public string CodigoColor { get; set; }
-        public string CodigoTalla { get; set; }
-        public Nullable<int> IdProducto { get; set; }
-        public Nullable<decimal> Disponible { get; set; }
-        public Nullable<decimal> MinStock { get; set; }
+        public int Id { get; set; }
+        public int IdPantalla { get; set; }
+        public int IdFuncion { get; set; }
+    
+        public virtual Funciones Funciones { get; set; }
+        public virtual Pantallas Pantallas { get; set; }
     }
 }
