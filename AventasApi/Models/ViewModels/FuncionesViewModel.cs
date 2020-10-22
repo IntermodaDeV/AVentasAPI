@@ -2,7 +2,7 @@
 {
     public class FuncionesViewModel
     {
-        public int IdFuncion { get; set; }
+        public int Id { get; set; }
         public string Nombre { get; set; }
         public bool Status { get; set; }
     }

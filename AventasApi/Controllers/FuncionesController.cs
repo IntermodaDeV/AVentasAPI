@@ -18,9 +18,9 @@ namespace AventasApi.Controllers
         {
             try
             {
-                var Funciones = context.Funciones.Where(f => f.Status == true).Select(f => new FuncionesViewModel
+                var Funciones = context.Funciones.Select(f => new FuncionesViewModel
                 {
-                    IdFuncion = f.Id
+                    Id = f.Id
                      , Nombre = f.Nombre
                      , Status = f.Status
                 });
@@ -34,7 +34,8 @@ namespace AventasApi.Controllers
 
 
         [HttpPost]
-        public async Task<IHttpActionResult> Post(FuncionesViewModel Funcion)
+        [Route("~/api/Funciones/Crear")]
+        public async Task<IHttpActionResult> Post([FromBody] FuncionesViewModel Funcion)
         {
             try
             {
@@ -51,6 +52,58 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("api/Funciones/ActualizarEstado/{Id}")]
+        public async Task<IHttpActionResult> ActualizarEstado(int Id)
+        {
+            try
+            {
+
+                var FuncionesDB = await context.Funciones.FindAsync(Id);
+                if(FuncionesDB == null)
+                {
+                    return BadRequest("No se encuentra la función.");
+                }
+
+                FuncionesDB.Status = !FuncionesDB.Status;
+                context.Entry(FuncionesDB).State = System.Data.Entity.EntityState.Modified;
+                context.SaveChanges();
+                var response = new { Message = "Se ha registrado con exito." };
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/funcion/modificar")]
+        public async Task<IHttpActionResult> ModificarFuncion([FromBody] FuncionesViewModel Funcion)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var FuncionDB = await ctx.Funciones.FindAsync(Funcion.Id);
+
+                    if (FuncionDB == null)
+                    {
+                        return BadRequest("No se encuentra la Función");
+                    }
+
+                    FuncionDB.Nombre = Funcion.Nombre;
+                    FuncionDB.Status = Funcion.Status;
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
             }
         }
     }
