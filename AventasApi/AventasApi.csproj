@@ -192,6 +192,7 @@
     <Compile Include="Controllers\GruposImpuestosController.cs" />
     <Compile Include="Controllers\MaestroLineaController.cs" />
     <Compile Include="Controllers\MonedaController.cs" />
+    <Compile Include="Controllers\PantallaController.cs" />
     <Compile Include="Controllers\PedidosXClienteController.cs" />
     <Compile Include="Controllers\PrioridadAsignacionController.cs" />
     <Compile Include="Controllers\PruebaColeccionesXLineaController.cs" />
@@ -228,6 +229,7 @@
     <Compile Include="Models\GruposImpuestosClientes.cs" />
     <Compile Include="Models\ListaEjecucionManualModel.cs" />
     <Compile Include="Models\ModuloModel.cs" />
+    <Compile Include="Models\PantallaModel.cs" />
     <Compile Include="Models\ProductoImpuestoModel.cs" />
     <Compile Include="Models\RazonNoVentaCausaViewModel.cs" />
     <Compile Include="Models\RazonNoVentaTipoViewModel.cs" />

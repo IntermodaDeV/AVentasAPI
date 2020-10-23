@@ -1,48 +1,50 @@
-﻿using System;
+﻿using AventasApi.Models;
+using DBData.Database;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using AventasApi.Models;
-using DBData.Database;
 
 namespace AventasApi.Controllers
 {
-    public class RolController : ApiController
+    [RoutePrefix("api/pantalla")]
+    public class PantallaController : ApiController
     {
         [HttpGet]
-        [Route("~/api/rol/roles")]
-        public async Task<IHttpActionResult> ObtenerRoles()
+        [Route("pantallas")]
+        public async Task<IHttpActionResult> ObtenerPantallas()
         {
             try
             {
-                using(var ctx = new AVentasEntities())
+                using (var ctx = new AVentasEntities())
                 {
-                    var listaRoles = await ctx.Roles.Select(x=>new { Id=x.Id,Nombre=x.Nombre,Status=x.Status }).ToListAsync();
-                    return Ok(listaRoles);
+                    var listaPantallas = await ctx.Pantallas.Select(x => new PantallaModel{ Id = x.IdPantalla, Nombre = x.Nombre, Ruta=x.Ruta,Status = x.Status.Value }).ToListAsync();
+                    return Ok(listaPantallas);
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest();
             }
         }
 
         [HttpPost]
-        [Route("~/api/rol/estado/{Id}")]
+        [Route("estado/{Id}")]
         public async Task<IHttpActionResult> ModificarEstado(int Id)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var rol = await ctx.Roles.FindAsync(Id);
+                    var pantalla = await ctx.Pantallas.FindAsync(Id);
 
-                    if (rol == null)
+                    if (pantalla == null)
                     {
-                        return BadRequest("No se encuentra el rol.");
+                        return BadRequest("No se encuentra la pantalla.");
                     }
 
-                    rol.Status = !rol.Status;
+                    pantalla.Status = !pantalla.Status;
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }
@@ -54,15 +56,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        [Route("~/api/rol/crear")]
-        public async Task<IHttpActionResult> CrearRol([FromBody] RolCrearModel rol)
+        [Route("crear")]
+        public async Task<IHttpActionResult> CrearPantalla([FromBody] PantallaModel pantalla)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var nuevoRol = new Roles() { Status = rol.Status, Nombre = rol.Nombre };
-                    ctx.Roles.Add(nuevoRol);
+                    var nuevoPantalla = new Pantallas() { Status = pantalla.Status, Nombre = pantalla.Nombre,Ruta=pantalla.Ruta };
+                    ctx.Pantallas.Add(nuevoPantalla);
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }
@@ -74,22 +76,23 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        [Route("~/api/rol/modificar")]
-        public async Task<IHttpActionResult> ModificarRol([FromBody] RolCrearModel rol)
+        [Route("modificar")]
+        public async Task<IHttpActionResult> ModificarPantalla([FromBody] PantallaModel pantalla)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var rolBd = await ctx.Roles.FindAsync(rol.Id);
+                    var pantallaBD = await ctx.Pantallas.FindAsync(pantalla.Id);
 
-                    if(rolBd == null)
+                    if (pantallaBD == null)
                     {
                         return BadRequest("No se encuentra el rol");
                     }
 
-                    rolBd.Nombre = rol.Nombre;
-                    rolBd.Status = rol.Status;
+                    pantallaBD.Nombre = pantalla.Nombre;
+                    pantallaBD.Status = pantalla.Status;
+                    pantallaBD.Ruta   = pantalla.Ruta;
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }
