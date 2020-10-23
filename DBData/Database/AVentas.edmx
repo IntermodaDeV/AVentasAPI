@@ -5,8 +5,8 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="AventasModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="Acciones">
           <Key>
             <PropertyRef Name="IdAccion" />
@@ -482,6 +482,11 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdRol" Type="int" Nullable="false" />
           <Property Name="IdFuncion" Type="int" Nullable="false" />
+          <Property Name="Status" Type="bit" />
+          <Property Name="createdby" Type="varchar" MaxLength="50" />
+          <Property Name="createddate" Type="datetime" />
+          <Property Name="modifiedby" Type="varchar" MaxLength="50" />
+          <Property Name="modifieddate" Type="datetime" />
         </EntityType>
         <EntityType Name="GrupoImpuestoArticulo">
           <Key>
@@ -587,6 +592,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdPantalla" Type="int" Nullable="false" />
           <Property Name="IdFuncion" Type="int" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="PantallasxUsuario">
           <Key>
@@ -902,8 +908,8 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Pin" Type="int" />
           <Property Name="Password" Type="varchar(max)" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_AtributosxColeccion">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -915,8 +921,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have 
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
           <Property Name="CodigoAtributo" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_ClientesxRuta">
           <Key>
             <PropertyRef Name="CodigoCliente" />
@@ -936,8 +942,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a prim
           <Property Name="Longitud" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Ruta" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_ColoresxProducto">
           <Key>
             <PropertyRef Name="IdColorxProducto" />
@@ -948,8 +954,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a p
           <Property Name="Rgb" Type="varchar" MaxLength="250" />
           <Property Name="IdProducto" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_FisicoDisponible">
           <Key>
             <PropertyRef Name="IdFisicoDisponible" />
@@ -961,8 +967,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a p
           <Property Name="Disponible" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_TallasxProducto">
           <Key>
             <PropertyRef Name="IdProducto" />
@@ -5790,6 +5796,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="Roles" Relationship="AventasModel.FK__Funciones__IdRol__746F28F1" FromRole="Funciones_Roles" ToRole="Roles" />
           <NavigationProperty Name="Funciones_Roles1" Relationship="AventasModel.FK_Funciones_Roles_Funciones_Roles" FromRole="Funciones_Roles" ToRole="Funciones_Roles1" />
           <NavigationProperty Name="Funciones_Roles2" Relationship="AventasModel.FK_Funciones_Roles_Funciones_Roles" FromRole="Funciones_Roles1" ToRole="Funciones_Roles" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="createdby" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="createddate" Type="DateTime" Precision="3" />
+          <Property Name="modifiedby" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="modifieddate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Pantallas">
           <Key>
@@ -5811,6 +5822,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="IdFuncion" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Funciones" Relationship="AventasModel.FK__Pantallas__IdFun__76577163" FromRole="Pantallas_Funciones" ToRole="Funciones" />
           <NavigationProperty Name="Pantallas" Relationship="AventasModel.FK__Pantallas__IdPan__783FB9D5" FromRole="Pantallas_Funciones" ToRole="Pantallas" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Roles">
           <Key>
@@ -7010,6 +7022,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Funciones_Roles">
             <EntityTypeMapping TypeName="AventasModel.Funciones_Roles">
               <MappingFragment StoreEntitySet="Funciones_Roles">
+                <ScalarProperty Name="modifieddate" ColumnName="modifieddate" />
+                <ScalarProperty Name="modifiedby" ColumnName="modifiedby" />
+                <ScalarProperty Name="createddate" ColumnName="createddate" />
+                <ScalarProperty Name="createdby" ColumnName="createdby" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="IdFuncion" ColumnName="IdFuncion" />
                 <ScalarProperty Name="IdRol" ColumnName="IdRol" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -7029,6 +7046,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Pantallas_Funciones">
             <EntityTypeMapping TypeName="AventasModel.Pantallas_Funciones">
               <MappingFragment StoreEntitySet="Pantallas_Funciones">
+                <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="IdFuncion" ColumnName="IdFuncion" />
                 <ScalarProperty Name="IdPantalla" ColumnName="IdPantalla" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
