@@ -25,10 +25,12 @@ namespace DBData.Database
         public string usuario { get; set; }
         public string password { get; set; }
         public bool status { get; set; }
+        public string EmpresaId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PantallasxUsuario> PantallasxUsuario { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Usuario_Rol> Usuario_Rol { get; set; }
+        public virtual Empresa Empresa { get; set; }
     }
 }

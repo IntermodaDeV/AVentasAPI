@@ -941,6 +941,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="usuario" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="password" Type="varchar(max)" Nullable="false" />
           <Property Name="status" Type="bit" Nullable="false" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -2169,6 +2170,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Usuarios__Empres__28E2F130">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="1" />
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="Usuarios">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Clientes_Empresa">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
           <End Role="Clientes" Type="Self.Clientes" Multiplicity="*" />
@@ -2869,6 +2882,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="TiposdePago" EntitySet="TiposdePago" />
             <End Role="TiposdePagoDetalle" EntitySet="TiposdePagoDetalle" />
           </AssociationSet>
+          <AssociationSet Name="FK__Usuarios__Empres__28E2F130" Association="Self.FK__Usuarios__Empres__28E2F130">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="Usuarios" EntitySet="Usuarios" />
+          </AssociationSet>
           <AssociationSet Name="FK_Clientes_Empresa" Association="Self.FK_Clientes_Empresa">
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="Clientes" EntitySet="Clientes" />
@@ -3273,6 +3290,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C" FromRole="Empresa" ToRole="PedidosxCliente" />
           <Property Name="DocumentoFiscal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__Productos__IdEmpresa__Empresa" FromRole="Empresa" ToRole="ProductosxColeccion" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK__Usuarios__Empres__28E2F130" FromRole="Empresa" ToRole="Usuarios" />
         </EntityType>
         <EntityType Name="Errores">
           <Key>
@@ -5184,6 +5202,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Usuario_Rol" EntitySet="Usuario_Rol" />
           </AssociationSet>
+          <AssociationSet Name="FK__Usuarios__Empres__28E2F130" Association="AventasModel.FK__Usuarios__Empres__28E2F130">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="Usuarios" EntitySet="Usuarios" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -5994,6 +6016,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="status" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="PantallasxUsuario" Relationship="AventasModel.FK_USUARIOP" FromRole="Usuarios" ToRole="PantallasxUsuario" />
           <NavigationProperty Name="Usuario_Rol" Relationship="AventasModel.FK_USUARIO" FromRole="Usuarios" ToRole="Usuario_Rol" />
+          <Property Name="EmpresaId" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__Usuarios__Empres__28E2F130" FromRole="Usuarios" ToRole="Empresa" />
         </EntityType>
         <Association Name="FK__Pantallas__IdPan__05F8DC4F">
           <End Type="AventasModel.Pantallas" Role="Pantallas" Multiplicity="0..1" />
@@ -6040,6 +6064,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="Usuario_Rol">
               <PropertyRef Name="usuarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Usuarios__Empres__28E2F130">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="Usuarios">
+              <PropertyRef Name="EmpresaId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -7228,6 +7264,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Usuarios">
             <EntityTypeMapping TypeName="AventasModel.Usuarios">
               <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
                 <ScalarProperty Name="status" ColumnName="status" />
                 <ScalarProperty Name="password" ColumnName="password" />
                 <ScalarProperty Name="usuario" ColumnName="usuario" />

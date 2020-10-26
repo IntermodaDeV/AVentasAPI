@@ -191,6 +191,7 @@
         <AssociationConnector Association="AventasModel.FK_USUARIOP" />
         <AssociationConnector Association="AventasModel.FK_ROL" />
         <AssociationConnector Association="AventasModel.FK_USUARIO" />
+        <AssociationConnector Association="AventasModel.FK__Usuarios__Empres__28E2F130" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
