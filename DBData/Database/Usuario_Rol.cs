@@ -12,13 +12,18 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class vw_FisicoDisponible
+    public partial class Usuario_Rol
     {
-        public int IdFisicoDisponible { get; set; }
-        public string CodigoColor { get; set; }
-        public string CodigoTalla { get; set; }
-        public Nullable<int> IdProducto { get; set; }
-        public Nullable<decimal> Disponible { get; set; }
-        public Nullable<decimal> MinStock { get; set; }
+        public int Id { get; set; }
+        public int usuarioId { get; set; }
+        public int rolId { get; set; }
+        public bool status { get; set; }
+        public string createdBy { get; set; }
+        public System.DateTime createdDate { get; set; }
+        public string editedBy { get; set; }
+        public System.DateTime editedDate { get; set; }
+    
+        public virtual Roles Roles { get; set; }
+        public virtual Usuarios Usuarios { get; set; }
     }
 }

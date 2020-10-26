@@ -345,6 +345,9 @@
     <Compile Include="Database\Usuarios.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Usuario_Rol.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\vw_AtributosxColeccion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

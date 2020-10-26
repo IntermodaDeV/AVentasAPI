@@ -5,8 +5,8 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="AventasModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Acciones">
           <Key>
             <PropertyRef Name="IdAccion" />
@@ -474,6 +474,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="75" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
+          <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
         <EntityType Name="Funciones_Roles">
           <Key>
@@ -584,6 +588,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Nombre" Type="varchar" MaxLength="40" />
           <Property Name="Ruta" Type="varchar" MaxLength="50" />
           <Property Name="Status" Type="bit" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="75" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
+          <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
         <EntityType Name="Pantallas_Funciones">
           <Key>
@@ -593,15 +601,23 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="IdPantalla" Type="int" Nullable="false" />
           <Property Name="IdFuncion" Type="int" Nullable="false" />
           <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="75" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
+          <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
         <EntityType Name="PantallasxUsuario">
           <Key>
             <PropertyRef Name="IdPantallaUsuario" />
           </Key>
           <Property Name="IdPantallaUsuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="IdUsuario" Type="varchar" MaxLength="50" />
+          <Property Name="IdUsuario" Type="int" />
           <Property Name="IdPantalla" Type="int" />
           <Property Name="Activa" Type="bit" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="75" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
+          <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
         <EntityType Name="PedidosDetalle">
           <Key>
@@ -767,6 +783,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="75" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
+          <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
         <EntityType Name="Rutas">
           <Key>
@@ -900,16 +920,30 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="COMPANY" Type="varchar" MaxLength="50" />
           <Property Name="UNITVALUEBOXES" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
+        <EntityType Name="Usuario_Rol">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="usuarioId" Type="int" Nullable="false" />
+          <Property Name="rolId" Type="int" Nullable="false" />
+          <Property Name="status" Type="bit" Nullable="false" />
+          <Property Name="createdBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="createdDate" Type="datetime" Nullable="false" />
+          <Property Name="editedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="editedDate" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="Usuarios">
           <Key>
-            <PropertyRef Name="IdUsuario" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="IdUsuario" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="Pin" Type="int" />
-          <Property Name="Password" Type="varchar(max)" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="usuario" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="password" Type="varchar(max)" Nullable="false" />
+          <Property Name="status" Type="bit" Nullable="false" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_AtributosxColeccion">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -921,8 +955,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
           <Property Name="CodigoAtributo" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ClientesxRuta">
           <Key>
             <PropertyRef Name="CodigoCliente" />
@@ -942,8 +976,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene defin
           <Property Name="Longitud" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Ruta" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ColoresxProducto">
           <Key>
             <PropertyRef Name="IdColorxProducto" />
@@ -954,8 +988,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene de
           <Property Name="Rgb" Type="varchar" MaxLength="250" />
           <Property Name="IdProducto" Type="int" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_FisicoDisponible">
           <Key>
             <PropertyRef Name="IdFisicoDisponible" />
@@ -967,8 +1001,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene de
           <Property Name="Disponible" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_TallasxProducto">
           <Key>
             <PropertyRef Name="IdProducto" />
@@ -1715,18 +1749,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Pantallas__IdUsu__0504B816">
-          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
-          <End Role="PantallasxUsuario" Type="Self.PantallasxUsuario" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Usuarios">
-              <PropertyRef Name="IdUsuario" />
-            </Principal>
-            <Dependent Role="PantallasxUsuario">
-              <PropertyRef Name="IdUsuario" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__PedidosDe__Pedid__70099B30">
           <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="0..1" />
           <End Role="PedidosDetalle" Type="Self.PedidosDetalle" Multiplicity="*" />
@@ -2207,6 +2229,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ROL">
+          <End Role="Roles" Type="Self.Roles" Multiplicity="1" />
+          <End Role="Usuario_Rol" Type="Self.Usuario_Rol" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Usuario_Rol">
+              <PropertyRef Name="rolId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SubFacturasxCliente_FacturasxCliente">
           <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
           <End Role="SubFacturasxCliente" Type="Self.SubFacturasxCliente" Multiplicity="*" />
@@ -2216,6 +2250,30 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="SubFacturasxCliente">
               <PropertyRef Name="IdFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USUARIO">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="Usuario_Rol" Type="Self.Usuario_Rol" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Usuario_Rol">
+              <PropertyRef Name="usuarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USUARIOP">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="PantallasxUsuario" Type="Self.PantallasxUsuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PantallasxUsuario">
+              <PropertyRef Name="IdUsuario" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2358,6 +2416,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="TiposdePedido" EntityType="Self.TiposdePedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TipoVisitaCliente" EntityType="Self.TipoVisitaCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransportePrecioCaja" EntityType="Self.TransportePrecioCaja" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Usuario_Rol" EntityType="Self.Usuario_Rol" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acciones" EntityType="Self.Acciones" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -2670,10 +2729,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Pantallas" EntitySet="Pantallas" />
             <End Role="Pantallas_Funciones" EntitySet="Pantallas_Funciones" />
           </AssociationSet>
-          <AssociationSet Name="FK__Pantallas__IdUsu__0504B816" Association="Self.FK__Pantallas__IdUsu__0504B816">
-            <End Role="Usuarios" EntitySet="Usuarios" />
-            <End Role="PantallasxUsuario" EntitySet="PantallasxUsuario" />
-          </AssociationSet>
           <AssociationSet Name="FK__PedidosDe__Pedid__70099B30" Association="Self.FK__PedidosDe__Pedid__70099B30">
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
             <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
@@ -2834,9 +2889,21 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
           </AssociationSet>
+          <AssociationSet Name="FK_ROL" Association="Self.FK_ROL">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="Usuario_Rol" EntitySet="Usuario_Rol" />
+          </AssociationSet>
           <AssociationSet Name="FK_SubFacturasxCliente_FacturasxCliente" Association="Self.FK_SubFacturasxCliente_FacturasxCliente">
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USUARIO" Association="Self.FK_USUARIO">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="Usuario_Rol" EntitySet="Usuario_Rol" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USUARIOP" Association="Self.FK_USUARIOP">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="PantallasxUsuario" EntitySet="PantallasxUsuario" />
           </AssociationSet>
           <AssociationSet Name="GrupoImpuestoArticulo_Empresa" Association="Self.GrupoImpuestoArticulo_Empresa">
             <End Role="Empresa" EntitySet="Empresa" />
@@ -3407,17 +3474,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Empresa" Relationship="Self.FK__MonedasxE__Empre__3D7E1B63" FromRole="MonedasxEmpresa" ToRole="Empresa" />
           <NavigationProperty Name="MaestroMoneda" Relationship="Self.FK__MonedasxE__IdMon__3C89F72A" FromRole="MonedasxEmpresa" ToRole="MaestroMoneda" />
         </EntityType>
-        <EntityType Name="PantallasxUsuario">
-          <Key>
-            <PropertyRef Name="IdPantallaUsuario" />
-          </Key>
-          <Property Name="IdPantallaUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IdUsuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IdPantalla" Type="Int32" />
-          <Property Name="Activa" Type="Boolean" />
-          <NavigationProperty Name="Usuarios" Relationship="Self.FK__Pantallas__IdUsu__0504B816" FromRole="PantallasxUsuario" ToRole="Usuarios" />
-          <NavigationProperty Name="Pantallas" Relationship="AventasModel.FK__Pantallas__IdPan__05F8DC4F" FromRole="PantallasxUsuario" ToRole="Pantallas" />
-        </EntityType>
         <EntityType Name="PrioridadAsignacion">
           <Key>
             <PropertyRef Name="idPrioridad" />
@@ -3638,15 +3694,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="TiempoEstimado" Type="Int32" />
           <NavigationProperty Name="AsignacionxAsesor" Relationship="Self.FK__Asignacio__idTip__26EFBBC6" FromRole="TipoVisitaCliente" ToRole="AsignacionxAsesor" />
           <NavigationProperty Name="AsignacionxAsesorDetalle" Relationship="Self.FK__Asignacio__idTip__5634BA94" FromRole="TipoVisitaCliente" ToRole="AsignacionxAsesorDetalle" />
-        </EntityType>
-        <EntityType Name="Usuarios">
-          <Key>
-            <PropertyRef Name="IdUsuario" />
-          </Key>
-          <Property Name="IdUsuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Pin" Type="Int32" />
-          <NavigationProperty Name="PantallasxUsuario" Relationship="Self.FK__Pantallas__IdUsu__0504B816" FromRole="Usuarios" ToRole="PantallasxUsuario" />
-          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Acciones">
           <Key>
@@ -4515,18 +4562,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Pantallas__IdUsu__0504B816">
-          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
-          <End Role="PantallasxUsuario" Type="Self.PantallasxUsuario" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Usuarios">
-              <PropertyRef Name="IdUsuario" />
-            </Principal>
-            <Dependent Role="PantallasxUsuario">
-              <PropertyRef Name="IdUsuario" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__TallasxPr__IdPro__270FB757">
           <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
           <End Role="TallasxProducto" Type="Self.TallasxProducto" Multiplicity="*" />
@@ -4635,7 +4670,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="MaestroLinea" EntityType="Self.MaestroLinea" />
           <EntitySet Name="MaestroMoneda" EntityType="Self.MaestroMoneda" />
           <EntitySet Name="MonedasxEmpresa" EntityType="Self.MonedasxEmpresa" />
-          <EntitySet Name="PantallasxUsuario" EntityType="Self.PantallasxUsuario" />
           <EntitySet Name="PrioridadAsignacion" EntityType="Self.PrioridadAsignacion" />
           <EntitySet Name="ProductosxColeccion" EntityType="Self.ProductosxColeccion" />
           <EntitySet Name="RazonNoVentaCausa" EntityType="Self.RazonNoVentaCausa" />
@@ -4652,7 +4686,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="TiposdePagoDetalle" EntityType="Self.TiposdePagoDetalle" />
           <EntitySet Name="TiposdePedido" EntityType="Self.TiposdePedido" />
           <EntitySet Name="TipoVisitaCliente" EntityType="Self.TipoVisitaCliente" />
-          <EntitySet Name="Usuarios" EntityType="Self.Usuarios" />
           <EntitySet Name="Acciones" EntityType="Self.Acciones" />
           <EntitySet Name="vw_AtributosxColeccion" EntityType="Self.vw_AtributosxColeccion" />
           <EntitySet Name="vw_ClientesxRuta" EntityType="Self.vw_ClientesxRuta" />
@@ -4923,10 +4956,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
           </AssociationSet>
-          <AssociationSet Name="FK__Pantallas__IdUsu__0504B816" Association="Self.FK__Pantallas__IdUsu__0504B816">
-            <End Role="Usuarios" EntitySet="Usuarios" />
-            <End Role="PantallasxUsuario" EntitySet="PantallasxUsuario" />
-          </AssociationSet>
           <AssociationSet Name="FK__TallasxPr__IdPro__270FB757" Association="Self.FK__TallasxPr__IdPro__270FB757">
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="TallasxProducto" EntitySet="TallasxProducto" />
@@ -5132,13 +5161,28 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Funciones_Roles" EntitySet="Funciones_Roles" />
             <End Role="Funciones_Roles1" EntitySet="Funciones_Roles" />
           </AssociationSet>
+          <AssociationSet Name="FK__Pantallas__IdPan__783FB9D5" Association="AventasModel.FK__Pantallas__IdPan__783FB9D5">
+            <End Role="Pantallas" EntitySet="Pantallas" />
+            <End Role="Pantallas_Funciones" EntitySet="Pantallas_Funciones" />
+          </AssociationSet>
+          <EntitySet Name="PantallasxUsuario" EntityType="AventasModel.PantallasxUsuario" />
+          <EntitySet Name="Usuario_Rol" EntityType="AventasModel.Usuario_Rol" />
+          <EntitySet Name="Usuarios" EntityType="AventasModel.Usuarios" />
           <AssociationSet Name="FK__Pantallas__IdPan__05F8DC4F" Association="AventasModel.FK__Pantallas__IdPan__05F8DC4F">
             <End Role="Pantallas" EntitySet="Pantallas" />
             <End Role="PantallasxUsuario" EntitySet="PantallasxUsuario" />
           </AssociationSet>
-          <AssociationSet Name="FK__Pantallas__IdPan__783FB9D5" Association="AventasModel.FK__Pantallas__IdPan__783FB9D5">
-            <End Role="Pantallas" EntitySet="Pantallas" />
-            <End Role="Pantallas_Funciones" EntitySet="Pantallas_Funciones" />
+          <AssociationSet Name="FK_USUARIOP" Association="AventasModel.FK_USUARIOP">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="PantallasxUsuario" EntitySet="PantallasxUsuario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ROL" Association="AventasModel.FK_ROL">
+            <End Role="Roles" EntitySet="Roles" />
+            <End Role="Usuario_Rol" EntitySet="Usuario_Rol" />
+          </AssociationSet>
+          <AssociationSet Name="FK_USUARIO" Association="AventasModel.FK_USUARIO">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="Usuario_Rol" EntitySet="Usuario_Rol" />
           </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -5784,6 +5828,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Status" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Funciones_Roles" Relationship="AventasModel.FK__Funciones__IdFun__75634D2A" FromRole="Funciones" ToRole="Funciones_Roles" />
           <NavigationProperty Name="Pantallas_Funciones" Relationship="AventasModel.FK__Pantallas__IdFun__76577163" FromRole="Funciones" ToRole="Pantallas_Funciones" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Funciones_Roles">
           <Key>
@@ -5810,8 +5858,12 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Nombre" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
           <Property Name="Ruta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="Boolean" />
-          <NavigationProperty Name="PantallasxUsuario" Relationship="AventasModel.FK__Pantallas__IdPan__05F8DC4F" FromRole="Pantallas" ToRole="PantallasxUsuario" />
           <NavigationProperty Name="Pantallas_Funciones" Relationship="AventasModel.FK__Pantallas__IdPan__783FB9D5" FromRole="Pantallas" ToRole="Pantallas_Funciones" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="PantallasxUsuario" Relationship="AventasModel.FK__Pantallas__IdPan__05F8DC4F" FromRole="Pantallas" ToRole="PantallasxUsuario" />
         </EntityType>
         <EntityType Name="Pantallas_Funciones">
           <Key>
@@ -5823,6 +5875,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Funciones" Relationship="AventasModel.FK__Pantallas__IdFun__76577163" FromRole="Pantallas_Funciones" ToRole="Funciones" />
           <NavigationProperty Name="Pantallas" Relationship="AventasModel.FK__Pantallas__IdPan__783FB9D5" FromRole="Pantallas_Funciones" ToRole="Pantallas" />
           <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Roles">
           <Key>
@@ -5832,6 +5888,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Nombre" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="Status" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Funciones_Roles" Relationship="AventasModel.FK__Funciones__IdRol__746F28F1" FromRole="Roles" ToRole="Funciones_Roles" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Usuario_Rol" Relationship="AventasModel.FK_ROL" FromRole="Roles" ToRole="Usuario_Rol" />
         </EntityType>
         <Association Name="FK__Funciones__IdFun__75634D2A">
           <End Type="AventasModel.Funciones" Role="Funciones" Multiplicity="1" />
@@ -5881,6 +5942,59 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Pantallas__IdPan__783FB9D5">
+          <End Type="AventasModel.Pantallas" Role="Pantallas" Multiplicity="1" />
+          <End Type="AventasModel.Pantallas_Funciones" Role="Pantallas_Funciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Pantallas">
+              <PropertyRef Name="IdPantalla" />
+            </Principal>
+            <Dependent Role="Pantallas_Funciones">
+              <PropertyRef Name="IdPantalla" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PantallasxUsuario">
+          <Key>
+            <PropertyRef Name="IdPantallaUsuario" />
+          </Key>
+          <Property Name="IdPantallaUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdUsuario" Type="Int32" />
+          <Property Name="IdPantalla" Type="Int32" />
+          <Property Name="Activa" Type="Boolean" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Pantallas" Relationship="AventasModel.FK__Pantallas__IdPan__05F8DC4F" FromRole="PantallasxUsuario" ToRole="Pantallas" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_USUARIOP" FromRole="PantallasxUsuario" ToRole="Usuarios" />
+        </EntityType>
+        <EntityType Name="Usuario_Rol">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="usuarioId" Type="Int32" Nullable="false" />
+          <Property Name="rolId" Type="Int32" Nullable="false" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+          <Property Name="createdBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="createdDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="editedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="editedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Roles" Relationship="AventasModel.FK_ROL" FromRole="Usuario_Rol" ToRole="Roles" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_USUARIO" FromRole="Usuario_Rol" ToRole="Usuarios" />
+        </EntityType>
+        <EntityType Name="Usuarios">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="usuario" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="PantallasxUsuario" Relationship="AventasModel.FK_USUARIOP" FromRole="Usuarios" ToRole="PantallasxUsuario" />
+          <NavigationProperty Name="Usuario_Rol" Relationship="AventasModel.FK_USUARIO" FromRole="Usuarios" ToRole="Usuario_Rol" />
+        </EntityType>
         <Association Name="FK__Pantallas__IdPan__05F8DC4F">
           <End Type="AventasModel.Pantallas" Role="Pantallas" Multiplicity="0..1" />
           <End Type="AventasModel.PantallasxUsuario" Role="PantallasxUsuario" Multiplicity="*" />
@@ -5893,15 +6007,39 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Pantallas__IdPan__783FB9D5">
-          <End Type="AventasModel.Pantallas" Role="Pantallas" Multiplicity="1" />
-          <End Type="AventasModel.Pantallas_Funciones" Role="Pantallas_Funciones" Multiplicity="*" />
+        <Association Name="FK_USUARIOP">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="AventasModel.PantallasxUsuario" Role="PantallasxUsuario" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Pantallas">
-              <PropertyRef Name="IdPantalla" />
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Pantallas_Funciones">
-              <PropertyRef Name="IdPantalla" />
+            <Dependent Role="PantallasxUsuario">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ROL">
+          <End Type="AventasModel.Roles" Role="Roles" Multiplicity="1" />
+          <End Type="AventasModel.Usuario_Rol" Role="Usuario_Rol" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Roles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Usuario_Rol">
+              <PropertyRef Name="rolId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_USUARIO">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="1" />
+          <End Type="AventasModel.Usuario_Rol" Role="Usuario_Rol" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Usuario_Rol">
+              <PropertyRef Name="usuarioId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -6378,16 +6516,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="PantallasxUsuario">
-            <EntityTypeMapping TypeName="AventasModel.PantallasxUsuario">
-              <MappingFragment StoreEntitySet="PantallasxUsuario">
-                <ScalarProperty Name="IdPantallaUsuario" ColumnName="IdPantallaUsuario" />
-                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
-                <ScalarProperty Name="IdPantalla" ColumnName="IdPantalla" />
-                <ScalarProperty Name="Activa" ColumnName="Activa" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="PrioridadAsignacion">
             <EntityTypeMapping TypeName="AventasModel.PrioridadAsignacion">
               <MappingFragment StoreEntitySet="PrioridadAsignacion">
@@ -6577,15 +6705,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
                 <ScalarProperty Name="Estatus" ColumnName="Estatus" />
                 <ScalarProperty Name="TiempoEstimado" ColumnName="TiempoEstimado" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Usuarios">
-            <EntityTypeMapping TypeName="AventasModel.Usuarios">
-              <MappingFragment StoreEntitySet="Usuarios">
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
-                <ScalarProperty Name="Pin" ColumnName="Pin" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -7013,6 +7132,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Funciones">
             <EntityTypeMapping TypeName="AventasModel.Funciones">
               <MappingFragment StoreEntitySet="Funciones">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -7036,6 +7159,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Pantallas">
             <EntityTypeMapping TypeName="AventasModel.Pantallas">
               <MappingFragment StoreEntitySet="Pantallas">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Ruta" ColumnName="Ruta" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
@@ -7046,6 +7173,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Pantallas_Funciones">
             <EntityTypeMapping TypeName="AventasModel.Pantallas_Funciones">
               <MappingFragment StoreEntitySet="Pantallas_Funciones">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="IdFuncion" ColumnName="IdFuncion" />
                 <ScalarProperty Name="IdPantalla" ColumnName="IdPantalla" />
@@ -7056,8 +7187,50 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Roles">
             <EntityTypeMapping TypeName="AventasModel.Roles">
               <MappingFragment StoreEntitySet="Roles">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PantallasxUsuario">
+            <EntityTypeMapping TypeName="AventasModel.PantallasxUsuario">
+              <MappingFragment StoreEntitySet="PantallasxUsuario">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Activa" ColumnName="Activa" />
+                <ScalarProperty Name="IdPantalla" ColumnName="IdPantalla" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+                <ScalarProperty Name="IdPantallaUsuario" ColumnName="IdPantallaUsuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Usuario_Rol">
+            <EntityTypeMapping TypeName="AventasModel.Usuario_Rol">
+              <MappingFragment StoreEntitySet="Usuario_Rol">
+                <ScalarProperty Name="editedDate" ColumnName="editedDate" />
+                <ScalarProperty Name="editedBy" ColumnName="editedBy" />
+                <ScalarProperty Name="createdDate" ColumnName="createdDate" />
+                <ScalarProperty Name="createdBy" ColumnName="createdBy" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="rolId" ColumnName="rolId" />
+                <ScalarProperty Name="usuarioId" ColumnName="usuarioId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Usuarios">
+            <EntityTypeMapping TypeName="AventasModel.Usuarios">
+              <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="usuario" ColumnName="usuario" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
