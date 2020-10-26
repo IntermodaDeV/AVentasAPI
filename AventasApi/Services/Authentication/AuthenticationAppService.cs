@@ -84,31 +84,31 @@ namespace AventasApi.Services.Authentication
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
                         }
 
-                        var entityFound = context.Usuarios.FirstOrDefault(x => x.IdUsuario.Equals(credential.UserAccount));
+                        var entityFound = context.Usuarios.FirstOrDefault(x => x.usuario.Equals(credential.UserAccount));
                         if (entityFound == null)
                         {
                             var newUser = new Usuarios();
-                            newUser.IdUsuario = credential.UserAccount;
-                            newUser.Password = BCrypt.Net.BCrypt.HashPassword(credential.Password);
+                            newUser.usuario = credential.UserAccount;
+                            newUser.password = BCrypt.Net.BCrypt.HashPassword(credential.Password);
                             context.Usuarios.Add(newUser);
                             context.SaveChanges();
                         }
                         else
                         {
-                            entityFound.Password = BCrypt.Net.BCrypt.HashPassword(credential.Password);
+                            entityFound.password = BCrypt.Net.BCrypt.HashPassword(credential.Password);
                             context.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
                             context.SaveChanges();
                         }
                     }
                     else
                     {
-                        var entityFound = context.Usuarios.FirstOrDefault(x => x.IdUsuario.Equals(credential.UserAccount));
+                        var entityFound = context.Usuarios.FirstOrDefault(x => x.usuario.Equals(credential.UserAccount));
                         if (entityFound == null)
                         {
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
                         }
 
-                        var isSamePassword = BCrypt.Net.BCrypt.Verify(credential.Password, entityFound.Password);
+                        var isSamePassword = BCrypt.Net.BCrypt.Verify(credential.Password, entityFound.password);
                         if (!isSamePassword)
                         {
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };

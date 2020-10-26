@@ -143,7 +143,7 @@ namespace AventasApi.Controllers
 
                     if (funcionRol == null)
                     {
-                        return BadRequest("El rol no tiene asignada la funcion");
+                        return BadRequest("El rol no tiene asignada la funcion.");
                     }
 
                     funcionRol.Status = false;
