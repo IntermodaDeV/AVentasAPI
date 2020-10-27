@@ -32,17 +32,18 @@ namespace AventasApi.Controllers
             }
         }
 
-
         [HttpPost]
         [Route("~/api/Funciones/Crear")]
         public async Task<IHttpActionResult> Post([FromBody] FuncionesViewModel Funcion)
         {
             try
             {
-                var FuncionesDB = new Funciones 
+                var FuncionesDB = new Funciones
                 {
                     Nombre = Funcion.Nombre
-                   ,Status = Funcion.Status
+                   , Status = Funcion.Status
+                   , CreatedBy = Funcion.Usuario
+                   , CreatedDate = DateTime.Now
                 };
                 context.Funciones.Add(FuncionesDB);
                 context.SaveChanges();
@@ -97,6 +98,8 @@ namespace AventasApi.Controllers
 
                     FuncionDB.Nombre = Funcion.Nombre;
                     FuncionDB.Status = Funcion.Status;
+                    FuncionDB.CreatedBy = Funcion.Usuario;
+                    FuncionDB.CreatedDate = DateTime.Now;
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }
@@ -104,6 +107,27 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IHttpActionResult> GetPantallasAsignadas(int IdFuncion)
+        {
+            try
+            {
+                using (var pant = new AVentasEntities())
+                {
+                    var PantallasAsignadas = pant.Pantallas_Funciones.Where(x => x.IdFuncion == IdFuncion && x.Status == true).Select(x => x.IdPantalla).ToList();
+
+                    var ListaPantallas = pant.Pantallas.Where(p => PantallasAsignadas.Contains(p.IdPantalla)).ToList();
+
+                    return Ok(ListaPantallas);
+                }
+                
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
             }
         }
     }

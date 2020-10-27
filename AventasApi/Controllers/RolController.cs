@@ -193,7 +193,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var nuevoRol = new Roles() { Status = rol.Status, Nombre = rol.Nombre };
+                    var nuevoRol = new Roles() { Status = rol.Status, Nombre = rol.Nombre, CreatedBy = rol.Usuario, CreatedDate = DateTime.Now };
                     ctx.Roles.Add(nuevoRol);
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
@@ -222,6 +222,8 @@ namespace AventasApi.Controllers
 
                     rolBd.Nombre = rol.Nombre;
                     rolBd.Status = rol.Status;
+                    rolBd.CreatedBy = rol.Usuario;
+                    rolBd.CreatedDate = DateTime.Now;
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }

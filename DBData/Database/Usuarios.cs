@@ -19,6 +19,7 @@ namespace DBData.Database
         {
             this.PantallasxUsuario = new HashSet<PantallasxUsuario>();
             this.Usuario_Rol = new HashSet<Usuario_Rol>();
+            this.Usuarios_Empresas = new HashSet<Usuarios_Empresas>();
         }
     
         public int Id { get; set; }
@@ -32,5 +33,7 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Usuario_Rol> Usuario_Rol { get; set; }
         public virtual Empresa Empresa { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Usuarios_Empresas> Usuarios_Empresas { get; set; }
     }
 }

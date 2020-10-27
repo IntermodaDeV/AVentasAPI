@@ -14,5 +14,8 @@ namespace AventasApi.Models.ViewModels
         public int IdFuncion { get; set; }
 
         public bool Status { get; set; }
+
+        public string Usuario { get; set; }
+      
     }
 }

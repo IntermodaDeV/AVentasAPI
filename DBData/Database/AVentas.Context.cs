@@ -106,6 +106,7 @@ namespace DBData.Database
         public virtual DbSet<PantallasxUsuario> PantallasxUsuario { get; set; }
         public virtual DbSet<Usuario_Rol> Usuario_Rol { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
+        public virtual DbSet<Usuarios_Empresas> Usuarios_Empresas { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
