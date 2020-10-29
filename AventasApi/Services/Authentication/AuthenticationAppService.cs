@@ -1,17 +1,14 @@
-﻿//using AventasApi.Enviroments;
-using DBData.Database;
+﻿using DBData.Database;
 using AventasApi.Models.Authentication;
 using JWT;
 using JWT.Algorithms;
 using JWT.Serializers;
-//using Responses;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using ExternalApiData.Enviroments;
 using ExternalApiData.Models.ApiModels;
-//using IMS.Extensions;
 
 namespace AventasApi.Services.Authentication
 {
@@ -57,15 +54,20 @@ namespace AventasApi.Services.Authentication
                     if (credential.IsValid(out message) == false)
                         return new AuthenticationResponse { Message = message, Data = null };
 
-                    var userBD = context.Asesores.AsNoTracking().FirstOrDefault(x => x.Usuario.Equals(credential.UserAccount));
+                    var userBD = context.Usuarios.AsNoTracking().FirstOrDefault(x => x.usuario.Equals(credential.UserAccount));
 
                     if (userBD == null)
                         return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
 
-                    
-                    var user = new Usuario { IdUsuario = userBD.Usuario, Pin = null };
+                    if (!userBD.status)
+                    {
+                        return new AuthenticationResponse { Message = "Usuario se encuentra deshabilitado para el sistema.", Data = null };
+                    }
 
-                    if (EnLinea(userBD.EmpresaId, userBD.Usuario))
+                    
+                    var user = new Usuario { IdUsuario = userBD.usuario, Pin = null };
+
+                    if (EnLinea(userBD.EmpresaId, userBD.usuario))
                     {
                         //Validar con usuario de Intermoda
                         var client = new RestClient(string.Format(Enviroment.AuthenticationApi, credential.UserAccount, credential.Password));
@@ -119,11 +121,11 @@ namespace AventasApi.Services.Authentication
 
                     var token = encoder.Encode(new UserAuthenticated
                     {
-                        UserAccount = userBD.Usuario,
+                        UserAccount = userBD.usuario,
                         DueDate = DateTime.Now.AddHours(12)
                     }, secret);
 
-                    var result = new Data {  Token = token, Usuario = user,Empresa=userBD.EmpresaId,Nombre=userBD.Nombre };
+                    var result = new Data {  Token = token, Usuario = user,Empresa=userBD.EmpresaId,Nombre=userBD.nombre };
 
                     return new AuthenticationResponse { Type = "1", Message = "Ok", Data = result };
                 }

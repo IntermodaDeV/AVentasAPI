@@ -15,8 +15,7 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -238,6 +237,7 @@
     <Compile Include="Models\RolCrearModel.cs" />
     <Compile Include="Models\RolModificarModel.cs" />
     <Compile Include="Models\TransportePrecioCaja.cs" />
+    <Compile Include="Models\UsuarioModel.cs" />
     <Compile Include="Models\ViewModels\AccionesViewModel.cs" />
     <Compile Include="Models\ViewModels\AcuerdosXTipoPedidoViewModel.cs" />
     <Compile Include="Models\ViewModels\AcuerdoVentaDetalleViewModel.cs" />

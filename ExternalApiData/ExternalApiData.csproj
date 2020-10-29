@@ -92,6 +92,7 @@
     <Compile Include="ApiModels\TallaXProductoCRMApiModel.cs" />
     <Compile Include="ApiModels\TiposDeColeccionDTO.cs" />
     <Compile Include="ApiModels\TiposPagoCRMApiModel.cs" />
+    <Compile Include="ApiModels\UsuarioApiModel.cs" />
     <Compile Include="Enviroments\Enviroment.cs" />
     <Compile Include="GestorData\GestorAcuerdosVenta.cs" />
     <Compile Include="GestorData\GestorAsesores.cs" />
