@@ -57,6 +57,7 @@
     <Compile Include="ApiModels\AcuerdoCRMApiModel.cs" />
     <Compile Include="ApiModels\AcuerdoVentaApiModel.cs" />
     <Compile Include="ApiModels\AcuerdoVentaDetalleApiModel.cs" />
+    <Compile Include="ApiModels\ApiException.cs" />
     <Compile Include="ApiModels\AsesorApiModel.cs" />
     <Compile Include="ApiModels\AtributosApiModel.cs" />
     <Compile Include="ApiModels\AtributosXProductoCRMApiModel.cs" />
