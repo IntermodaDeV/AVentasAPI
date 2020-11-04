@@ -15,6 +15,10 @@ namespace AventasApi.Models.ViewModels
 
         public bool Status { get; set; }
 
+        public string NombrePantalla { get; set; }
+
+        public string Ruta { get; set; }
+
         public string Usuario { get; set; }
       
     }
