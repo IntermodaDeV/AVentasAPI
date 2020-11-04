@@ -13,6 +13,8 @@ using AventasApi.Models;
 using AventasApi.Services.Authentication;
 using ExternalApiData.Models.ApiModels;
 using ExternalApiData.Enviroments;
+using Newtonsoft.Json;
+using ExternalApiData.ApiModels;
 
 namespace AventasApi.Controllers
 {
@@ -397,21 +399,28 @@ namespace AventasApi.Controllers
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Accept", "application/json");
                         request.AddJsonBody(pe);
-                        IRestResponse response = client.Execute(request);
-                        string content = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(response.Content);
-                        if (content.StartsWith("Success"))
+                        var response = client.Execute<List<string>>(request);
+
+                        if (response.IsSuccessful)
                         {
-                            content = content.Remove(0, 8);
-                            content = content.Split(' ')[0];
-                            PEdidoID = numeroReferencia;
-                            PedidoBDAGuardar.PedidoId = numeroReferencia;
-                            PedidoBDAGuardar.Sincronizado = true;
-                            PedidoBDAGuardar.NumeroPedido = content;
+                            if (response.Content.Substring(1, 7).ToUpper() == "SUCCESS")
+                            {
+                                var pedidoAX = response.Content.Substring(9, 11);
+                                PEdidoID = numeroReferencia;
+                                PedidoBDAGuardar.PedidoId = numeroReferencia;
+                                PedidoBDAGuardar.Sincronizado = true;
+                                PedidoBDAGuardar.NumeroPedido = pedidoAX;
+                            }
                         }
                         else
                         {
-                            return BadRequest(content);
-                        }
+                            if (response.Data != null)
+                            {
+                                var excepcion = response.Data.FirstOrDefault();
+                                var resp = JsonConvert.DeserializeObject<ApiException>(excepcion);
+                                return BadRequest(resp.Message);
+                            }
+                        } 
 
                     }
                     catch (Exception e)
