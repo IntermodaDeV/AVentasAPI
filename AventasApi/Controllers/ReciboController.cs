@@ -429,7 +429,7 @@ namespace AventasApi.Controllers
                                 IdSubFactura = subfactura.IdSubFactura,
                                 Descuento = 0
                             };
-                            if (valorCuota > valor)
+                            if (Math.Round(valorCuota, 2) > Math.Round(valor, 2))
                             {
                                 detalleReciboXCliente.Valor = Decimal.Parse((valor).ToString());
                                 recibo.APLICADO = (aplicadoDouble + valor).ToString();
