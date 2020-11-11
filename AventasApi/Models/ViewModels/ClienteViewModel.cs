@@ -63,6 +63,7 @@ namespace AventasApi.Models
         public string Nombre { get; set; }
         public string ComunidadAutonoma { get; set; }
         public string GrupoPrecio { get; set; }
+        public string NombreGrupoPrecio { get; set; }
         public string GrupoCliente { get; set; }
         public string Descuento { get; set; }
         public string Moneda { get; set; }

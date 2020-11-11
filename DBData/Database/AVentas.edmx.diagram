@@ -40,8 +40,6 @@
         <EntityTypeShape EntityType="AventasModel.MaestroLinea" Width="1.5" PointX="6" PointY="30" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.MaestroMoneda" Width="1.5" PointX="16.25" PointY="28" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.MonedasxEmpresa" Width="1.5" PointX="6" PointY="37.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="AventasModel.Pantallas" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="AventasModel.PantallasxUsuario" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.PrioridadAsignacion" Width="1.5" PointX="8" PointY="53" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.ProductosxColeccion" Width="1.5" PointX="10.25" PointY="40.125" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.RazonNoVentaCausa" Width="1.5" PointX="11" PointY="37.375" IsExpanded="true" />
@@ -58,7 +56,6 @@
         <EntityTypeShape EntityType="AventasModel.TiposdePagoDetalle" Width="1.5" PointX="5.25" PointY="54.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.TiposdePedido" Width="1.5" PointX="0.75" PointY="48.125" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.TipoVisitaCliente" Width="1.5" PointX="8" PointY="55.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="AventasModel.Usuarios" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.Acciones" Width="1.5" PointX="4.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.vw_AtributosxColeccion" Width="1.5" PointX="9.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.vw_ClientesxRuta" Width="1.5" PointX="6.75" PointY="9.75" IsExpanded="true" />
@@ -131,8 +128,6 @@
         <AssociationConnector Association="AventasModel.FK__Productos__IdLin__4EA8A765" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__MonedasxE__IdMon__3C89F72A" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__SubFactur__IdMon__79E80B25" ManuallyRouted="false" />
-        <AssociationConnector Association="AventasModel.FK__Pantallas__IdPan__05F8DC4F" ManuallyRouted="false" />
-        <AssociationConnector Association="AventasModel.FK__Pantallas__IdUsu__0504B816" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__TallasxPr__IdPro__270FB757" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__RazonNoVe__IdRaz__0ABD916C" ManuallyRouted="false" />
         <AssociationConnector Association="AventasModel.FK__RecibosDe__IdSub__7FF5EA36" ManuallyRouted="false" />
@@ -179,6 +174,27 @@
         <EntityTypeShape EntityType="AventasModel.PedidosDetalle" Width="1.5" PointX="26.75" PointY="35.875" />
         <AssociationConnector Association="AventasModel.FK__PedidosDe__Pedid__70099B30" />
         <AssociationConnector Association="AventasModel.FK_PedidosDetalle_ProductosxColeccion" />
+        <EntityTypeShape EntityType="AventasModel.Funciones" Width="1.5" PointX="13.375" PointY="9.625" />
+        <EntityTypeShape EntityType="AventasModel.Funciones_Roles" Width="1.5" PointX="15.625" PointY="9.5" />
+        <EntityTypeShape EntityType="AventasModel.Pantallas" Width="1.5" PointX="0.75" PointY="1" />
+        <EntityTypeShape EntityType="AventasModel.Pantallas_Funciones" Width="1.5" PointX="15.625" PointY="5.375" />
+        <EntityTypeShape EntityType="AventasModel.Roles" Width="1.5" PointX="13.375" PointY="15.75" />
+        <AssociationConnector Association="AventasModel.FK__Funciones__IdFun__75634D2A" />
+        <AssociationConnector Association="AventasModel.FK__Pantallas__IdFun__76577163" />
+        <AssociationConnector Association="AventasModel.FK__Funciones__IdRol__746F28F1" />
+        <AssociationConnector Association="AventasModel.FK_Funciones_Roles_Funciones_Roles" />
+        <AssociationConnector Association="AventasModel.FK__Pantallas__IdPan__783FB9D5" />
+        <EntityTypeShape EntityType="AventasModel.PantallasxUsuario" Width="1.5" PointX="5.625" PointY="14.25" />
+        <EntityTypeShape EntityType="AventasModel.Usuario_Rol" Width="1.5" PointX="15.625" PointY="16.625" />
+        <EntityTypeShape EntityType="AventasModel.Usuarios" Width="1.5" PointX="3.375" PointY="18.375" />
+        <AssociationConnector Association="AventasModel.FK__Pantallas__IdPan__05F8DC4F" />
+        <AssociationConnector Association="AventasModel.FK_USUARIOP" />
+        <AssociationConnector Association="AventasModel.FK_ROL" />
+        <AssociationConnector Association="AventasModel.FK_USUARIO" />
+        <AssociationConnector Association="AventasModel.FK__Usuarios__Empres__28E2F130" />
+        <EntityTypeShape EntityType="AventasModel.Usuarios_Empresas" Width="1.5" PointX="8.625" PointY="29.75" />
+        <AssociationConnector Association="AventasModel.FK__Usuarios___Empre__2BBF5DDB" />
+        <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__2CB38214" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

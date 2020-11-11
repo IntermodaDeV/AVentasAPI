@@ -15,7 +15,8 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -183,6 +184,7 @@
     <Compile Include="Controllers\CoordenadasXClienteController.cs" />
     <Compile Include="Controllers\CorreoController.cs" />
     <Compile Include="Controllers\EmpresaController.cs" />
+    <Compile Include="Controllers\FuncionesController.cs" />
     <Compile Include="Controllers\EstadisticaVisitaController.cs" />
     <Compile Include="Controllers\FacturasXClienteController.cs" />
     <Compile Include="Controllers\FisicoDisponibleController.cs" />
@@ -191,17 +193,20 @@
     <Compile Include="Controllers\GruposImpuestosController.cs" />
     <Compile Include="Controllers\MaestroLineaController.cs" />
     <Compile Include="Controllers\MonedaController.cs" />
+    <Compile Include="Controllers\PantallaController.cs" />
     <Compile Include="Controllers\PedidosXClienteController.cs" />
     <Compile Include="Controllers\PrioridadAsignacionController.cs" />
     <Compile Include="Controllers\PruebaColeccionesXLineaController.cs" />
     <Compile Include="Controllers\RazonNoVentaController.cs" />
     <Compile Include="Controllers\ReciboController.cs" />
+    <Compile Include="Controllers\RolController.cs" />
     <Compile Include="Controllers\SincronizacionListaController.cs" />
     <Compile Include="Controllers\TipoPagoController.cs" />
     <Compile Include="Controllers\TipoPedidoController.cs" />
     <Compile Include="Controllers\TiposColeccionController.cs" />
     <Compile Include="Controllers\TipoVisitaClienteController.cs" />
     <Compile Include="Controllers\TransporteController.cs" />
+    <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Filters\Auth.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -226,10 +231,14 @@
     <Compile Include="Models\GruposImpuestosClientes.cs" />
     <Compile Include="Models\ListaEjecucionManualModel.cs" />
     <Compile Include="Models\ModuloModel.cs" />
+    <Compile Include="Models\PantallaModel.cs" />
     <Compile Include="Models\ProductoImpuestoModel.cs" />
     <Compile Include="Models\RazonNoVentaCausaViewModel.cs" />
     <Compile Include="Models\RazonNoVentaTipoViewModel.cs" />
+    <Compile Include="Models\RolCrearModel.cs" />
+    <Compile Include="Models\RolModificarModel.cs" />
     <Compile Include="Models\TransportePrecioCaja.cs" />
+    <Compile Include="Models\UsuarioModel.cs" />
     <Compile Include="Models\ViewModels\AccionesViewModel.cs" />
     <Compile Include="Models\ViewModels\AcuerdosXTipoPedidoViewModel.cs" />
     <Compile Include="Models\ViewModels\AcuerdoVentaDetalleViewModel.cs" />
@@ -263,17 +272,24 @@
     <Compile Include="Models\ViewModels\DetPedTempViewModel.cs" />
     <Compile Include="Models\ViewModels\DistribucionXTallaViewModel.cs" />
     <Compile Include="Models\ViewModels\EdadesViewModel.cs" />
+    <Compile Include="Models\ViewModels\EmpresaViewModel.cs" />
     <Compile Include="Models\ViewModels\EncPedTempViewModel.cs" />
     <Compile Include="Models\ViewModels\FacturasXAcuerdosViewModel.cs" />
     <Compile Include="Models\ViewModels\FacturasXClienteViewModel.cs" />
     <Compile Include="Models\ViewModels\FotografiasXProductoViewModel.cs" />
+    <Compile Include="Models\ViewModels\FuncionesViewModel.cs" />
     <Compile Include="Models\ViewModels\MonedaViewModel.cs" />
     <Compile Include="Models\ViewModels\PagosReciboPostViewModel.cs" />
+    <Compile Include="Models\ViewModels\PantallasFuncionesViewModel.cs" />
     <Compile Include="Models\ViewModels\PedidoPostViewModel.cs" />
+    <Compile Include="Models\ViewModels\PermisosViewModel.cs" />
     <Compile Include="Models\ViewModels\PrecioEspecificoViewModel.cs" />
     <Compile Include="Models\ViewModels\ReciboPostViewModel.cs" />
     <Compile Include="Models\ViewModels\RecibosDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\RecibosxClienteViewModel.cs" />
+    <Compile Include="Models\ViewModels\RolesFuncionesViewModel.cs" />
+    <Compile Include="Models\ViewModels\RolesUsuariosViewModel.cs" />
+    <Compile Include="Models\ViewModels\RolesViewModel.cs" />
     <Compile Include="Models\ViewModels\SubFacturasXTipoPedidoViewModel.cs" />
     <Compile Include="Models\ViewModels\GoeposicionXAsesorViewModel.cs" />
     <Compile Include="Models\ViewModels\MailViewModel.cs" />
@@ -293,6 +309,7 @@
     <Compile Include="Models\ViewModels\TipoPedidoViewModel.cs" />
     <Compile Include="Models\ViewModels\TiposdeColeccionViewModel.cs" />
     <Compile Include="Models\ViewModels\TipoVisitaClienteViewModel.cs" />
+    <Compile Include="Models\ViewModels\UsuariosEmpresasViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AsyncJobs\AsyncSqlInsert.cs" />
     <Compile Include="Services\Authentication\AuthenticationAppService.cs" />
@@ -356,7 +373,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62630</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:62630/</IISUrl>
+          <IISUrl>http://localhost:62631/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

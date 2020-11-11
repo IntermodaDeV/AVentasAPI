@@ -198,6 +198,12 @@
     <Compile Include="Database\FotografiasXProducto.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Funciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Funciones_Roles.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\GESTORES.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
@@ -249,6 +255,9 @@
     <Compile Include="Database\PantallasxUsuario.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Pantallas_Funciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\PedidosDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -282,6 +291,9 @@
     <Compile Include="Database\RecibosxCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Roles.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Rutas.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -296,6 +308,9 @@
     </Compile>
     <Compile Include="Database\SP_POST_LISTA_EJECUCION_MANUAL_Result.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\SP_VISITASPORMES_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\SubFacturasxCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
@@ -328,6 +343,12 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\Usuarios.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Usuarios_Empresas.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Usuario_Rol.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\vw_AtributosxColeccion.cs">

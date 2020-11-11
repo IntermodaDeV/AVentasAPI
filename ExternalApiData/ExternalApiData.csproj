@@ -57,6 +57,7 @@
     <Compile Include="ApiModels\AcuerdoCRMApiModel.cs" />
     <Compile Include="ApiModels\AcuerdoVentaApiModel.cs" />
     <Compile Include="ApiModels\AcuerdoVentaDetalleApiModel.cs" />
+    <Compile Include="ApiModels\ApiException.cs" />
     <Compile Include="ApiModels\AsesorApiModel.cs" />
     <Compile Include="ApiModels\AtributosApiModel.cs" />
     <Compile Include="ApiModels\AtributosXProductoCRMApiModel.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="ApiModels\TallaXProductoCRMApiModel.cs" />
     <Compile Include="ApiModels\TiposDeColeccionDTO.cs" />
     <Compile Include="ApiModels\TiposPagoCRMApiModel.cs" />
+    <Compile Include="ApiModels\UsuarioApiModel.cs" />
     <Compile Include="Enviroments\Enviroment.cs" />
     <Compile Include="GestorData\GestorAcuerdosVenta.cs" />
     <Compile Include="GestorData\GestorAsesores.cs" />
