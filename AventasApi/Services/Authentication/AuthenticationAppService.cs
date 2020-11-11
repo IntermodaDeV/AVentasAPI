@@ -121,6 +121,7 @@ namespace AventasApi.Services.Authentication
 
                     var token = encoder.Encode(new UserAuthenticated
                     {
+                        Id=userBD.Id,
                         UserAccount = userBD.usuario,
                         DueDate = DateTime.Now.AddHours(12)
                     }, secret);
