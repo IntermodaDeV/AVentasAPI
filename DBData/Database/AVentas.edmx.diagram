@@ -195,6 +195,9 @@
         <EntityTypeShape EntityType="AventasModel.Usuarios_Empresas" Width="1.5" PointX="8.625" PointY="29.75" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Empre__2BBF5DDB" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__2CB38214" />
+        <EntityTypeShape EntityType="AventasModel.Usuarios_Asesores" Width="1.5" PointX="16.25" PointY="23.875" />
+        <AssociationConnector Association="AventasModel.FK__Usuarios___Codig__382534C0" />
+        <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__37311087" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

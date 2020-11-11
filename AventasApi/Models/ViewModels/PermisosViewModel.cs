@@ -14,10 +14,12 @@ namespace AventasApi.Models.ViewModels
         public string EmpresaId { get; set; }
         
         public List<RolesUsuariosViewModel> RolesUsuarios;
+        public List<UsuariosEmpresasViewModel> EmpresasUsuarios;
 
         public PermisosViewModel()
         {
             this.RolesUsuarios = new List<RolesUsuariosViewModel>();
+            this.EmpresasUsuarios = new List<UsuariosEmpresasViewModel>();
         }
     }
 }
