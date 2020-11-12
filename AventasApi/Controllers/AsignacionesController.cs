@@ -315,6 +315,8 @@ namespace AventasApi.Controllers
         {
             try
             {
+                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                
                 if (model == null || model.Count() == 0)
                 {
                     return BadRequest("No se puede registrar una lista vacia.");
@@ -324,7 +326,28 @@ namespace AventasApi.Controllers
                 {
                     var listaDominio  = ConvertirListaAsignacion(model);
                     var listaGuardar = ConvertirListaAsignacion(model);
-                    var asesores = listaDominio.Select(x => x.CodigoAsesor).Distinct().ToList(); 
+                    var asesores = listaDominio.Select(x => x.CodigoAsesor).Distinct().ToList();
+                    var empresas = model.Select(x => x.Empresa).Distinct().ToList();
+
+                    var asesoresAsignados = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                    var empresasAsignadas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
+
+                    foreach (var asesor in asesores)
+                    {
+                        if (!asesoresAsignados.Contains(asesor))
+                        {
+                            return BadRequest($"La empresa {asesor} no esta asignada a su usuario.");
+                        }
+                    }
+
+                    foreach (var empresa in empresas)
+                    {
+                        if (!empresasAsignadas.Contains(empresa))
+                        {
+                            return BadRequest($"La empresa {empresa} no esta asignada a su usuario.");
+                        }
+                    }
+
                     List<AsignacionxAsesor> listaGuardadas = new List<AsignacionxAsesor>();
 
                     for (int x = 0; x < listaDominio.Count(); x++)
