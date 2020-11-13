@@ -102,7 +102,8 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> Impuesto { get; set; }
         public Nullable<decimal> Flete { get; set; }
         public bool Sincronizado { get; set; }
-
+        public bool Procesando { get; set; }
+        public string ErrorAx { get; set; }
         public PedidosXClienteViewModel()
         {
             Productos = new List<ProductosXPedidoViewModel>();
