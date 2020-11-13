@@ -669,6 +669,8 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="ModoVenta" Type="varchar" MaxLength="50" />
           <Property Name="Flete" Type="decimal" Precision="10" Scale="2" />
           <Property Name="RequiereEntrega" Type="bit" Nullable="false" />
+          <Property Name="Procesando" Type="bit" />
+          <Property Name="ErrorAx" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -2402,6 +2404,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
         <Function Name="EstadisticaVisita" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="FechaInicio" Type="date" Mode="In" />
           <Parameter Name="FechaFin" Type="date" Mode="In" />
+          <Parameter Name="User" Type="varchar" Mode="In" />
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="PResumenCredito" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
@@ -5106,6 +5109,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <FunctionImport Name="EstadisticaVisita" ReturnType="Collection(AventasModel.EstadisticaVisita_Result)">
             <Parameter Name="FechaInicio" Mode="In" Type="DateTime" />
             <Parameter Name="FechaFin" Mode="In" Type="DateTime" />
+            <Parameter Name="User" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="PResumenCredito" ReturnType="Collection(AventasModel.PResumenCredito_Result)" />
           <FunctionImport Name="sp_alterdiagram">
@@ -5568,6 +5572,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="RequiereEntrega" Type="Boolean" Nullable="false" />
           <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosxCliente" ToRole="PedidosDetalle" />
+          <Property Name="Procesando" Type="Boolean" />
+          <Property Name="ErrorAx" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK__PedidosxC__Codig__6B44E613">
           <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="0..1" />
@@ -7209,6 +7215,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="ErrorAx" ColumnName="ErrorAx" />
+                <ScalarProperty Name="Procesando" ColumnName="Procesando" />
                 <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
                 <ScalarProperty Name="RequiereEntrega" ColumnName="RequiereEntrega" />
                 <ScalarProperty Name="Flete" ColumnName="Flete" />

@@ -316,7 +316,6 @@
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
     <Compile Include="Utils\logicValidation.cs" />
     <Compile Include="Utils\SyncCuentaCorriente.cs" />
-    <Compile Include="Utils\SyncPedidoAx.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
