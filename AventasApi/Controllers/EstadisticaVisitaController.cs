@@ -13,11 +13,11 @@ namespace AventasApi.Controllers
     {
         AVentasEntities context = new AVentasEntities();
         [HttpGet]
-        public async Task<IHttpActionResult> GetEstadistica(DateTime FechaInicio, DateTime FechaFin)
+        public async Task<IHttpActionResult> GetEstadistica(DateTime FechaInicio, DateTime FechaFin, string Usuario)
         {
             try
             {
-                var estadistica = context.EstadisticaVisita(FechaInicio, FechaFin);
+                var estadistica = context.EstadisticaVisita(FechaInicio, FechaFin, Usuario);
                 return Ok(estadistica);
             }catch(Exception e)
             {

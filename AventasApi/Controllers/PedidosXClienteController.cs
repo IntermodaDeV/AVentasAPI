@@ -115,7 +115,7 @@ namespace AventasApi.Controllers
                 };
 
                 int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
-                string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
+                string inicialesAsesor = asesor.InicialesNombre;
 
                 string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
                 var pe = new PedidoCRMApiModel

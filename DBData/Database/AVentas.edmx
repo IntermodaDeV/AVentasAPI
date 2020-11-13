@@ -949,6 +949,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="BloqueoInfoCredito" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Usuarios_Asesores">
           <Key>
@@ -5377,6 +5378,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="Int32" Name="Recibos" Nullable="true" />
           <Property Type="Decimal" Name="TotalPedidos" Nullable="true" Precision="38" Scale="2" />
           <Property Type="Decimal" Name="TotalRecibos" Nullable="true" Precision="38" Scale="4" />
+          <Property Type="String" Name="Empresa" Nullable="true" MaxLength="50" />
         </ComplexType>
         <ComplexType Name="PResumenCredito_Result">
           <Property Type="Int32" Name="Id" Nullable="true" />
@@ -6148,6 +6150,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Usuarios_Asesores" Relationship="AventasModel.FK__Usuarios___Usuar__37311087" FromRole="Usuarios" ToRole="Usuarios_Asesores" />
+          <Property Name="BloqueoInfoCredito" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK__Pantallas__IdPan__05F8DC4F">
           <End Type="AventasModel.Pantallas" Role="Pantallas" Multiplicity="0..1" />
@@ -7090,6 +7093,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="Recibos" ColumnName="Recibos" />
                 <ScalarProperty Name="TotalPedidos" ColumnName="TotalPedidos" />
                 <ScalarProperty Name="TotalRecibos" ColumnName="TotalRecibos" />
+                <ScalarProperty Name="Empresa" ColumnName="Empresa" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -7474,6 +7478,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Usuarios">
             <EntityTypeMapping TypeName="AventasModel.Usuarios">
               <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="BloqueoInfoCredito" ColumnName="BloqueoInfoCredito" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />

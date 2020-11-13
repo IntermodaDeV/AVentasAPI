@@ -141,7 +141,7 @@ namespace AventasApi.Controllers
                                 LineaString = facCli.MaestroLinea.Linea,
                                 IdTipoPedido = facCli.IdTipoPedido,
                                 TipoPedidoString = facCli.TiposdePedido.TipoPedido,
-                                Cuotas = facCli.SubFacturasxCliente.Where(subFac => (subFac.Saldo - subFac.Descuento) > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
+                                Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.FechaMaxDescuento >= DateTime.Today ? (subFac.Saldo - subFac.Descuento) > 0 : subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                                 {
                                     FechaFactura = subFac.FacturasxCliente.FechaFactura,
                                     TipoDocumento = subFac.FacturasxCliente.Tipo,
@@ -283,7 +283,7 @@ namespace AventasApi.Controllers
                                     LineaString = facCli.MaestroLinea.Linea,
                                     IdTipoPedido = facCli.IdTipoPedido,
                                     TipoPedidoString = facCli.TiposdePedido.TipoPedido,
-                                    Cuotas = facCli.SubFacturasxCliente.Where(subFac => (subFac.Saldo - subFac.Descuento) > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
+                                    Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.FechaMaxDescuento >= DateTime.Today ? (subFac.Saldo - subFac.Descuento) > 0 : subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                                     {
                                         FechaFactura = subFac.FacturasxCliente.FechaFactura,
                                         TipoDocumento = subFac.FacturasxCliente.Tipo,
@@ -512,7 +512,7 @@ namespace AventasApi.Controllers
                                         LineaString = facCli.MaestroLinea.Linea,
                                         IdTipoPedido = facCli.IdTipoPedido,
                                         TipoPedidoString = facCli.TiposdePedido.TipoPedido,
-                                        Cuotas = facCli.SubFacturasxCliente.Where(subFac => (subFac.Saldo - subFac.Descuento) > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
+                                        Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.FechaMaxDescuento >= DateTime.Today ? (subFac.Saldo - subFac.Descuento) > 0 : subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                                         {
                                             FechaFactura = subFac.FacturasxCliente.FechaFactura,
                                             TipoDocumento = subFac.FacturasxCliente.Tipo,
