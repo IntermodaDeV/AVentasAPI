@@ -186,17 +186,17 @@
         <AssociationConnector Association="AventasModel.FK__Pantallas__IdPan__783FB9D5" />
         <EntityTypeShape EntityType="AventasModel.PantallasxUsuario" Width="1.5" PointX="5.625" PointY="14.25" />
         <EntityTypeShape EntityType="AventasModel.Usuario_Rol" Width="1.5" PointX="15.625" PointY="16.625" />
-        <EntityTypeShape EntityType="AventasModel.Usuarios" Width="1.5" PointX="3.375" PointY="18.375" />
         <AssociationConnector Association="AventasModel.FK__Pantallas__IdPan__05F8DC4F" />
-        <AssociationConnector Association="AventasModel.FK_USUARIOP" />
         <AssociationConnector Association="AventasModel.FK_ROL" />
-        <AssociationConnector Association="AventasModel.FK_USUARIO" />
-        <AssociationConnector Association="AventasModel.FK__Usuarios__Empres__28E2F130" />
         <EntityTypeShape EntityType="AventasModel.Usuarios_Empresas" Width="1.5" PointX="8.625" PointY="29.75" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Empre__2BBF5DDB" />
-        <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__2CB38214" />
         <EntityTypeShape EntityType="AventasModel.Usuarios_Asesores" Width="1.5" PointX="16.25" PointY="23.875" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Codig__382534C0" />
+        <EntityTypeShape EntityType="AventasModel.Usuarios" Width="1.5" PointX="3" PointY="29" />
+        <AssociationConnector Association="AventasModel.FK__Usuarios__Empres__28E2F130" />
+        <AssociationConnector Association="AventasModel.FK_USUARIOP" />
+        <AssociationConnector Association="AventasModel.FK_USUARIO" />
+        <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__2CB38214" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__37311087" />
         </Diagram>
     </edmx:Diagrams>

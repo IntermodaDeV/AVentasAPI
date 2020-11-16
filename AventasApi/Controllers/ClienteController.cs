@@ -334,11 +334,19 @@ namespace AventasApi.Controllers
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var creditos = ctx.PResumenCredito().ToList();
-
-                    var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                    List<string> asesoresHabilitados = new List<string>();
+                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
                     var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
 
-                    var asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x=>x.CodigoAsesor).ToListAsync();
+                    if (usuario.FlagTodosAsesores.Value)
+                    {
+                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+                    else
+                    {
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
 
                     List<ClientePedidoViewModel> listaClientes = new List<ClientePedidoViewModel>();
 
@@ -422,10 +430,20 @@ namespace AventasApi.Controllers
                     var FechaLimiteFuturo = FechaLimite.AddDays(15);
                     var Recibos = ctx.AnticiposxCliente.Where(r => r.NumPedido != null).Select(a => a.NumPedido).ToList();
 
-                    var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                    List<string> asesoresHabilitados = new List<string>();
+                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
                     var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
 
-                    var asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                    if (usuario.FlagTodosAsesores.Value)
+                    {
+                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+                    else
+                    {
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+
                     List<ClienteViewModel> listaClientes = new List<ClienteViewModel>();
 
                     foreach (var asesor in asesoresHabilitados)

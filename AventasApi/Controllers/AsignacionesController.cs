@@ -1,16 +1,10 @@
-﻿using AventasApi.Filters;
-using DBData.Database;
-using AventasApi.Models.Authentication;
-//using IMS.Tokens.Services;
+﻿using DBData.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Results;
 using AventasApi.Models.ViewModels;
 using AventasApi.Services.Authentication;
 using AventasApi.Models;
@@ -326,25 +320,39 @@ namespace AventasApi.Controllers
                 {
                     var listaDominio  = ConvertirListaAsignacion(model);
                     var listaGuardar = ConvertirListaAsignacion(model);
+                    var usuario  = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id); 
                     var asesores = listaDominio.Select(x => x.CodigoAsesor).Distinct().ToList();
                     var empresas = model.Select(x => x.Empresa).Distinct().ToList();
-
-                    var asesoresAsignados = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
                     var empresasAsignadas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
 
-                    foreach (var asesor in asesores)
+                    if (usuario.FlagTodosAsesores.Value)
                     {
-                        if (!asesoresAsignados.Contains(asesor))
+                        foreach (var empresa in empresas)
                         {
-                            return BadRequest($"La empresa {asesor} no esta asignada a su usuario.");
+                            if (!empresasAsignadas.Contains(empresa))
+                            {
+                                return BadRequest($"La empresa {empresa} no esta asignada a su usuario.");
+                            }
                         }
                     }
-
-                    foreach (var empresa in empresas)
+                    else
                     {
-                        if (!empresasAsignadas.Contains(empresa))
+                        var asesoresAsignados = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+
+                        foreach (var asesor in asesores)
                         {
-                            return BadRequest($"La empresa {empresa} no esta asignada a su usuario.");
+                            if (!asesoresAsignados.Contains(asesor))
+                            {
+                                return BadRequest($"La empresa {asesor} no esta asignada a su usuario.");
+                            }
+                        }
+
+                        foreach (var empresa in empresas)
+                        {
+                            if (!empresasAsignadas.Contains(empresa))
+                            {
+                                return BadRequest($"La empresa {empresa} no esta asignada a su usuario.");
+                            }
                         }
                     }
 

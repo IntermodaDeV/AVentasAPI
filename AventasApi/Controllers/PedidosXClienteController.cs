@@ -199,7 +199,7 @@ namespace AventasApi.Controllers
                 PedidoBDAGuardar.PedidoId = numeroReferencia;
                 PedidoBDAGuardar.NumeroPedido = "";
                 PedidoBDAGuardar.Sincronizado = false;
-                PedidoBDAGuardar.Procesando = false;
+                PedidoBDAGuardar.Procesando = true;
 
                 PResumenCredito_Result resultado;
                 using (AVentasEntities context = new AVentasEntities())
@@ -669,6 +669,12 @@ namespace AventasApi.Controllers
                 }
                 else
                 {
+                    using (var ctx = new AVentasEntities())
+                    {
+                        var pedidoDB = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.PedidoId == pedido.REFERENCE);
+                        pedidoDB.Procesando = false;
+                        await ctx.SaveChangesAsync();
+                    }
                     return BadRequest("Servidor de AX no disponible");
                 }
             }catch(Exception e)

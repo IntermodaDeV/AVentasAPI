@@ -22,7 +22,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var usuarios = await ctx.Usuarios.Select(x => new { Id = x.Id, Usuario = x.usuario,Nombre=x.nombre,Status=x.status,BloqueoCredito=x.BloqueoInfoCredito }).ToListAsync();
+                    var usuarios = await ctx.Usuarios.Select(x => new { Id = x.Id, Usuario = x.usuario,Nombre=x.nombre,Status=x.status,BloqueoCredito=x.BloqueoInfoCredito,BloqueoAsesores=x.FlagTodosAsesores }).ToListAsync();
                     return Ok(usuarios);
                 }
             }
@@ -52,6 +52,7 @@ namespace AventasApi.Controllers
                         nombre = usuario.nombre,
                         EmpresaId = usuario.EmpresaId,
                         BloqueoInfoCredito=false,
+                        FlagTodosAsesores=false,
                         CreatedBy = usuario.creador,
                         CreatedDate=DateTime.Now,
                         ModifiedBy=usuario.creador,
@@ -253,7 +254,7 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        [Route("desactivarsensible/{id}/{user}")]
+        [Route("desactivar/sensible/{id}/{user}")]
         public async Task<IHttpActionResult> RemoverUsuarioBloqueSensible(int id, string user)
         {
             try
@@ -268,6 +269,34 @@ namespace AventasApi.Controllers
                     }
 
                     usuario.BloqueoInfoCredito = !usuario.BloqueoInfoCredito;
+                    usuario.ModifiedDate = DateTime.Now;
+                    usuario.ModifiedBy = user;
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("desactivar/asesores/{id}/{user}")]
+        public async Task<IHttpActionResult> RemoverTodosAsesores(int id, string user)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var usuario = await ctx.Usuarios.FindAsync(id);
+
+                    if (usuario == null)
+                    {
+                        return BadRequest("El usuario no existe.");
+                    }
+
+                    usuario.FlagTodosAsesores = !usuario.FlagTodosAsesores;
                     usuario.ModifiedDate = DateTime.Now;
                     usuario.ModifiedBy = user;
                     var result = await ctx.SaveChangesAsync();
