@@ -199,7 +199,7 @@ namespace AventasApi.Controllers
                 PedidoBDAGuardar.PedidoId = numeroReferencia;
                 PedidoBDAGuardar.NumeroPedido = "";
                 PedidoBDAGuardar.Sincronizado = false;
-                PedidoBDAGuardar.Procesando = true;
+                PedidoBDAGuardar.Procesando = false;
 
                 PResumenCredito_Result resultado;
                 using (AVentasEntities context = new AVentasEntities())
@@ -219,7 +219,9 @@ namespace AventasApi.Controllers
                     }
                 }
 
-                return Ok(new { EncabezadoPedido = new { PedidoId = numeroReferencia, PedidoAPI = pe } });
+                _ = PostAx(pe);
+
+                return Ok(new { EncabezadoPedido = new { PedidoId = numeroReferencia } });
             }
             catch (Exception e)
             {
@@ -625,14 +627,16 @@ namespace AventasApi.Controllers
                     bool error = false;
                     using (var ctx = new AVentasEntities())
                     {
+                        var pedidoDB = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.PedidoId == pedido.REFERENCE);
+                        pedidoDB.Procesando = true;
+                        await ctx.SaveChangesAsync();
+
                         var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
                         client.Timeout = 480 * (1000);
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Accept", "application/json");
                         request.AddJsonBody(pedido);
                         var response = client.Execute<List<string>>(request);
-
-                        var pedidoDB = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.PedidoId == pedido.REFERENCE);
 
                         if (response.IsSuccessful)
                         {
@@ -679,7 +683,21 @@ namespace AventasApi.Controllers
                 }
             }catch(Exception e)
             {
-                return BadRequest(e.Message);
+                string msj = e.Message;
+                try
+                {
+                    using (var ctx = new AVentasEntities())
+                    {
+                        var pedidoDB = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.PedidoId == pedido.REFERENCE);
+                        pedidoDB.Procesando = false;
+                        await ctx.SaveChangesAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    msj += "\n" + ex.Message;
+                }
+                return BadRequest(msj);
             }
         }
 
