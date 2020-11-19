@@ -64,6 +64,9 @@ namespace AventasApi.Controllers
         {
             try
             {
+                string numeroReferencia = Pedido.NumeroReferencia;
+                int numeroCorelativo = 0;
+                var cache = false;
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
 
                 Asesores asesor;
@@ -114,11 +117,14 @@ namespace AventasApi.Controllers
                     RequiereEntrega = Pedido.RequiereEntrega
                 };
 
-                int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
-                string inicialesAsesor = asesor.InicialesNombre;
-
-                string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
-                var pe = new PedidoCRMApiModel
+                if (numeroReferencia == "")
+                {
+                    cache = true;
+                    numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                    string inicialesAsesor = asesor.InicialesNombre;
+                    numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                }
+                /*var pe = new PedidoCRMApiModel
                 {
                     COMPANY = cliente.EmpresaId,
                     CUSTOMER_ACCOUNT = Pedido.CodigoCliente,
@@ -152,7 +158,7 @@ namespace AventasApi.Controllers
                     pe.FISCAL_DOCUMENT = "";
                     pe.DELIVERY_ADDRESS = "";
                     pe.PHONE = (SyncTelCredito.VALOR == "1") ? cliente.Telefono : "";
-                }
+                }*/
 
                 foreach (var detalle in Pedido.DetallePedido)
                 {
@@ -160,7 +166,7 @@ namespace AventasApi.Controllers
                     int.TryParse(detalle.Cantidad, out cantidad);
                     if (cantidad > 0)
                     {
-                        pe.PedidoJsonItems.Add(
+                        /*pe.PedidoJsonItems.Add(
                                 new PedidoJsonItems
                                 {
                                     COLOR = detalle.CodigoColor,
@@ -173,7 +179,7 @@ namespace AventasApi.Controllers
                                     SIZE = detalle.Talla,
                                     UNIT = "Und",
                                     UNIT_PRICE = detalle.PrecioUnitario
-                                });
+                                });*/
                         PedidoBDAGuardar.TotalUnidades += cantidad;
                         decimal precioUnitario = 0;
                         decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
@@ -204,9 +210,12 @@ namespace AventasApi.Controllers
                 PResumenCredito_Result resultado;
                 using (AVentasEntities context = new AVentasEntities())
                 {
-                    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                    asesor.CorrelativoPedidos = numeroCorelativo + 1;
-                    context.SaveChanges();
+                    if (cache)
+                    {
+                        asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                        asesor.CorrelativoPedidos = numeroCorelativo + 1;
+                        context.SaveChanges();
+                    }
                     resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
                 }
                 AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
@@ -219,7 +228,7 @@ namespace AventasApi.Controllers
                     }
                 }
 
-                _ = PostAx(pe);
+                _ = PostPedidoPendiente(numeroReferencia);
 
                 return Ok(new { EncabezadoPedido = new { PedidoId = numeroReferencia } });
             }
@@ -242,6 +251,13 @@ namespace AventasApi.Controllers
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
                     string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+
+                    var toUpdate = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == asesor.CodigoAsesor);
+                    if (toUpdate != null)
+                    {
+                        toUpdate.CorrelativoPedidos = numeroCorelativo + 1;
+                        ctx.SaveChanges();
+                    }
 
                     return Ok(numeroReferencia);
                 }
@@ -537,19 +553,17 @@ namespace AventasApi.Controllers
         {
             try
             {
-                using(var ctx = new AVentasEntities())
+                var Pedido = new PedidoCRMApiModel();
+                using (var ctx = new AVentasEntities())
                 {
-                    var pedidoDB = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.PedidoId == pedido && x.Procesando==false);
+                    var pedidoDB = ctx.PedidosxCliente.FirstOrDefault(x => x.PedidoId == pedido && x.Procesando==false);
 
                     if (pedidoDB == null)
                     {
                         return BadRequest($"El pedido {pedido} se encuentra ya en proceso de sincronizacion.");
                     }
 
-                    pedidoDB.Procesando = true;
-                    await ctx.SaveChangesAsync();
-
-                    var Pedido = new PedidoCRMApiModel
+                    Pedido = new PedidoCRMApiModel
                     {
                         COMPANY = pedidoDB.Empresa.EmpresaId,
                         CUSTOMER_ACCOUNT = pedidoDB.Clientes.CodigoCliente,
@@ -606,10 +620,63 @@ namespace AventasApi.Controllers
                          });
                     }
 
-                    return await PostAx(Pedido);
+                    if (EnLinea(Pedido.COMPANY, Pedido.SALES_MANAGER))
+                    {
+                        string respuesta = string.Empty;
+                        bool error = false;
 
+                        pedidoDB.Procesando = true;
+                        ctx.SaveChanges();
+
+                        var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
+                        client.Timeout = 480 * (1000);
+                        var request = new RestRequest(Method.POST);
+                        request.AddHeader("Accept", "application/json");
+                        request.AddJsonBody(Pedido);
+                        var response = client.Execute<List<string>>(request);
+
+                        if (response.IsSuccessful)
+                        {
+                            if (response.Content.Substring(1, 7).ToUpper() == "SUCCESS")
+                            {
+                                var pedidoAX = response.Content.Substring(9, 11);
+                                pedidoDB.NumeroPedido = pedidoAX;
+                                pedidoDB.Sincronizado = true;
+                                respuesta = $"Pedido {Pedido.REFERENCE} sincronizado exitosamente con AX.";
+                            }
+                        }
+                        else
+                        {
+                            if (response.Data != null)
+                            {
+                                var excepcion = response.Data.FirstOrDefault();
+                                var resp = JsonConvert.DeserializeObject<ApiException>(excepcion);
+                                respuesta = $"Pedido {Pedido.REFERENCE} Error: {resp.Message}";
+                                pedidoDB.Sincronizado = false;
+                                pedidoDB.ErrorAx = resp.Message;
+                                error = true;
+                            }
+                        }
+                        pedidoDB.Procesando = false;
+                        await ctx.SaveChangesAsync();
+
+                        if (error)
+                        {
+                            return BadRequest(respuesta);
+                        }
+
+                        return Ok(respuesta);
+                    }
+                    else
+                    {
+                        pedidoDB.Procesando = false;
+                        ctx.SaveChanges();
+
+                        return BadRequest("Servidor de AX no disponible");
+                    }
                 }
-            }catch(Exception e)
+            }
+            catch(Exception e)
             {
                 return BadRequest(e.Message);
             }
@@ -627,9 +694,9 @@ namespace AventasApi.Controllers
                     bool error = false;
                     using (var ctx = new AVentasEntities())
                     {
-                        var pedidoDB = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.PedidoId == pedido.REFERENCE);
+                        var pedidoDB = ctx.PedidosxCliente.FirstOrDefault(x => x.PedidoId == pedido.REFERENCE);
                         pedidoDB.Procesando = true;
-                        await ctx.SaveChangesAsync();
+                        ctx.SaveChanges();
 
                         var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
                         client.Timeout = 480 * (1000);

@@ -343,7 +343,7 @@ namespace AventasApi.Controllers
                         {
                             if (!asesoresAsignados.Contains(asesor))
                             {
-                                return BadRequest($"La empresa {asesor} no esta asignada a su usuario.");
+                                return BadRequest($"El asesor {asesor} no esta asignado a su usuario.");
                             }
                         }
 
