@@ -105,8 +105,9 @@ namespace DBData.Database
         public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<PantallasxUsuario> PantallasxUsuario { get; set; }
         public virtual DbSet<Usuario_Rol> Usuario_Rol { get; set; }
-        public virtual DbSet<Usuarios> Usuarios { get; set; }
         public virtual DbSet<Usuarios_Empresas> Usuarios_Empresas { get; set; }
+        public virtual DbSet<Usuarios_Asesores> Usuarios_Asesores { get; set; }
+        public virtual DbSet<Usuarios> Usuarios { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -126,7 +127,7 @@ namespace DBData.Database
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<CuentaCorriente2_Result>("CuentaCorriente2", codigoClienteParameter);
         }
     
-        public virtual ObjectResult<EstadisticaVisita_Result> EstadisticaVisita(Nullable<System.DateTime> fechaInicio, Nullable<System.DateTime> fechaFin)
+        public virtual ObjectResult<EstadisticaVisita_Result> EstadisticaVisita(Nullable<System.DateTime> fechaInicio, Nullable<System.DateTime> fechaFin, string user)
         {
             var fechaInicioParameter = fechaInicio.HasValue ?
                 new ObjectParameter("FechaInicio", fechaInicio) :
@@ -136,7 +137,11 @@ namespace DBData.Database
                 new ObjectParameter("FechaFin", fechaFin) :
                 new ObjectParameter("FechaFin", typeof(System.DateTime));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<EstadisticaVisita_Result>("EstadisticaVisita", fechaInicioParameter, fechaFinParameter);
+            var userParameter = user != null ?
+                new ObjectParameter("User", user) :
+                new ObjectParameter("User", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<EstadisticaVisita_Result>("EstadisticaVisita", fechaInicioParameter, fechaFinParameter, userParameter);
         }
     
         public virtual ObjectResult<PResumenCredito_Result> PResumenCredito()

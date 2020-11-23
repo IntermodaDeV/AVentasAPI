@@ -46,8 +46,12 @@ namespace AventasApi.Controllers.Authentication
                     {
                         usuario = u.usuario,
                         EmpresaId = u.EmpresaId,
-                        password = u.password,
+                        BloqueoCredito=u.BloqueoInfoCredito,
                         status = u.status,
+                        EmpresasUsuarios = db.Usuarios_Empresas.Where(e => e.Status == true && e.UsuarioId == u.Id).Select(e => new UsuariosEmpresasViewModel
+                        {
+                            EmpresaId = e.EmpresaId
+                        }).ToList(),
                         RolesUsuarios = db.Usuario_Rol.Where(r => r.usuarioId == u.Id && r.status == true).Select(rol => new RolesUsuariosViewModel
                         {
                             Id = rol.Id,

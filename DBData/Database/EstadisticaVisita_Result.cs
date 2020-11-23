@@ -27,5 +27,6 @@ namespace DBData.Database
         public Nullable<int> Recibos { get; set; }
         public Nullable<decimal> TotalPedidos { get; set; }
         public Nullable<decimal> TotalRecibos { get; set; }
+        public string Empresa { get; set; }
     }
 }

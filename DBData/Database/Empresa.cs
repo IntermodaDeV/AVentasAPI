@@ -31,8 +31,8 @@ namespace DBData.Database
             this.GrupoImpuestoCliente = new HashSet<GrupoImpuestoCliente>();
             this.PedidosxCliente = new HashSet<PedidosxCliente>();
             this.ProductosxColeccion = new HashSet<ProductosxColeccion>();
-            this.Usuarios = new HashSet<Usuarios>();
             this.Usuarios_Empresas = new HashSet<Usuarios_Empresas>();
+            this.Usuarios = new HashSet<Usuarios>();
         }
     
         public string EmpresaId { get; set; }
@@ -74,8 +74,8 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductosxColeccion> ProductosxColeccion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Usuarios> Usuarios { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Usuarios_Empresas> Usuarios_Empresas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Usuarios> Usuarios { get; set; }
     }
 }

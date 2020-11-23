@@ -20,6 +20,7 @@ namespace DBData.Database
             this.PantallasxUsuario = new HashSet<PantallasxUsuario>();
             this.Usuario_Rol = new HashSet<Usuario_Rol>();
             this.Usuarios_Empresas = new HashSet<Usuarios_Empresas>();
+            this.Usuarios_Asesores = new HashSet<Usuarios_Asesores>();
         }
     
         public int Id { get; set; }
@@ -32,13 +33,17 @@ namespace DBData.Database
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
+        public bool BloqueoInfoCredito { get; set; }
+        public Nullable<bool> FlagTodosAsesores { get; set; }
     
+        public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PantallasxUsuario> PantallasxUsuario { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Usuario_Rol> Usuario_Rol { get; set; }
-        public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Usuarios_Empresas> Usuarios_Empresas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Usuarios_Asesores> Usuarios_Asesores { get; set; }
     }
 }

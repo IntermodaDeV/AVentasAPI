@@ -51,6 +51,8 @@ namespace DBData.Database
         public Nullable<decimal> Flete { get; set; }
         public bool RequiereEntrega { get; set; }
         public bool Sincronizado { get; set; }
+        public Nullable<bool> Procesando { get; set; }
+        public string ErrorAx { get; set; }
     
         public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }

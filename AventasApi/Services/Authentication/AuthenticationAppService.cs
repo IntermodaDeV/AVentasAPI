@@ -70,9 +70,10 @@ namespace AventasApi.Services.Authentication
                     if (EnLinea(userBD.EmpresaId, userBD.usuario))
                     {
                         //Validar con usuario de Intermoda
-                        var client = new RestClient(string.Format(Enviroment.AuthenticationApi, credential.UserAccount, credential.Password));
+                        var client = new RestClient(Enviroment.AuthenticationApi);
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Accept", "application/json");
+                        request.AddJsonBody(new {dominio="INTERMODA",usuario=credential.UserAccount,psd=credential.Password});
                         IRestResponse response = client.Execute(request);
 
                         if (response.IsSuccessful == false)
@@ -121,6 +122,7 @@ namespace AventasApi.Services.Authentication
 
                     var token = encoder.Encode(new UserAuthenticated
                     {
+                        Id=userBD.Id,
                         UserAccount = userBD.usuario,
                         DueDate = DateTime.Now.AddHours(12)
                     }, secret);

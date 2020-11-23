@@ -7,6 +7,7 @@ namespace AventasApi.Models.ViewModels
 {
     public class PedidoPostViewModel
     {
+        public string NumeroReferencia { get; set; }
         public string CodigoCliente { get; set; }
         public string CodigoColeccion { get; set; }
         public string AcuerdoVenta { get; set; }

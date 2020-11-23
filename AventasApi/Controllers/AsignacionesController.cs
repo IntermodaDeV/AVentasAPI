@@ -1,16 +1,10 @@
-﻿using AventasApi.Filters;
-using DBData.Database;
-using AventasApi.Models.Authentication;
-//using IMS.Tokens.Services;
+﻿using DBData.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Results;
 using AventasApi.Models.ViewModels;
 using AventasApi.Services.Authentication;
 using AventasApi.Models;
@@ -315,6 +309,8 @@ namespace AventasApi.Controllers
         {
             try
             {
+                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                
                 if (model == null || model.Count() == 0)
                 {
                     return BadRequest("No se puede registrar una lista vacia.");
@@ -324,7 +320,42 @@ namespace AventasApi.Controllers
                 {
                     var listaDominio  = ConvertirListaAsignacion(model);
                     var listaGuardar = ConvertirListaAsignacion(model);
-                    var asesores = listaDominio.Select(x => x.CodigoAsesor).Distinct().ToList(); 
+                    var usuario  = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id); 
+                    var asesores = listaDominio.Select(x => x.CodigoAsesor).Distinct().ToList();
+                    var empresas = model.Select(x => x.Empresa).Distinct().ToList();
+                    var empresasAsignadas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
+
+                    if (usuario.FlagTodosAsesores.Value)
+                    {
+                        foreach (var empresa in empresas)
+                        {
+                            if (!empresasAsignadas.Contains(empresa))
+                            {
+                                return BadRequest($"La empresa {empresa} no esta asignada a su usuario.");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var asesoresAsignados = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+
+                        foreach (var asesor in asesores)
+                        {
+                            if (!asesoresAsignados.Contains(asesor))
+                            {
+                                return BadRequest($"El asesor {asesor} no esta asignado a su usuario.");
+                            }
+                        }
+
+                        foreach (var empresa in empresas)
+                        {
+                            if (!empresasAsignadas.Contains(empresa))
+                            {
+                                return BadRequest($"La empresa {empresa} no esta asignada a su usuario.");
+                            }
+                        }
+                    }
+
                     List<AsignacionxAsesor> listaGuardadas = new List<AsignacionxAsesor>();
 
                     for (int x = 0; x < listaDominio.Count(); x++)

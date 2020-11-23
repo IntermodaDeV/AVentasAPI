@@ -15,6 +15,7 @@ using ExternalApiData.Models.ApiModels;
 using ExternalApiData.Enviroments;
 using Newtonsoft.Json;
 using ExternalApiData.ApiModels;
+using System.Threading.Tasks;
 
 namespace AventasApi.Controllers
 {
@@ -56,6 +57,215 @@ namespace AventasApi.Controllers
             IRestResponse<List<AsesorApiModel>> respuesta = client.Execute<List<AsesorApiModel>>(request);
 
             return respuesta.IsSuccessful;
+        }
+
+        [HttpPost]
+        public IHttpActionResult Post([FromBody] PedidoPostViewModel Pedido)
+        {
+            try
+            {
+                string numeroReferencia = Pedido.NumeroReferencia;
+                int numeroCorelativo = 0;
+                var cache = false;
+                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                Asesores asesor;
+                Colecciones coleccion;
+                AcuerdosxCliente acuerdoVenta;
+                TiposdePedido tipoPedido;
+                Clientes cliente;
+                ClienteContado clienteContado;
+                CONFIGURACIONE SyncTelContado;
+                CONFIGURACIONE SyncTelCredito;
+
+                using (AVentasConfigEntities config = new AVentasConfigEntities())
+                {
+                    SyncTelContado = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1201);
+                    SyncTelCredito = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1202);
+                }
+
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    clienteContado = context.ClienteContado.Find(Pedido.ClienteContadoId);
+                    asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                    acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
+                    tipoPedido = acuerdoVenta?.TiposdePedido;
+                    cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
+                    coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
+                }
+                DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
+                PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
+                {
+                    IdTipoPedido = tipoPedido?.IdTipoPedido,
+                    IdColeccion = coleccion.IdColeccion,
+                    CodigoCliente = cliente.CodigoCliente,
+                    AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
+                    EmpresaId = cliente.EmpresaId,
+                    Fecha = DateTime.Now,
+                    FechaEntrega = fechaEntrega,
+                    CodigoAsesor = asesor.CodigoAsesor,
+                    Observacion = Pedido.Observacion,
+                    TotalUnidades = 0,
+                    PedidosDetalle = new List<PedidosDetalle>(),
+                    Subtotal = 0,
+                    Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
+                    Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
+                    IdLinea = Pedido.Linea,
+                    ClienteContadoId = Pedido.ClienteContadoId,
+                    ModoVenta = Pedido.ModoVenta,
+                    Flete = Pedido.Flete,
+                    RequiereEntrega = Pedido.RequiereEntrega
+                };
+
+                if (numeroReferencia == "")
+                {
+                    cache = true;
+                    numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                    string inicialesAsesor = asesor.InicialesNombre;
+                    numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                }
+                /*var pe = new PedidoCRMApiModel
+                {
+                    COMPANY = cliente.EmpresaId,
+                    CUSTOMER_ACCOUNT = Pedido.CodigoCliente,
+                    DATE_CONFIRMED_RECEIPT = fechaEntrega.ToString("dd/MM/yyyy"),
+                    DELIVERY_ADDRESS = string.Empty,
+                    DELIVERY_MODE = "",
+                    DISC_GROUP = "",
+                    ID_SALES_AGREEMENT = Pedido.AcuerdoVenta,
+                    LINE = Pedido.Linea,
+                    OBSERVATIONS = (Pedido.Observacion == null) ? "" : Pedido.Observacion,
+                    PACKAGE = coleccion.CodigoColeccion,
+                    PACKAGE_TYPE = coleccion.ColeccionTipo,
+                    PedidoJsonItems = new List<PedidoJsonItems>(),
+                    REFERENCE = numeroReferencia,
+                    SALES_MANAGER = asesor.Usuario,
+                    SALES_ORDER_TYPE = (coleccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
+                    USER = asesor.Usuario,
+                    INCLUDE_TAX = "0"
+                };
+
+                if (clienteContado != null)
+                {
+                    pe.SALES_NAME = clienteContado.Nombre;
+                    pe.FISCAL_DOCUMENT = clienteContado.RTN;
+                    pe.DELIVERY_ADDRESS = clienteContado.Direccion;
+                    pe.PHONE = (SyncTelContado.VALOR == "1") ? clienteContado.Telefono : "";
+                }
+                else
+                {
+                    pe.SALES_NAME = "";
+                    pe.FISCAL_DOCUMENT = "";
+                    pe.DELIVERY_ADDRESS = "";
+                    pe.PHONE = (SyncTelCredito.VALOR == "1") ? cliente.Telefono : "";
+                }*/
+
+                foreach (var detalle in Pedido.DetallePedido)
+                {
+                    int cantidad = 0;
+                    int.TryParse(detalle.Cantidad, out cantidad);
+                    if (cantidad > 0)
+                    {
+                        /*pe.PedidoJsonItems.Add(
+                                new PedidoJsonItems
+                                {
+                                    COLOR = detalle.CodigoColor,
+                                    DELIVERY_ADDRESS = "",
+                                    DISC_PERCENTAGE = "0.00",
+                                    ITEM_CODE = detalle.CodigoProducto,
+                                    LOT_NUMBER = coleccion.CodigoColeccion,
+                                    QUANTITY = detalle.Cantidad,
+                                    REFERENCE = numeroReferencia,
+                                    SIZE = detalle.Talla,
+                                    UNIT = "Und",
+                                    UNIT_PRICE = detalle.PrecioUnitario
+                                });*/
+                        PedidoBDAGuardar.TotalUnidades += cantidad;
+                        decimal precioUnitario = 0;
+                        decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
+                        PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
+
+                        PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
+                        {
+                            IdProducto = detalle.IdProducto,
+                            CodigoColor = detalle.CodigoColor,
+                            CodigoTalla = detalle.Talla,
+                            Cantidad = cantidad,
+                            MontoLinea = (precioUnitario * cantidad),
+                            Fecha = DateTime.Now,
+                            CodigoAsesor = asesor.CodigoAsesor,
+                            PrecioUnitario = precioUnitario
+                        });
+                    }
+
+                }
+
+                PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
+                PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                PedidoBDAGuardar.PedidoId = numeroReferencia;
+                PedidoBDAGuardar.NumeroPedido = "";
+                PedidoBDAGuardar.Sincronizado = false;
+                PedidoBDAGuardar.Procesando = false;
+
+                PResumenCredito_Result resultado;
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    if (cache)
+                    {
+                        asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                        asesor.CorrelativoPedidos = numeroCorelativo + 1;
+                        context.SaveChanges();
+                    }
+                    resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
+                }
+                AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
+
+                if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
+                {
+                    if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                    {
+                        ReducirStock(PedidoBDAGuardar);
+                    }
+                }
+
+                _ = PostPedidoPendiente(numeroReferencia);
+
+                return Ok(new { EncabezadoPedido = new { PedidoId = numeroReferencia } });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/PedidosXCliente/correlativo")]
+        public async Task <IHttpActionResult> GetCorrelativo()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount);
+                    int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                    string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
+                    string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+
+                    var toUpdate = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == asesor.CodigoAsesor);
+                    if (toUpdate != null)
+                    {
+                        toUpdate.CorrelativoPedidos = numeroCorelativo + 1;
+                        ctx.SaveChanges();
+                    }
+
+                    return Ok(numeroReferencia);
+                }
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpGet]
@@ -153,8 +363,104 @@ namespace AventasApi.Controllers
                 }
         }
 
+        [HttpGet]
+        [Route("~/api/PedidosXCliente/Pendientes/{asesor}/{FechaInicio}/{FechaFin}")]
+        public IHttpActionResult GetPendientes(string Asesor, DateTime FechaInicio, DateTime FechaFin)
+        {
+            try
+            {
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
+                    {
+                        FechaInicio = DateTime.Today.AddDays(-30);
+                        FechaFin = DateTime.Today.AddDays(1);
+                    }
+                    else
+                    {
+                        FechaFin = FechaFin.AddDays(1);
+                    }
 
+                    List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == Asesor && p.Fecha >= FechaInicio && p.Fecha < FechaFin && p.Sincronizado==false).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
+                    {
+                        PedidoId = ped.PedidoId,
+                        NumeroPedido = ped.NumeroPedido,
+                        Sincronizado = ped.Sincronizado,
+                        Procesando = ped.Procesando.Value,
+                        ErrorAx = ped.ErrorAx,
+                        NombreColeccion = context.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
+                        TotalUnidades = ped.TotalUnidades,
+                        TotalXPedido = ped.TotalPedido,
+                        SubTotalXPedido = ped.Subtotal,
+                        Impuesto = ped.TotalImpuesto,
+                        ClienteContadoId = ped.ClienteContadoId,
+                        ModoVenta = ped.ModoVenta,
+                        Flete = ped.Flete,
+                        Cliente = new ClienteViewModel
+                        {
+                            Codigo = ped.Clientes.CodigoCliente,
+                            Nombre = ped.Clientes.Nombre,
+                            Direccion = ped.Clientes.Direccion,
+                            Moneda = ped.Clientes.IdMoneda
+                        },
+                        Linea = context.MaestroLinea.Select(ml => new LineaViewModel
+                        {
+                            IdLinea = ml.IdLinea,
+                            Linea = ml.Linea,
+                        }).FirstOrDefault(ml => ml.IdLinea == ped.IdLinea),
+                        TipoPedido = context.TiposdePedido.Select(tp => new TipoPedidoViewModel
+                        {
+                            IdTipoPedido = tp.IdTipoPedido,
+                            TipoPedido = tp.TipoPedido,
+                            HabilitaEstilos = tp.HabilitaEstilos ?? false,
+                            Imagen = tp.Url_Imagen,
+                            Aplica_Todos = tp.Aplica_Todos ?? false,
+                            Restrictivo = tp.Restrictivo ?? false
+                        }).FirstOrDefault(tp => tp.IdTipoPedido == ped.IdTipoPedido),
+                        AcuerdoVenta = ped.AcuerdoVenta,
+                        EmpresaId = ped.EmpresaId,
+                        FechaActual = ped.Fecha,
+                        Usuario = context.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == ped.CodigoAsesor).Nombre,
+                        FechaEntrega = ped.FechaEntrega,
+                        Observacion = ped.Observacion,
+                        location = new Location
+                        {
+                            mocked = ped.Mocked ?? false,
+                            accuracy = ped.Accuracy,
+                            altitude = ped.Altitude,
+                            latitude = ped.Latitude,
+                            longitude = ped.Longitude,
+                            error = ped.Error
+                        }
+                    }).ToList();
+                    foreach (var pedido in pedidos)
+                    {
+                        string imagenB64 = "";
 
+                        var firma = context.FirmasxPedido.FirstOrDefault(fir => pedido.PedidoId == fir.PedidoId);
+                        if (firma != null)
+                        {
+                            try
+                            {
+                                imagenB64 = "data:image/png;base64," + Convert.ToBase64String(firma.Firma);
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+
+                            pedido.Firma = imagenB64;
+
+                        }
+                    }
+                    return Ok(pedidos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
 
         [HttpGet]
         [Route("~/api/PedidoDetalle/{CodigoPedido}")]
@@ -241,164 +547,92 @@ namespace AventasApi.Controllers
 
         }
 
-
         [HttpPost]
-        public IHttpActionResult Post([FromBody] PedidoPostViewModel Pedido)
+        [Route("~/api/PedidosXCliente/sincronizar/{pedido}")]
+        public async Task<IHttpActionResult> PostPedidoPendiente(string pedido)
         {
             try
             {
-                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                //var user = new { UserAccount = "gmonrroy" };
-                Asesores asesor;
-                Colecciones coleccion;
-                AcuerdosxCliente acuerdoVenta;
-                TiposdePedido tipoPedido;
-                Clientes cliente;
-                ClienteContado clienteContado;
-                CONFIGURACIONE SyncTelContado;
-                CONFIGURACIONE SyncTelCredito;
+                var Pedido = new PedidoCRMApiModel();
+                using (var ctx = new AVentasEntities())
+                {
+                    var pedidoDB = ctx.PedidosxCliente.FirstOrDefault(x => x.PedidoId == pedido && x.Procesando==false);
 
-                using (AVentasConfigEntities config = new AVentasConfigEntities())
-                {
-                    SyncTelContado = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1201);
-                    SyncTelCredito = config.CONFIGURACIONES.FirstOrDefault(x => x.CODIGO == 1202);
-                }
-
-                using (AVentasEntities context = new AVentasEntities())
-                {
-                    clienteContado = context.ClienteContado.Find(Pedido.ClienteContadoId);
-                    asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                    acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
-                    tipoPedido = acuerdoVenta?.TiposdePedido;
-                    cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
-                    coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
-                }
-                DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
-                PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
-                {
-                    //PedidoId = ,
-                    IdTipoPedido = tipoPedido?.IdTipoPedido,
-                    IdColeccion = coleccion.IdColeccion,
-                    CodigoCliente = cliente.CodigoCliente,
-                    AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
-                    EmpresaId = cliente.EmpresaId,
-                    Fecha = DateTime.Now,
-                    FechaEntrega = fechaEntrega,
-                    CodigoAsesor = asesor.CodigoAsesor,
-                    Observacion = Pedido.Observacion,
-                    TotalUnidades = 0,
-                    PedidosDetalle = new List<PedidosDetalle>(),
-                    Subtotal = 0,
-                    //TotalImpuesto = ,
-                    //TotalDescuento = ,
-                    //TotalPedido = ,
-                    //Mocked = ,
-                    //Accuracy = ,
-                    //Altitude = ,
-                    Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
-                    Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
-                    //Error = ,
-                    IdLinea = Pedido.Linea,
-                    //idMoneda = ,
-                    //IdEstado = ,
-                    ClienteContadoId = Pedido.ClienteContadoId,
-                    ModoVenta = Pedido.ModoVenta,
-                    Flete = Pedido.Flete,
-                    RequiereEntrega = Pedido.RequiereEntrega
-                };
-
-                int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
-                string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
-
-                string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
-                var pe = new PedidoCRMApiModel
-                {
-                    COMPANY = cliente.EmpresaId,
-                    CUSTOMER_ACCOUNT = Pedido.CodigoCliente,
-                    DATE_CONFIRMED_RECEIPT = fechaEntrega.ToString("dd/MM/yyyy"),
-                    DELIVERY_ADDRESS = string.Empty,
-                    DELIVERY_MODE = "",
-                    DISC_GROUP = "",
-                    ID_SALES_AGREEMENT = Pedido.AcuerdoVenta,
-                    LINE = Pedido.Linea,
-                    OBSERVATIONS = (Pedido.Observacion == null) ? "" : Pedido.Observacion,
-                    PACKAGE = coleccion.CodigoColeccion,
-                    PACKAGE_TYPE = coleccion.ColeccionTipo,
-                    PedidoJsonItems = new List<PedidoJsonItems>(),
-                    REFERENCE = numeroReferencia,
-                    SALES_MANAGER = asesor.Usuario,
-                    SALES_ORDER_TYPE = (coleccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
-                    USER = asesor.Usuario,
-                    INCLUDE_TAX = "0"
-                };
-
-                if (clienteContado != null)
-                {
-                    pe.SALES_NAME = clienteContado.Nombre;
-                    pe.FISCAL_DOCUMENT = clienteContado.RTN;
-                    pe.DELIVERY_ADDRESS = clienteContado.Direccion;
-                    pe.PHONE = (SyncTelContado.VALOR == "1") ? clienteContado.Telefono : "";
-                }
-                else
-                {
-                    pe.SALES_NAME = "";
-                    pe.FISCAL_DOCUMENT = "";
-                    pe.DELIVERY_ADDRESS = "";
-                    pe.PHONE = (SyncTelCredito.VALOR == "1") ? cliente.Telefono : "";
-                }
-
-                foreach (var detalle in Pedido.DetallePedido)
-                {
-                    int cantidad = 0;
-                    int.TryParse(detalle.Cantidad, out cantidad);
-                    if (cantidad > 0)
+                    if (pedidoDB == null)
                     {
-                        pe.PedidoJsonItems.Add(
-                                new PedidoJsonItems
-                                {
-                                    COLOR = detalle.CodigoColor,
-                                    DELIVERY_ADDRESS = "",
-                                    DISC_PERCENTAGE = "0.00",
-                                    ITEM_CODE = detalle.CodigoProducto,
-                                    LOT_NUMBER = coleccion.CodigoColeccion,
-                                    QUANTITY = detalle.Cantidad,
-                                    REFERENCE = numeroReferencia,
-                                    SIZE = detalle.Talla,
-                                    UNIT = "Und",
-                                    UNIT_PRICE = detalle.PrecioUnitario
-                                });
-                        PedidoBDAGuardar.TotalUnidades += cantidad;
-                        decimal precioUnitario = 0;
-                        decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                        PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
-
-                        PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
-                        {
-                            IdProducto = detalle.IdProducto,
-                            CodigoColor = detalle.CodigoColor,
-                            CodigoTalla = detalle.Talla,
-                            Cantidad = cantidad,
-                            MontoLinea = (precioUnitario * cantidad),
-                            Fecha = DateTime.Now,
-                            CodigoAsesor = asesor.CodigoAsesor,
-                            PrecioUnitario = precioUnitario
-                        });
+                        return BadRequest($"El pedido {pedido} se encuentra ya en proceso de sincronizacion.");
                     }
 
-                }
-
-                PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
-                PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
-                string PEdidoID = "";
-                if (EnLinea(cliente.EmpresaId, asesor.Usuario))
-                {
-                    try
+                    Pedido = new PedidoCRMApiModel
                     {
+                        COMPANY = pedidoDB.Empresa.EmpresaId,
+                        CUSTOMER_ACCOUNT = pedidoDB.Clientes.CodigoCliente,
+                        DATE_CONFIRMED_RECEIPT = pedidoDB.FechaEntrega.Value.ToString("dd/MM/yyyy"),
+                        DELIVERY_ADDRESS = string.Empty,
+                        DELIVERY_MODE = "",
+                        DISC_GROUP = "",
+                        ID_SALES_AGREEMENT = pedidoDB.AcuerdoVenta,
+                        LINE = pedidoDB.MaestroLinea.IdLinea,
+                        OBSERVATIONS = (pedidoDB.Observacion == null) ? "" : pedidoDB.Observacion,
+                        PACKAGE = pedidoDB.Colecciones.CodigoColeccion,
+                        PACKAGE_TYPE = pedidoDB.Colecciones.TiposdeColeccion.ColeccionTipo,
+                        PedidoJsonItems = new List<PedidoJsonItems>(),
+                        REFERENCE = pedidoDB.PedidoId,
+                        SALES_MANAGER = pedidoDB.Asesores.Usuario,
+                        SALES_ORDER_TYPE = (pedidoDB.Colecciones.TiposdeColeccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
+                        USER = pedidoDB.Asesores.Usuario,
+                        INCLUDE_TAX = "0"
+
+
+                    };
+                    if (pedidoDB.ClienteContadoId != null)
+                    {
+                        var contado = ctx.ClienteContado.Where(c => c.id == pedidoDB.ClienteContadoId).FirstOrDefault();
+                        Pedido.SALES_NAME = contado.Nombre;
+                        Pedido.FISCAL_DOCUMENT = contado.RTN;
+                        Pedido.DELIVERY_ADDRESS = contado.Direccion;
+                        Pedido.PHONE = contado.Telefono;
+                    }
+                    else
+                    {
+                        Pedido.SALES_NAME = "";
+                        Pedido.FISCAL_DOCUMENT = "";
+                        Pedido.DELIVERY_ADDRESS = "";
+                        Pedido.PHONE = pedidoDB.Clientes.Telefono;
+                    }
+
+
+                    foreach (var detalle in ctx.PedidosDetalle.Where(det => det.PedidosxCliente.PedidoId == pedidoDB.PedidoId))
+                    {
+                        Pedido.PedidoJsonItems.Add(
+                         new PedidoJsonItems
+                         {
+                             COLOR = detalle.CodigoColor,
+                             DELIVERY_ADDRESS = "",
+                             DISC_PERCENTAGE = "0.00",
+                             ITEM_CODE = detalle.ProductosxColeccion.CodigoProducto,
+                             LOT_NUMBER = pedidoDB.Colecciones.CodigoColeccion,
+                             QUANTITY = Convert.ToString(detalle.Cantidad),
+                             REFERENCE = detalle.PedidosxCliente.PedidoId,
+                             SIZE = detalle.CodigoTalla,
+                             UNIT = "Und",
+                             UNIT_PRICE = Convert.ToString(detalle.PrecioUnitario)
+                         });
+                    }
+
+                    if (EnLinea(Pedido.COMPANY, Pedido.SALES_MANAGER))
+                    {
+                        string respuesta = string.Empty;
+                        bool error = false;
+
+                        pedidoDB.Procesando = true;
+                        ctx.SaveChanges();
+
                         var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
                         client.Timeout = 480 * (1000);
                         var request = new RestRequest(Method.POST);
                         request.AddHeader("Accept", "application/json");
-                        request.AddJsonBody(pe);
+                        request.AddJsonBody(Pedido);
                         var response = client.Execute<List<string>>(request);
 
                         if (response.IsSuccessful)
@@ -406,10 +640,9 @@ namespace AventasApi.Controllers
                             if (response.Content.Substring(1, 7).ToUpper() == "SUCCESS")
                             {
                                 var pedidoAX = response.Content.Substring(9, 11);
-                                PEdidoID = numeroReferencia;
-                                PedidoBDAGuardar.PedidoId = numeroReferencia;
-                                PedidoBDAGuardar.Sincronizado = true;
-                                PedidoBDAGuardar.NumeroPedido = pedidoAX;
+                                pedidoDB.NumeroPedido = pedidoAX;
+                                pedidoDB.Sincronizado = true;
+                                respuesta = $"Pedido {Pedido.REFERENCE} sincronizado exitosamente con AX.";
                             }
                         }
                         else
@@ -418,47 +651,120 @@ namespace AventasApi.Controllers
                             {
                                 var excepcion = response.Data.FirstOrDefault();
                                 var resp = JsonConvert.DeserializeObject<ApiException>(excepcion);
-                                return BadRequest(resp.Message);
+                                respuesta = $"Pedido {Pedido.REFERENCE} Error: {resp.Message}";
+                                pedidoDB.Sincronizado = false;
+                                pedidoDB.ErrorAx = resp.Message;
+                                error = true;
                             }
-                        } 
+                        }
+                        pedidoDB.Procesando = false;
+                        await ctx.SaveChangesAsync();
 
+                        if (error)
+                        {
+                            return BadRequest(respuesta);
+                        }
+
+                        return Ok(respuesta);
                     }
-                    catch (Exception e)
+                    else
                     {
-                        return BadRequest(Newtonsoft.Json.JsonConvert.SerializeObject(e));
+                        pedidoDB.Procesando = false;
+                        ctx.SaveChanges();
+
+                        return BadRequest("Servidor de AX no disponible");
                     }
+                }
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/PedidosXCliente/postax")]
+        public async Task<IHttpActionResult> PostAx([FromBody] PedidoCRMApiModel pedido)
+        {
+            try
+            {
+                if (EnLinea(pedido.COMPANY, pedido.SALES_MANAGER))
+                {
+                    string respuesta = string.Empty;
+                    bool error = false;
+                    using (var ctx = new AVentasEntities())
+                    {
+                        var pedidoDB = ctx.PedidosxCliente.FirstOrDefault(x => x.PedidoId == pedido.REFERENCE);
+                        pedidoDB.Procesando = true;
+                        ctx.SaveChanges();
+
+                        var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}pedidos/upload");
+                        client.Timeout = 480 * (1000);
+                        var request = new RestRequest(Method.POST);
+                        request.AddHeader("Accept", "application/json");
+                        request.AddJsonBody(pedido);
+                        var response = client.Execute<List<string>>(request);
+
+                        if (response.IsSuccessful)
+                        {
+                            if (response.Content.Substring(1, 7).ToUpper() == "SUCCESS")
+                            {
+                                var pedidoAX = response.Content.Substring(9, 11);
+                                pedidoDB.NumeroPedido = pedidoAX;
+                                pedidoDB.Sincronizado = true;
+                                respuesta = $"Pedido {pedido.REFERENCE} sincronizado exitosamente con AX.";
+                            }
+                        }
+                        else
+                        {
+                            if (response.Data != null)
+                            {
+                                var excepcion = response.Data.FirstOrDefault();
+                                var resp = JsonConvert.DeserializeObject<ApiException>(excepcion);
+                                respuesta = $"Pedido {pedido.REFERENCE} Error: {resp.Message}";
+                                pedidoDB.Sincronizado = false;
+                                pedidoDB.ErrorAx = resp.Message;
+                                error = true;
+                            }
+                        }
+                        pedidoDB.Procesando = false;
+                        await ctx.SaveChangesAsync();
+                    }
+
+                    if (error)
+                    {
+                        return BadRequest(respuesta);
+                    }
+
+                    return Ok(respuesta);
                 }
                 else
                 {
-                    PEdidoID = numeroReferencia;
-                    PedidoBDAGuardar.PedidoId = numeroReferencia;
-                    PedidoBDAGuardar.NumeroPedido = "";
-                    PedidoBDAGuardar.Sincronizado = false;
-                }
-
-
-                PResumenCredito_Result resultado;
-                using (AVentasEntities context = new AVentasEntities())
-                {
-                    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                    asesor.CorrelativoPedidos = numeroCorelativo + 1;
-                    context.SaveChanges();
-                    resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
-                }
-                AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
-
-                if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
-                {
-                    if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                    using (var ctx = new AVentasEntities())
                     {
-                        ReducirStock(PedidoBDAGuardar);
+                        var pedidoDB = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.PedidoId == pedido.REFERENCE);
+                        pedidoDB.Procesando = false;
+                        await ctx.SaveChangesAsync();
                     }
+                    return BadRequest("Servidor de AX no disponible");
                 }
-
-                return Ok(new { EncabezadoPedido = new { PedidoId = PEdidoID } });
             }catch(Exception e)
             {
-                return BadRequest(e.ToString());
+                string msj = e.Message;
+                try
+                {
+                    using (var ctx = new AVentasEntities())
+                    {
+                        var pedidoDB = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.PedidoId == pedido.REFERENCE);
+                        pedidoDB.Procesando = false;
+                        await ctx.SaveChangesAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    msj += "\n" + ex.Message;
+                }
+                return BadRequest(msj);
             }
         }
 
