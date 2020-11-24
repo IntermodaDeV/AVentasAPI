@@ -225,6 +225,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ModoEntrega" Type="varchar" MaxLength="50" />
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
           <Property Name="Habilitado" Type="bit" Nullable="false" />
+          <Property Name="VersionRegistro" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+          <Property Name="VersionRegistroBINT" Type="bigint" StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -2440,7 +2442,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-        <Function Name="SP_VISITASPORMES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="SP_VISITASPORMES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="User" Type="varchar" Mode="In" />
+        </Function>
         <EntityContainer Name="AventasModelStoreContainer">
           <EntitySet Name="AcuerdosxCliente" EntityType="Self.AcuerdosxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AcuerdosxClienteDetalle" EntityType="Self.AcuerdosxClienteDetalle" Schema="dbo" store:Type="Tables" />
@@ -3250,6 +3254,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="ModoEntrega" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Habilitado" Type="Boolean" Nullable="false" />
+          <Property Name="VersionRegistro" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="VersionRegistroBINT" Type="Int64" annotation:StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -5262,7 +5268,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
           </AssociationSet>
-          <FunctionImport Name="SP_VISITASPORMES" ReturnType="Collection(AventasModel.SP_VISITASPORMES_Result)" />
           <EntitySet Name="Funciones" EntityType="AventasModel.Funciones" />
           <EntitySet Name="Funciones_Roles" EntityType="AventasModel.Funciones_Roles" />
           <EntitySet Name="Pantallas" EntityType="AventasModel.Pantallas" />
@@ -5329,6 +5334,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Usuarios_Asesores" EntitySet="Usuarios_Asesores" />
           </AssociationSet>
+          <FunctionImport Name="SP_VISITASPORMES" ReturnType="Collection(AventasModel.SP_VISITASPORMES_Result1)">
+            <Parameter Name="User" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -5966,6 +5974,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="Int32" Name="M" Nullable="false" />
           <Property Type="Int32" Name="VISITAS" Nullable="false" />
           <Property Type="DateTime" Name="FECHA" Nullable="true" />
+          <Property Type="String" Name="EMPRESA" Nullable="false" MaxLength="4" />
         </ComplexType>
         <EntityType Name="Funciones">
           <Key>
@@ -6292,6 +6301,13 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="SP_VISITASPORMES_Result1">
+          <Property Type="Int32" Name="ANIO" Nullable="true" />
+          <Property Type="Int32" Name="M" Nullable="false" />
+          <Property Type="Int32" Name="VISITAS" Nullable="false" />
+          <Property Type="DateTime" Name="FECHA" Nullable="true" />
+          <Property Type="String" Name="EMPRESA" Nullable="false" MaxLength="4" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -6450,6 +6466,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Clientes">
             <EntityTypeMapping TypeName="AventasModel.Clientes">
               <MappingFragment StoreEntitySet="Clientes">
+                <ScalarProperty Name="VersionRegistroBINT" ColumnName="VersionRegistroBINT" />
+                <ScalarProperty Name="VersionRegistro" ColumnName="VersionRegistro" />
                 <ScalarProperty Name="Habilitado" ColumnName="Habilitado" />
                 <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
                 <ScalarProperty Name="ModoEntrega" ColumnName="ModoEntrega" />
@@ -7371,16 +7389,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="SP_VISITASPORMES" FunctionName="AventasModel.Store.SP_VISITASPORMES">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="AventasModel.SP_VISITASPORMES_Result">
-                <ScalarProperty Name="ANIO" ColumnName="ANIO" />
-                <ScalarProperty Name="M" ColumnName="M" />
-                <ScalarProperty Name="VISITAS" ColumnName="VISITAS" />
-                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="Funciones">
             <EntityTypeMapping TypeName="AventasModel.Funciones">
               <MappingFragment StoreEntitySet="Funciones">
@@ -7523,6 +7531,17 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_VISITASPORMES" FunctionName="AventasModel.Store.SP_VISITASPORMES">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_VISITASPORMES_Result1">
+                <ScalarProperty Name="ANIO" ColumnName="ANIO" />
+                <ScalarProperty Name="M" ColumnName="M" />
+                <ScalarProperty Name="VISITAS" ColumnName="VISITAS" />
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+                <ScalarProperty Name="EMPRESA" ColumnName="EMPRESA" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

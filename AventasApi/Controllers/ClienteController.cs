@@ -35,6 +35,7 @@ namespace AventasApi.Controllers
                         context.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoAsesor == user.UserAccount).Select(cli => new ClienteViewModel
                         {
                             EmpresaId = cli.EmpresaId,
+                            NombreGrupoPrecio = context.MaestroGrupoPrecio.FirstOrDefault(m => m.GrupoPrecio == cli.GrupoPrecio).Descripcion,
                             Codigo = cli.CodigoCliente,
                             Nombre = cli.Nombre,
                             Zona = cli.Zona,
