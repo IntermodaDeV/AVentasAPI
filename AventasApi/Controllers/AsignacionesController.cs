@@ -28,83 +28,101 @@ namespace AventasApi.Controllers
         {
             try
             {
-                FechaInicio = new DateTime(FechaInicio.Year, FechaInicio.Month, FechaInicio.Day);
-                FechaFin = new DateTime(FechaFin.Year, FechaFin.Month, FechaFin.Day);
-                FechaFin = FechaFin.AddDays(1);
-                //var user = TokenService.Validate<UserAuthenticated>(Request.Headers.Authorization.Parameter);
-                //var user = new { UserAccount = "gmonrroy" };
-                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-
-                List<AsignacionesXFechaViewModel> asignacionesXFecha = new List<AsignacionesXFechaViewModel>();
-                var asignaciones = context.AsignacionxAsesor
-                    .Where(axa =>
-                        axa.CodigoAsesor == context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount).CodigoAsesor && axa.FechaAsignacion >= FechaInicio &&
-                        axa.FechaAsignacion < FechaFin).Select(axa => new
-                        {
-                            IdAsignacionxAsesor = axa.IdAsignacionxAsesor,
-                            Fecha = axa.Fecha,
-                            CodigoCliente = axa.CodigoCliente,
-                            CodigoAsesor = axa.CodigoAsesor,
-                            Usuario = axa.Usuario,
-                            FechaAsignacion = axa.FechaAsignacion,
-                            Orden = axa.Orden,
-                            HoraInicio = axa.HoraInicio,
-                            HoraFinal = axa.HoraFinal,
-                            idPrioridad = axa.idPrioridad,
-                            idTipoVisita = axa.idTipoVisita,
-                            Observacion = axa.Observacion,
-                            PrioridadAsignacion = axa.PrioridadAsignacion,
-                            Checkin = axa.BloqueoCheckin,
-                            Checkout = axa.BloqueoCheckout
-                        })
-                    .OrderBy(axa => axa.HoraInicio).ToList();
-
-                foreach (var asignacion in asignaciones)
+                using (var ctx = new AVentasEntities())
                 {
-                    int indexAsignacionXFecha = asignacionesXFecha.FindIndex(axf => axf.fecha.Value.Year == asignacion.FechaAsignacion.Value.Year && axf.fecha.Value.DayOfYear == asignacion.FechaAsignacion.Value.DayOfYear);
+                    List<AsignacionesXFechaViewModel> asignacionesXFecha = new List<AsignacionesXFechaViewModel>();
+                    FechaInicio = new DateTime(FechaInicio.Year, FechaInicio.Month, FechaInicio.Day);
+                    FechaFin = new DateTime(FechaFin.Year, FechaFin.Month, FechaFin.Day);
+                    FechaFin = FechaFin.AddDays(1);
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    List<string> asesoresHabilitados = new List<string>();
+                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
+                    var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
 
-                    if (indexAsignacionXFecha == -1)
+                    if (usuario.FlagTodosAsesores.Value)
                     {
-                        AsignacionesXFechaViewModel nuevaAsignacionXFecha = new AsignacionesXFechaViewModel
-                        {
-                            fecha = new DateTime(asignacion.FechaAsignacion.Value.Year, asignacion.FechaAsignacion.Value.Month,
-                                asignacion.FechaAsignacion.Value.Day),
-                            asignaciones = new List<AsignacionXAsesorViewModel>()
-                        };
-                        nuevaAsignacionXFecha.asignaciones.Add(new AsignacionXAsesorViewModel
-                        {
-                            IdAsignacionxAsesor = asignacion.IdAsignacionxAsesor,
-                            cliente = asignacion.CodigoCliente,
-                            HoraInicio = asignacion.HoraInicio,
-                            HoraFin = asignacion.HoraFinal,
-                            IdPrioridad = asignacion.idPrioridad,
-                            IdTipoVisita = asignacion.idTipoVisita,
-                            Observacion = asignacion.Observacion,
-                            ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
-                            Checkin = asignacion.Checkin,
-                            Checkout = asignacion.Checkout
-                        });
-                        asignacionesXFecha.Add(nuevaAsignacionXFecha);
+                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
                     }
                     else
                     {
-                        asignacionesXFecha[indexAsignacionXFecha].asignaciones.Add(new AsignacionXAsesorViewModel
-                        {
-                            IdAsignacionxAsesor = asignacion.IdAsignacionxAsesor,
-                            cliente = asignacion.CodigoCliente,
-                            HoraInicio = asignacion.HoraInicio,
-                            HoraFin = asignacion.HoraFinal,
-                            IdPrioridad = asignacion.idPrioridad,
-                            IdTipoVisita = asignacion.idTipoVisita,
-                            Observacion = asignacion.Observacion,
-                            ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
-                            Checkin = asignacion.Checkin,
-                            Checkout = asignacion.Checkout
-                        });
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
                     }
+
+                    List<AsignacionesXFechaViewModel> ListaAsignaciones = new List<AsignacionesXFechaViewModel>();
+                    foreach (var asesor in asesoresHabilitados)
+                    {
+                        var asignaciones = context.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == asesor && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).Select(axa => new
+                            {
+                                IdAsignacionxAsesor = axa.IdAsignacionxAsesor,
+                                Fecha = axa.Fecha,
+                                CodigoCliente = axa.CodigoCliente,
+                                CodigoAsesor = axa.CodigoAsesor,
+                                Usuario = axa.Usuario,
+                                FechaAsignacion = axa.FechaAsignacion,
+                                Orden = axa.Orden,
+                                HoraInicio = axa.HoraInicio,
+                                HoraFinal = axa.HoraFinal,
+                                idPrioridad = axa.idPrioridad,
+                                idTipoVisita = axa.idTipoVisita,
+                                Observacion = axa.Observacion,
+                                PrioridadAsignacion = axa.PrioridadAsignacion,
+                                Checkin = axa.BloqueoCheckin,
+                                Checkout = axa.BloqueoCheckout
+                            }).OrderBy(axa => axa.HoraInicio).ToList();
+                        
+                    
+                    foreach (var asignacion in asignaciones)
+                        {
+                            int indexAsignacionXFecha = asignacionesXFecha.FindIndex(axf => axf.fecha.Value.Year == asignacion.FechaAsignacion.Value.Year && axf.fecha.Value.DayOfYear == asignacion.FechaAsignacion.Value.DayOfYear);
+
+                            if (indexAsignacionXFecha == -1)
+                            {
+                                AsignacionesXFechaViewModel nuevaAsignacionXFecha = new AsignacionesXFechaViewModel
+                                {
+                                    fecha = new DateTime(asignacion.FechaAsignacion.Value.Year, asignacion.FechaAsignacion.Value.Month,
+                                        asignacion.FechaAsignacion.Value.Day),
+                                    asignaciones = new List<AsignacionXAsesorViewModel>()
+                                };
+                                nuevaAsignacionXFecha.asignaciones.Add(new AsignacionXAsesorViewModel
+                                {
+                                    IdAsignacionxAsesor = asignacion.IdAsignacionxAsesor,
+                                    cliente = asignacion.CodigoCliente,
+                                    HoraInicio = asignacion.HoraInicio,
+                                    HoraFin = asignacion.HoraFinal,
+                                    IdPrioridad = asignacion.idPrioridad,
+                                    IdTipoVisita = asignacion.idTipoVisita,
+                                    Observacion = asignacion.Observacion,
+                                    ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
+                                    Checkin = asignacion.Checkin,
+                                    Checkout = asignacion.Checkout
+                                });
+                                asignacionesXFecha.Add(nuevaAsignacionXFecha);
+                            }
+                            else
+                            {
+                                asignacionesXFecha[indexAsignacionXFecha].asignaciones.Add(new AsignacionXAsesorViewModel
+                                {
+                                    IdAsignacionxAsesor = asignacion.IdAsignacionxAsesor,
+                                    cliente = asignacion.CodigoCliente,
+                                    HoraInicio = asignacion.HoraInicio,
+                                    HoraFin = asignacion.HoraFinal,
+                                    IdPrioridad = asignacion.idPrioridad,
+                                    IdTipoVisita = asignacion.idTipoVisita,
+                                    Observacion = asignacion.Observacion,
+                                    ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
+                                    Checkin = asignacion.Checkin,
+                                    Checkout = asignacion.Checkout
+                                });
+                            }
+                        }
+                        ListaAsignaciones.AddRange(asignacionesXFecha);
+                    }
+                    return Ok(ListaAsignaciones);
                 }
-                return Ok(asignacionesXFecha);
-            }catch(Exception e)
+                
+            }
+            catch(Exception e)
             {
                 return BadRequest(e.ToString());
             }
@@ -166,14 +184,12 @@ namespace AventasApi.Controllers
                     DateTime FechaFin = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,
                         asignacionNueva.fecha.Value.Day);
                     FechaFin = FechaFin.AddDays(1);
-                    var asignacionesDB = context.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount).CodigoAsesor
-                                                                            && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).ToList();
                     List<AsignacionxAsesor> asignaciones = asignacionNueva.asignaciones.Select(asi => new AsignacionxAsesor
                     {
                         Fecha = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
                         FechaAsignacion = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
                         CodigoCliente = asi.cliente,
-                        CodigoAsesor = codigoAsesor,
+                        CodigoAsesor = asi.Asesor,
                         HoraInicio = asi.HoraInicio,
                         HoraFinal = asi.HoraFin,
                         idPrioridad = asi.IdPrioridad,
@@ -185,6 +201,8 @@ namespace AventasApi.Controllers
 
                     foreach (var asignacion in asignaciones)
                     {
+                        var asignacionesDB = context.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == asignacion.CodigoAsesor && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).ToList();
+
                         var ListAsignacionesDB = asignacionesDB.Where(axa => axa.HoraInicio == asignacion.HoraInicio && axa.HoraFinal == asignacion.HoraFinal).ToList();
 
                         if (ListAsignacionesDB.Count == 0)

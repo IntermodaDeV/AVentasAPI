@@ -97,6 +97,7 @@ namespace AventasApi.Models
         public string Ruta { get; set; }
         public string CodigoRuta { get; set; }
         public string Moneda { get; set; }
+        public string Asesor { get; set; }
 
         public Nullable<decimal> Latitud { get; set; }
         public Nullable<decimal> Longitud { get; set; }
