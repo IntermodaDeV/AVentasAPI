@@ -380,7 +380,6 @@ namespace AventasApi.Controllers
 
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                 var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                var isOnline = EnLinea(asesor.EmpresaId, asesor.CodigoAsesor);
                 if (anticipoPost.Pagos != null)
                 {
                     List<ReciboApiModel> recibos = new List<ReciboApiModel>();
@@ -399,7 +398,7 @@ namespace AventasApi.Controllers
                             Referencia = pago.Referencia,
                             FechaCheque = anticipoPost.FechaPago,
                             IdBanco = codigobanco,
-                            Sincronizado = isOnline ? true : false,
+                            Sincronizado = false,
                             Valor = valorPago,
                             IdMoneda = pago.IdMoneda,
                             CodigoAsesor = user.UserAccount,
@@ -472,34 +471,10 @@ namespace AventasApi.Controllers
                         recibos.Add(anticipoAX);
                     }
 
-                    if (isOnline)
-                    {
-                        var client = new RestClient();
-                        var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
-                        {
-                            RequestFormat = DataFormat.Json
-                        };
-                        request.AddHeader("Content-type", "application/json; charset=utf-8");
-                        request.Parameters.Clear();
-                        request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
-                        var respuesta = client.Execute(request);
+                    _ = PostReciboAx(recibos);
 
-                        if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
-                        {
-                            context.SaveChanges();
-                            return Ok(respuestaPagoRecibo);
-                        }
-                        else
-                        {
-                            return BadRequest(respuesta.Content);
-                        }
-                    }
-                    else
-                    {
-
-                        context.SaveChanges();
-                        return Ok(respuestaPagoRecibo);
-                    }
+                    context.SaveChanges();
+                    return Ok(respuestaPagoRecibo);
                 }
                 return BadRequest();
             }
@@ -524,7 +499,7 @@ namespace AventasApi.Controllers
                 var BancosBD = context.Bancos.AsNoTracking().ToList();
                 var codigoCliente = "";
                 int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
-                string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
+                string inicialesAsesor = asesor.InicialesNombre;
                 var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(subFac => subFac.FechaVencimiento).ToList();
 
                 List<ReciboApiModel> recibos = new List<ReciboApiModel>();
@@ -609,7 +584,7 @@ namespace AventasApi.Controllers
                                     IdBanco = bank?.IdBanco,
                                     Valor = 0,
                                     IdMoneda = pago.IdMoneda,
-                                    Sincronizado = isOnline ? true : false,
+                                    Sincronizado = false,
                                     CodigoAsesor = asesor.CodigoAsesor,
                                     IdFactura = subfactura.IdFactura,
                                     Descuento = 0,
@@ -719,8 +694,21 @@ namespace AventasApi.Controllers
                         ValorSinDescuento = decimal.Parse(reciboPost.SaldoFavor.ToString())
                     });
                 }
-
-                if (isOnline)
+               
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                    if (reciboPost.Pagos.Count() == 1)
+                        numeroCorrelativoRecibo++;
+                    asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
+                    context.SaveChanges();
+                }
+                AsyncSqlInsert.IngresarRecibos(recibosxCliente);
+                //Sincronizacion AX
+                _ = PostReciboAx(recibos);
+                ///-------------------------------
+                return Ok(respuestaPagoRecibo);
+                /*if (isOnline)
                 {
                     try
                     {
@@ -775,7 +763,7 @@ namespace AventasApi.Controllers
                     }
                     AsyncSqlInsert.IngresarRecibos(recibosxCliente);
                     return Ok(respuestaPagoRecibo);
-                }
+                }*/
             }
             catch (Exception e)
             {
@@ -783,6 +771,8 @@ namespace AventasApi.Controllers
             }
         }
 
+        [Route("api/Recibo/PostReciboAx")]
+        [HttpPost]
         public async Task<IHttpActionResult> PostReciboAx(List<ReciboApiModel> recibos)
         {
             if (EnLinea(recibos[0].COMPANY, recibos[0].ASESOR))
