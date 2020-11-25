@@ -36,6 +36,6 @@ namespace AventasApi.Models.ViewModels
 
 
         public List<RecibosDetalleViewModel> DetalleRecibo { get; set; }
-
+        public bool Anticipo { get;  set; }
     }
 }

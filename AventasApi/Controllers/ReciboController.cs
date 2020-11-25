@@ -182,7 +182,7 @@ namespace AventasApi.Controllers
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                 var recibosXAsesor = context.RecibosxCliente.Where(recCli => recCli.CodigoAsesor == user.UserAccount && recCli.Sincronizado==false).Select(rec => new RecibosxClienteViewModel
                 {
-
+                    Anticipo=false,
                     NumeroRecibo = rec.NumeroRecibo,
                     CodigoCliente = rec.CodigoCliente,
                     Fecha = rec.Fecha,
@@ -252,7 +252,7 @@ namespace AventasApi.Controllers
                 }).ToList();
                 var anticiposXAsesor = context.AnticiposxCliente.Where(recCli => recCli.CodigoAsesor == user.UserAccount && recCli.Sincronizado==false).Select(ant => new RecibosxClienteViewModel
                 {
-
+                    Anticipo=true,
                     NumeroRecibo = ant.NumeroRecibo,
                     CodigoCliente = ant.CodigoCliente,
                     Fecha = ant.Fecha,
@@ -362,6 +362,64 @@ namespace AventasApi.Controllers
                         ReciboSincronizar.Add(Recibos);
                     }
                     return await PostReciboAx(ReciboSincronizar);
+                }
+            }
+            else
+            {
+                return BadRequest("El servidor de AX no esta disponible.");
+            }
+        }
+
+        [HttpPost]
+        [Route("api/Recibo/Anticipo/Pendiente/{recibo}")]
+        public async Task<IHttpActionResult> PostPendientesAnticipo(string recibo)
+        {
+            if (EnLinea("IMHN", "hbenitez"))
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var Recibo = ctx.AnticiposxCliente.FirstOrDefault(x => x.NumeroRecibo == recibo);
+
+                    if (Recibo == null)
+                    {
+                        return BadRequest("El recibo no existe.");
+                    }
+
+                    List<ReciboApiModel> ReciboSincronizar = new List<ReciboApiModel>();
+                    var asesor = ctx.Asesores.Where(a => a.CodigoAsesor == Recibo.CodigoAsesor).FirstOrDefault();
+                    var TipoPago = ctx.TiposdePago.Where(a => a.IdTipoPago == Recibo.IdTipoPago).FirstOrDefault();
+                    var Banco = ctx.Bancos.Where(a => a.IdBanco == Recibo.IdBanco).FirstOrDefault();
+
+                    var Recibos = new ReciboApiModel
+                    {
+                        COMPANY = asesor.EmpresaId,
+                        ASESOR = asesor.Usuario,
+                        ASESOR_NOMBRE = asesor.Nombre,
+                        ASESOR_DIARIO = asesor.CodigoAsesor,
+                        RECIBO = Recibo.NumeroRecibo,
+                        CLIENTE = Recibo.CodigoCliente,
+                        MONEDA = Recibo.IdMoneda,
+                        FECHA = Recibo.Fecha.Value.ToString("dd/MM/yyyy"),
+                        DESCRIPCION = "",
+                        TOTAL_RECIBO = Recibo.Valor.ToString(),
+                        TOTAL_FACTURAS = Recibo.Valor.ToString(),
+                        TOTAL_APLICADO = Recibo.Valor.ToString(),
+                        TIPO_PAGO = TipoPago.Codigo,
+                        SPEC_PAGO = Recibo.SpecPago,
+                        BANCO = Banco != null ? Banco.NombreBanco : "",
+                        REFERENCIA = Recibo.Referencia,
+                        FECHA_PAGO = Recibo.FechaCheque.Value.ToString("dd/MM/yyyy"),
+                        FACTURA = "Anticipo",
+                        APLICADO = Recibo.Valor.ToString(),
+                        DESCUENTO = Recibo.Descuento.ToString(),
+                        REF_TRANSOPEN = "",
+                        ES_CONTADO = Recibo.EsContado.ToString(),
+                        NUM_PEDIDO = Recibo.NumPedido,
+                    };
+                    ReciboSincronizar.Add(Recibos);
+                
+
+                    return await PostAnticipoAx(ReciboSincronizar);
                 }
             }
             else
@@ -818,6 +876,55 @@ namespace AventasApi.Controllers
                 return BadRequest("El servidor de AX no esta disponible.");
             }
         }
+
+        [Route("api/Recibo/PostAnticipoAx")]
+        [HttpPost]
+        public async Task<IHttpActionResult> PostAnticipoAx(List<ReciboApiModel> recibos)
+        {
+            if (EnLinea(recibos[0].COMPANY, recibos[0].ASESOR))
+            {
+                try
+                {
+                    var client = new RestClient();
+                    var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
+                    {
+                        RequestFormat = DataFormat.Json
+                    };
+                    request.AddHeader("Content-type", "application/json; charset=utf-8");
+                    request.Parameters.Clear();
+                    request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
+                    var respuesta = client.Execute(request);
+
+                    if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
+                    {
+                        using (var ctx = new AVentasEntities())
+                        {
+                            var numeroRecibo = recibos[0].RECIBO;
+                            var recibo = await ctx.AnticiposxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo == numeroRecibo);
+                            recibo.Sincronizado = true;
+                            await ctx.SaveChangesAsync();
+                        }
+
+                        syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE);
+                        syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
+                        return Ok($"El recibo {recibos[0].RECIBO} ha sido sincronizado exitosamente con AX.");
+                    }
+                    else
+                    {
+                        return BadRequest(respuesta.Content);
+                    }
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(Newtonsoft.Json.JsonConvert.SerializeObject(recibos));
+                }
+            }
+            else
+            {
+                return BadRequest("El servidor de AX no esta disponible.");
+            }
+        }
+
     }
     public class RespuestaRecibo
     {
