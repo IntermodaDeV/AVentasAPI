@@ -269,6 +269,7 @@ namespace AventasApi.Controllers
                     {
                         List<ClienteAgendaViewModel> clientes = await ctx.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoAsesor == asesor).Select(cli => new ClienteAgendaViewModel
                         {
+                            Asesor = cli.CodigoAsesor,
                             EmpresaId = cli.EmpresaId,
                             Codigo = cli.CodigoCliente,
                             Nombre = cli.Nombre,

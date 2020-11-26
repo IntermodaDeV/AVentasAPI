@@ -49,7 +49,6 @@ namespace AventasApi.Controllers
                         asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
                     }
 
-                    List<AsignacionesXFechaViewModel> ListaAsignaciones = new List<AsignacionesXFechaViewModel>();
                     foreach (var asesor in asesoresHabilitados)
                     {
                         var asignaciones = context.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == asesor && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).Select(axa => new
@@ -70,7 +69,7 @@ namespace AventasApi.Controllers
                                 Checkin = axa.BloqueoCheckin,
                                 Checkout = axa.BloqueoCheckout
                             }).OrderBy(axa => axa.HoraInicio).ToList();
-                        
+
                     
                     foreach (var asignacion in asignaciones)
                         {
@@ -95,7 +94,8 @@ namespace AventasApi.Controllers
                                     Observacion = asignacion.Observacion,
                                     ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
                                     Checkin = asignacion.Checkin,
-                                    Checkout = asignacion.Checkout
+                                    Checkout = asignacion.Checkout,
+                                    Asesor = asignacion.CodigoAsesor
                                 });
                                 asignacionesXFecha.Add(nuevaAsignacionXFecha);
                             }
@@ -112,13 +112,13 @@ namespace AventasApi.Controllers
                                     Observacion = asignacion.Observacion,
                                     ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
                                     Checkin = asignacion.Checkin,
-                                    Checkout = asignacion.Checkout
+                                    Checkout = asignacion.Checkout,
+                                    Asesor = asignacion.CodigoAsesor
                                 });
                             }
                         }
-                        ListaAsignaciones.AddRange(asignacionesXFecha);
                     }
-                    return Ok(ListaAsignaciones);
+                    return Ok(asignacionesXFecha);
                 }
                 
             }
