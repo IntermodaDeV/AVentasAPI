@@ -40,122 +40,143 @@ namespace AventasApi.Controllers
             return respuesta.IsSuccessful;
         }
 
-        public IHttpActionResult Get()
+        public async Task<IHttpActionResult> Get()
         {
             try
             {
-                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                var recibosXAsesor = context.RecibosxCliente.Where(recCli => recCli.CodigoAsesor == user.UserAccount).Select(rec => new RecibosxClienteViewModel
+                using (var ctx = new AVentasEntities())
                 {
 
-                    NumeroRecibo = rec.NumeroRecibo,
-                    CodigoCliente = rec.CodigoCliente,
-                    Fecha = rec.Fecha,
-                    IdTipoPago = rec.IdTipoPago,
-                    Referencia = rec.Referencia,
-                    FechaPago = rec.FechaCheque,
-                    IdBanco = rec.IdBanco,
-                    Valor = rec.Valor,
-                    IdMoneda = context.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == rec.IdMoneda).Moneda,
-                    Sincronizado = rec.Sincronizado,
-                    CodigoAsesor = rec.CodigoAsesor,
-                    IdFactura = rec.IdFactura,
-                    Longitude = rec.Longitude,
-                    Latitude = rec.Latitude,
-                    DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == rec.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
-                    Descuento = rec.Descuento,
-                    Cliente = context.Clientes.Where(cli => cli.CodigoCliente == rec.CodigoCliente).Select(cli => new ClienteViewModel
-                    {
-                        Codigo = cli.CodigoCliente,
-                        Nombre = cli.Nombre,
-                        Direccion = cli.Direccion,
-                        Moneda = cli.IdMoneda
-                    }).FirstOrDefault(),
-                    TipoPago = context.TiposdePago.Where(tp => tp.IdTipoPago == rec.IdTipoPago).Select(tp => new TipoPagoViewModel
-                    {
-                        IdTipoPago = tp.IdTipoPago,
-                        Codigo = tp.Codigo,
-                        Descripcion = tp.Descripcion,
-                        Tipo = tp.Tipo,
-                        EmpresaId = tp.EmpresaId,
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    List<string> asesoresHabilitados = new List<string>();
+                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
+                    var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
 
-                    }).FirstOrDefault(),
-                    DetalleRecibo = rec.RecibosDetalle.Select(recDet =>
-                    recDet.SubFacturasxCliente != null ?
-                    new RecibosDetalleViewModel
+                    if (usuario.FlagTodosAsesores.Value)
                     {
-                        IdReciboDetalle = recDet.IdReciboDetalle,
-                        Factura = recDet.SubFacturasxCliente.Factura,
-                        NumeroFel = recDet.SubFacturasxCliente.NumeroFEL,
-                        FechaFactura = recDet.SubFacturasxCliente.FacturasxCliente.FechaFactura,
-                        Tipo = rec.FacturasxCliente.Tipo,
-                        ReciboId = recDet.ReciboId,
-                        IdSubFactura = recDet.IdSubFactura,
-                        Valor = recDet.Valor,
-                        ValorFactura = recDet.SubFacturasxCliente.FacturasxCliente.TotalFactura,
-                        ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
-                        Descuento = recDet.Descuento,
-                        EsAbono = recDet.EsAbono,
-                        DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0
-                    } : new RecibosDetalleViewModel
-                    {
-                        IdReciboDetalle = recDet.IdReciboDetalle,
-                        Factura = "SALDO_FAVOR",
-                        NumeroFel = "",
-                        FechaFactura = null,
-                        Tipo = "Pago",
-                        ReciboId = recDet.ReciboId,
-                        IdSubFactura = null,
-                        Valor = recDet.Valor,
-                        ValorFactura = 0,
-                        ValorSinDescuento = recDet.Valor,
-                        Descuento = 0,
-                        EsAbono = true,
-                        DiasVencimiento = 0,
+                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
                     }
-                    ).ToList()
-                }).ToList();
-                var anticiposXAsesor = context.AnticiposxCliente.Where(recCli => recCli.CodigoAsesor == user.UserAccount).Select(ant => new RecibosxClienteViewModel
-                {
+                    else
+                    {
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
 
-                    NumeroRecibo = ant.NumeroRecibo,
-                    CodigoCliente = ant.CodigoCliente,
-                    Fecha = ant.Fecha,
-                    IdTipoPago = ant.IdTipoPago,
-                    Referencia = ant.Referencia,
-                    FechaPago = ant.FechaCheque,
-                    IdBanco = ant.IdBanco,
-                    Valor = ant.Valor,
-                    IdMoneda = context.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == ant.IdMoneda).Moneda,
-                    Sincronizado = ant.Sincronizado,
-                    CodigoAsesor = ant.CodigoAsesor,
-                    IdFactura = 0,
-                    Latitude = ant.Latitude,
-                    Longitude = ant.Longitude,
-                    DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == ant.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
-                    Descuento = 0,
-                    Cliente = context.Clientes.Where(cli => cli.CodigoCliente == ant.CodigoCliente).Select(cli => new ClienteViewModel
+                    List<RecibosxClienteViewModel> ListaRecibos = new List<RecibosxClienteViewModel>();
+                    foreach (var asesor in asesoresHabilitados)
                     {
-                        Codigo = cli.CodigoCliente,
-                        Nombre = cli.Nombre,
-                        Direccion = cli.Direccion,
-                        Moneda = cli.IdMoneda
-                    }).FirstOrDefault(),
-                    TipoPago = context.TiposdePago.Where(tp => tp.IdTipoPago == ant.IdTipoPago).Select(tp => new TipoPagoViewModel
+                    var Recibos = context.RecibosxCliente.Where(recCli => recCli.CodigoAsesor == asesor).Select(rec => new RecibosxClienteViewModel
                     {
-                        IdTipoPago = tp.IdTipoPago,
-                        Codigo = tp.Codigo,
-                        Descripcion = tp.Descripcion,
-                        Tipo = tp.Tipo,
-                        EmpresaId = tp.EmpresaId,
+                        Asesor = rec.CodigoAsesor,
+                        NumeroRecibo = rec.NumeroRecibo,
+                        CodigoCliente = rec.CodigoCliente,
+                        Fecha = rec.Fecha,
+                        IdTipoPago = rec.IdTipoPago,
+                        Referencia = rec.Referencia,
+                        FechaPago = rec.FechaCheque,
+                        IdBanco = rec.IdBanco,
+                        Valor = rec.Valor,
+                        IdMoneda = context.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == rec.IdMoneda).Moneda,
+                        Sincronizado = rec.Sincronizado,
+                        CodigoAsesor = rec.CodigoAsesor,
+                        IdFactura = rec.IdFactura,
+                        Longitude = rec.Longitude,
+                        Latitude = rec.Latitude,
+                        DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == rec.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
+                        Descuento = rec.Descuento,
+                        Cliente = context.Clientes.Where(cli => cli.CodigoCliente == rec.CodigoCliente).Select(cli => new ClienteViewModel
+                        {
+                            Codigo = cli.CodigoCliente,
+                            Nombre = cli.Nombre,
+                            Direccion = cli.Direccion,
+                            Moneda = cli.IdMoneda
+                        }).FirstOrDefault(),
+                        TipoPago = context.TiposdePago.Where(tp => tp.IdTipoPago == rec.IdTipoPago).Select(tp => new TipoPagoViewModel
+                        {
+                            IdTipoPago = tp.IdTipoPago,
+                            Codigo = tp.Codigo,
+                            Descripcion = tp.Descripcion,
+                            Tipo = tp.Tipo,
+                            EmpresaId = tp.EmpresaId,
 
-                    }).FirstOrDefault(),
-                    Pedido = context.PedidosxCliente.Where(p => p.NumeroPedido == ant.NumPedido).Select(ped => new PedidosXClienteViewModel
+                        }).FirstOrDefault(),
+                        DetalleRecibo = rec.RecibosDetalle.Select(recDet =>
+                        recDet.SubFacturasxCliente != null ?
+                        new RecibosDetalleViewModel
+                        {
+                            IdReciboDetalle = recDet.IdReciboDetalle,
+                            Factura = recDet.SubFacturasxCliente.Factura,
+                            NumeroFel = recDet.SubFacturasxCliente.NumeroFEL,
+                            FechaFactura = recDet.SubFacturasxCliente.FacturasxCliente.FechaFactura,
+                            Tipo = rec.FacturasxCliente.Tipo,
+                            ReciboId = recDet.ReciboId,
+                            IdSubFactura = recDet.IdSubFactura,
+                            Valor = recDet.Valor,
+                            ValorFactura = recDet.SubFacturasxCliente.FacturasxCliente.TotalFactura,
+                            ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
+                            Descuento = recDet.Descuento,
+                            EsAbono = recDet.EsAbono,
+                            DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0
+                        } : new RecibosDetalleViewModel
+                        {
+                            IdReciboDetalle = recDet.IdReciboDetalle,
+                            Factura = "SALDO_FAVOR",
+                            NumeroFel = "",
+                            FechaFactura = null,
+                            Tipo = "Pago",
+                            ReciboId = recDet.ReciboId,
+                            IdSubFactura = null,
+                            Valor = recDet.Valor,
+                            ValorFactura = 0,
+                            ValorSinDescuento = recDet.Valor,
+                            Descuento = 0,
+                            EsAbono = true,
+                            DiasVencimiento = 0,
+                        }
+                        ).ToList()
+                    }).ToList();
+                    
+                    var anticiposXAsesor = context.AnticiposxCliente.Where(recCli => recCli.CodigoAsesor == asesor).Select(ant => new RecibosxClienteViewModel
                     {
-                        NumeroPedido = ped.NumeroPedido,
-                        ClienteContadoId = ped.ClienteContadoId
-                    }).FirstOrDefault(),
-                    DetalleRecibo = new List<RecibosDetalleViewModel> { new RecibosDetalleViewModel {
+                        Asesor = ant.CodigoAsesor,
+                        NumeroRecibo = ant.NumeroRecibo,
+                        CodigoCliente = ant.CodigoCliente,
+                        Fecha = ant.Fecha,
+                        IdTipoPago = ant.IdTipoPago,
+                        Referencia = ant.Referencia,
+                        FechaPago = ant.FechaCheque,
+                        IdBanco = ant.IdBanco,
+                        Valor = ant.Valor,
+                        IdMoneda = context.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == ant.IdMoneda).Moneda,
+                        Sincronizado = ant.Sincronizado,
+                        CodigoAsesor = ant.CodigoAsesor,
+                        IdFactura = 0,
+                        Latitude = ant.Latitude,
+                        Longitude = ant.Longitude,
+                        DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == ant.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
+                        Descuento = 0,
+                        Cliente = context.Clientes.Where(cli => cli.CodigoCliente == ant.CodigoCliente).Select(cli => new ClienteViewModel
+                        {
+                            Codigo = cli.CodigoCliente,
+                            Nombre = cli.Nombre,
+                            Direccion = cli.Direccion,
+                            Moneda = cli.IdMoneda
+                        }).FirstOrDefault(),
+                        TipoPago = context.TiposdePago.Where(tp => tp.IdTipoPago == ant.IdTipoPago).Select(tp => new TipoPagoViewModel
+                        {
+                            IdTipoPago = tp.IdTipoPago,
+                            Codigo = tp.Codigo,
+                            Descripcion = tp.Descripcion,
+                            Tipo = tp.Tipo,
+                            EmpresaId = tp.EmpresaId,
+
+                        }).FirstOrDefault(),
+                        Pedido = context.PedidosxCliente.Where(p => p.NumeroPedido == ant.NumPedido).Select(ped => new PedidosXClienteViewModel
+                        {
+                            NumeroPedido = ped.NumeroPedido,
+                            ClienteContadoId = ped.ClienteContadoId
+                        }).FirstOrDefault(),
+                        DetalleRecibo = new List<RecibosDetalleViewModel> { new RecibosDetalleViewModel {
                     Valor = ant.Valor,
                     ValorSinDescuento = ant.Valor,
                     DiasVencimiento = 0,
@@ -164,9 +185,13 @@ namespace AventasApi.Controllers
                     Descuento=0,
                     FechaFactura=ant.Fecha
                 } }
-                }).ToList();
-                recibosXAsesor.AddRange(anticiposXAsesor);
-                return Ok(recibosXAsesor);
+                    }).ToList();
+                        ListaRecibos.AddRange(Recibos);
+                        ListaRecibos.AddRange(anticiposXAsesor);
+
+                }
+                    return Ok(ListaRecibos);
+                }
             }catch(Exception e)
             {
                 return BadRequest(e.ToString());

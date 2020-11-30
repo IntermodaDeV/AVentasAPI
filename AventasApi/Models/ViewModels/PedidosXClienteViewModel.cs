@@ -68,6 +68,7 @@ namespace AventasApi.Models.ViewModels
 
     public class PedidosXClienteViewModel
     {
+        public string Asesor { get; set; }
         public string PedidoId { get; set; }
         //public string CodigoCliente { get; set; }
         public string CodigoColeccion { get; set; }
