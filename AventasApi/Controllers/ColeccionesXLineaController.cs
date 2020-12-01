@@ -238,6 +238,7 @@ namespace AventasApi.Controllers
                                                   {
                                                       ProductoId = pxc.CodigoProducto,
                                                       CodigoColeccion = vw_coleccion.CodigoColeccion,
+                                                      CantidadMinima = pxc.CantidadMinima==null?0:pxc.CantidadMinima,
                                                       CodigoProducto = pxc.IdProducto,
                                                       NombreProducto = pxc.NombreProducto,
                                                       GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),

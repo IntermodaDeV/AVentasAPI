@@ -725,6 +725,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="GrupoImpuesto" Type="varchar" MaxLength="150" />
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
           <Property Name="VisibleParaVentas" Type="bit" Nullable="false" />
+          <Property Name="CantidadMinima" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -3642,6 +3643,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="FotografiasXProducto" Relationship="AventasModel.FK__Fotografi__IdPro__190BB0C3" FromRole="ProductosxColeccion" ToRole="FotografiasXProducto" />
           <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdPro__377B294A" FromRole="ProductosxColeccion" ToRole="PrecioEspecifico" />
           <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion" FromRole="ProductosxColeccion" ToRole="PedidosDetalle" />
+          <Property Name="CantidadMinima" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -5335,7 +5337,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Usuarios_Asesores" EntitySet="Usuarios_Asesores" />
           </AssociationSet>
           <FunctionImport Name="SP_VISITASPORMES" ReturnType="Collection(AventasModel.SP_VISITASPORMES_Result1)">
-            <Parameter Name="User" Mode="In" Type="String" />
+          <Parameter Name="User" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -6797,6 +6799,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="ProductosxColeccion">
             <EntityTypeMapping TypeName="AventasModel.ProductosxColeccion">
               <MappingFragment StoreEntitySet="ProductosxColeccion">
+                <ScalarProperty Name="CantidadMinima" ColumnName="CantidadMinima" />
                 <ScalarProperty Name="VisibleParaVentas" ColumnName="VisibleParaVentas" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
                 <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />

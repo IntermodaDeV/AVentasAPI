@@ -39,6 +39,7 @@ namespace DBData.Database
         public string GrupoImpuesto { get; set; }
         public string EmpresaId { get; set; }
         public bool VisibleParaVentas { get; set; }
+        public Nullable<decimal> CantidadMinima { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AtributosxProducto> AtributosxProducto { get; set; }
