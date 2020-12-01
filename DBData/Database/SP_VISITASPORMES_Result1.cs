@@ -11,7 +11,7 @@ namespace DBData.Database
 {
     using System;
     
-    public partial class SP_VISITASPORMES_Result
+    public partial class SP_VISITASPORMES_Result1
     {
         public Nullable<int> ANIO { get; set; }
         public int M { get; set; }

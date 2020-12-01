@@ -33,9 +33,9 @@ namespace AventasApi.Models.ViewModels
         public ClienteViewModel Cliente { get; set; }
         public PedidosXClienteViewModel Pedido { get; set; }
         public string SpecPago { get; set; }
-
+        public string Asesor { get; set; }
 
         public List<RecibosDetalleViewModel> DetalleRecibo { get; set; }
-
+        public bool Anticipo { get;  set; }
     }
 }

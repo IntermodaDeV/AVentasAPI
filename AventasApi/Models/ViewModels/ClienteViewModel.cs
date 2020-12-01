@@ -37,6 +37,8 @@ namespace AventasApi.Models
         public Nullable<decimal> Longitud { get; set; }
         public List<FacturasXClienteViewModel> Facturas;
         public List<AcuerdosXTipoPedidoViewModel> AcuerdosXTipoPedido;
+        public string NombreGrupoPrecio { get; set; }
+
         public double NumeroFacturasVencidas { get; set; }
         public decimal MontoFacturasVencidas { get; set; }
         public double NumeroFacturasXVencer { get; set; }
@@ -95,6 +97,7 @@ namespace AventasApi.Models
         public string Ruta { get; set; }
         public string CodigoRuta { get; set; }
         public string Moneda { get; set; }
+        public string Asesor { get; set; }
 
         public Nullable<decimal> Latitud { get; set; }
         public Nullable<decimal> Longitud { get; set; }

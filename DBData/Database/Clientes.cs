@@ -51,6 +51,8 @@ namespace DBData.Database
         public string ModoEntrega { get; set; }
         public string CodigoAsesor { get; set; }
         public bool Habilitado { get; set; }
+        public byte[] VersionRegistro { get; set; }
+        public Nullable<long> VersionRegistroBINT { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AcuerdosxCliente> AcuerdosxCliente { get; set; }

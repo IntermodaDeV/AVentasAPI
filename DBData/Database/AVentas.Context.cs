@@ -252,9 +252,13 @@ namespace DBData.Database
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_upgraddiagrams");
         }
     
-        public virtual ObjectResult<SP_VISITASPORMES_Result> SP_VISITASPORMES()
+        public virtual ObjectResult<SP_VISITASPORMES_Result1> SP_VISITASPORMES(string user)
         {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_VISITASPORMES_Result>("SP_VISITASPORMES");
+            var userParameter = user != null ?
+                new ObjectParameter("User", user) :
+                new ObjectParameter("User", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_VISITASPORMES_Result1>("SP_VISITASPORMES", userParameter);
         }
     }
 }

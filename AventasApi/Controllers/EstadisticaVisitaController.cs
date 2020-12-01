@@ -1,4 +1,5 @@
-﻿using DBData.Database;
+﻿using AventasApi.Services.Authentication;
+using DBData.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,12 @@ namespace AventasApi.Controllers
     public class EstadisticaVisitaController : ApiController
     {
         AVentasEntities context = new AVentasEntities();
+        private readonly AuthenticationAppService _authenticationAppService;
+        public EstadisticaVisitaController()
+        {
+            _authenticationAppService = new AuthenticationAppService();
+        }
+
         [HttpGet]
         public async Task<IHttpActionResult> GetEstadistica(DateTime FechaInicio, DateTime FechaFin, string Usuario)
         {
@@ -33,10 +40,12 @@ namespace AventasApi.Controllers
             {
                 using(var ctx = new AVentasEntities())
                 {
-                    var visitas = ctx.SP_VISITASPORMES().Select(x => new
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var visitas = ctx.SP_VISITASPORMES(user.UserAccount).Select(x => new
                     {
                         MES = Convertir(x.M, x.ANIO.Value),
-                        VISITAS = x.VISITAS
+                        VISITAS = x.VISITAS,
+                        EMPRESA=x.EMPRESA
                     }).ToList();         
                     return Ok(visitas);
                 }
