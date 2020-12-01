@@ -283,7 +283,7 @@ namespace AventasApi.Controllers
 
                     if (usuario.FlagTodosAsesores.Value)
                     {
-                        asesoresHabilitados = await context.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await context.Asesores.Where(x => x.CodigoAsesor == Asesor).Select(x => x.CodigoAsesor).ToListAsync();
                     }
                     else
                     {
