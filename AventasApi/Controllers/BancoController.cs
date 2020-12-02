@@ -44,5 +44,40 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpGet]
+        [Route("api/banco")]
+        public IHttpActionResult GetBancos()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var bancos = ctx.Bancos.Select(banco => new BancoViewModel
+                    {
+                        IdBanco = banco.IdBanco,
+                        NombreBanco = banco.NombreBanco,
+                        Descripcion = banco.Descripcion,
+                        EmpresaId = banco.EmpresaId,
+                        CuentasBancarias = banco.CuentasBancarias.Select(cuentBanc => new CuentaBancariaViewModel
+                        {
+                            IdCuentaBancaria = cuentBanc.IdCuentaBancaria,
+                            NombreBanco = cuentBanc.NombreBanco,
+                            NumeroCuenta = cuentBanc.NumeroCuenta,
+                            Descripcion = cuentBanc.Descripcion,
+                            GrupoBanco = cuentBanc.GrupoBanco,
+                            IdBanco = cuentBanc.IdBanco,
+                            IdMoneda = cuentBanc.IdMoneda,
+                            EmpresaId = cuentBanc.EmpresaId,
+                        }).ToList(),
+                    }).ToList();
+                    return Ok(bancos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }
