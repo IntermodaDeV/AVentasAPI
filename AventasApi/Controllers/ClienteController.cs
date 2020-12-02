@@ -262,8 +262,8 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/cliente/agenda")]
-        public async Task<IHttpActionResult> GetClientesAgenda()
+        [Route("~/api/cliente/agenda/{asesor}")]
+        public async Task<IHttpActionResult> GetClientesAgenda(string Asesor)
         {
             try
             {
@@ -278,7 +278,7 @@ namespace AventasApi.Controllers
 
                     if (usuario.FlagTodosAsesores.Value)
                     {
-                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => x.CodigoAsesor == Asesor).Select(x => x.CodigoAsesor).ToListAsync();
                     }
                     else
                     {

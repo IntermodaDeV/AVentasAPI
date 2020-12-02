@@ -24,7 +24,7 @@ namespace AventasApi.Controllers
 
         }
         [HttpGet]
-        public async Task<IHttpActionResult> GetAsignacionesXRango(DateTime FechaInicio, DateTime FechaFin)
+        public async Task<IHttpActionResult> GetAsignacionesXRango(DateTime FechaInicio, DateTime FechaFin, string Asesor)
         {
             try
             {
@@ -41,7 +41,14 @@ namespace AventasApi.Controllers
 
                     if (usuario.FlagTodosAsesores.Value)
                     {
-                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                        if (Asesor != "null")
+                        {
+                            asesoresHabilitados = await ctx.Asesores.Where(x => x.CodigoAsesor == Asesor).Select(x => x.CodigoAsesor).ToListAsync();
+                        }
+                        else
+                        {
+                            asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                        }
                     }
                     else
                     {
@@ -169,14 +176,11 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult Post([FromBody] List<AsignacionesXFechaViewModel> asignacionesNuevas)
+        public async Task<IHttpActionResult> Post([FromBody] List<AsignacionesXFechaViewModel> asignacionesNuevas)
         {
             try
             {
-                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                 List<AsignacionxAsesor> ListAsignaciones = new List<AsignacionxAsesor>();
-                //var user = TokenService.Validate<UserAuthenticated>(Request.Headers.Authorization.Parameter);
-                string codigoAsesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount).CodigoAsesor;
                 foreach (var asignacionNueva in asignacionesNuevas)
                 {
                     DateTime FechaInicio = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,

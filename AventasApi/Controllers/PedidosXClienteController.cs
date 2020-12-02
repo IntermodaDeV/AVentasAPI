@@ -230,7 +230,7 @@ namespace AventasApi.Controllers
 
                 _ = PostPedidoPendiente(numeroReferencia);
 
-                return Ok(new { EncabezadoPedido = new { PedidoId = numeroReferencia } });
+                return Ok(numeroReferencia);
             }
             catch (Exception e)
             {
