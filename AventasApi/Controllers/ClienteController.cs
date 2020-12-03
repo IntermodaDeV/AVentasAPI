@@ -637,5 +637,142 @@ namespace AventasApi.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("~/api/cliente/cuenta/{cliente}")]
+        public async Task<IHttpActionResult> GetClientesCuenta(string cliente)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var FechaLimite = DateTime.Today;
+                    var FechaLimiteFuturo = FechaLimite.AddDays(15);
+                    var Recibos = ctx.AnticiposxCliente.Where(r => r.NumPedido != null).Select(a => a.NumPedido).ToList();
+
+
+                    List<ClienteViewModel> clientes = await ctx.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoCliente == cliente).Select(cli => new ClienteViewModel
+                    {
+                        EmpresaId = cli.EmpresaId,
+                        Codigo = cli.CodigoCliente,
+                        Nombre = cli.Nombre,
+                        Zona = cli.Zona,
+                        ComunidadAutonoma = cli.ComunidadAutonoma,
+                        GrupoPrecio = cli.GrupoPrecio,
+                        GrupoCliente = cli.GrupoCliente,
+                        Descuento = cli.Descuento,
+                        Direccion = cli.Direccion,
+                        Moneda = cli.IdMoneda,
+                        Ruta = cli.ClientesxRuta.FirstOrDefault().Rutas.Nombre,
+                        CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
+                        Latitud = cli.Latitud,
+                        LimiteCredito = cli.LimiteCredito ?? 0,
+                        CreditoDisponible = cli.CreditoDisponible ?? 0,
+                        Longitud = cli.Longitud,
+                        GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
+                        ModoEntrega = cli.ModoEntrega,
+                        FacturacionEntrega = cli.FacturacionEntrega,
+                        CuentaCorriente = ctx.LimiteCreditoxCliente.Where(lcc => lcc.CodigoCliente == cli.CodigoCliente).Select(lcc => new CuentaCorrienteViewModel
+                        {
+                            Descripcion = lcc.Descripcion,
+                            Valor = lcc.Valor ?? 0
+                        }).ToList(),
+                        Recibo = ctx.AnticiposxCliente.Where(r => r.CodigoCliente == cli.CodigoCliente && r.NumPedido != null).Select(rec => new AnticiposViewModel
+                        {
+                            NumPedido = rec.NumPedido,
+                            CodigoCliente = rec.CodigoCliente
+                        }).ToList(),
+                        Pedido = ctx.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.PedidoId) && ped.PedidoId != null && ped.Sincronizado == true).Select(ped => new PedidosXClienteViewModel
+                        {
+                            PedidoId = ped.NumeroPedido,
+                            NumeroPedido = ped.PedidoId,
+                            CodigoColeccion = ped.Colecciones.CodigoColeccion,
+                            NombreColeccion = ped.Colecciones.Nombre,
+                            FechaEntrega = ped.FechaEntrega,
+                            FechaActual = ped.Fecha,
+                            TotalXPedido = ped.TotalPedido,
+                            ClienteContadoId = ped.ClienteContadoId
+
+                        }).ToList()
+                    }).ToListAsync();
+
+
+                    clientes[0].AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
+                    {
+                        IdTipoPedido = asa.Key.IdTipoPedido,
+                        TipoPedido = asa.Key.TipoPedido,
+                        AgrupaPorCuota = asa.Key.AgruparPorCuotas,
+                        Acuerdos = asa.GroupBy(acu => acu.AcuerdosxCliente).Select(acu => new FacturasXAcuerdosViewModel
+                        {
+                            Acuerdo = acu.Key == null ? "" : acu.Key.IdAcuerdoxCliente,
+                            Valor = acu.Key == null ? "0" : (acu.Key.Total ?? 0).ToString(),
+                            Disponible = acu.Key == null ? "0" : (acu.Key.Saldo ?? 0).ToString(),
+                            Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
+                            {
+                                IdFactura = facCli.IdFactura,
+                                Factura = facCli.Factura,
+                                NumeroFEL = facCli.NumeroFEL,
+                                CodigoCliente = facCli.CodigoCliente,
+                                EmpresaId = facCli.EmpresaId,
+                                IdMoneda = facCli.IdMoneda,
+                                Tipo = facCli.Tipo,
+                                FechaFactura = facCli.FechaFactura,
+                                FechaVencimiento = facCli.FechaVencimiento,
+                                FechaMaxDescuento = facCli.FechaMaxDescuento,
+                                TotalFactura = facCli.TotalFactura,
+                                Saldo = facCli.Saldo,
+                                PendienteFactura = facCli.PendienteFactura,
+                                Descuento = facCli.Descuento,
+                                FacturaStatus = facCli.FacturaStatus,
+                                NumeroPagos = facCli.NumeroPagos,
+                                Referencia = facCli.Referencia,
+                                IdLinea = facCli.IdLinea,
+                                LineaString = facCli.MaestroLinea.Linea,
+                                IdTipoPedido = facCli.IdTipoPedido,
+                                TipoPedidoString = facCli.TiposdePedido.TipoPedido,
+                                Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.FechaMaxDescuento >= DateTime.Today ? (subFac.Saldo - subFac.Descuento) > 0 : subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
+                                {
+                                    FechaFactura = subFac.FacturasxCliente.FechaFactura,
+                                    TipoDocumento = subFac.FacturasxCliente.Tipo,
+                                    IdSubFactura = subFac.IdSubFactura,
+                                    IdFactura = subFac.IdFactura,
+                                    Factura = subFac.Factura,
+                                    NumeroFEL = subFac.NumeroFEL,
+                                    CodigoCliente = subFac.CodigoCliente,
+                                    EmpresaId = subFac.EmpresaId,
+                                    IdMoneda = ctx.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == subFac.IdMoneda).Moneda,
+                                    IdAcuerdoxCliente = subFac.IdAcuerdoxCliente,
+                                    FechaVencimiento = subFac.FechaVencimiento,
+                                    FechaMaxDescuento = subFac.AcuerdosxCliente != null ? subFac.FechaMaxDescuento : subFac.FacturasxCliente.FechaMaxDescuento,
+                                    FechaVencimientoDescuento = subFac.FechaVencimientoDescuento,
+                                    Saldo = subFac.Saldo,
+                                    SaldoDivisa = subFac.SaldoDivisa,
+                                    Descuento = subFac.Descuento,
+                                    PendientePago = subFac.PendientePago,
+                                    Referencia = subFac.Referencia,
+                                    ReferenciaFacturas = subFac.ReferenciaFacturas,
+                                    ReferenciaAcuerdo = subFac.ReferenciaAcuerdo,
+                                    NumeroCuota = subFac.NumeroCuota,
+                                    ValorCuota = (subFac.ValorCuota > 0) ? subFac.ValorCuota : facCli.TotalFactura,
+                                    ValorVencidoCuota = subFac.ValorVencidoCuota,
+                                    ReferenciaCuotas = subFac.ReferenciaCuotas,
+                                }).ToList()
+                            }).ToList()
+
+                        }).ToList()
+                    }).ToList();
+
+                    return Ok(clientes[0]);
+                }
+            
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
     }
 }

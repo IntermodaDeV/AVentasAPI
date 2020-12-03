@@ -78,6 +78,7 @@ namespace AventasApi.Controllers
                     {
                     var Recibos = context.RecibosxCliente.Where(r => r.CodigoAsesor == asesor && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
+                        Anticipo=false,
                         Asesor = rec.CodigoAsesor,
                         NumeroRecibo = rec.NumeroRecibo,
                         CodigoCliente = rec.CodigoCliente,
@@ -149,6 +150,7 @@ namespace AventasApi.Controllers
                     
                     var anticiposXAsesor = context.AnticiposxCliente.Where(recCli => recCli.CodigoAsesor == asesor).Select(ant => new RecibosxClienteViewModel
                     {
+                        Anticipo=true,
                         Asesor = ant.CodigoAsesor,
                         NumeroRecibo = ant.NumeroRecibo,
                         CodigoCliente = ant.CodigoCliente,
@@ -789,20 +791,7 @@ namespace AventasApi.Controllers
                     });
                 }
                
-                using (AVentasEntities context = new AVentasEntities())
-                {
-                    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                    if (reciboPost.Pagos.Count() == 1)
-                        numeroCorrelativoRecibo++;
-                    asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
-                    context.SaveChanges();
-                }
-                AsyncSqlInsert.IngresarRecibos(recibosxCliente);
-                //Sincronizacion AX
-                _ = PostReciboAx(recibos);
-                ///-------------------------------
-                return Ok(respuestaPagoRecibo);
-                /*if (isOnline)
+                if (isOnline)
                 {
                     try
                     {
@@ -857,7 +846,7 @@ namespace AventasApi.Controllers
                     }
                     AsyncSqlInsert.IngresarRecibos(recibosxCliente);
                     return Ok(respuestaPagoRecibo);
-                }*/
+                }
             }
             catch (Exception e)
             {

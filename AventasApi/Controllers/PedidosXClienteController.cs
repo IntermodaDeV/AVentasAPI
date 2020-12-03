@@ -228,7 +228,7 @@ namespace AventasApi.Controllers
                     }
                 }
 
-                _ = PostPedidoPendiente(numeroReferencia);
+                //s_ = PostPedidoPendiente(numeroReferencia);
 
                 return Ok(numeroReferencia);
             }
