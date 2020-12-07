@@ -468,7 +468,7 @@ namespace AventasApi.Controllers
 
         [Route("api/Recibo/Anticipo")]
         [HttpPost]
-        public async Task<IHttpActionResult> PostAnticipo(ReciboPostViewModel anticipoPost)
+        public IHttpActionResult PostAnticipo(ReciboPostViewModel anticipoPost)
         {
             try
             {
@@ -581,7 +581,7 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> PostRecibo(ReciboPostViewModel reciboPost)
+        public IHttpActionResult PostRecibo(ReciboPostViewModel reciboPost)
         {
             try
             {
@@ -816,7 +816,7 @@ namespace AventasApi.Controllers
                                 asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
                                 context.SaveChanges();
                             }
-                            AsyncSqlInsert.IngresarRecibos(recibosxCliente);
+                            AsyncSqlInsert.IngresarRecibos(recibosxCliente,true);
                             syncCuentaCorriente.SyncFacturas(asesor.EmpresaId, codigoCliente);
                             syncCuentaCorriente.SyncSubFacturas(asesor.EmpresaId, codigoCliente, asesor.CodigoAsesor);
                             return Ok(respuestaPagoRecibo);
@@ -844,7 +844,7 @@ namespace AventasApi.Controllers
                         asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
                         context.SaveChanges();
                     }
-                    AsyncSqlInsert.IngresarRecibos(recibosxCliente);
+                    AsyncSqlInsert.IngresarRecibos(recibosxCliente,false);
                     return Ok(respuestaPagoRecibo);
                 }
             }

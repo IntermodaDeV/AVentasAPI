@@ -43,7 +43,7 @@ namespace AventasApi.Services.AsyncJobs
 
             });
         }
-        public static  void IngresarRecibos(List<RecibosxClienteViewModel> recibos)
+        public static  void IngresarRecibos(List<RecibosxClienteViewModel> recibos,bool sincronizado)
         {
             var reciboTask = Task.Run(() =>
             {
@@ -59,7 +59,7 @@ namespace AventasApi.Services.AsyncJobs
                     IdBanco = rec.IdBanco,
                     Valor = rec.Valor,
                     IdMoneda = rec.IdMoneda,
-                    Sincronizado = rec.Sincronizado,
+                    Sincronizado = sincronizado,
                     CodigoAsesor = rec.CodigoAsesor,
                     IdFactura = rec.IdFactura,
                     Descuento = rec.Descuento,
