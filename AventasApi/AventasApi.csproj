@@ -15,8 +15,7 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -230,6 +229,7 @@
     <Compile Include="Models\GruposImpuestosArticulos.cs" />
     <Compile Include="Models\GruposImpuestosClientes.cs" />
     <Compile Include="Models\ListaEjecucionManualModel.cs" />
+    <Compile Include="Models\ListaPrecio.cs" />
     <Compile Include="Models\ModuloModel.cs" />
     <Compile Include="Models\PantallaModel.cs" />
     <Compile Include="Models\ProductoImpuestoModel.cs" />
