@@ -2,7 +2,9 @@
 using DBData.Database;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace AventasApi.Controllers
@@ -68,30 +70,83 @@ namespace AventasApi.Controllers
         }
 
         [Route("ComunidadAutonoma")]
-        public IEnumerable<ComunidadAutonomaModel> GetComunidadAutonoma()
+        public async Task<IHttpActionResult> GetComunidadAutonoma()
         {
             try
             {
-                var empresas = context.ComunidadAutonoma.ToList();
-                if (empresas.Count <= 0)
+                using(var ctx= new AVentasEntities())
                 {
-                    return new List<ComunidadAutonomaModel>();
-                }
+                    var empresas =await ctx.ComunidadAutonoma.ToListAsync();
+                    var grupos = empresas.Select(x => new ComunidadAutonomaModel()
+                    {
+                        STATEID = x.STATEID,
+                        NAME = x.NAME,
+                        COUNTRYREGIONID = x.COUNTRYREGIONID
+                    }
+                    ).ToList();
 
-                var grupos = empresas.Select(x => new ComunidadAutonomaModel()
-                {
-                    STATEID = x.STATEID,
-                    NAME = x.NAME,
-                    COUNTRYREGIONID = x.COUNTRYREGIONID
+                    return Ok(grupos);
                 }
-                ).ToList();
-
-                return grupos;
             }
             catch (Exception e)
             {
-                return new List<ComunidadAutonomaModel>();
+                return BadRequest();
             }
+        }
+
+        [Route("preciocaja")]
+        public async Task<IHttpActionResult> GetPrecioCaja()
+        {
+            try
+            {
+                using(var ctx = new AVentasEntities())
+                {
+                    var empresas = await ctx.TransportePrecioCaja.ToListAsync();
+                    var grupos = empresas.Select(x => new TransportePrecioCajaModel()
+                    {
+                        CODE = x.CODE,
+                        STATE = x.STATE,
+                        UNITVALUEBOXES = Math.Round(x.UNITVALUEBOXES.Value),
+                        COMPANY=x.COMPANY.ToUpper()
+                    }
+                    ).ToList();
+
+                    return Ok(grupos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [Route("empresas")]
+        public async Task<IHttpActionResult> GetEmpresasTransporte()
+        {
+            try
+            {
+                using(var ctx=new AVentasEntities())
+                {
+                    var empresas = await ctx.EmpresaTransporte.ToListAsync();
+                    
+                    var grupos = empresas.Select(x => new EmpresaTransporteModel()
+                    {
+                        CODE = x.CODE,
+                        TXT = x.TXT,
+                        MULTIPLO = x.MULTIPLO.Value,
+                        ACTIVE = (x.MULTIPLO > 0),
+                        COMPANY=x.COMPANY.ToUpper()
+                    }
+                    ).ToList();
+
+                    return Ok(grupos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+
         }
     }
 }
