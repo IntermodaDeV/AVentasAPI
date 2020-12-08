@@ -65,6 +65,7 @@ namespace AventasApi.Controllers.Authentication
                         BloqueoCredito=u.BloqueoInfoCredito,
                         status = u.status,
                         TodosAsesores = u.FlagTodosAsesores,
+                        UsuarioOficina = u.FlagUsuarioOficina,
                         EmpresasUsuarios = db.Usuarios_Empresas.Where(e => e.Status == true && e.UsuarioId == u.Id).Select(e => new UsuariosEmpresasViewModel
                         {
                             EmpresaId = e.EmpresaId

@@ -35,6 +35,7 @@ namespace DBData.Database
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public bool BloqueoInfoCredito { get; set; }
         public Nullable<bool> FlagTodosAsesores { get; set; }
+        public Nullable<bool> FlagUsuarioOficina { get; set; }
     
         public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

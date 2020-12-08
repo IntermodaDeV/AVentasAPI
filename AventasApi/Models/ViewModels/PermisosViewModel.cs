@@ -12,7 +12,8 @@ namespace AventasApi.Models.ViewModels
         public string EmpresaId { get; set; }
         public Nullable<bool> TodosAsesores { get; set; }
         public Nullable<bool> BloqueoCredito { get; set; }
-        
+        public Nullable<bool> UsuarioOficina { get; set; }
+
         public List<RolesUsuariosViewModel> RolesUsuarios;
         public List<UsuariosEmpresasViewModel> EmpresasUsuarios;
         public List<AsesoresUsuarioViewModel> AsesoresUsuario;
