@@ -27,5 +27,12 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpGet]
+        [Route("~/api/configuraciones/conexion")]
+        public IHttpActionResult VerificarConexion()
+        {
+            return Ok();
+        }
     }
 }
