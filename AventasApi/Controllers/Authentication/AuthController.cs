@@ -84,6 +84,7 @@ namespace AventasApi.Controllers.Authentication
                                 {
                                    NombrePantalla = p.Pantallas.Nombre,
                                    Ruta = p.Pantallas.Ruta,
+                                   ModoOffline = p.Pantallas.ModoOffline,
                                    Status = p.Status
                                 }).ToList()
                             }).ToList()
