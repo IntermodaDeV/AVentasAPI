@@ -594,6 +594,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
           <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="ModoOffline" Type="bit" />
         </EntityType>
         <EntityType Name="Pantallas_Funciones">
           <Key>
@@ -6024,6 +6025,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="ModifiedBy" Type="String" MaxLength="75" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="PantallasxUsuario" Relationship="AventasModel.FK__Pantallas__IdPan__05F8DC4F" FromRole="Pantallas" ToRole="PantallasxUsuario" />
+          <Property Name="ModoOffline" Type="Boolean" />
         </EntityType>
         <EntityType Name="Pantallas_Funciones">
           <Key>
@@ -7424,6 +7426,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Pantallas">
             <EntityTypeMapping TypeName="AventasModel.Pantallas">
               <MappingFragment StoreEntitySet="Pantallas">
+                <ScalarProperty Name="ModoOffline" ColumnName="ModoOffline" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
