@@ -393,6 +393,7 @@ namespace AventasApi.Controllers
                                                                         ProductosXEdad = ctx.ProductosxColeccion.Where(pxc => pxc.EmpresaId == pais.ToUpper() && pxc.IdColeccion == vw_coleccion.IdColeccion && pxc.IdEdad == me.IdEdad && me.IdLinea == pxc.IdLinea && pxc.VisibleParaVentas == true).Select(pxc => new ProductoXColeccionViewModel
                                                                         {
                                                                             ProductoId = pxc.CodigoProducto,
+                                                                            CantidadMinima = pxc.CantidadMinima == null ? 0 : pxc.CantidadMinima,
                                                                             CodigoColeccion = vw_coleccion.CodigoColeccion,
                                                                             CodigoProducto = pxc.IdProducto,
                                                                             NombreProducto = pxc.NombreProducto,
