@@ -14,6 +14,23 @@ namespace AventasApi.Controllers
     [RoutePrefix("api/usuario")]
     public class UsuarioController : ApiController
     {
+        [HttpGet]
+        [Route("validar/{Id}")]
+        public IHttpActionResult GetUsuarioById(string Id)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var result = ctx.Usuarios.Where(x => x.usuario == Id).Select(ase => new UsuarioModel { usuario = ase.usuario, nombre = ase.nombre, EmpresaId = ase.EmpresaId }).ToList();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
 
         [HttpGet]
         public async Task<IHttpActionResult> ObtenerUsuarios()

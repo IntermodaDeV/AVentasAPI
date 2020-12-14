@@ -79,6 +79,7 @@ namespace AventasApi.Controllers
                     var Recibos = context.RecibosxCliente.Where(r => r.CodigoAsesor == asesor && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
                         Anticipo=false,
+                        NombreAsesor = context.Asesores.FirstOrDefault(x=>x.CodigoAsesor==rec.CodigoAsesor).Nombre,
                         Asesor = rec.CodigoAsesor,
                         NumeroRecibo = rec.NumeroRecibo,
                         CodigoCliente = rec.CodigoCliente,
@@ -151,6 +152,7 @@ namespace AventasApi.Controllers
                     var anticiposXAsesor = context.AnticiposxCliente.Where(recCli => recCli.CodigoAsesor == asesor).Select(ant => new RecibosxClienteViewModel
                     {
                         Anticipo=true,
+                        NombreAsesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == ant.CodigoAsesor).Nombre,
                         Asesor = ant.CodigoAsesor,
                         NumeroRecibo = ant.NumeroRecibo,
                         CodigoCliente = ant.CodigoCliente,

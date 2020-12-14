@@ -43,5 +43,31 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("~/api/Geoposicion/EnviarUbicacion")]
+        public IHttpActionResult PostServicio([FromBody] GoeposicionXAsesorViewModel geoposicion)
+        {
+            try
+            {
+                context.BitacoraGeoposicion.Add(new BitacoraGeoposicion
+                {
+                    IdAsignacionxAsesor = geoposicion.IdAsignacionxAsesor,
+                    Mocked = geoposicion.Mocked,
+                    Accuracy = geoposicion.Accuracy,
+                    Altitude = geoposicion.Altitude,
+                    Latitude = geoposicion.Latitude,
+                    Longitude = geoposicion.Longitude,
+                    CodigoAsesor = geoposicion.CodigoAsesor,
+                    Fecha = DateTime.Now
+                });
+                context.SaveChanges();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }
