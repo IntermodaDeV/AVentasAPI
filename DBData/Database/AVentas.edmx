@@ -594,6 +594,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
           <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="ModoOffline" Type="bit" />
         </EntityType>
         <EntityType Name="Pantallas_Funciones">
           <Key>
@@ -725,6 +726,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="GrupoImpuesto" Type="varchar" MaxLength="150" />
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
           <Property Name="VisibleParaVentas" Type="bit" Nullable="false" />
+          <Property Name="CantidadMinima" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -953,6 +955,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ModifiedDate" Type="datetime" />
           <Property Name="BloqueoInfoCredito" Type="bit" Nullable="false" />
           <Property Name="FlagTodosAsesores" Type="bit" />
+          <Property Name="FlagUsuarioOficina" Type="bit" />
         </EntityType>
         <EntityType Name="Usuarios_Asesores">
           <Key>
@@ -3642,6 +3645,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="FotografiasXProducto" Relationship="AventasModel.FK__Fotografi__IdPro__190BB0C3" FromRole="ProductosxColeccion" ToRole="FotografiasXProducto" />
           <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdPro__377B294A" FromRole="ProductosxColeccion" ToRole="PrecioEspecifico" />
           <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion" FromRole="ProductosxColeccion" ToRole="PedidosDetalle" />
+          <Property Name="CantidadMinima" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -5335,7 +5339,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Usuarios_Asesores" EntitySet="Usuarios_Asesores" />
           </AssociationSet>
           <FunctionImport Name="SP_VISITASPORMES" ReturnType="Collection(AventasModel.SP_VISITASPORMES_Result1)">
-            <Parameter Name="User" Mode="In" Type="String" />
+          <Parameter Name="User" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -6021,6 +6025,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="ModifiedBy" Type="String" MaxLength="75" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="PantallasxUsuario" Relationship="AventasModel.FK__Pantallas__IdPan__05F8DC4F" FromRole="Pantallas" ToRole="PantallasxUsuario" />
+          <Property Name="ModoOffline" Type="Boolean" />
         </EntityType>
         <EntityType Name="Pantallas_Funciones">
           <Key>
@@ -6240,6 +6245,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Usuario_Rol" Relationship="AventasModel.FK_USUARIO" FromRole="Usuarios" ToRole="Usuario_Rol" />
           <NavigationProperty Name="Usuarios_Empresas" Relationship="AventasModel.FK__Usuarios___Usuar__2CB38214" FromRole="Usuarios" ToRole="Usuarios_Empresas" />
           <NavigationProperty Name="Usuarios_Asesores" Relationship="AventasModel.FK__Usuarios___Usuar__37311087" FromRole="Usuarios" ToRole="Usuarios_Asesores" />
+          <Property Name="FlagUsuarioOficina" Type="Boolean" />
         </EntityType>
         <Association Name="FK__Usuarios__Empres__28E2F130">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -6797,6 +6803,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="ProductosxColeccion">
             <EntityTypeMapping TypeName="AventasModel.ProductosxColeccion">
               <MappingFragment StoreEntitySet="ProductosxColeccion">
+                <ScalarProperty Name="CantidadMinima" ColumnName="CantidadMinima" />
                 <ScalarProperty Name="VisibleParaVentas" ColumnName="VisibleParaVentas" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
                 <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />
@@ -7419,6 +7426,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Pantallas">
             <EntityTypeMapping TypeName="AventasModel.Pantallas">
               <MappingFragment StoreEntitySet="Pantallas">
+                <ScalarProperty Name="ModoOffline" ColumnName="ModoOffline" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
@@ -7516,6 +7524,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Usuarios">
             <EntityTypeMapping TypeName="AventasModel.Usuarios">
               <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="FlagUsuarioOficina" ColumnName="FlagUsuarioOficina" />
                 <ScalarProperty Name="FlagTodosAsesores" ColumnName="FlagTodosAsesores" />
                 <ScalarProperty Name="BloqueoInfoCredito" ColumnName="BloqueoInfoCredito" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />

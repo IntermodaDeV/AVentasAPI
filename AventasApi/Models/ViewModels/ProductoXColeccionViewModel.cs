@@ -15,6 +15,8 @@ namespace AventasApi.Models.ViewModels
         public string GrupoImpuesto { get; set; }
         public LineaViewModel Linea { get; set; }
         public List<PrecioXProductoViewModel> Precio { get; set; }
+        public decimal? CantidadMinima { get;  set; }
+
         public List<TallaViewModel> ListaTalla;
         public List<ColorViewModel> ListaColores;
         public List<FisicoDisponibleViewModel> fisicaDisponible;

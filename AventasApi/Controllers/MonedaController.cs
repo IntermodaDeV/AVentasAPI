@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System;
 using System.Data.Entity;
+using System.Collections.Generic;
 
 namespace AventasApi.Controllers
 {
@@ -49,5 +50,40 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpGet]
+        [Route("api/Moneda/monedas")]
+        public async Task<IHttpActionResult> GetMonedas()
+        {
+            try
+            {
+                using(var ctx=new AVentasEntities())
+                {
+                    List<MonedaViewModel> listaMonedas = new List<MonedaViewModel>();
+                    var empresas = await ctx.Empresa.Select(x => x.EmpresaId).ToListAsync();
+
+                    foreach(var empresa in empresas)
+                    {
+                        var MonedaXEmpresa = await ctx.MonedasxEmpresa.Where(m => m.EmpresaId == empresa).Select(m => m.IdMoneda).ToListAsync();
+                        var monedas = await ctx.MaestroMoneda.Where(m => MonedaXEmpresa.Contains(m.IdMoneda)).Select(mon => new MonedaViewModel
+                        {
+                            IdMoneda = mon.IdMoneda,
+                            Moneda = mon.Moneda,
+                            Abreviacion = mon.Abreviacion,
+                            Empresa = empresa
+                        }).ToListAsync();
+
+                        listaMonedas.AddRange(monedas);
+                    }
+                    
+                    return Ok(listaMonedas);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
     }
 }

@@ -20,7 +20,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var listaPantallas = await ctx.Pantallas.Select(x => new PantallaModel{ Id = x.IdPantalla, Nombre = x.Nombre, Ruta=x.Ruta,Status = x.Status.Value }).ToListAsync();
+                    var listaPantallas = await ctx.Pantallas.Select(x => new PantallaModel{ Id = x.IdPantalla, Nombre = x.Nombre, Ruta=x.Ruta,Status = x.Status.Value,ModoOffline=x.ModoOffline.Value }).ToListAsync();
                     return Ok(listaPantallas);
                 }
             }
@@ -57,6 +57,32 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
+        [Route("modooffline/{Id}")]
+        public async Task<IHttpActionResult> ModificarOffline(int Id)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var pantalla = await ctx.Pantallas.FindAsync(Id);
+
+                    if (pantalla == null)
+                    {
+                        return BadRequest("No se encuentra la pantalla.");
+                    }
+
+                    pantalla.ModoOffline = !pantalla.ModoOffline;
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
         [Route("crear")]
         public async Task<IHttpActionResult> CrearPantalla([FromBody] PantallaModel pantalla)
         {
@@ -64,7 +90,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var nuevoPantalla = new Pantallas() { Status = pantalla.Status, Nombre = pantalla.Nombre,Ruta=pantalla.Ruta , CreatedBy = pantalla.Usuario, CreatedDate = DateTime.Now};
+                    var nuevoPantalla = new Pantallas() { Status = pantalla.Status, Nombre = pantalla.Nombre,Ruta=pantalla.Ruta , CreatedBy = pantalla.Usuario, CreatedDate = DateTime.Now,ModoOffline=false};
                     ctx.Pantallas.Add(nuevoPantalla);
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
@@ -94,6 +120,7 @@ namespace AventasApi.Controllers
                     pantallaBD.Nombre = pantalla.Nombre;
                     pantallaBD.Status = pantalla.Status;
                     pantallaBD.Ruta   = pantalla.Ruta;
+                    pantallaBD.ModoOffline = pantalla.ModoOffline;
                     pantallaBD.CreatedBy = pantalla.Usuario;
                     pantallaBD.CreatedDate = DateTime.Now;
                     var result = await ctx.SaveChangesAsync();

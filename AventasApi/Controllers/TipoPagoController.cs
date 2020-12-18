@@ -42,5 +42,39 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpGet]
+        [Route("api/TipoPago")]
+        public IHttpActionResult GetTiposPago()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var tiposPago = ctx.TiposdePago.Select(tipoPago => new TipoPagoViewModel
+                    {
+                        IdTipoPago = tipoPago.IdTipoPago,
+                        Codigo = tipoPago.Codigo,
+                        Descripcion = tipoPago.Descripcion,
+                        Tipo = tipoPago.Tipo,
+                        EmpresaId = tipoPago.EmpresaId,
+                        TiposdePagoDetalle = tipoPago.TiposdePagoDetalle.Select(tipoPagoDetalle => new TipoPagoDetalleViewModel
+                        {
+                            IdTipoPagoDetalle = tipoPagoDetalle.IdTipoPagoDetalle,
+                            Codigo = tipoPagoDetalle.Codigo,
+                            CodigoDetalle = tipoPagoDetalle.CodigoDetalle,
+                            Descripcion = tipoPagoDetalle.Descripcion,
+                            EmpresaId = tipoPagoDetalle.EmpresaId,
+                            IdTipoPago = tipoPagoDetalle.IdTipoPago,
+                        }).ToList(),
+                    }).ToList();
+                    return Ok(tiposPago);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }

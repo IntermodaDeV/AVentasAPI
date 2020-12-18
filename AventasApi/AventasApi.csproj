@@ -229,6 +229,7 @@
     <Compile Include="Models\GruposImpuestosArticulos.cs" />
     <Compile Include="Models\GruposImpuestosClientes.cs" />
     <Compile Include="Models\ListaEjecucionManualModel.cs" />
+    <Compile Include="Models\ListaPrecio.cs" />
     <Compile Include="Models\ModuloModel.cs" />
     <Compile Include="Models\PantallaModel.cs" />
     <Compile Include="Models\ProductoImpuestoModel.cs" />
@@ -287,6 +288,7 @@
     <Compile Include="Models\ViewModels\RecibosDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\RecibosxClienteViewModel.cs" />
     <Compile Include="Models\ViewModels\RolesFuncionesViewModel.cs" />
+    <Compile Include="Models\ViewModels\AsesoresUsuarioViewModel.cs" />
     <Compile Include="Models\ViewModels\RolesUsuariosViewModel.cs" />
     <Compile Include="Models\ViewModels\RolesViewModel.cs" />
     <Compile Include="Models\ViewModels\SubFacturasXTipoPedidoViewModel.cs" />

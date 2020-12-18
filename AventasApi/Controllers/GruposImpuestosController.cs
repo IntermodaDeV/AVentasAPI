@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using DBData.Database;
+using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace AventasApi.Controllers
 {
@@ -55,6 +57,58 @@ namespace AventasApi.Controllers
                 }).ToList();
 
                 return Ok(grupos);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("Clientes")]
+        public async Task<IHttpActionResult> GruposImpuestosClientes()
+        {
+            try
+            {
+                using(var ctx=new AVentasEntities())
+                {
+                    var clientes = await ctx.GrupoImpuestoCliente.Where(x => x.Activo == true).OrderBy(x => x.GrupoCliente).ToListAsync();
+                    var grupos = clientes.Select(x => new ClienteImpuestoModel()
+                    {
+                        GRUPO = x.GrupoCliente.ToUpper(),
+                        IMPUESTO = (x.Porcentaje / 100),
+                        EMPRESA=x.Empresa.ToUpper()
+                    }
+                    ).ToList();
+
+                    return Ok(grupos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("Articulos")]
+        public async Task<IHttpActionResult> GruposImpuestosArticulos()
+        {
+            try
+            {
+                using(var ctx=new AVentasEntities())
+                {
+                    var ImpProductos = await ctx.GrupoImpuestoArticulo.Where(x =>x.Activo == true).OrderBy(x => x.GrupoProducto).ToListAsync();
+                   
+                    var grupos = ImpProductos.Select(x => new ProductoImpuestoModel()
+                    {
+                        GRUPO = x.GrupoProducto.ToUpper(),
+                        IMPUESTO = (x.Porcentaje / 100),
+                        EMPRESA=x.Empresa.ToUpper()
+                    }).ToList();
+
+                    return Ok(grupos);
+                }
             }
             catch (Exception e)
             {

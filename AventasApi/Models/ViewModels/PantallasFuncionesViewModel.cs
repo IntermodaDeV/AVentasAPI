@@ -20,6 +20,7 @@ namespace AventasApi.Models.ViewModels
         public string Ruta { get; set; }
 
         public string Usuario { get; set; }
-      
+
+        public bool? ModoOffline { get; set; }
     }
 }

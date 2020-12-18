@@ -7,5 +7,6 @@
         public string Ruta { get; set; }
         public bool? Status { get; set; }
         public string Usuario { get; set; }
+        public bool? ModoOffline { get; set; }
     }
 }

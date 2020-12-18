@@ -39,8 +39,9 @@ namespace AventasApi.Controllers
 
             return respuesta.IsSuccessful;
         }
-
-        public async Task<IHttpActionResult> Get()
+        [HttpGet]
+        [Route("~/api/Recibo/{asesor}/{FechaInicio}/{FechaFin}")]
+        public async Task<IHttpActionResult> Get(string Asesor, DateTime FechaInicio, DateTime FechaFin)
         {
             try
             {
@@ -54,7 +55,7 @@ namespace AventasApi.Controllers
 
                     if (usuario.FlagTodosAsesores.Value)
                     {
-                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await context.Asesores.Where(x => x.CodigoAsesor == Asesor).Select(x => x.CodigoAsesor).ToListAsync();
                     }
                     else
                     {
@@ -62,11 +63,23 @@ namespace AventasApi.Controllers
                         asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
                     }
 
+                    if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
+                    {
+                        FechaInicio = DateTime.Today.AddDays(-30);
+                        FechaFin = DateTime.Today.AddDays(1);
+                    }
+                    else
+                    {
+                        FechaFin = FechaFin.AddDays(1);
+                    }
+
                     List<RecibosxClienteViewModel> ListaRecibos = new List<RecibosxClienteViewModel>();
                     foreach (var asesor in asesoresHabilitados)
                     {
-                    var Recibos = context.RecibosxCliente.Where(recCli => recCli.CodigoAsesor == asesor).Select(rec => new RecibosxClienteViewModel
+                    var Recibos = context.RecibosxCliente.Where(r => r.CodigoAsesor == asesor && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
+                        Anticipo=false,
+                        NombreAsesor = context.Asesores.FirstOrDefault(x=>x.CodigoAsesor==rec.CodigoAsesor).Nombre,
                         Asesor = rec.CodigoAsesor,
                         NumeroRecibo = rec.NumeroRecibo,
                         CodigoCliente = rec.CodigoCliente,
@@ -138,6 +151,8 @@ namespace AventasApi.Controllers
                     
                     var anticiposXAsesor = context.AnticiposxCliente.Where(recCli => recCli.CodigoAsesor == asesor).Select(ant => new RecibosxClienteViewModel
                     {
+                        Anticipo=true,
+                        NombreAsesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == ant.CodigoAsesor).Nombre,
                         Asesor = ant.CodigoAsesor,
                         NumeroRecibo = ant.NumeroRecibo,
                         CodigoCliente = ant.CodigoCliente,
@@ -455,7 +470,7 @@ namespace AventasApi.Controllers
 
         [Route("api/Recibo/Anticipo")]
         [HttpPost]
-        public async Task<IHttpActionResult> PostAnticipo(ReciboPostViewModel anticipoPost)
+        public IHttpActionResult PostAnticipo(ReciboPostViewModel anticipoPost)
         {
             try
             {
@@ -568,7 +583,7 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> PostRecibo(ReciboPostViewModel reciboPost)
+        public IHttpActionResult PostRecibo(ReciboPostViewModel reciboPost)
         {
             try
             {
@@ -778,20 +793,7 @@ namespace AventasApi.Controllers
                     });
                 }
                
-                using (AVentasEntities context = new AVentasEntities())
-                {
-                    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                    if (reciboPost.Pagos.Count() == 1)
-                        numeroCorrelativoRecibo++;
-                    asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
-                    context.SaveChanges();
-                }
-                AsyncSqlInsert.IngresarRecibos(recibosxCliente);
-                //Sincronizacion AX
-                _ = PostReciboAx(recibos);
-                ///-------------------------------
-                return Ok(respuestaPagoRecibo);
-                /*if (isOnline)
+                if (isOnline)
                 {
                     try
                     {
@@ -816,7 +818,7 @@ namespace AventasApi.Controllers
                                 asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
                                 context.SaveChanges();
                             }
-                            AsyncSqlInsert.IngresarRecibos(recibosxCliente);
+                            AsyncSqlInsert.IngresarRecibos(recibosxCliente,true);
                             syncCuentaCorriente.SyncFacturas(asesor.EmpresaId, codigoCliente);
                             syncCuentaCorriente.SyncSubFacturas(asesor.EmpresaId, codigoCliente, asesor.CodigoAsesor);
                             return Ok(respuestaPagoRecibo);
@@ -844,9 +846,9 @@ namespace AventasApi.Controllers
                         asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
                         context.SaveChanges();
                     }
-                    AsyncSqlInsert.IngresarRecibos(recibosxCliente);
+                    AsyncSqlInsert.IngresarRecibos(recibosxCliente,false);
                     return Ok(respuestaPagoRecibo);
-                }*/
+                }
             }
             catch (Exception e)
             {
