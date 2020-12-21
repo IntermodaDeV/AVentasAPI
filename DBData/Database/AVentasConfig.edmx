@@ -153,6 +153,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__LISTA_EJE__ID_GE__30C33EC3">
+          <End Role="GESTORES" Type="Self.GESTORES" Multiplicity="0..1" />
+          <End Role="LISTA_EJECUCION_ESPECIFICO" Type="Self.LISTA_EJECUCION_ESPECIFICO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION_ESPECIFICO">
+              <PropertyRef Name="ID_GESTOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__LISTA_EJE__ID_GE__4222D4EF">
           <End Role="GESTORES" Type="Self.GESTORES" Multiplicity="0..1" />
           <End Role="LISTA_EJECUCION" Type="Self.LISTA_EJECUCION" Multiplicity="*" />
@@ -230,6 +242,10 @@
             <End Role="GESTORES" EntitySet="GESTORES" />
             <End Role="LISTA_EJECUCION_MANUAL" EntitySet="LISTA_EJECUCION_MANUAL" />
           </AssociationSet>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__30C33EC3" Association="Self.FK__LISTA_EJE__ID_GE__30C33EC3">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION_ESPECIFICO" EntitySet="LISTA_EJECUCION_ESPECIFICO" />
+          </AssociationSet>
           <AssociationSet Name="FK__LISTA_EJE__ID_GE__4222D4EF" Association="Self.FK__LISTA_EJE__ID_GE__4222D4EF">
             <End Role="GESTORES" EntitySet="GESTORES" />
             <End Role="LISTA_EJECUCION" EntitySet="LISTA_EJECUCION" />
@@ -302,6 +318,10 @@
             <End Role="LISTA_EJECUCION_ESPECIFICO" EntitySet="LISTA_EJECUCION_ESPECIFICO" />
             <End Role="PARAMETROS_LE_ESPECIFICO" EntitySet="PARAMETROS_LE_ESPECIFICO" />
           </AssociationSet>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__30C33EC3" Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__30C33EC3">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION_ESPECIFICO" EntitySet="LISTA_EJECUCION_ESPECIFICO" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="GESTORES">
           <Key>
@@ -327,6 +347,7 @@
           <NavigationProperty Name="LISTA_EJECUCION1" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__6FE99F9F" FromRole="GESTORES" ToRole="LISTA_EJECUCION" />
           <Property Name="ETIQUETA" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="LISTA_EJECUCION_MANUAL" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__14270015" FromRole="GESTORES" ToRole="LISTA_EJECUCION_MANUAL" />
+          <NavigationProperty Name="LISTA_EJECUCION_ESPECIFICO" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__30C33EC3" FromRole="GESTORES" ToRole="LISTA_EJECUCION_ESPECIFICO" />
         </EntityType>
         <EntityType Name="LISTA_EJECUCION">
           <Key>
@@ -469,6 +490,7 @@
           <Property Name="USUARIO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="FECHA" Type="DateTime" Precision="3" />
           <NavigationProperty Name="PARAMETROS_LE_ESPECIFICO" Relationship="AVentasConfigModel.FK__PARAMETRO__ID_LI__2BFE89A6" FromRole="LISTA_EJECUCION_ESPECIFICO" ToRole="PARAMETROS_LE_ESPECIFICO" />
+          <NavigationProperty Name="GESTORES" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__30C33EC3" FromRole="LISTA_EJECUCION_ESPECIFICO" ToRole="GESTORES" />
         </EntityType>
         <EntityType Name="PARAMETROS_LE_ESPECIFICO">
           <Key>
@@ -491,6 +513,18 @@
             </Principal>
             <Dependent Role="PARAMETROS_LE_ESPECIFICO">
               <PropertyRef Name="ID_LISTA_EJECUCION" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LISTA_EJE__ID_GE__30C33EC3">
+          <End Type="AVentasConfigModel.GESTORES" Role="GESTORES" Multiplicity="0..1" />
+          <End Type="AVentasConfigModel.LISTA_EJECUCION_ESPECIFICO" Role="LISTA_EJECUCION_ESPECIFICO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION_ESPECIFICO">
+              <PropertyRef Name="ID_GESTOR" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
