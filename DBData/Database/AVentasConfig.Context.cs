@@ -33,6 +33,8 @@ namespace DBData.Database
         public virtual DbSet<LISTA_EJECUCION_MANUAL> LISTA_EJECUCION_MANUAL { get; set; }
         public virtual DbSet<LOG_EJECUCION> LOG_EJECUCION { get; set; }
         public virtual DbSet<MODULOS> MODULOS { get; set; }
+        public virtual DbSet<LISTA_EJECUCION_ESPECIFICO> LISTA_EJECUCION_ESPECIFICO { get; set; }
+        public virtual DbSet<PARAMETROS_LE_ESPECIFICO> PARAMETROS_LE_ESPECIFICO { get; set; }
     
         public virtual ObjectResult<SP_POST_LISTA_EJECUCION_MANUAL_Result> SP_POST_LISTA_EJECUCION_MANUAL(Nullable<int> iD_GESTOR, string uSUARIO)
         {

@@ -225,6 +225,9 @@
     <Compile Include="Database\LISTA_EJECUCION.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\LISTA_EJECUCION_ESPECIFICO.cs">
+      <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\LISTA_EJECUCION_MANUAL.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
@@ -257,6 +260,9 @@
     </Compile>
     <Compile Include="Database\Pantallas_Funciones.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\PARAMETROS_LE_ESPECIFICO.cs">
+      <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\PedidosDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>

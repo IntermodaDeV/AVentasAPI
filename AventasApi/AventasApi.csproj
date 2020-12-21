@@ -199,6 +199,7 @@
     <Compile Include="Controllers\RazonNoVentaController.cs" />
     <Compile Include="Controllers\ReciboController.cs" />
     <Compile Include="Controllers\RolController.cs" />
+    <Compile Include="Controllers\SincronizacionEspecificoController.cs" />
     <Compile Include="Controllers\SincronizacionListaController.cs" />
     <Compile Include="Controllers\TipoPagoController.cs" />
     <Compile Include="Controllers\TipoPedidoController.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Models\ListaPrecio.cs" />
     <Compile Include="Models\ModuloModel.cs" />
     <Compile Include="Models\PantallaModel.cs" />
+    <Compile Include="Models\PosteoColeccionSincEspecificoModel.cs" />
     <Compile Include="Models\ProductoImpuestoModel.cs" />
     <Compile Include="Models\RazonNoVentaCausaViewModel.cs" />
     <Compile Include="Models\RazonNoVentaTipoViewModel.cs" />
