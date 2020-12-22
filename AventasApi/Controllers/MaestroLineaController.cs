@@ -28,7 +28,7 @@ namespace AventasApi.Controllers
                     IdLinea = ml.IdLinea,
                     Linea = ml.Linea,
                     Imagen = ml.Url_Imagen
-                }).ToListAsync();
+                }).OrderByDescending(x => x.IdLinea).ToListAsync();
                 return Ok(lineas);
             }catch(Exception e)
             {
