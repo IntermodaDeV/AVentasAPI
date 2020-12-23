@@ -80,7 +80,7 @@ namespace AventasApi.Controllers
                 var fechaInicio = DateTime.Now.Date.AddDays(-15);
 
                 using (var context = new AVentasConfigEntities())
-                {
+                {                   
                     var modulos = context.LISTA_EJECUCION_ESPECIFICO.Where(x => x.USUARIO == usuario && x.FECHA >= fechaInicio).ToList();
                     if (modulos.Count <= 0)
                     {
@@ -99,7 +99,9 @@ namespace AventasApi.Controllers
                         EN_EJECUCION = x.EN_EJECUCION,
                         FINALIZADO = x.FINALIZADO,
                         ID_MODULO = x.GESTORES.MODULOS.ID,
-                        MODULO = x.GESTORES.MODULOS.NOMBRE
+                        MODULO = x.GESTORES.MODULOS.NOMBRE,
+                        PAQUETE = context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "COLECCION").VALOR,
+                        EMPRESA = context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "EMPRESA").VALOR
                     }
                     ).ToList();
 
