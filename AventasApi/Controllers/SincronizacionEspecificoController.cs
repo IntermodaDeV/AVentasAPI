@@ -7,6 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using ExternalApiData.Enviroments;
+using RestSharp;
 
 namespace AventasApi.Controllers
 {
@@ -198,5 +200,36 @@ namespace AventasApi.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet]
+        [Route("verificar/{empresa}/{paquete}")]
+        public IHttpActionResult VerificarPaquete(string paquete, string empresa)
+        {
+            try
+            {
+                var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}paquetes/{empresa}/{paquete}/existe");
+                client.Timeout = 480 * (1000);
+                var request = new RestRequest(Method.GET);
+                request.AddHeader("Accept", "application/json");
+                IRestResponse response = client.Execute(request);
+
+                if (!response.IsSuccessful)
+                {
+                    return BadRequest("Servidor se encuentra fuera de linea.");
+                }
+
+                var content = Newtonsoft.Json.JsonConvert.DeserializeObject<ColeccionApiModel>(response.Content);
+                return Ok(content);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+    }
+
+    public class ColeccionApiModel
+    {
+        public string CodigoPaquete { get; set; }
     }
 }
