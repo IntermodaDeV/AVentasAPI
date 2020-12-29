@@ -29,5 +29,7 @@ namespace AventasApi.Models
         public DateTime? FECHA { get; set; }
         public int ID_MODULO { get; set; }
         public string MODULO { get; set; }
+        public string PAQUETE { get; internal set; }
+        public string EMPRESA { get; internal set; }
     }
 }

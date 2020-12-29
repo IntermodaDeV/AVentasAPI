@@ -12,18 +12,24 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class MODULOS
+    public partial class LISTA_EJECUCION_ESPECIFICO
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public MODULOS()
+        public LISTA_EJECUCION_ESPECIFICO()
         {
-            this.GESTORES = new HashSet<GESTORES>();
+            this.PARAMETROS_LE_ESPECIFICO = new HashSet<PARAMETROS_LE_ESPECIFICO>();
         }
     
         public int ID { get; set; }
-        public string NOMBRE { get; set; }
+        public Nullable<int> ID_GESTOR { get; set; }
+        public bool EN_ESPERA { get; set; }
+        public bool EN_EJECUCION { get; set; }
+        public bool FINALIZADO { get; set; }
+        public string USUARIO { get; set; }
+        public Nullable<System.DateTime> FECHA { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<GESTORES> GESTORES { get; set; }
+        public virtual ICollection<PARAMETROS_LE_ESPECIFICO> PARAMETROS_LE_ESPECIFICO { get; set; }
+        public virtual GESTORES GESTORES { get; set; }
     }
 }

@@ -348,19 +348,16 @@ namespace AventasApi.Controllers
                     bool filtarXGrupoPrecio = true;
                     string urlImagenes = ctx.Configuraciones.FirstOrDefault(conf => conf.CodigoConfiguracion == "UrlImages")?.Valor ?? "";
                     List<ColeccionViewModel> listaColecciones = new List<ColeccionViewModel>();
-
-                    foreach (var grupoPrecio in grupo.ListaPrecios)
-                    {
+                    List<string> ListaGrupoPrecios = new List<string>();
+                   
                         foreach (var pais in grupo.Paises)
                         {
-                            var existe = ctx.MaestroGrupoPrecio.FirstOrDefault(x => x.GrupoPrecio == grupoPrecio && x.EmpresaId == pais);
-                            if (existe != null)
-                            {
+                            ListaGrupoPrecios = ctx.MaestroGrupoPrecio.Where(x => grupo.ListaPrecios.Contains(x.GrupoPrecio) && x.EmpresaId == pais).Select(x=> x.GrupoPrecio).ToList();
                                 List<ColeccionViewModel> colecciones = await ctx.Colecciones
                                     .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
                                                  new ColeccionViewModel
                                                  {
-                                                     GrupoPrecio = grupoPrecio,
+                                                     GrupoPrecio = ListaGrupoPrecios.FirstOrDefault(),
                                                      IdColeccion = vw_coleccion.IdColeccion,
                                                      CodigoColeccion = vw_coleccion.CodigoColeccion,
                                                      Nombre = vw_coleccion.Nombre,
@@ -465,7 +462,7 @@ namespace AventasApi.Controllers
                                                                                    IdTalla = f.CodigoTalla,
                                                                                    Cantidad = f.Disponible,
                                                                                    MinStock = f.MinStock,
-                                                                                   PreciosEspecificos = f.PrecioEspecifico.Where(preEsp => filtarXGrupoPrecio).Where(preEsp => preEsp.GrupoPrecio == grupoPrecio).Select(preEsp => new PrecioEspecificoViewModel
+                                                                                   PreciosEspecificos = f.PrecioEspecifico.Where(preEsp => filtarXGrupoPrecio).Where(preEsp => ListaGrupoPrecios.Contains(preEsp.GrupoPrecio)).Select(preEsp => new PrecioEspecificoViewModel
                                                                                    {
                                                                                        IdPrecioEspecifico = preEsp.IdPrecioEspecifico,
                                                                                        IdMoneda = preEsp.IdMoneda,
@@ -481,9 +478,7 @@ namespace AventasApi.Controllers
                                                  }).AsNoTracking().ToListAsync();
 
                                 listaColecciones.AddRange(colecciones);
-                            }
                         }
-                    }
 
                     return Ok(listaColecciones);
                 }

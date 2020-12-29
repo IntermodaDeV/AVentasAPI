@@ -44,6 +44,18 @@
           <Property Name="EN_EJECUCION" Type="bit" Nullable="false" />
           <Property Name="FINALIZADO" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="LISTA_EJECUCION_ESPECIFICO">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_GESTOR" Type="int" />
+          <Property Name="EN_ESPERA" Type="bit" Nullable="false" />
+          <Property Name="EN_EJECUCION" Type="bit" Nullable="false" />
+          <Property Name="FINALIZADO" Type="bit" Nullable="false" />
+          <Property Name="USUARIO" Type="varchar" MaxLength="50" />
+          <Property Name="FECHA" Type="datetime" />
+        </EntityType>
         <EntityType Name="LISTA_EJECUCION_MANUAL">
           <Key>
             <PropertyRef Name="ID" />
@@ -82,6 +94,17 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="NOMBRE" Type="varchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="PARAMETROS_LE_ESPECIFICO">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_LISTA_EJECUCION" Type="int" />
+          <Property Name="TIPO" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="VALOR" Type="varchar" MaxLength="100" />
+          <Property Name="USUARIO" Type="varchar" MaxLength="50" />
+          <Property Name="FECHA" Type="datetime" />
+        </EntityType>
         <Association Name="FK__GESTORES__ID_GP__412EB0B6">
           <End Role="GESTORES" Type="Self.GESTORES" Multiplicity="0..1" />
           <End Role="GESTORES1" Type="Self.GESTORES" Multiplicity="*" />
@@ -114,6 +137,30 @@
               <PropertyRef Name="ID" />
             </Principal>
             <Dependent Role="LISTA_EJECUCION_MANUAL">
+              <PropertyRef Name="ID_GESTOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LISTA_EJE__ID_GE__29221CFB">
+          <End Role="GESTORES" Type="Self.GESTORES" Multiplicity="0..1" />
+          <End Role="LISTA_EJECUCION_MANUAL" Type="Self.LISTA_EJECUCION_MANUAL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION_MANUAL">
+              <PropertyRef Name="ID_GESTOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LISTA_EJE__ID_GE__30C33EC3">
+          <End Role="GESTORES" Type="Self.GESTORES" Multiplicity="0..1" />
+          <End Role="LISTA_EJECUCION_ESPECIFICO" Type="Self.LISTA_EJECUCION_ESPECIFICO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION_ESPECIFICO">
               <PropertyRef Name="ID_GESTOR" />
             </Dependent>
           </ReferentialConstraint>
@@ -154,6 +201,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__PARAMETRO__ID_LI__2BFE89A6">
+          <End Role="LISTA_EJECUCION_ESPECIFICO" Type="Self.LISTA_EJECUCION_ESPECIFICO" Multiplicity="0..1" />
+          <End Role="PARAMETROS_LE_ESPECIFICO" Type="Self.PARAMETROS_LE_ESPECIFICO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LISTA_EJECUCION_ESPECIFICO">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PARAMETROS_LE_ESPECIFICO">
+              <PropertyRef Name="ID_LISTA_EJECUCION" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Function Name="SP_POST_LISTA_EJECUCION_MANUAL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ID_GESTOR" Type="int" Mode="In" />
           <Parameter Name="USUARIO" Type="varchar" Mode="In" />
@@ -162,9 +221,11 @@
           <EntitySet Name="CONFIGURACIONES" EntityType="Self.CONFIGURACIONES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GESTORES" EntityType="Self.GESTORES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LISTA_EJECUCION" EntityType="Self.LISTA_EJECUCION" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LISTA_EJECUCION_ESPECIFICO" EntityType="Self.LISTA_EJECUCION_ESPECIFICO" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LISTA_EJECUCION_MANUAL" EntityType="Self.LISTA_EJECUCION_MANUAL" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LOG_EJECUCION" EntityType="Self.LOG_EJECUCION" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MODULOS" EntityType="Self.MODULOS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PARAMETROS_LE_ESPECIFICO" EntityType="Self.PARAMETROS_LE_ESPECIFICO" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__GESTORES__ID_GP__412EB0B6" Association="Self.FK__GESTORES__ID_GP__412EB0B6">
             <End Role="GESTORES" EntitySet="GESTORES" />
             <End Role="GESTORES1" EntitySet="GESTORES" />
@@ -177,6 +238,14 @@
             <End Role="GESTORES" EntitySet="GESTORES" />
             <End Role="LISTA_EJECUCION_MANUAL" EntitySet="LISTA_EJECUCION_MANUAL" />
           </AssociationSet>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__29221CFB" Association="Self.FK__LISTA_EJE__ID_GE__29221CFB">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION_MANUAL" EntitySet="LISTA_EJECUCION_MANUAL" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__30C33EC3" Association="Self.FK__LISTA_EJE__ID_GE__30C33EC3">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION_ESPECIFICO" EntitySet="LISTA_EJECUCION_ESPECIFICO" />
+          </AssociationSet>
           <AssociationSet Name="FK__LISTA_EJE__ID_GE__4222D4EF" Association="Self.FK__LISTA_EJE__ID_GE__4222D4EF">
             <End Role="GESTORES" EntitySet="GESTORES" />
             <End Role="LISTA_EJECUCION" EntitySet="LISTA_EJECUCION" />
@@ -188,6 +257,10 @@
           <AssociationSet Name="FK__LOG_EJECU__ID_LI__4316F928" Association="Self.FK__LOG_EJECU__ID_LI__4316F928">
             <End Role="LISTA_EJECUCION" EntitySet="LISTA_EJECUCION" />
             <End Role="LOG_EJECUCION" EntitySet="LOG_EJECUCION" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PARAMETRO__ID_LI__2BFE89A6" Association="Self.FK__PARAMETRO__ID_LI__2BFE89A6">
+            <End Role="LISTA_EJECUCION_ESPECIFICO" EntitySet="LISTA_EJECUCION_ESPECIFICO" />
+            <End Role="PARAMETROS_LE_ESPECIFICO" EntitySet="PARAMETROS_LE_ESPECIFICO" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -239,6 +312,16 @@
             <End Role="GESTORES" EntitySet="GESTORES" />
             <End Role="LISTA_EJECUCION_MANUAL" EntitySet="LISTA_EJECUCION_MANUAL" />
           </AssociationSet>
+          <EntitySet Name="LISTA_EJECUCION_ESPECIFICO" EntityType="AVentasConfigModel.LISTA_EJECUCION_ESPECIFICO" />
+          <EntitySet Name="PARAMETROS_LE_ESPECIFICO" EntityType="AVentasConfigModel.PARAMETROS_LE_ESPECIFICO" />
+          <AssociationSet Name="FK__PARAMETRO__ID_LI__2BFE89A6" Association="AVentasConfigModel.FK__PARAMETRO__ID_LI__2BFE89A6">
+            <End Role="LISTA_EJECUCION_ESPECIFICO" EntitySet="LISTA_EJECUCION_ESPECIFICO" />
+            <End Role="PARAMETROS_LE_ESPECIFICO" EntitySet="PARAMETROS_LE_ESPECIFICO" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LISTA_EJE__ID_GE__30C33EC3" Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__30C33EC3">
+            <End Role="GESTORES" EntitySet="GESTORES" />
+            <End Role="LISTA_EJECUCION_ESPECIFICO" EntitySet="LISTA_EJECUCION_ESPECIFICO" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="GESTORES">
           <Key>
@@ -264,6 +347,7 @@
           <NavigationProperty Name="LISTA_EJECUCION1" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__6FE99F9F" FromRole="GESTORES" ToRole="LISTA_EJECUCION" />
           <Property Name="ETIQUETA" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="LISTA_EJECUCION_MANUAL" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__14270015" FromRole="GESTORES" ToRole="LISTA_EJECUCION_MANUAL" />
+          <NavigationProperty Name="LISTA_EJECUCION_ESPECIFICO" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__30C33EC3" FromRole="GESTORES" ToRole="LISTA_EJECUCION_ESPECIFICO" />
         </EntityType>
         <EntityType Name="LISTA_EJECUCION">
           <Key>
@@ -394,6 +478,56 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="LISTA_EJECUCION_ESPECIFICO">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_GESTOR" Type="Int32" />
+          <Property Name="EN_ESPERA" Type="Boolean" Nullable="false" />
+          <Property Name="EN_EJECUCION" Type="Boolean" Nullable="false" />
+          <Property Name="FINALIZADO" Type="Boolean" Nullable="false" />
+          <Property Name="USUARIO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FECHA" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="PARAMETROS_LE_ESPECIFICO" Relationship="AVentasConfigModel.FK__PARAMETRO__ID_LI__2BFE89A6" FromRole="LISTA_EJECUCION_ESPECIFICO" ToRole="PARAMETROS_LE_ESPECIFICO" />
+          <NavigationProperty Name="GESTORES" Relationship="AVentasConfigModel.FK__LISTA_EJE__ID_GE__30C33EC3" FromRole="LISTA_EJECUCION_ESPECIFICO" ToRole="GESTORES" />
+        </EntityType>
+        <EntityType Name="PARAMETROS_LE_ESPECIFICO">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_LISTA_EJECUCION" Type="Int32" />
+          <Property Name="TIPO" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VALOR" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="USUARIO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FECHA" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="LISTA_EJECUCION_ESPECIFICO" Relationship="AVentasConfigModel.FK__PARAMETRO__ID_LI__2BFE89A6" FromRole="PARAMETROS_LE_ESPECIFICO" ToRole="LISTA_EJECUCION_ESPECIFICO" />
+        </EntityType>
+        <Association Name="FK__PARAMETRO__ID_LI__2BFE89A6">
+          <End Type="AVentasConfigModel.LISTA_EJECUCION_ESPECIFICO" Role="LISTA_EJECUCION_ESPECIFICO" Multiplicity="0..1" />
+          <End Type="AVentasConfigModel.PARAMETROS_LE_ESPECIFICO" Role="PARAMETROS_LE_ESPECIFICO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LISTA_EJECUCION_ESPECIFICO">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="PARAMETROS_LE_ESPECIFICO">
+              <PropertyRef Name="ID_LISTA_EJECUCION" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LISTA_EJE__ID_GE__30C33EC3">
+          <End Type="AVentasConfigModel.GESTORES" Role="GESTORES" Multiplicity="0..1" />
+          <End Type="AVentasConfigModel.LISTA_EJECUCION_ESPECIFICO" Role="LISTA_EJECUCION_ESPECIFICO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GESTORES">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="LISTA_EJECUCION_ESPECIFICO">
+              <PropertyRef Name="ID_GESTOR" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -490,6 +624,31 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="LISTA_EJECUCION_ESPECIFICO">
+            <EntityTypeMapping TypeName="AVentasConfigModel.LISTA_EJECUCION_ESPECIFICO">
+              <MappingFragment StoreEntitySet="LISTA_EJECUCION_ESPECIFICO">
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+                <ScalarProperty Name="USUARIO" ColumnName="USUARIO" />
+                <ScalarProperty Name="FINALIZADO" ColumnName="FINALIZADO" />
+                <ScalarProperty Name="EN_EJECUCION" ColumnName="EN_EJECUCION" />
+                <ScalarProperty Name="EN_ESPERA" ColumnName="EN_ESPERA" />
+                <ScalarProperty Name="ID_GESTOR" ColumnName="ID_GESTOR" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PARAMETROS_LE_ESPECIFICO">
+            <EntityTypeMapping TypeName="AVentasConfigModel.PARAMETROS_LE_ESPECIFICO">
+              <MappingFragment StoreEntitySet="PARAMETROS_LE_ESPECIFICO">
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+                <ScalarProperty Name="USUARIO" ColumnName="USUARIO" />
+                <ScalarProperty Name="VALOR" ColumnName="VALOR" />
+                <ScalarProperty Name="TIPO" ColumnName="TIPO" />
+                <ScalarProperty Name="ID_LISTA_EJECUCION" ColumnName="ID_LISTA_EJECUCION" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

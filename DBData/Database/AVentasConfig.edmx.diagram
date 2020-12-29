@@ -17,6 +17,10 @@
         <AssociationConnector Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__6FE99F9F" />
         <AssociationConnector Association="AVentasConfigModel.FK__LOG_EJECU__ID_LI__4316F928" />
         <AssociationConnector Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__14270015" />
+        <EntityTypeShape EntityType="AVentasConfigModel.LISTA_EJECUCION_ESPECIFICO" Width="1.5" PointX="3.375" PointY="7" />
+        <EntityTypeShape EntityType="AVentasConfigModel.PARAMETROS_LE_ESPECIFICO" Width="1.5" PointX="5.625" PointY="7" />
+        <AssociationConnector Association="AVentasConfigModel.FK__PARAMETRO__ID_LI__2BFE89A6" />
+        <AssociationConnector Association="AVentasConfigModel.FK__LISTA_EJE__ID_GE__30C33EC3" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
