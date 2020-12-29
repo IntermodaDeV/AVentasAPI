@@ -12,4 +12,9 @@ namespace AventasApi.Models
         public string ColeccionId { get; set; }
         public string Usuario { get; set; }
     }
+
+    public class PosteoCancelarListaEspecificoModel
+    {
+        public int IdLista { get; set; }
+    }
 }

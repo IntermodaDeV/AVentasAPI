@@ -16,12 +16,44 @@ namespace AventasApi.Controllers
         [AcceptVerbs("POST")]
         [HttpPost]
         [Route("Coleccion/upload")]
-        public IHttpActionResult UploadSalesOrder([FromBody] PosteoColeccionSincEspecificoModel model)
+        public IHttpActionResult EnviarLista([FromBody] PosteoColeccionSincEspecificoModel model)
         {
             try
             {
                 using (var context = new AVentasConfigEntities())
                 {
+                    var found = context.LISTA_EJECUCION_ESPECIFICO.Where(x => x.ID_GESTOR == model.IdGestor && x.FINALIZADO != false).ToList();
+
+                    if(found != null)
+                    {
+
+                        foreach(var iterlista in found)
+                        {
+                            string empresa = "";
+                            string coleccion = "";
+
+                            foreach(var iterpar in iterlista.PARAMETROS_LE_ESPECIFICO)
+                            {
+                                if(iterpar.TIPO == "COLECCION")
+                                {
+                                    coleccion = iterpar.VALOR;
+                                }
+
+                                if(iterpar.TIPO == "EMPRESA")
+                                {
+                                    empresa = iterpar.VALOR;
+                                }
+                            }
+                            
+                            if(empresa == model.EmpresaId && coleccion == model.ColeccionId)
+                            {
+                                return BadRequest($"Colección ya se encuentra en lista de espera o ejecución.");
+                            }
+
+
+                        }
+                    }
+
                     var entityLista = new LISTA_EJECUCION_ESPECIFICO
                     {
                         ID_GESTOR = model.IdGestor,
@@ -62,6 +94,59 @@ namespace AventasApi.Controllers
                     }
 
                     return Ok();
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [AcceptVerbs("POST")]
+        [HttpPost]
+        [Route("Coleccion/cancelar")]
+        public IHttpActionResult CancelarLista([FromBody] PosteoCancelarListaEspecificoModel model)
+        {
+            try
+            {
+                using (var context = new AVentasConfigEntities())
+                {
+                    var lista = context.LISTA_EJECUCION_ESPECIFICO.Where(x => x.ID == model.IdLista);
+
+                    if(lista != null)
+                    {
+                        var listaACancelar = lista.FirstOrDefault();
+
+                        if (listaACancelar != null)
+                        {
+                            //vuelve a actualizar el registro para verificar que no esté en ejecución
+                            listaACancelar = context.LISTA_EJECUCION_ESPECIFICO.Where(x => x.ID == model.IdLista).FirstOrDefault();
+
+                            if (listaACancelar.EN_ESPERA == true && listaACancelar.EN_EJECUCION != true)
+                            {
+                                listaACancelar.EN_ESPERA = false;
+                                listaACancelar.EN_EJECUCION = false;
+                                listaACancelar.FINALIZADO = true;
+
+                                context.Entry(listaACancelar).State = EntityState.Modified;
+                                context.SaveChanges();
+
+                                return Ok();
+                            }
+                            else
+                            {
+                                return BadRequest($"Lista ID: {model.IdLista} ya se encuentra en ejecución, no es posible cancelarla.");
+                            }
+                        }
+                        else
+                        {
+                            return BadRequest($"No se encontró el registro de Lista ID: {model.IdLista}.");
+                        }
+                    }    
+                    else
+                    {
+                        return BadRequest($"No se encontró el registro de Lista ID: {model.IdLista}.");
+                    }
                 }
             }
             catch (System.Exception ex)
