@@ -24,7 +24,7 @@ namespace AventasApi.Controllers
             {
                 using (var context = new AVentasConfigEntities())
                 {
-                    var found = context.LISTA_EJECUCION_ESPECIFICO.Where(x => x.ID_GESTOR == model.IdGestor && x.FINALIZADO != false).ToList();
+                    var found = context.LISTA_EJECUCION_ESPECIFICO.Where(x => x.ID_GESTOR == model.IdGestor && x.FINALIZADO == false).ToList();
 
                     if(found != null)
                     {
