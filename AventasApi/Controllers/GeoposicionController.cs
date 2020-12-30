@@ -89,14 +89,14 @@ namespace AventasApi.Controllers
 
                     if (usuario.FlagTodosAsesores.Value)
                     {
-                        var asesores = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId))
+                        var asesores = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId) && x.Activo==true)
                             .Select(x => new { codigo = x.CodigoAsesor, nombre = x.Nombre, empresa = x.EmpresaId }).ToListAsync();
                         return Ok(asesores);
                     }
                     else
                     {
-                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
-                        var asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId))
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id ).Select(x => x.CodigoAsesor).ToListAsync();
+                        var asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true)
                             .Select(x => new { codigo = x.CodigoAsesor, nombre = x.Nombre, empresa = x.EmpresaId }).ToListAsync();
                         return Ok(asesoresHabilitados);
                     }

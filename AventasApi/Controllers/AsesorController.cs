@@ -34,7 +34,7 @@ public class AsesorController : ApiController
             {
                 var Asesores = ase.Usuarios_Asesores.Where(x => x.UsuarioId == Id && x.Status == true).Select(x => x.CodigoAsesor).ToList();
 
-                var AsesoresAsignados = await ase.Asesores.Where(e => Asesores.Contains(e.CodigoAsesor)).Select(e => new AsesoresViewModel
+                var AsesoresAsignados = await ase.Asesores.Where(e => Asesores.Contains(e.CodigoAsesor) && e.Activo == true).Select(e => new AsesoresViewModel
                 {
                     Id = e.CodigoAsesor,
                     Nombre = e.Nombre
@@ -62,7 +62,7 @@ public class AsesorController : ApiController
 
                 var EmpresasPermitidas = ase.Usuarios_Empresas.Where(e => e.UsuarioId == Id && e.Status == true).Select(e => e.EmpresaId).ToList();
 
-                var AsesoresNoAsignados = await ase.Asesores.Where(e => !Asesores.Contains(e.CodigoAsesor) && EmpresasPermitidas.Contains(e.EmpresaId)).Select(e => new AsesoresViewModel
+                var AsesoresNoAsignados = await ase.Asesores.Where(e => !Asesores.Contains(e.CodigoAsesor) && EmpresasPermitidas.Contains(e.EmpresaId) && e.Activo == true).Select(e => new AsesoresViewModel
                 {
                     Id = e.CodigoAsesor,
                     Nombre = e.Nombre

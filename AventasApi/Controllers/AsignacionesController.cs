@@ -43,17 +43,17 @@ namespace AventasApi.Controllers
                     {
                         if (Asesor != "null")
                         {
-                            asesoresHabilitados = await ctx.Asesores.Where(x => x.CodigoAsesor == Asesor).Select(x => x.CodigoAsesor).ToListAsync();
+                            asesoresHabilitados = await ctx.Asesores.Where(x => x.CodigoAsesor == Asesor && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
                         }
                         else
                         {
-                            asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                            asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
                         }
                     }
                     else
                     {
                         var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
-                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
                     }
 
                     foreach (var asesor in asesoresHabilitados)
