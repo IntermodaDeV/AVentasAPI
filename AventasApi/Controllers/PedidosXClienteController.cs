@@ -283,12 +283,12 @@ namespace AventasApi.Controllers
 
                     if (usuario.FlagTodosAsesores.Value)
                     {
-                        asesoresHabilitados = await context.Asesores.Where(x => x.CodigoAsesor == Asesor).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await context.Asesores.Where(x => x.CodigoAsesor == Asesor && x.Activo==true).Select(x => x.CodigoAsesor).ToListAsync();
                     }
                     else
                     {
                         var asesores = await context.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
-                        asesoresHabilitados = await context.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await context.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo==true).Select(x => x.CodigoAsesor).ToListAsync();
                     }
 
                     List<PedidosXClienteViewModel> ListaPedidos = new List<PedidosXClienteViewModel>();

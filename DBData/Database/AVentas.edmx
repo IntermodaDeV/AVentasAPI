@@ -89,6 +89,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="CorrelativoRecibos" Type="int" />
           <Property Name="InicialesNombre" Type="varchar" MaxLength="50" />
           <Property Name="Diario" Type="varchar" MaxLength="20" />
+          <Property Name="Activo" Type="bit" />
         </EntityType>
         <EntityType Name="AsignacionxAsesor">
           <Key>
@@ -3102,6 +3103,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="RutasxAsesor" Relationship="Self.FK__RutasxAse__Codig__658C0CBD" FromRole="Asesores" ToRole="RutasxAsesor" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Codig__6B44E613" FromRole="Asesores" ToRole="PedidosxCliente" />
           <NavigationProperty Name="Usuarios_Asesores" Relationship="AventasModel.FK__Usuarios___Codig__382534C0" FromRole="Asesores" ToRole="Usuarios_Asesores" />
+          <Property Name="Activo" Type="Boolean" />
         </EntityType>
         <EntityType Name="AsignacionxAsesor">
           <Key>
@@ -6355,6 +6357,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Asesores">
             <EntityTypeMapping TypeName="AventasModel.Asesores">
               <MappingFragment StoreEntitySet="Asesores">
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
                 <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />

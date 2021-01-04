@@ -50,12 +50,12 @@ namespace AventasApi.Controllers.Authentication
 
                     if (usuario.FlagTodosAsesores.Value)
                     {
-                        AsesoresUsuario = await db.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                        AsesoresUsuario = await db.Asesores.Where(x => empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
                     }
                     else
                     {
                         var asesores = await db.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == usuario.Id).Select(x => x.CodigoAsesor).ToListAsync();
-                        AsesoresUsuario = await db.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                        AsesoresUsuario = await db.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
                     }
 
                     List<PermisosViewModel> PermisosUsuario = db.Usuarios.Where(u => u.usuario == Usuario).Select(u => new PermisosViewModel
