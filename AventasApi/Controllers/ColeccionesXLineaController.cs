@@ -484,7 +484,7 @@ namespace AventasApi.Controllers
                 }
             }catch(Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
             }
         }
     }
