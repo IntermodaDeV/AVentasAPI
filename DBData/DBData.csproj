@@ -168,6 +168,9 @@
     <Compile Include="Database\EmpresaTransporte.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Encuesta.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Errores.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -306,6 +309,9 @@
     <Compile Include="Database\RutasxAsesor.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\SeccionesEncuesta.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\sp_helpdiagramdefinition_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -343,6 +349,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\TiposdePedido.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\TiposIngreso.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\TipoVisitaCliente.cs">
