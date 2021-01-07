@@ -47,6 +47,7 @@ namespace DBData.Database
         public virtual DbSet<DistribucionxTalla> DistribucionxTalla { get; set; }
         public virtual DbSet<EdadesxColeccion> EdadesxColeccion { get; set; }
         public virtual DbSet<Empresa> Empresa { get; set; }
+        public virtual DbSet<Encuesta> Encuesta { get; set; }
         public virtual DbSet<Errores> Errores { get; set; }
         public virtual DbSet<EstadosPedido> EstadosPedido { get; set; }
         public virtual DbSet<FacturasxCliente> FacturasxCliente { get; set; }
@@ -92,6 +93,7 @@ namespace DBData.Database
         public virtual DbSet<ComunidadAutonoma> ComunidadAutonoma { get; set; }
         public virtual DbSet<EmpresaTransporte> EmpresaTransporte { get; set; }
         public virtual DbSet<TransportePrecioCaja> TransportePrecioCaja { get; set; }
+        public virtual DbSet<TiposIngreso> TiposIngreso { get; set; }
         public virtual DbSet<PreciosxProducto> PreciosxProducto { get; set; }
         public virtual DbSet<FisicoDisponible> FisicoDisponible { get; set; }
         public virtual DbSet<FotografiasXProducto> FotografiasXProducto { get; set; }
@@ -103,6 +105,7 @@ namespace DBData.Database
         public virtual DbSet<Pantallas> Pantallas { get; set; }
         public virtual DbSet<Pantallas_Funciones> Pantallas_Funciones { get; set; }
         public virtual DbSet<Roles> Roles { get; set; }
+        public virtual DbSet<SeccionesEncuesta> SeccionesEncuesta { get; set; }
         public virtual DbSet<PantallasxUsuario> PantallasxUsuario { get; set; }
         public virtual DbSet<Usuario_Rol> Usuario_Rol { get; set; }
         public virtual DbSet<Usuarios_Empresas> Usuarios_Empresas { get; set; }
