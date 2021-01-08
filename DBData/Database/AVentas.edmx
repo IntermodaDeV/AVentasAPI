@@ -532,6 +532,30 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Empresa" Type="varchar" MaxLength="250" Nullable="false" />
           <Property Name="Activo" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="GrupoOpciones">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="GrupoOpcionesDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GrupoOpcionesId" Type="int" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="GrupoTalla">
           <Key>
             <PropertyRef Name="CodigoGrupoTalla" />
@@ -1751,6 +1775,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__GrupoOpci__Grupo__47326E26">
+          <End Role="GrupoOpciones" Type="Self.GrupoOpciones" Multiplicity="1" />
+          <End Role="GrupoOpcionesDetalle" Type="Self.GrupoOpcionesDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GrupoOpciones">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="GrupoOpcionesDetalle">
+              <PropertyRef Name="GrupoOpcionesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__LimiteCre__Codig__7E57BA87">
           <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
           <End Role="LimiteCreditoxCliente" Type="Self.LimiteCreditoxCliente" Multiplicity="*" />
@@ -2556,6 +2592,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="Funciones_Roles" EntityType="Self.Funciones_Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoImpuestoArticulo" EntityType="Self.GrupoImpuestoArticulo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoImpuestoCliente" EntityType="Self.GrupoImpuestoCliente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GrupoOpciones" EntityType="Self.GrupoOpciones" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GrupoOpcionesDetalle" EntityType="Self.GrupoOpcionesDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoTalla" EntityType="Self.GrupoTalla" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LimiteCreditoxCliente" EntityType="Self.LimiteCreditoxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LineasxColeccion" EntityType="Self.LineasxColeccion" Schema="dbo" store:Type="Tables" />
@@ -2878,6 +2916,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK__Funciones__IdRol__746F28F1" Association="Self.FK__Funciones__IdRol__746F28F1">
             <End Role="Roles" EntitySet="Roles" />
             <End Role="Funciones_Roles" EntitySet="Funciones_Roles" />
+          </AssociationSet>
+          <AssociationSet Name="FK__GrupoOpci__Grupo__47326E26" Association="Self.FK__GrupoOpci__Grupo__47326E26">
+            <End Role="GrupoOpciones" EntitySet="GrupoOpciones" />
+            <End Role="GrupoOpcionesDetalle" EntitySet="GrupoOpcionesDetalle" />
           </AssociationSet>
           <AssociationSet Name="FK__LimiteCre__Codig__7E57BA87" Association="Self.FK__LimiteCre__Codig__7E57BA87">
             <End Role="Clientes" EntitySet="Clientes" />
@@ -5434,6 +5476,12 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="SeccionesEncuesta" EntitySet="SeccionesEncuesta" />
           </AssociationSet>
           <EntitySet Name="TiposIngreso" EntityType="AventasModel.TiposIngreso" />
+          <EntitySet Name="GrupoOpcionesDetalle" EntityType="AventasModel.GrupoOpcionesDetalle" />
+          <EntitySet Name="GrupoOpciones" EntityType="AventasModel.GrupoOpciones" />
+          <AssociationSet Name="FK__GrupoOpci__Grupo__47326E26" Association="AventasModel.FK__GrupoOpci__Grupo__47326E26">
+            <End Role="GrupoOpciones" EntitySet="GrupoOpciones" />
+            <End Role="GrupoOpcionesDetalle" EntitySet="GrupoOpcionesDetalle" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -6478,6 +6526,44 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="GrupoOpcionesDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="GrupoOpcionesId" Type="Int32" Nullable="false" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="GrupoOpciones" Relationship="AventasModel.FK__GrupoOpci__Grupo__47326E26" FromRole="GrupoOpcionesDetalle" ToRole="GrupoOpciones" />
+        </EntityType>
+        <EntityType Name="GrupoOpciones">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="GrupoOpcionesDetalle" Relationship="AventasModel.FK__GrupoOpci__Grupo__47326E26" FromRole="GrupoOpciones" ToRole="GrupoOpcionesDetalle" />
+        </EntityType>
+        <Association Name="FK__GrupoOpci__Grupo__47326E26">
+          <End Type="AventasModel.GrupoOpciones" Role="GrupoOpciones" Multiplicity="1" />
+          <End Type="AventasModel.GrupoOpcionesDetalle" Role="GrupoOpcionesDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GrupoOpciones">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="GrupoOpcionesDetalle">
+              <PropertyRef Name="GrupoOpcionesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -7757,6 +7843,32 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="RequiereGrupoOpciones" ColumnName="RequiereGrupoOpciones" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GrupoOpcionesDetalle">
+            <EntityTypeMapping TypeName="AventasModel.GrupoOpcionesDetalle">
+              <MappingFragment StoreEntitySet="GrupoOpcionesDetalle">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="GrupoOpcionesId" ColumnName="GrupoOpcionesId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GrupoOpciones">
+            <EntityTypeMapping TypeName="AventasModel.GrupoOpciones">
+              <MappingFragment StoreEntitySet="GrupoOpciones">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="Id" ColumnName="Id" />

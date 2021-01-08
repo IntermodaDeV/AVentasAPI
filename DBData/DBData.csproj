@@ -216,6 +216,12 @@
     <Compile Include="Database\GrupoImpuestoCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\GrupoOpciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\GrupoOpcionesDetalle.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\GrupoTalla.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

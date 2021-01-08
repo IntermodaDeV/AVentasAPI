@@ -142,10 +142,42 @@ namespace AventasApi.Controllers
                         Titulo = seccion.Titulo,
                         Obligatorio = seccion.Obligatorio,
                         Status = seccion.Status,
-                        CreatedBy = seccion.CreatedBy,
+                        CreatedBy = seccion.Usuario,
                         CreatedDate = DateTime.Now
                     };
                     ctx.SeccionesEncuesta.Add(seccionEncuesta);
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/secciones/modificar")]
+        public async Task<IHttpActionResult> ModificarSeccionEncuesta([FromBody] SeccionEncuestaViewModel secciones)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var EncuestaBD = await ctx.SeccionesEncuesta.FindAsync(secciones.Id);
+
+                    if (EncuestaBD == null)
+                    {
+                        return BadRequest("No se encuentra la seccione de encuesta");
+                    }
+                    EncuestaBD.EncuestaId = secciones.EncuestaId;
+                    EncuestaBD.Nombre = secciones.Nombre;
+                    EncuestaBD.Descripcion = secciones.Descripcion;
+                    EncuestaBD.Titulo = secciones.Titulo;
+                    EncuestaBD.Obligatorio = secciones.Obligatorio;
+                    EncuestaBD.Status = secciones.Status;
+                    EncuestaBD.ModifiedBy = secciones.Usuario;
+                    EncuestaBD.ModifiedDate = DateTime.Now;
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }

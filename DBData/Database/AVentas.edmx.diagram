@@ -203,6 +203,9 @@
         <AssociationConnector Association="AventasModel.FK__Encuesta__Empres__10D65D75" />
         <AssociationConnector Association="AventasModel.FK__Secciones__Encue__2018A105" />
         <EntityTypeShape EntityType="AventasModel.TiposIngreso" Width="1.5" PointX="10.375" PointY="15.75" />
+        <EntityTypeShape EntityType="AventasModel.GrupoOpcionesDetalle" Width="1.5" PointX="18.375" PointY="0.75" />
+        <EntityTypeShape EntityType="AventasModel.GrupoOpciones" Width="1.5" PointX="3.375" PointY="18.75" />
+        <AssociationConnector Association="AventasModel.FK__GrupoOpci__Grupo__47326E26" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

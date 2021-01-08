@@ -5,15 +5,11 @@ using System.Web;
 
 namespace AventasApi.Models.ViewModels
 {
-    public class SeccionEncuestaViewModel
+    public class GrupoOpcionesDetalleViewModel
     {
         public int Id { get; set; }
-        public int EncuestaId { get; set; }
+        public int GrupoOpcionesId { get; set; }
         public string Nombre { get; set; }
-        public string Titulo { get; set; }
-        public string Descripcion { get; set; }
-        public bool Obligatorio { get; set; }
-        public bool Status { get; set; }
         public string Usuario { get; set; }
     }
 }

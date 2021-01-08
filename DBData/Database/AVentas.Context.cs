@@ -111,6 +111,8 @@ namespace DBData.Database
         public virtual DbSet<Encuesta> Encuesta { get; set; }
         public virtual DbSet<SeccionesEncuesta> SeccionesEncuesta { get; set; }
         public virtual DbSet<TiposIngreso> TiposIngreso { get; set; }
+        public virtual DbSet<GrupoOpcionesDetalle> GrupoOpcionesDetalle { get; set; }
+        public virtual DbSet<GrupoOpciones> GrupoOpciones { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
