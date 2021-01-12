@@ -18,6 +18,7 @@ namespace DBData.Database
         public GrupoOpciones()
         {
             this.GrupoOpcionesDetalle = new HashSet<GrupoOpcionesDetalle>();
+            this.Preguntas = new HashSet<Preguntas>();
         }
     
         public int Id { get; set; }
@@ -30,5 +31,7 @@ namespace DBData.Database
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<GrupoOpcionesDetalle> GrupoOpcionesDetalle { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Preguntas> Preguntas { get; set; }
     }
 }

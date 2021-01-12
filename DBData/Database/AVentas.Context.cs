@@ -108,11 +108,13 @@ namespace DBData.Database
         public virtual DbSet<Usuarios_Empresas> Usuarios_Empresas { get; set; }
         public virtual DbSet<Usuarios_Asesores> Usuarios_Asesores { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
-        public virtual DbSet<Encuesta> Encuesta { get; set; }
         public virtual DbSet<SeccionesEncuesta> SeccionesEncuesta { get; set; }
         public virtual DbSet<TiposIngreso> TiposIngreso { get; set; }
         public virtual DbSet<GrupoOpcionesDetalle> GrupoOpcionesDetalle { get; set; }
         public virtual DbSet<GrupoOpciones> GrupoOpciones { get; set; }
+        public virtual DbSet<Encuesta> Encuesta { get; set; }
+        public virtual DbSet<Preguntas> Preguntas { get; set; }
+        public virtual DbSet<PreguntasOpciones> PreguntasOpciones { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

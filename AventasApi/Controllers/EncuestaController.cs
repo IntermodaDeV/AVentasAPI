@@ -23,7 +23,6 @@ namespace AventasApi.Controllers
                     var ListaEncuesta = await ctx.Encuesta.Select(x => new 
                     {
                         Id =x.Id,
-                        Empresa = x.EmpresaId,
                         Nombre = x.Nombre,
                         Descripcion = x.Descripcion,
                         FechaInicio = x.FechaInicio,
@@ -47,7 +46,6 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var Encuesta = new Encuesta() {
-                        EmpresaId = encuesta.Empresa,
                         Nombre = encuesta.Nombre,
                         Descripcion = encuesta.Descripcion,
                         FechaInicio = encuesta.FechaInicio,
@@ -83,7 +81,6 @@ namespace AventasApi.Controllers
 
                     EncuestaBD.Nombre = encuesta.Nombre;
                     EncuestaBD.Descripcion = encuesta.Descripcion;
-                    EncuestaBD.EmpresaId = encuesta.Empresa;
                     EncuestaBD.FechaInicio = encuesta.FechaInicio;
                     EncuestaBD.FechaFin = encuesta.FechaFin;
                     EncuestaBD.ModifiedBy = encuesta.Usuario;

@@ -100,11 +100,12 @@ namespace AventasApi.Controllers
                                                           IdLinea = pxc.IdLinea
                                                       }).ToList(),
                                                       ListaImagenes = pxc.FotografiasXProducto.Where(txp => txp.FotografiaProducto != null)
-                                                         .Where(txp => (pxc.FotografiasXProducto.Where(fxp => fxp.CodigoColor == "").Count() > 0 && txp.CodigoColor == "") || (pxc.FotografiasXProducto.FirstOrDefault() != null && txp.CodigoColor == pxc.FotografiasXProducto.FirstOrDefault().CodigoColor))
-                                                         .OrderByDescending(foto => foto.Principal)
-                                                         .Select(foto => new FotografiasXProductoViewModel
-                                                         {
-                                                             IdFotografia = foto.IdFotografia,
+                                                           .Where(txp => (pxc.FotografiasXProducto.Where(fxp => fxp.CodigoColor == "").Count() > 0 && txp.CodigoColor == "") || (pxc.FotografiasXProducto.FirstOrDefault() != null
+                                                           && txp.CodigoColor == (pxc.FotografiasXProducto.Where(c => c.CodigoColor != null).Count() > 0 ? (pxc.ColoresxProducto.Where(c => c.Disponible == true).Count() > 0 ? pxc.ColoresxProducto.FirstOrDefault().CodigoColor : pxc.FotografiasXProducto.FirstOrDefault().CodigoColor) : pxc.FotografiasXProducto.FirstOrDefault().CodigoColor)))
+                                                           .OrderByDescending(foto => foto.Principal)
+                                                           .Select(foto => new FotografiasXProductoViewModel
+                                                           {
+                                                               IdFotografia = foto.IdFotografia,
                                                              FotografiaProducto = urlImagenes + foto.FotografiaProducto,
                                                              CodigoColor = foto.CodigoColor,
                                                              Principal = foto.Principal ?? false

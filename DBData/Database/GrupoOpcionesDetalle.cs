@@ -14,6 +14,12 @@ namespace DBData.Database
     
     public partial class GrupoOpcionesDetalle
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public GrupoOpcionesDetalle()
+        {
+            this.PreguntasOpciones = new HashSet<PreguntasOpciones>();
+        }
+    
         public int Id { get; set; }
         public int GrupoOpcionesId { get; set; }
         public string Nombre { get; set; }
@@ -23,5 +29,7 @@ namespace DBData.Database
         public Nullable<System.DateTime> ModifiedDate { get; set; }
     
         public virtual GrupoOpciones GrupoOpciones { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PreguntasOpciones> PreguntasOpciones { get; set; }
     }
 }

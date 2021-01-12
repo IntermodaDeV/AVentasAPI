@@ -198,14 +198,20 @@
         <AssociationConnector Association="AventasModel.FK_USUARIO" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__2CB38214" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__37311087" />
-        <EntityTypeShape EntityType="AventasModel.Encuesta" Width="1.5" PointX="14.375" PointY="0.75" />
         <EntityTypeShape EntityType="AventasModel.SeccionesEncuesta" Width="1.5" PointX="8.375" PointY="15.75" />
-        <AssociationConnector Association="AventasModel.FK__Encuesta__Empres__10D65D75" />
-        <AssociationConnector Association="AventasModel.FK__Secciones__Encue__2018A105" />
         <EntityTypeShape EntityType="AventasModel.TiposIngreso" Width="1.5" PointX="10.375" PointY="15.75" />
         <EntityTypeShape EntityType="AventasModel.GrupoOpcionesDetalle" Width="1.5" PointX="18.375" PointY="0.75" />
         <EntityTypeShape EntityType="AventasModel.GrupoOpciones" Width="1.5" PointX="3.375" PointY="18.75" />
         <AssociationConnector Association="AventasModel.FK__GrupoOpci__Grupo__47326E26" />
+        <EntityTypeShape EntityType="AventasModel.Encuesta" Width="1.5" PointX="6.125" PointY="18" />
+        <AssociationConnector Association="AventasModel.FK__Secciones__Encue__2018A105" />
+        <EntityTypeShape EntityType="AventasModel.Preguntas" Width="1.5" PointX="12.625" PointY="19.5" />
+        <EntityTypeShape EntityType="AventasModel.PreguntasOpciones" Width="1.5" PointX="20.625" PointY="10.75" />
+        <AssociationConnector Association="AventasModel.FK__Preguntas__Secci__5B3966D3" />
+        <AssociationConnector Association="AventasModel.FK__Preguntas__Grupo__5D21AF45" />
+        <AssociationConnector Association="AventasModel.FK__Preguntas__Grupo__60F24029" />
+        <AssociationConnector Association="AventasModel.FK__Preguntas__Pregu__5FFE1BF0" />
+        <AssociationConnector Association="AventasModel.FK__Preguntas__TipoI__5C2D8B0C" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
