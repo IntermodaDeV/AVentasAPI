@@ -356,7 +356,9 @@ namespace AventasApi.Controllers
                         {
                             ListaGrupoPrecios = ctx.MaestroGrupoPrecio.Where(x => grupo.ListaPrecios.Contains(x.GrupoPrecio) && x.EmpresaId == pais).Select(x=> x.GrupoPrecio).ToList();
                                 List<ColeccionViewModel> colecciones = await ctx.Colecciones
-                                    .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
+                                    .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today 
+                                     && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()
+                                     && (grupo.UsuarioOficina ? vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper() : vw_coleccion.Estatus == 1)).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
                                                  new ColeccionViewModel
                                                  {
                                                      GrupoPrecio = ListaGrupoPrecios.FirstOrDefault(),
