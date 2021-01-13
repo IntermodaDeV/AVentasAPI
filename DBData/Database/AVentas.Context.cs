@@ -113,8 +113,8 @@ namespace DBData.Database
         public virtual DbSet<GrupoOpcionesDetalle> GrupoOpcionesDetalle { get; set; }
         public virtual DbSet<GrupoOpciones> GrupoOpciones { get; set; }
         public virtual DbSet<Encuesta> Encuesta { get; set; }
-        public virtual DbSet<Preguntas> Preguntas { get; set; }
         public virtual DbSet<PreguntasOpciones> PreguntasOpciones { get; set; }
+        public virtual DbSet<Preguntas> Preguntas { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

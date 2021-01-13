@@ -205,11 +205,11 @@
         <AssociationConnector Association="AventasModel.FK__GrupoOpci__Grupo__47326E26" />
         <EntityTypeShape EntityType="AventasModel.Encuesta" Width="1.5" PointX="6.125" PointY="18" />
         <AssociationConnector Association="AventasModel.FK__Secciones__Encue__2018A105" />
-        <EntityTypeShape EntityType="AventasModel.Preguntas" Width="1.5" PointX="12.625" PointY="19.5" />
         <EntityTypeShape EntityType="AventasModel.PreguntasOpciones" Width="1.5" PointX="20.625" PointY="10.75" />
+        <AssociationConnector Association="AventasModel.FK__Preguntas__Grupo__60F24029" />
+        <EntityTypeShape EntityType="AventasModel.Preguntas" Width="1.5" PointX="12.625" PointY="19.5" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__Secci__5B3966D3" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__Grupo__5D21AF45" />
-        <AssociationConnector Association="AventasModel.FK__Preguntas__Grupo__60F24029" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__Pregu__5FFE1BF0" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__TipoI__5C2D8B0C" />
         </Diagram>

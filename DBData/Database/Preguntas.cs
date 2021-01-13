@@ -23,7 +23,7 @@ namespace DBData.Database
         public int Id { get; set; }
         public int SeccionEncuestaId { get; set; }
         public int TipoIngresoId { get; set; }
-        public int GrupoOpcionesId { get; set; }
+        public Nullable<int> GrupoOpcionesId { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public bool Obligatorio { get; set; }
