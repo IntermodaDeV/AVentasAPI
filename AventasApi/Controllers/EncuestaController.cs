@@ -95,7 +95,7 @@ namespace AventasApi.Controllers
             }
         }
 
-        ///---------------GET Y POST DE SECCIONES ENCUESTAS
+        ///---------------SECCIONES ENCUESTAS -----------------------------------------------------------------------------
         [HttpGet]
         [Route("~/api/Encuesta/Secciones")]
         public async Task<IHttpActionResult> ObtenerSeccionesEncuestas()
@@ -122,6 +122,32 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("~/api/Encuesta/Seccion/{encuestaId}")]
+        public async Task<IHttpActionResult> ObtenerSeccionEncuesta(int encuestaId)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var ListaSecciones = await ctx.SeccionesEncuesta.Where(e=> e.EncuestaId == encuestaId).Select(x => new
+                    {
+                        Id = x.Id,
+                        EncuestaId = x.EncuestaId,
+                        Nombre = x.Nombre,
+                        Titulo = x.Titulo,
+                        Descripcion = x.Descripcion,
+                        Obligatorio = x.Obligatorio,
+                        Status = x.Status
+                    }).ToListAsync();
+                    return Ok(ListaSecciones);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
 
         [HttpPost]
         [Route("~/api/Encuesta/Secciones/registrar")]
@@ -175,6 +201,32 @@ namespace AventasApi.Controllers
                     EncuestaBD.Status = secciones.Status;
                     EncuestaBD.ModifiedBy = secciones.Usuario;
                     EncuestaBD.ModifiedDate = DateTime.Now;
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/secciones/estado/{Id}")]
+        public async Task<IHttpActionResult> ActualizarEstado(int Id)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var seccion = await ctx.SeccionesEncuesta.FindAsync(Id);
+
+                    if (seccion == null)
+                    {
+                        return BadRequest("No se encuentra la sección de encuesta.");
+                    }
+
+                    seccion.Status = !seccion.Status;
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }
