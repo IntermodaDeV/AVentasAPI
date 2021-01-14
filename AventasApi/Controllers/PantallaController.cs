@@ -114,15 +114,15 @@ namespace AventasApi.Controllers
 
                     if (pantallaBD == null)
                     {
-                        return BadRequest("No se encuentra el rol");
+                        return BadRequest("No se encuentra la pantalla");
                     }
 
                     pantallaBD.Nombre = pantalla.Nombre;
                     pantallaBD.Status = pantalla.Status;
                     pantallaBD.Ruta   = pantalla.Ruta;
                     pantallaBD.ModoOffline = pantalla.ModoOffline;
-                    pantallaBD.CreatedBy = pantalla.Usuario;
-                    pantallaBD.CreatedDate = DateTime.Now;
+                    pantallaBD.ModifiedBy = pantalla.Usuario;
+                    pantallaBD.ModifiedDate = DateTime.Now;
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }

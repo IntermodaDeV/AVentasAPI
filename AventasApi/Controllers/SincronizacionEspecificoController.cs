@@ -89,9 +89,20 @@ namespace AventasApi.Controllers
                             USUARIO = model.Usuario
                         };
 
+                        var entityParametros3 = new PARAMETROS_LE_ESPECIFICO
+                        {
+                            ID_LISTA_EJECUCION = entityLista.ID,
+                            FECHA = DateTime.Now,
+                            TIPO = "FORZAR",
+                            VALOR = model.Forzar,
+                            USUARIO = model.Usuario
+                        };
+
                         context.PARAMETROS_LE_ESPECIFICO.Add(entityParametros1);
                         context.SaveChanges();
                         context.PARAMETROS_LE_ESPECIFICO.Add(entityParametros2);
+                        context.SaveChanges();
+                        context.PARAMETROS_LE_ESPECIFICO.Add(entityParametros3);
                         context.SaveChanges();
                     }
 

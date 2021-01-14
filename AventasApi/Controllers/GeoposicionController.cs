@@ -7,12 +7,20 @@ using AventasApi.Services.Authentication;
 using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace AventasApi.Controllers
 {
     public class QueryFilter
     {
         public List<string> asesores { get; set; }
+    }
+
+    public class QueryFilterRecorrido
+    {
+        public string FechaInicio { get; set; }
+        public string FechaFin { get; set; }
+        public string asesor { get; set; }
     }
     public class GeoposicionController : ApiController
     {
@@ -104,7 +112,7 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
             }
         }
 
@@ -177,7 +185,59 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/Geoposicion/recorrido")]
+        public IHttpActionResult ObtenerRecorridoAsesor([FromUri]QueryFilterRecorrido filter)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var fechaInicio = DateTime.ParseExact($"{filter.FechaInicio}", "yyyy-MM-dd hh:mm tt", CultureInfo.InvariantCulture);
+                    var fechaFin = DateTime.ParseExact($"{filter.FechaFin}", "yyyy-MM-dd hh:mm tt", CultureInfo.InvariantCulture);
+                    var coordenadas = ctx.BitacoraGeoposicion.Where(x => x.CodigoAsesor == filter.asesor && x.Fecha>=fechaInicio && x.Fecha<=fechaFin)
+                        .Select(x => new { 
+                            lat = x.Latitude, 
+                            lng = x.Longitude })
+                        .ToList();
+
+                    var pedidos = ctx.PedidosxCliente.Where(x => x.CodigoAsesor == filter.asesor && x.Fecha >= fechaInicio && x.Fecha <= fechaFin)
+                        .Select(x => new
+                        {
+                            pedidoId=x.PedidoId,
+                            numeroPedido=x.NumeroPedido,
+                            cliente=x.CodigoCliente,
+                            nombreCliente = x.Clientes.Nombre,
+                            totalPedido=x.TotalPedido,
+                            lat = x.Latitude,
+                            lng = x.Longitude
+                        }).ToList();
+
+                    var recibos = ctx.RecibosxCliente.Where(x => x.CodigoAsesor == filter.asesor && x.Fecha >= fechaInicio && x.Fecha <= fechaFin)
+                        .Select(x => new
+                        {
+                            reciboId = x.ReciboId,
+                            numeroRecibo = x.NumeroRecibo,
+                            cliente = x.CodigoCliente,
+                            nombreCliente=ctx.Clientes.FirstOrDefault(c=>c.CodigoCliente==x.CodigoCliente).Nombre,
+                            totalRecibo=x.Valor,
+                            moneda=x.IdMoneda,
+                            lat = x.Latitude,
+                            lng = x.Longitude
+                        }).ToList();
+
+                    var datos = new { coordenadas=coordenadas,recibos=recibos,pedidos=pedidos };
+                    return Ok(datos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
             }
         }
     }

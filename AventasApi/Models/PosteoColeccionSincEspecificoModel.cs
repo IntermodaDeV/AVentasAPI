@@ -11,6 +11,7 @@ namespace AventasApi.Models
         public string EmpresaId { get; set; }
         public string ColeccionId { get; set; }
         public string Usuario { get; set; }
+        public string Forzar { get; set; }
     }
 
     public class PosteoCancelarListaEspecificoModel

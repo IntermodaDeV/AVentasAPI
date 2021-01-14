@@ -22,7 +22,7 @@ namespace AventasApi.Models.ViewModels
         public System.DateTime? ProduccionFinal { get; set; }
         public System.DateTime? EntregaInicio { get; set; }
         public System.DateTime? EntregaFinal { get; set; }
-        public int Estatus { get; set; }
+        public int? Estatus { get; set; }
         public string GrupoPrecio { get; internal set; }
 
         public List<AtributosViewModel> AtributosXColeccion;
