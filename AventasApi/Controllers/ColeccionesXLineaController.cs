@@ -168,8 +168,8 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/colecciones/{linea}/{pais}/{UsuarioOficina}")]
-        public async Task<IHttpActionResult> GetColeccionesPorLinea(string linea,string pais, bool UsuarioOficina)
+        [Route("~/api/colecciones/{linea}/{pais}")]
+        public async Task<IHttpActionResult> GetColeccionesPorLinea(string linea,string pais)
         {
             try
             {
@@ -179,8 +179,7 @@ namespace AventasApi.Controllers
                         .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today
                                && vw_coleccion.VentaFinal >= DateTime.Today
                                && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()
-                               && vw_coleccion.LineasxColeccion.Select(x => x.IdLinea).Contains(linea)
-                               && (UsuarioOficina ? vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper() : vw_coleccion.Estatus == 1))
+                               && vw_coleccion.LineasxColeccion.Select(x => x.IdLinea).Contains(linea))
                         .OrderBy(vw_coleccion => vw_coleccion.VentaFinal)
                         .Select(vw_coleccion =>
                              new ColeccionViewModel
@@ -195,7 +194,7 @@ namespace AventasApi.Controllers
                                  DisenoFinal = vw_coleccion.DisenoFinal,
                                  EntregaInicio = vw_coleccion.EntregaInicio,
                                  EntregaFinal = vw_coleccion.EntregaFinal,
-                                 Estatus = vw_coleccion.Estatus ?? 0,
+                                 Estatus = vw_coleccion.Estatus,
                                  ProduccionInicio = vw_coleccion.ProduccionInicio,
                                  ProduccionFinal = vw_coleccion.ProduccionFinal,
                                  VentaInicio = vw_coleccion.VentaInicio,
@@ -357,8 +356,7 @@ namespace AventasApi.Controllers
                             ListaGrupoPrecios = ctx.MaestroGrupoPrecio.Where(x => grupo.ListaPrecios.Contains(x.GrupoPrecio) && x.EmpresaId == pais).Select(x=> x.GrupoPrecio).ToList();
                                 List<ColeccionViewModel> colecciones = await ctx.Colecciones
                                     .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today 
-                                     && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()
-                                     && (grupo.UsuarioOficina ? vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper() : vw_coleccion.Estatus == 1)).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
+                                           && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
                                                  new ColeccionViewModel
                                                  {
                                                      GrupoPrecio = ListaGrupoPrecios.FirstOrDefault(),
@@ -372,7 +370,7 @@ namespace AventasApi.Controllers
                                                      DisenoFinal = vw_coleccion.DisenoFinal,
                                                      EntregaInicio = vw_coleccion.EntregaInicio,
                                                      EntregaFinal = vw_coleccion.EntregaFinal,
-                                                     Estatus = vw_coleccion.Estatus ?? 0,
+                                                     Estatus = vw_coleccion.Estatus,
                                                      ProduccionInicio = vw_coleccion.ProduccionInicio,
                                                      ProduccionFinal = vw_coleccion.ProduccionFinal,
                                                      VentaInicio = vw_coleccion.VentaInicio,
