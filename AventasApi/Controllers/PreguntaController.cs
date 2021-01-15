@@ -11,7 +11,7 @@ namespace AventasApi.Controllers
     public class PreguntaController : ApiController
     {
 
-        ///---------------GET Y POST DE ENCUESTAS
+        ///---------------PREGUNTAS
         [HttpGet]
         [Route("~/api/preguntas/{seccionId}")]
         public async Task<IHttpActionResult> ObtenerPreguntas(int seccionId)
@@ -103,6 +103,32 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/preguntas/estado/{Id}")]
+        public async Task<IHttpActionResult> ActualizarEstado(int Id)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var pregunta = await ctx.Preguntas.FindAsync(Id);
+
+                    if (pregunta == null)
+                    {
+                        return BadRequest("No se encuentra la pregunta.");
+                    }
+
+                    pregunta.Status = !pregunta.Status;
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
             }
         }
     }

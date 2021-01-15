@@ -185,7 +185,6 @@
     <Compile Include="Controllers\CorreoController.cs" />
     <Compile Include="Controllers\EmpresaController.cs" />
     <Compile Include="Controllers\PreguntaController.cs" />
-    <Compile Include="Controllers\RespuestaController.cs" />
     <Compile Include="Controllers\GrupoOpcionesController.cs" />
     <Compile Include="Controllers\EncuestaController.cs" />
     <Compile Include="Controllers\FuncionesController.cs" />
@@ -284,6 +283,7 @@
     <Compile Include="Models\ViewModels\EncPedTempViewModel.cs" />
     <Compile Include="Models\ViewModels\GrupoOpcionesDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\GrupoOpcionesViewModel.cs" />
+    <Compile Include="Models\ViewModels\PreguntasOpcionesViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasViewModel.cs" />
     <Compile Include="Models\ViewModels\TiposIngresosViewModel.cs" />
     <Compile Include="Models\ViewModels\SeccionEncuestaViewModel.cs" />

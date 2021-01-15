@@ -743,7 +743,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SeccionEncuestaId" Type="int" Nullable="false" />
           <Property Name="TipoIngresoId" Type="int" Nullable="false" />
           <Property Name="GrupoOpcionesId" Type="int" />
@@ -2106,10 +2106,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </ReferentialConstraint>
         </Association>
         <Association Name="FK__Preguntas__Secci__5B3966D3">
-          <End Role="Encuesta" Type="Self.Encuesta" Multiplicity="1" />
+          <End Role="SeccionesEncuesta" Type="Self.SeccionesEncuesta" Multiplicity="1" />
           <End Role="Preguntas" Type="Self.Preguntas" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Encuesta">
+            <Principal Role="SeccionesEncuesta">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Preguntas">
@@ -3098,7 +3098,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="PreguntasOpciones" EntitySet="PreguntasOpciones" />
           </AssociationSet>
           <AssociationSet Name="FK__Preguntas__Secci__5B3966D3" Association="Self.FK__Preguntas__Secci__5B3966D3">
-            <End Role="Encuesta" EntitySet="Encuesta" />
+            <End Role="SeccionesEncuesta" EntitySet="SeccionesEncuesta" />
             <End Role="Preguntas" EntitySet="Preguntas" />
           </AssociationSet>
           <AssociationSet Name="FK__Preguntas__TipoI__5C2D8B0C" Association="Self.FK__Preguntas__TipoI__5C2D8B0C">
@@ -5595,6 +5595,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="TiposIngreso" EntitySet="TiposIngreso" />
             <End Role="Preguntas" EntitySet="Preguntas" />
           </AssociationSet>
+          <AssociationSet Name="FK__Preguntas__Secci__5B3966D31" Association="AventasModel.FK__Preguntas__Secci__5B3966D31">
+            <End Role="SeccionesEncuesta" EntitySet="SeccionesEncuesta" />
+            <End Role="Preguntas" EntitySet="Preguntas" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -6584,6 +6588,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Encuesta" Relationship="AventasModel.FK__Secciones__Encue__2018A105" FromRole="SeccionesEncuesta" ToRole="Encuesta" />
+          <NavigationProperty Name="Preguntas" Relationship="AventasModel.FK__Preguntas__Secci__5B3966D31" FromRole="SeccionesEncuesta" ToRole="Preguntas" />
         </EntityType>
         <EntityType Name="TiposIngreso">
           <Key>
@@ -6715,6 +6720,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="GrupoOpciones" Relationship="AventasModel.FK__Preguntas__Grupo__5D21AF45" FromRole="Preguntas" ToRole="GrupoOpciones" />
           <NavigationProperty Name="PreguntasOpciones" Relationship="AventasModel.FK__Preguntas__Pregu__5FFE1BF0" FromRole="Preguntas" ToRole="PreguntasOpciones" />
           <NavigationProperty Name="TiposIngreso" Relationship="AventasModel.FK__Preguntas__TipoI__5C2D8B0C" FromRole="Preguntas" ToRole="TiposIngreso" />
+          <NavigationProperty Name="SeccionesEncuesta" Relationship="AventasModel.FK__Preguntas__Secci__5B3966D31" FromRole="Preguntas" ToRole="SeccionesEncuesta" />
         </EntityType>
         <Association Name="FK__Preguntas__Secci__5B3966D3">
           <End Type="AventasModel.Encuesta" Role="Encuesta" Multiplicity="1" />
@@ -6761,6 +6767,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="Preguntas">
               <PropertyRef Name="TipoIngresoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Preguntas__Secci__5B3966D31">
+          <End Type="AventasModel.SeccionesEncuesta" Role="SeccionesEncuesta" Multiplicity="1" />
+          <End Type="AventasModel.Preguntas" Role="Preguntas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SeccionesEncuesta">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Preguntas">
+              <PropertyRef Name="SeccionEncuestaId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>

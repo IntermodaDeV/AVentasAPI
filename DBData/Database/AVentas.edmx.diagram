@@ -212,6 +212,7 @@
         <AssociationConnector Association="AventasModel.FK__Preguntas__Grupo__5D21AF45" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__Pregu__5FFE1BF0" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__TipoI__5C2D8B0C" />
+        <AssociationConnector Association="AventasModel.FK__Preguntas__Secci__5B3966D31" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
