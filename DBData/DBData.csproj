@@ -168,6 +168,9 @@
     <Compile Include="Database\EmpresaTransporte.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Empresa_Encuesta.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Encuesta.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -322,6 +325,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\SeccionesEncuesta.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Secciones_Usuarios.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\sp_helpdiagramdefinition_Result.cs">

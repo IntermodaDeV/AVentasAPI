@@ -47,16 +47,16 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("EmpresasAsignadas/{Id}")]
-        public async Task<IHttpActionResult> GetEmpresaAsignada(int Id)
+        [Route("EmpresaPermitidas/{Id}")]
+        public async Task<IHttpActionResult> GetEmpresaPermitidas(int Id)
         {
             try
             {
                 using (var emp = new AVentasEntities())
                 {
-                    var EmpresasAsignadas = emp.Usuarios_Empresas.Where(x => x.UsuarioId == Id && x.Status == true).Select(x => x.EmpresaId).ToList();
+                    var EmpresasPermitidas = emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToList();
 
-                    var ListaEmpresas = await emp.Empresa.Where(e => EmpresasAsignadas.Contains(e.EmpresaId)).Select(e => new EmpresaViewModel
+                    var ListaEmpresas = await emp.Empresa.Where(e => EmpresasPermitidas.Contains(e.EmpresaId)).Select(e => new EmpresaViewModel
                     {
                         Id = e.EmpresaId,
                         Nombre = e.EmpresaId

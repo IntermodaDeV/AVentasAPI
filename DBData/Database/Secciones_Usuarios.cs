@@ -12,18 +12,18 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class Usuario_Rol
+    public partial class Secciones_Usuarios
     {
         public int Id { get; set; }
-        public int usuarioId { get; set; }
-        public int rolId { get; set; }
-        public bool status { get; set; }
-        public string createdBy { get; set; }
-        public System.DateTime createdDate { get; set; }
-        public string editedBy { get; set; }
-        public System.DateTime editedDate { get; set; }
+        public int SeccionId { get; set; }
+        public int UsuarioId { get; set; }
+        public bool Status { get; set; }
+        public string CreatedBy { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public string ModifiedBy { get; set; }
+        public Nullable<System.DateTime> ModifiedDate { get; set; }
     
-        public virtual Roles Roles { get; set; }
+        public virtual SeccionesEncuesta SeccionesEncuesta { get; set; }
         public virtual Usuarios Usuarios { get; set; }
     }
 }
