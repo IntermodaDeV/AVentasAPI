@@ -11,6 +11,13 @@ using AventasApi.Models;
 
 namespace AventasApi.Controllers
 {
+    public class DeshabilitarProducto
+    {
+        public int Coleccion { get; set; }
+        public string Pais { get; set; }
+        public string Producto { get; set; }
+    }
+
     [RoutePrefix("api/ColeccionesXLinea")]
     public class ColeccionesXLineaController : ApiController
     {
@@ -491,14 +498,14 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        [Route("~/api/colecciones/deshabilitarproducto/{pais}/{coleccion}/{producto}")]
-        public async Task<IHttpActionResult> DeshabilitarProducto(string pais,int coleccion,string producto)
+        [Route("~/api/colecciones/deshabilitarproducto")]
+        public async Task<IHttpActionResult> DeshabilitarProducto([FromBody] DeshabilitarProducto producto)
         {
             try
             {
                 using(AVentasEntities ctx = new AVentasEntities())
                 {
-                    ProductosxColeccion productoBd = await ctx.ProductosxColeccion.FirstOrDefaultAsync(x => x.IdColeccion == coleccion && x.EmpresaId == pais.ToUpper() && x.CodigoProducto == producto);
+                    ProductosxColeccion productoBd = await ctx.ProductosxColeccion.FirstOrDefaultAsync(x => x.IdColeccion == producto.Coleccion && x.EmpresaId == producto.Pais.ToUpper() && x.CodigoProducto == producto.Producto);
 
                     if (productoBd == null)
                     {
