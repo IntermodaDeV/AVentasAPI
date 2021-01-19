@@ -46,7 +46,8 @@ namespace AventasApi.Controllers
                         Status=x.status,
                         BloqueoCredito=x.BloqueoInfoCredito,
                         BloqueoAsesores=x.FlagTodosAsesores,
-                        UsuarioOficina = x.FlagUsuarioOficina
+                        UsuarioOficina = x.FlagUsuarioOficina,
+                        AdministradorProductos=x.FlagAdministradorProductos
                     }).ToListAsync();
                     return Ok(usuarios);
                 }
@@ -79,6 +80,7 @@ namespace AventasApi.Controllers
                         BloqueoInfoCredito=false,
                         FlagTodosAsesores=false,
                         FlagUsuarioOficina = false,
+                        FlagAdministradorProductos=false,
                         CreatedBy = usuario.creador,
                         CreatedDate=DateTime.Now,
                         ModifiedBy=usuario.creador,
@@ -295,6 +297,34 @@ namespace AventasApi.Controllers
                     }
 
                     usuario.BloqueoInfoCredito = !usuario.BloqueoInfoCredito;
+                    usuario.ModifiedDate = DateTime.Now;
+                    usuario.ModifiedBy = user;
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("desactivar/administradorproductos/{id}/{user}")]
+        public async Task<IHttpActionResult> RemoverAdministradorProducto(int id, string user)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var usuario = await ctx.Usuarios.FindAsync(id);
+
+                    if (usuario == null)
+                    {
+                        return BadRequest("El usuario no existe.");
+                    }
+
+                    usuario.FlagAdministradorProductos = !usuario.FlagAdministradorProductos;
                     usuario.ModifiedDate = DateTime.Now;
                     usuario.ModifiedBy = user;
                     var result = await ctx.SaveChangesAsync();

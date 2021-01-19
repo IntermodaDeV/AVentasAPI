@@ -489,5 +489,31 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("~/api/colecciones/deshabilitarproducto/{pais}/{coleccion}/{producto}")]
+        public async Task<IHttpActionResult> DeshabilitarProducto(string pais,int coleccion,string producto)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    ProductosxColeccion productoBd = await ctx.ProductosxColeccion.FirstOrDefaultAsync(x => x.IdColeccion == coleccion && x.EmpresaId == pais.ToUpper() && x.CodigoProducto == producto);
+
+                    if (productoBd == null)
+                    {
+                        return BadRequest("No se encuentra el producto.");
+                    }
+
+                    productoBd.VisibleParaVentas = false;
+                    await ctx.SaveChangesAsync();
+                    return Ok(productoBd);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+       
     }
 }

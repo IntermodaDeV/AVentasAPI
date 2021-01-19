@@ -76,7 +76,7 @@ namespace AventasApi.Controllers
                             ID_LISTA_EJECUCION = entityLista.ID,
                             FECHA = DateTime.Now,
                             TIPO = "EMPRESA",
-                            VALOR = model.EmpresaId,
+                            VALOR = model.EmpresaId==null?"":model.EmpresaId,
                             USUARIO = model.Usuario
                         };
 
@@ -85,7 +85,7 @@ namespace AventasApi.Controllers
                             ID_LISTA_EJECUCION = entityLista.ID,
                             FECHA = DateTime.Now,
                             TIPO = "COLECCION",
-                            VALOR = model.ColeccionId,
+                            VALOR = model.ColeccionId==null?"":model.ColeccionId,
                             USUARIO = model.Usuario
                         };
 
@@ -94,7 +94,7 @@ namespace AventasApi.Controllers
                             ID_LISTA_EJECUCION = entityLista.ID,
                             FECHA = DateTime.Now,
                             TIPO = "FORZAR",
-                            VALOR = model.Forzar,
+                            VALOR = model.Forzar==null?"0":model.Forzar,
                             USUARIO = model.Usuario
                         };
 
