@@ -323,7 +323,8 @@ namespace AventasApi.Controllers
                             Codigo = ped.Clientes.CodigoCliente,
                             Nombre = ped.Clientes.Nombre,
                             Direccion = ped.Clientes.Direccion,
-                            Moneda = ped.Clientes.IdMoneda
+                            Moneda = ped.Clientes.IdMoneda,
+                            EmpresaId = ped.Clientes.EmpresaId
                         },
                         Linea = context.MaestroLinea.Select(ml => new LineaViewModel
                         {

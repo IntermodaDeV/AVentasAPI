@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +32,14 @@ namespace AventasApi.Controllers
                        Descripcion = x.Descripcion,
                        Obligatorio = x.Obligatorio,
                        RespuestaObligatorio = x.RespuestaObligatorio,
-                       Status = x.Status
+                       Status = x.Status,
+                       PreguntaOpciones = ctx.PreguntasOpciones.Where(p => p.PreguntaId == x.Id).Select(p => new PreguntasOpcionesViewModel
+                       {
+                           Id = p.Id,
+                           GrupoOpcionesDetalleId = p.GrupoOpcionesDetalleId,
+                           PreguntaId = p.PreguntaId,
+                           Status = p.Status
+                       })
                     }).ToListAsync();
                     return Ok(ListaPreguntas);
                 }
@@ -48,8 +56,11 @@ namespace AventasApi.Controllers
         {
             try
             {
-                using (var ctx = new AVentasEntities())
+                using (var db = new AVentasEntities())
                 {
+
+                    List<PreguntasViewModel> Preguntas = new List<PreguntasViewModel>();
+                    Preguntas.Add(preguntasEncuesta);
                     var PreguntasEncuesta = new Preguntas() {
                         SeccionEncuestaId = preguntasEncuesta.SeccionEncuestaId,
                         TipoIngresoId = preguntasEncuesta.TipoIngresoId,
@@ -62,7 +73,46 @@ namespace AventasApi.Controllers
                         CreatedBy = preguntasEncuesta.Usuario,
                         CreatedDate = DateTime.Now
                     };
-                    ctx.Preguntas.Add(PreguntasEncuesta);
+                    db.Preguntas.Add(PreguntasEncuesta);
+                    var result = await db.SaveChangesAsync();
+
+                    var preguntaId = db.Preguntas.OrderByDescending(p => p.Id).Select(p => p.Id).FirstOrDefault();
+                    if (preguntasEncuesta.GrupoOpcionesDetalle.Count() > 0)
+                    {
+                        _= RegistrarPreguntasOpciones(preguntasEncuesta.GrupoOpcionesDetalle, preguntaId, preguntasEncuesta.Usuario);
+                    }
+                    return Ok("Ok");
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/preguntaOpciones/registrar")]
+        public async Task<IHttpActionResult> RegistrarPreguntasOpciones(List<string> preguntaOpciones, int preguntaId, string usuario)
+        {
+            try
+            {
+                List<PreguntasOpciones> ListaPreguntaOpciones = new List<PreguntasOpciones>();
+                using (var ctx = new AVentasEntities())
+                {
+                    foreach(var opcion in preguntaOpciones)
+                    {
+                        var PreguntasOpciones = new PreguntasOpciones()
+                        {
+                            PreguntaId = preguntaId,
+                            GrupoOpcionesDetalleId = Convert.ToInt32(opcion),
+                            Status = true,
+                            CreatedBy = usuario,
+                            CreatedDate = DateTime.Now
+                        };
+                        ctx.PreguntasOpciones.Add(PreguntasOpciones);
+                    }
+                   
+                   
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }
@@ -75,7 +125,7 @@ namespace AventasApi.Controllers
 
         [HttpPost]
         [Route("~/api/preguntas/modificar")]
-        public async Task<IHttpActionResult> ModificarEncuesta([FromBody] PreguntasViewModel preguntasEncuesta)
+        public async Task<IHttpActionResult> ModificarPregunta([FromBody] PreguntasViewModel preguntasEncuesta)
         {
             try
             {
@@ -103,7 +153,7 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
             }
         }
 

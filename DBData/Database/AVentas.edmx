@@ -774,7 +774,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PreguntaId" Type="int" Nullable="false" />
           <Property Name="GrupoOpcionesDetalleId" Type="int" Nullable="false" />
           <Property Name="Status" Type="bit" Nullable="false" />
