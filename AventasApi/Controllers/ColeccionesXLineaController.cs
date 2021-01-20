@@ -512,6 +512,11 @@ namespace AventasApi.Controllers
                         return BadRequest("No se encuentra el producto.");
                     }
 
+                    if (productoBd.VisibleParaVentas == false)
+                    {
+                        return BadRequest("El producto ya se encuentra deshabilitado.");
+                    }
+
                     productoBd.VisibleParaVentas = false;
                     await ctx.SaveChangesAsync();
                     return Ok(productoBd);
