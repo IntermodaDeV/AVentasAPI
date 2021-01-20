@@ -31,5 +31,6 @@ namespace AventasApi.Models
         public string MODULO { get; set; }
         public string PAQUETE { get; internal set; }
         public string EMPRESA { get; internal set; }
+        public string FORZOSA { get; internal set; }
     }
 }

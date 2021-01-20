@@ -199,7 +199,8 @@ namespace AventasApi.Controllers
                         ID_MODULO = x.GESTORES.MODULOS.ID,
                         MODULO = x.GESTORES.MODULOS.NOMBRE,
                         PAQUETE = context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "COLECCION").VALOR,
-                        EMPRESA = context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "EMPRESA").VALOR
+                        EMPRESA = context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "EMPRESA").VALOR,
+                        FORZOSA = context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "FORZAR") == null ? "0": context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "FORZAR").VALOR
                     }
                     ).ToList();
 
