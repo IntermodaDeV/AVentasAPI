@@ -729,6 +729,7 @@ namespace AventasApi.Controllers
                             reciboXCliente.Valor += detalleReciboXCliente.Valor;
                             reciboXCliente.DetalleRecibo.Add(detalleReciboXCliente);
                             var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == recibo.FACTURA);
+                            var fechaFactura = context.FacturasxCliente.FirstOrDefault(x=>x.Factura == recibo.FACTURA).FechaFactura;
                             if (pagoAplicado == null)
                             {
                                 TimeSpan ts = reciboPost.Fecha - subfactura.FechaVencimiento.Value;
@@ -739,7 +740,7 @@ namespace AventasApi.Controllers
                                 {
                                     IdFactura = recibo.FACTURA,
                                     NumeroFEL = subfactura.NumeroFEL,
-                                    Fecha = subfactura.FechaVencimiento.Value,
+                                    Fecha = fechaFactura.Value,
                                     Dias = dias,
                                     TipoDocumento = subfactura.FacturasxCliente.Tipo,
                                     EsAbono = detalleReciboXCliente.EsAbono,
