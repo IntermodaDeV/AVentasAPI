@@ -498,7 +498,7 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        [Route("~/api/colecciones/deshabilitarproducto")]
+        [Route("deshabilitarproducto")]
         public async Task<IHttpActionResult> DeshabilitarProducto([FromBody] DeshabilitarProducto producto)
         {
             try
@@ -518,8 +518,8 @@ namespace AventasApi.Controllers
                     }
 
                     productoBd.VisibleParaVentas = false;
-                    await ctx.SaveChangesAsync();
-                    return Ok(productoBd);
+                    var res = await ctx.SaveChangesAsync();
+                    return Ok(res);
                 }
             }catch(Exception e)
             {
