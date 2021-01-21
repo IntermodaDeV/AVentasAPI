@@ -33,7 +33,7 @@ namespace AventasApi.Controllers
                        Obligatorio = x.Obligatorio,
                        RespuestaObligatorio = x.RespuestaObligatorio,
                        Status = x.Status,
-                       PreguntaOpciones = ctx.PreguntasOpciones.Where(p => p.PreguntaId == x.Id).Select(p => new PreguntasOpcionesViewModel
+                       PreguntaOpciones = ctx.PreguntasOpciones.Where(p => p.PreguntaId == x.Id && p.Status == true).Select(p => new PreguntasOpcionesViewModel
                        {
                            Id = p.Id,
                            GrupoOpcionesDetalleId = p.GrupoOpcionesDetalleId,
@@ -92,11 +92,10 @@ namespace AventasApi.Controllers
 
         [HttpPost]
         [Route("~/api/preguntaOpciones/registrar")]
-        public async Task<IHttpActionResult> RegistrarPreguntasOpciones(List<string> preguntaOpciones, int preguntaId, string usuario)
+        public async Task<IHttpActionResult> RegistrarPreguntasOpciones(List<int> preguntaOpciones, int preguntaId, string usuario)
         {
             try
             {
-                List<PreguntasOpciones> ListaPreguntaOpciones = new List<PreguntasOpciones>();
                 using (var ctx = new AVentasEntities())
                 {
                     foreach(var opcion in preguntaOpciones)
@@ -104,7 +103,7 @@ namespace AventasApi.Controllers
                         var PreguntasOpciones = new PreguntasOpciones()
                         {
                             PreguntaId = preguntaId,
-                            GrupoOpcionesDetalleId = Convert.ToInt32(opcion),
+                            GrupoOpcionesDetalleId = opcion,
                             Status = true,
                             CreatedBy = usuario,
                             CreatedDate = DateTime.Now
@@ -147,7 +146,76 @@ namespace AventasApi.Controllers
                     PreguntasBD.Status = preguntasEncuesta.Status;
                     PreguntasBD.ModifiedBy = preguntasEncuesta.Usuario;
                     PreguntasBD.ModifiedDate = DateTime.Now;
+
+
+                    if (preguntasEncuesta.GrupoOpcionesDetalle.Count() > 0 && preguntasEncuesta.RequiereOpciones == true)
+                    {
+                        _ = ModificarPreguntasOpciones(preguntasEncuesta.GrupoOpcionesDetalle, PreguntasBD.Id, preguntasEncuesta.Usuario);
+                    }
+                    else
+                    {
+                        var preguntasOpciones = ctx.PreguntasOpciones.Where(p => p.PreguntaId == PreguntasBD.Id).ToList();
+                        foreach (var pregunta in preguntasOpciones)
+                        {
+                            pregunta.Status = false;
+                            pregunta.ModifiedBy = preguntasEncuesta.Usuario;
+                            pregunta.ModifiedDate = DateTime.Now;
+                        }
+                    }
                     var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/preguntaOpciones/registrar")]
+        public async Task<IHttpActionResult> ModificarPreguntasOpciones(List<int> preguntaOpciones, int preguntaId, string usuario)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+                    var preguntasOpciones = db.PreguntasOpciones.Where(p => p.PreguntaId == preguntaId && !preguntaOpciones.Contains(p.GrupoOpcionesDetalleId)).ToList();
+                    foreach (var pregunta in preguntasOpciones)
+                    {
+                        pregunta.Status = false;
+                        pregunta.ModifiedBy = usuario;
+                        pregunta.ModifiedDate = DateTime.Now;
+                    }
+
+                    foreach (var opcion in preguntaOpciones)
+                    {
+                        var PreguntaOpcionesDB = await db.PreguntasOpciones.FirstOrDefaultAsync(p => p.PreguntaId == preguntaId && p.GrupoOpcionesDetalleId == opcion);
+
+                        if(PreguntaOpcionesDB != null)
+                        {
+                            PreguntaOpcionesDB.Status = true;
+                            PreguntaOpcionesDB.ModifiedBy = usuario;
+                            PreguntaOpcionesDB.ModifiedDate = DateTime.Now;
+                        }
+                        else
+                        {
+                            var PreguntasOpciones = new PreguntasOpciones()
+                            {
+                                PreguntaId = preguntaId,
+                                GrupoOpcionesDetalleId = opcion,
+                                Status = true,
+                                CreatedBy = usuario,
+                                CreatedDate = DateTime.Now
+                            };
+                            db.PreguntasOpciones.Add(PreguntasOpciones);
+                        }
+                       
+                    }
+
+
+                    var result = await db.SaveChangesAsync();
                     return Ok(result);
                 }
             }
