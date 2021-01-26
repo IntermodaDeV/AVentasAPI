@@ -11,6 +11,13 @@ using AventasApi.Models;
 
 namespace AventasApi.Controllers
 {
+    public class DeshabilitarProducto
+    {
+        public int Coleccion { get; set; }
+        public string Pais { get; set; }
+        public string Producto { get; set; }
+    }
+
     [RoutePrefix("api/ColeccionesXLinea")]
     public class ColeccionesXLineaController : ApiController
     {
@@ -168,8 +175,8 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/colecciones/{linea}/{pais}/{UsuarioOficina}")]
-        public async Task<IHttpActionResult> GetColeccionesPorLinea(string linea,string pais, bool UsuarioOficina)
+        [Route("~/api/colecciones/{linea}/{pais}")]
+        public async Task<IHttpActionResult> GetColeccionesPorLinea(string linea,string pais)
         {
             try
             {
@@ -179,8 +186,7 @@ namespace AventasApi.Controllers
                         .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today
                                && vw_coleccion.VentaFinal >= DateTime.Today
                                && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()
-                               && vw_coleccion.LineasxColeccion.Select(x => x.IdLinea).Contains(linea)
-                               && (UsuarioOficina ? vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper() : vw_coleccion.Estatus == 1))
+                               && vw_coleccion.LineasxColeccion.Select(x => x.IdLinea).Contains(linea))
                         .OrderBy(vw_coleccion => vw_coleccion.VentaFinal)
                         .Select(vw_coleccion =>
                              new ColeccionViewModel
@@ -195,7 +201,7 @@ namespace AventasApi.Controllers
                                  DisenoFinal = vw_coleccion.DisenoFinal,
                                  EntregaInicio = vw_coleccion.EntregaInicio,
                                  EntregaFinal = vw_coleccion.EntregaFinal,
-                                 Estatus = vw_coleccion.Estatus ?? 0,
+                                 Estatus = vw_coleccion.Estatus,
                                  ProduccionInicio = vw_coleccion.ProduccionInicio,
                                  ProduccionFinal = vw_coleccion.ProduccionFinal,
                                  VentaInicio = vw_coleccion.VentaInicio,
@@ -357,8 +363,7 @@ namespace AventasApi.Controllers
                             ListaGrupoPrecios = ctx.MaestroGrupoPrecio.Where(x => grupo.ListaPrecios.Contains(x.GrupoPrecio) && x.EmpresaId == pais).Select(x=> x.GrupoPrecio).ToList();
                                 List<ColeccionViewModel> colecciones = await ctx.Colecciones
                                     .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today 
-                                     && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()
-                                     && (grupo.UsuarioOficina ? vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper() : vw_coleccion.Estatus == 1)).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
+                                           && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
                                                  new ColeccionViewModel
                                                  {
                                                      GrupoPrecio = ListaGrupoPrecios.FirstOrDefault(),
@@ -372,7 +377,7 @@ namespace AventasApi.Controllers
                                                      DisenoFinal = vw_coleccion.DisenoFinal,
                                                      EntregaInicio = vw_coleccion.EntregaInicio,
                                                      EntregaFinal = vw_coleccion.EntregaFinal,
-                                                     Estatus = vw_coleccion.Estatus ?? 0,
+                                                     Estatus = vw_coleccion.Estatus,
                                                      ProduccionInicio = vw_coleccion.ProduccionInicio,
                                                      ProduccionFinal = vw_coleccion.ProduccionFinal,
                                                      VentaInicio = vw_coleccion.VentaInicio,
@@ -491,5 +496,36 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("deshabilitarproducto")]
+        public async Task<IHttpActionResult> DeshabilitarProducto([FromBody] DeshabilitarProducto producto)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    ProductosxColeccion productoBd = await ctx.ProductosxColeccion.FirstOrDefaultAsync(x => x.IdColeccion == producto.Coleccion && x.EmpresaId == producto.Pais.ToUpper() && x.CodigoProducto == producto.Producto);
+
+                    if (productoBd == null)
+                    {
+                        return BadRequest("No se encuentra el producto.");
+                    }
+
+                    if (productoBd.VisibleParaVentas == false)
+                    {
+                        return BadRequest("El producto ya se encuentra deshabilitado.");
+                    }
+
+                    productoBd.VisibleParaVentas = false;
+                    var res = await ctx.SaveChangesAsync();
+                    return Ok(res);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+       
     }
 }

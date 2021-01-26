@@ -19,6 +19,7 @@ namespace DBData.Database
         {
             this.SeccionesEncuesta = new HashSet<SeccionesEncuesta>();
             this.Preguntas = new HashSet<Preguntas>();
+            this.Empresa_Encuesta = new HashSet<Empresa_Encuesta>();
         }
     
         public int Id { get; set; }
@@ -35,5 +36,7 @@ namespace DBData.Database
         public virtual ICollection<SeccionesEncuesta> SeccionesEncuesta { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Preguntas> Preguntas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Empresa_Encuesta> Empresa_Encuesta { get; set; }
     }
 }

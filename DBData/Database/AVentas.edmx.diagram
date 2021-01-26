@@ -212,6 +212,13 @@
         <AssociationConnector Association="AventasModel.FK__Preguntas__Grupo__5D21AF45" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__Pregu__5FFE1BF0" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__TipoI__5C2D8B0C" />
+        <AssociationConnector Association="AventasModel.FK__Preguntas__Secci__5B3966D31" />
+        <EntityTypeShape EntityType="AventasModel.Empresa_Encuesta" Width="1.5" PointX="8.375" PointY="25.625" />
+        <EntityTypeShape EntityType="AventasModel.Secciones_Usuarios" Width="1.5" PointX="10.625" PointY="25.375" />
+        <AssociationConnector Association="AventasModel.FK__EmpresaEn__Empre__7405149D" />
+        <AssociationConnector Association="AventasModel.FK__EmpresaEn__Encue__74F938D6" />
+        <AssociationConnector Association="AventasModel.FK__Secciones__Secci__7BA63665" />
+        <AssociationConnector Association="AventasModel.FK__Secciones__Usuar__7C9A5A9E" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using AventasApi.Models;
 using AventasApi.Models.ViewModels;
 using DBData.Database;
 
@@ -11,7 +12,7 @@ namespace AventasApi.Controllers
     public class EncuestaController : ApiController
     {
 
-        ///---------------GET Y POST DE ENCUESTAS
+        ///--------------- ENCUESTAS
         [HttpGet]
         [Route("~/api/Encuesta")]
         public async Task<IHttpActionResult> ObtenerEncuestas()
@@ -95,6 +96,125 @@ namespace AventasApi.Controllers
             }
         }
 
+
+        ///---------------------------EMPRESAS ENCUESTAS ---------------------------------------------------------
+        [HttpGet]
+        [Route("~/api/Encuesta/EmpresaPermitidas/{Id}")]
+        public async Task<IHttpActionResult> GetEmpresaPermitidas(int Id)
+        {
+            try
+            {
+                using (var emp = new AVentasEntities())
+                {
+                    var EmpresasPermitidas = emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToList();
+
+                    var ListaEmpresas = await emp.Empresa.Where(e => EmpresasPermitidas.Contains(e.EmpresaId)).Select(e => new EmpresaViewModel
+                    {
+                        Id = e.EmpresaId,
+                        Nombre = e.EmpresaId
+                    }).ToListAsync();
+
+                    return Ok(ListaEmpresas);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/Encuesta/EmpresasNoPermitidas/{Id}")]
+        public async Task<IHttpActionResult> GetEmpresasNoPermitidas(int Id)
+        {
+            try
+            {
+                using (var emp = new AVentasEntities())
+                {
+                    var EmpresasPermitidas = emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToList();
+
+                    var ListaEmpresas = await emp.Empresa.Where(e => !EmpresasPermitidas.Contains(e.EmpresaId)).Select(e => new EmpresaViewModel
+                    {
+                        Id = e.EmpresaId,
+                        Nombre = e.EmpresaId
+                    }).ToListAsync();
+
+                    return Ok(ListaEmpresas);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+
+        [HttpPost]
+        [Route("~/api/Encuesta/AsignarEmpresa/{EmpresaId}/{encuestaId}/{usuario}")]
+        public async Task<IHttpActionResult> AsignarEmpresa(string EmpresaId, int encuestaId, string usuario)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var EncuestaEmpresa = await ctx.Empresa_Encuesta.FirstOrDefaultAsync(x => x.EncuestaId == encuestaId && x.EmpresaId == EmpresaId);
+
+                    if (EncuestaEmpresa != null)
+                    {
+                        EncuestaEmpresa.Status = true;
+                        EncuestaEmpresa.ModifiedBy = usuario;
+                        EncuestaEmpresa.ModifiedDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        var Empresa_Encuesta = new Empresa_Encuesta()
+                        {
+                            EmpresaId = EmpresaId,
+                            EncuestaId = encuestaId,
+                            Status = true,
+                            CreatedBy = usuario,
+                            CreatedDate = DateTime.Now
+                        };
+                        ctx.Empresa_Encuesta.Add(Empresa_Encuesta);
+                    }
+
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/Encuesta/RemoverEmpresa/{EmpresaId}/{EncuestaId}/{usuario}")]
+        public async Task<IHttpActionResult> RemoverEmpresa(string EmpresaId, int EncuestaId, string usuario)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var EmpresaEncuesta = await ctx.Empresa_Encuesta.FirstOrDefaultAsync(x => x.EmpresaId == EmpresaId && x.EncuestaId == EncuestaId);
+
+                    if (EmpresaEncuesta == null)
+                    {
+                        return BadRequest("No se encontro el registro, contacte al administrador");
+                    }
+
+                    EmpresaEncuesta.Status = false;
+                    EmpresaEncuesta.ModifiedBy = usuario;
+                    EmpresaEncuesta.ModifiedDate = DateTime.Now;
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
         ///---------------SECCIONES ENCUESTAS -----------------------------------------------------------------------------
         [HttpGet]
         [Route("~/api/Encuesta/Secciones")]
@@ -134,6 +254,7 @@ namespace AventasApi.Controllers
                     {
                         Id = x.Id,
                         EncuestaId = x.EncuestaId,
+                        NombreEncuesta = x.Encuesta.Nombre,
                         Nombre = x.Nombre,
                         Titulo = x.Titulo,
                         Descripcion = x.Descripcion,
@@ -227,6 +348,123 @@ namespace AventasApi.Controllers
                     }
 
                     seccion.Status = !seccion.Status;
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/secciones/usuarios/{Id}")]
+        public async Task<IHttpActionResult> GetUsuariosConAcceso(int Id)
+        {
+            try
+            {
+                using (var emp = new AVentasEntities())
+                {
+                    var UsuariosConAcceso = emp.Secciones_Usuarios.Where(x => x.SeccionId == Id && x.Status == true).Select(x => x.UsuarioId).ToList();
+                    var ListaUsuarios = await emp.Usuarios.Where(e => UsuariosConAcceso.Contains(e.Id)).Select(e => new UsuarioModel
+                    {
+                        Id = e.Id,
+                        Nombre = e.nombre                        
+                    }).ToListAsync();
+
+                    return Ok(ListaUsuarios);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/secciones/usuariosSinAcceso/{Id}")]
+        public async Task<IHttpActionResult> GetUsuariosSinAcceso(int Id)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+                    var UsuariosConAcceso = db.Secciones_Usuarios.Where(x => x.SeccionId == Id && x.Status == true).Select(x => x.UsuarioId).ToList();
+                    var encuesta = db.SeccionesEncuesta.Where(e => e.Id == Id).Select(x => x.EncuestaId).FirstOrDefault();
+                    var EmpresaEncuesta = db.Empresa_Encuesta.Where(x => x.EncuestaId == encuesta && x.Status == true).Select(x=> x.EmpresaId).ToList();
+                    var ListaUsuarios = await db.Usuarios.Where(e => !UsuariosConAcceso.Contains(e.Id) && EmpresaEncuesta.Contains(e.EmpresaId)).Select(e => new UsuarioModel
+                    {
+                        Id = e.Id,
+                        Nombre = e.nombre
+                    }).ToListAsync();
+
+                    return Ok(ListaUsuarios);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/secciones/AsignarAccesoUsuario/{seccionId}/{usuarioId}/{usuario}")]
+        public async Task<IHttpActionResult> AsignarAccesoUsuario(int seccionId, int usuarioId, string usuario)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+                    var ListaUsuarios = await db.Secciones_Usuarios.FirstOrDefaultAsync(u => u.UsuarioId == usuarioId && u.SeccionId == seccionId);
+
+                    if (ListaUsuarios != null)
+                    {
+                        ListaUsuarios.Status = true;
+                        ListaUsuarios.ModifiedBy = usuario;
+                        ListaUsuarios.ModifiedDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        var Secciones_Usuarios = new Secciones_Usuarios()
+                        {
+                            SeccionId  =  seccionId,
+                            UsuarioId = usuarioId,
+                            Status = true,
+                            CreatedBy = usuario,
+                            CreatedDate = DateTime.Now
+                        };
+                        db.Secciones_Usuarios.Add(Secciones_Usuarios);
+                    }
+
+                    var result = await db.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/secciones/RemoverUsuario/{usuarioId}/{seccionId}/{usuario}")]
+        public async Task<IHttpActionResult> RemoverAccesoUsuario(int usuarioId, int seccionId, string usuario)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var UsuarioSeccion = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.UsuarioId == usuarioId && x.SeccionId == seccionId);
+
+                    if (UsuarioSeccion == null)
+                    {
+                        return BadRequest("No se encontro el registro, contacte al administrador");
+                    }
+
+                    UsuarioSeccion.Status = false;
+                    UsuarioSeccion.ModifiedBy = usuario;
+                    UsuarioSeccion.ModifiedDate = DateTime.Now;
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }

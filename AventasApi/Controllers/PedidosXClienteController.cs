@@ -16,6 +16,8 @@ using ExternalApiData.Enviroments;
 using Newtonsoft.Json;
 using ExternalApiData.ApiModels;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
+using System.IO;
 
 namespace AventasApi.Controllers
 {
@@ -64,6 +66,17 @@ namespace AventasApi.Controllers
         {
             try
             {
+                try
+                {
+                    var json = new JavaScriptSerializer().Serialize(Pedido);
+
+                    EscribirEnArchivo($"Pedido At: {DateTime.Now} : {json}.\n");
+                }
+                catch (Exception)
+                {
+
+                }
+
                 string numeroReferencia = Pedido.NumeroReferencia;
                 int numeroCorelativo = 0;
                 var cache = false;
@@ -323,7 +336,8 @@ namespace AventasApi.Controllers
                             Codigo = ped.Clientes.CodigoCliente,
                             Nombre = ped.Clientes.Nombre,
                             Direccion = ped.Clientes.Direccion,
-                            Moneda = ped.Clientes.IdMoneda
+                            Moneda = ped.Clientes.IdMoneda,
+                            EmpresaId = ped.Clientes.EmpresaId
                         },
                         Linea = context.MaestroLinea.Select(ml => new LineaViewModel
                         {
@@ -805,7 +819,41 @@ namespace AventasApi.Controllers
             }
         }
 
+        public void EscribirEnArchivo(string Message)
+        {
+            try
+            {
+                #region Creacion Carpeta
+                string path = @"C:\AVentasAPIPedidos";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                #endregion Creacion Carpeta
 
+                #region Creacion Archivo
+                string filepath = path + "\\ServiceLog_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+                if (!File.Exists(filepath))
+                {
+                    using (StreamWriter sw = File.CreateText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                else
+                {
+                    using (StreamWriter sw = File.AppendText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                #endregion Creacion Archivo
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
     }
 }

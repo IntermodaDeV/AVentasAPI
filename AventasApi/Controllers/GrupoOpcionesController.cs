@@ -141,6 +141,31 @@ namespace AventasApi.Controllers
         }
 
 
+        [HttpGet]
+        [Route("~/api/GrupoOpcionesDetalle/{GrupoOpcionId}")]
+        public async Task<IHttpActionResult> ObtenerGrupoOpcionesDetalle(int GrupoOpcionId)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var grupoOpcionesDetalle = await ctx.GrupoOpcionesDetalle.Where(g=> g.GrupoOpcionesId == GrupoOpcionId).Select(x => new
+                    {
+                        Id = x.Id,
+                        GrupoOpcionesId = x.GrupoOpcionesId,
+                        NombreGrupoOpciones = x.GrupoOpciones.Nombre,
+                        Nombre = x.Nombre
+                    }).ToListAsync();
+                    return Ok(grupoOpcionesDetalle);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+
         [HttpPost]
         [Route("~/api/GrupoOpcionesDetalle/registrar")]
         public async Task<IHttpActionResult> RegistrarGrupoOpcionesDetalle([FromBody] GrupoOpcionesDetalleViewModel grupoOpcionesDetalle)

@@ -6,6 +6,5 @@ namespace AventasApi.Models
     {
         public List<string> ListaPrecios { get; set; }
         public List<string> Paises { get; set; }
-        public bool UsuarioOficina { get; set; }
     }
 }

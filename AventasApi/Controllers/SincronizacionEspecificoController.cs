@@ -76,7 +76,7 @@ namespace AventasApi.Controllers
                             ID_LISTA_EJECUCION = entityLista.ID,
                             FECHA = DateTime.Now,
                             TIPO = "EMPRESA",
-                            VALOR = model.EmpresaId,
+                            VALOR = model.EmpresaId==null?"":model.EmpresaId,
                             USUARIO = model.Usuario
                         };
 
@@ -85,7 +85,7 @@ namespace AventasApi.Controllers
                             ID_LISTA_EJECUCION = entityLista.ID,
                             FECHA = DateTime.Now,
                             TIPO = "COLECCION",
-                            VALOR = model.ColeccionId,
+                            VALOR = model.ColeccionId==null?"":model.ColeccionId,
                             USUARIO = model.Usuario
                         };
 
@@ -94,7 +94,7 @@ namespace AventasApi.Controllers
                             ID_LISTA_EJECUCION = entityLista.ID,
                             FECHA = DateTime.Now,
                             TIPO = "FORZAR",
-                            VALOR = model.Forzar,
+                            VALOR = model.Forzar==null?"0":model.Forzar,
                             USUARIO = model.Usuario
                         };
 
@@ -199,7 +199,8 @@ namespace AventasApi.Controllers
                         ID_MODULO = x.GESTORES.MODULOS.ID,
                         MODULO = x.GESTORES.MODULOS.NOMBRE,
                         PAQUETE = context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "COLECCION").VALOR,
-                        EMPRESA = context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "EMPRESA").VALOR
+                        EMPRESA = context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "EMPRESA").VALOR,
+                        FORZOSA = context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "FORZAR") == null ? "0": context.PARAMETROS_LE_ESPECIFICO.FirstOrDefault(p => p.ID_LISTA_EJECUCION == x.ID && p.TIPO == "FORZAR").VALOR
                     }
                     ).ToList();
 

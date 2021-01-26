@@ -12,9 +12,11 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Script.Serialization;
 
 namespace AventasApi.Controllers
 {
@@ -587,6 +589,17 @@ namespace AventasApi.Controllers
         {
             try
             {
+                try
+                {
+                    var json = new JavaScriptSerializer().Serialize(reciboPost);
+
+                    EscribirEnArchivo($"Recibo At: {DateTime.Now} : {json}.\n");
+                }
+                catch (Exception)
+                {
+
+                }
+
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
 
                 RespuestaRecibo respuestaPagoRecibo = new RespuestaRecibo();
@@ -729,6 +742,7 @@ namespace AventasApi.Controllers
                             reciboXCliente.Valor += detalleReciboXCliente.Valor;
                             reciboXCliente.DetalleRecibo.Add(detalleReciboXCliente);
                             var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == recibo.FACTURA);
+                            var fechaFactura = context.FacturasxCliente.FirstOrDefault(x=>x.Factura == recibo.FACTURA).FechaFactura;
                             if (pagoAplicado == null)
                             {
                                 TimeSpan ts = reciboPost.Fecha - subfactura.FechaVencimiento.Value;
@@ -739,7 +753,7 @@ namespace AventasApi.Controllers
                                 {
                                     IdFactura = recibo.FACTURA,
                                     NumeroFEL = subfactura.NumeroFEL,
-                                    Fecha = subfactura.FechaVencimiento.Value,
+                                    Fecha = fechaFactura.Value,
                                     Dias = dias,
                                     TipoDocumento = subfactura.FacturasxCliente.Tipo,
                                     EsAbono = detalleReciboXCliente.EsAbono,
@@ -949,6 +963,42 @@ namespace AventasApi.Controllers
             else
             {
                 return BadRequest("El servidor de AX no esta disponible.");
+            }
+        }
+
+        public void EscribirEnArchivo(string Message)
+        {
+            try
+            {
+                #region Creacion Carpeta
+                string path = @"C:\AVentasAPIRecibos";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                #endregion Creacion Carpeta
+
+                #region Creacion Archivo
+                string filepath = path + "\\ServiceLog_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+                if (!File.Exists(filepath))
+                {
+                    using (StreamWriter sw = File.CreateText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                else
+                {
+                    using (StreamWriter sw = File.AppendText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                #endregion Creacion Archivo
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 

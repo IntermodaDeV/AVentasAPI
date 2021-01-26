@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace AventasApi.Controllers
     public class PreguntaController : ApiController
     {
 
-        ///---------------GET Y POST DE ENCUESTAS
+        ///---------------PREGUNTAS
         [HttpGet]
         [Route("~/api/preguntas/{seccionId}")]
         public async Task<IHttpActionResult> ObtenerPreguntas(int seccionId)
@@ -24,13 +25,21 @@ namespace AventasApi.Controllers
                     {
                        Id = x.Id,
                        SeccionEncuestaId = x.SeccionEncuestaId,
+                       NombreSeccion = x.SeccionesEncuesta.Nombre,
                        TipoIngresoId = x.TipoIngresoId,
                        GrupoOpcionesId = x.GrupoOpcionesId,
                        Nombre = x.Nombre,
                        Descripcion = x.Descripcion,
                        Obligatorio = x.Obligatorio,
                        RespuestaObligatorio = x.RespuestaObligatorio,
-                       Status = x.Status
+                       Status = x.Status,
+                       PreguntaOpciones = ctx.PreguntasOpciones.Where(p => p.PreguntaId == x.Id && p.Status == true).Select(p => new PreguntasOpcionesViewModel
+                       {
+                           Id = p.Id,
+                           GrupoOpcionesDetalleId = p.GrupoOpcionesDetalleId,
+                           PreguntaId = p.PreguntaId,
+                           Status = p.Status
+                       })
                     }).ToListAsync();
                     return Ok(ListaPreguntas);
                 }
@@ -47,8 +56,11 @@ namespace AventasApi.Controllers
         {
             try
             {
-                using (var ctx = new AVentasEntities())
+                using (var db = new AVentasEntities())
                 {
+
+                    List<PreguntasViewModel> Preguntas = new List<PreguntasViewModel>();
+                    Preguntas.Add(preguntasEncuesta);
                     var PreguntasEncuesta = new Preguntas() {
                         SeccionEncuestaId = preguntasEncuesta.SeccionEncuestaId,
                         TipoIngresoId = preguntasEncuesta.TipoIngresoId,
@@ -61,7 +73,45 @@ namespace AventasApi.Controllers
                         CreatedBy = preguntasEncuesta.Usuario,
                         CreatedDate = DateTime.Now
                     };
-                    ctx.Preguntas.Add(PreguntasEncuesta);
+                    db.Preguntas.Add(PreguntasEncuesta);
+                    var result = await db.SaveChangesAsync();
+
+                    var preguntaId = db.Preguntas.OrderByDescending(p => p.Id).Select(p => p.Id).FirstOrDefault();
+                    if (preguntasEncuesta.GrupoOpcionesDetalle.Count() > 0)
+                    {
+                        _= RegistrarPreguntasOpciones(preguntasEncuesta.GrupoOpcionesDetalle, preguntaId, preguntasEncuesta.Usuario);
+                    }
+                    return Ok("Ok");
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/preguntaOpciones/registrar")]
+        public async Task<IHttpActionResult> RegistrarPreguntasOpciones(List<int> preguntaOpciones, int preguntaId, string usuario)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    foreach(var opcion in preguntaOpciones)
+                    {
+                        var PreguntasOpciones = new PreguntasOpciones()
+                        {
+                            PreguntaId = preguntaId,
+                            GrupoOpcionesDetalleId = opcion,
+                            Status = true,
+                            CreatedBy = usuario,
+                            CreatedDate = DateTime.Now
+                        };
+                        ctx.PreguntasOpciones.Add(PreguntasOpciones);
+                    }
+                   
+                   
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }
@@ -74,7 +124,7 @@ namespace AventasApi.Controllers
 
         [HttpPost]
         [Route("~/api/preguntas/modificar")]
-        public async Task<IHttpActionResult> ModificarEncuesta([FromBody] PreguntasViewModel preguntasEncuesta)
+        public async Task<IHttpActionResult> ModificarPregunta([FromBody] PreguntasViewModel preguntasEncuesta)
         {
             try
             {
@@ -96,13 +146,108 @@ namespace AventasApi.Controllers
                     PreguntasBD.Status = preguntasEncuesta.Status;
                     PreguntasBD.ModifiedBy = preguntasEncuesta.Usuario;
                     PreguntasBD.ModifiedDate = DateTime.Now;
+
+
+                    if (preguntasEncuesta.GrupoOpcionesDetalle.Count() > 0 && preguntasEncuesta.RequiereOpciones == true)
+                    {
+                        _ = ModificarPreguntasOpciones(preguntasEncuesta.GrupoOpcionesDetalle, PreguntasBD.Id, preguntasEncuesta.Usuario);
+                    }
+                    else
+                    {
+                        var preguntasOpciones = ctx.PreguntasOpciones.Where(p => p.PreguntaId == PreguntasBD.Id).ToList();
+                        foreach (var pregunta in preguntasOpciones)
+                        {
+                            pregunta.Status = false;
+                            pregunta.ModifiedBy = preguntasEncuesta.Usuario;
+                            pregunta.ModifiedDate = DateTime.Now;
+                        }
+                    }
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/preguntaOpciones/registrar")]
+        public async Task<IHttpActionResult> ModificarPreguntasOpciones(List<int> preguntaOpciones, int preguntaId, string usuario)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+                    var preguntasOpciones = db.PreguntasOpciones.Where(p => p.PreguntaId == preguntaId && !preguntaOpciones.Contains(p.GrupoOpcionesDetalleId)).ToList();
+                    foreach (var pregunta in preguntasOpciones)
+                    {
+                        pregunta.Status = false;
+                        pregunta.ModifiedBy = usuario;
+                        pregunta.ModifiedDate = DateTime.Now;
+                    }
+
+                    foreach (var opcion in preguntaOpciones)
+                    {
+                        var PreguntaOpcionesDB = await db.PreguntasOpciones.FirstOrDefaultAsync(p => p.PreguntaId == preguntaId && p.GrupoOpcionesDetalleId == opcion);
+
+                        if(PreguntaOpcionesDB != null)
+                        {
+                            PreguntaOpcionesDB.Status = true;
+                            PreguntaOpcionesDB.ModifiedBy = usuario;
+                            PreguntaOpcionesDB.ModifiedDate = DateTime.Now;
+                        }
+                        else
+                        {
+                            var PreguntasOpciones = new PreguntasOpciones()
+                            {
+                                PreguntaId = preguntaId,
+                                GrupoOpcionesDetalleId = opcion,
+                                Status = true,
+                                CreatedBy = usuario,
+                                CreatedDate = DateTime.Now
+                            };
+                            db.PreguntasOpciones.Add(PreguntasOpciones);
+                        }
+                       
+                    }
+
+
+                    var result = await db.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/preguntas/estado/{Id}")]
+        public async Task<IHttpActionResult> ActualizarEstado(int Id)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var pregunta = await ctx.Preguntas.FindAsync(Id);
+
+                    if (pregunta == null)
+                    {
+                        return BadRequest("No se encuentra la pregunta.");
+                    }
+
+                    pregunta.Status = !pregunta.Status;
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }
             }
             catch (Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
             }
         }
     }
