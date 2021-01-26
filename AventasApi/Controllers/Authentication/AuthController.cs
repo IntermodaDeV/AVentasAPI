@@ -105,5 +105,36 @@ namespace AventasApi.Controllers.Authentication
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("~/api/logsesion")]
+        public async Task<IHttpActionResult> logSesion([FromBody] logSesionViewModel logSesion)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+                    var usuarioId = db.Usuarios.Where(u => u.usuario == logSesion.Usuario).Select(u => u.Id).FirstOrDefault();
+                    var sesionLog = new LogSesion()
+                    {
+                        Usuario = usuarioId,
+                        version_navegador = logSesion.version_navegador,
+                        IP_Publica = logSesion.Ip_publica,
+                        Latitud = logSesion.latitud,
+                        Longitud = logSesion.longitud,
+                        Version_App = logSesion.version_App,
+                        Fecha = DateTime.Now
+                    };
+
+                    db.LogSesion.Add(sesionLog);
+                    var result = await db.SaveChangesAsync();
+                    return Ok(result);
+                } 
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }

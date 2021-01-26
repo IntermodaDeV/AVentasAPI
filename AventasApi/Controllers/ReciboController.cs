@@ -822,6 +822,29 @@ namespace AventasApi.Controllers
                             AsyncSqlInsert.IngresarRecibos(recibosxCliente,true);
                             syncCuentaCorriente.SyncFacturas(asesor.EmpresaId, codigoCliente);
                             syncCuentaCorriente.SyncSubFacturas(asesor.EmpresaId, codigoCliente, asesor.CodigoAsesor);
+
+                            foreach (var iter in recibos)
+                            {
+                                using (AVentasEntities ctx = new AVentasEntities())
+                                {
+                                    var factura = ctx.FacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA && x.EmpresaId == iter.COMPANY);
+
+                                    if (factura != null)
+                                    {
+                                        factura.Saldo -= iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
+                                    }
+
+                                    var subfactura = ctx.SubFacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA & x.EmpresaId == iter.COMPANY & x.Referencia == iter.REF_TRANSOPEN);
+
+                                    if (subfactura != null)
+                                    {
+                                        subfactura.Saldo -= iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
+                                    }
+
+                                    ctx.SaveChanges();
+                                }
+                            }
+
                             return Ok(respuestaPagoRecibo);
                         }
                         else
@@ -848,6 +871,27 @@ namespace AventasApi.Controllers
                         context.SaveChanges();
                     }
                     AsyncSqlInsert.IngresarRecibos(recibosxCliente,false);
+                    foreach (var iter in recibos)
+                    {
+                        using (AVentasEntities ctx = new AVentasEntities())
+                        {
+                            var factura = ctx.FacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA && x.EmpresaId == iter.COMPANY);
+
+                            if (factura != null)
+                            {
+                                factura.Saldo -= iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
+                            }
+
+                            var subfactura = ctx.SubFacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA & x.EmpresaId == iter.COMPANY & x.Referencia == iter.REF_TRANSOPEN);
+
+                            if (subfactura != null)
+                            {
+                                subfactura.Saldo -= iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
+                            }
+
+                            ctx.SaveChanges();
+                        }
+                    }
                     return Ok(respuestaPagoRecibo);
                 }
             }

@@ -22,6 +22,8 @@ namespace DBData.Database
             this.Usuarios_Empresas = new HashSet<Usuarios_Empresas>();
             this.Usuarios_Asesores = new HashSet<Usuarios_Asesores>();
             this.Secciones_Usuarios = new HashSet<Secciones_Usuarios>();
+            this.Respuestas = new HashSet<Respuestas>();
+            this.LogSesion = new HashSet<LogSesion>();
         }
     
         public int Id { get; set; }
@@ -50,5 +52,9 @@ namespace DBData.Database
         public virtual ICollection<Usuarios_Asesores> Usuarios_Asesores { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Secciones_Usuarios> Secciones_Usuarios { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Respuestas> Respuestas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LogSesion> LogSesion { get; set; }
     }
 }
