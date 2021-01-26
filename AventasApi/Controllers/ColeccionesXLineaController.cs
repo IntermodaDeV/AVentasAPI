@@ -277,6 +277,7 @@ namespace AventasApi.Controllers
                                               {
                                                   IdFotografia = foto.IdFotografia,
                                                   FotografiaProducto = urlImagenes + foto.FotografiaProducto,
+                                                  NombreFotografia=foto.FotografiaProducto,
                                                   CodigoColor = foto.CodigoColor,
                                                   Principal = foto.Principal ?? false
                                               }).ToList(),
@@ -306,6 +307,7 @@ namespace AventasApi.Controllers
                                            {
                                                IdFotografia = foto.IdFotografia,
                                                FotografiaProducto = urlImagenes + foto.FotografiaProducto,
+                                               NombreFotografia = foto.FotografiaProducto,
                                                CodigoColor = foto.CodigoColor,
                                                Principal = foto.Principal ?? false
                                            }).ToList(),
@@ -526,6 +528,32 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
-       
+
+        [HttpPost]
+        [Route("eliminarimagen/{codigocolor}")]
+        public async Task<IHttpActionResult> EliminarImagen(int codigocolor)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    FotografiasXProducto fotografia = await ctx.FotografiasXProducto.FindAsync(codigocolor);
+
+                    if (fotografia == null)
+                    {
+                        return BadRequest("La imagen de producto no existe.");
+                    }
+
+                    ctx.FotografiasXProducto.Remove(fotografia);
+                    int res = await ctx.SaveChangesAsync();
+                    return Ok(res);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
     }
 }
