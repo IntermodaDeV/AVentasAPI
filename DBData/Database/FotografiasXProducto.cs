@@ -21,7 +21,6 @@ namespace DBData.Database
         public int IdProducto { get; set; }
         public string CodigoColor { get; set; }
         public Nullable<bool> Principal { get; set; }
-        public byte[] FotografiaVarbinary { get; set; }
     
         public virtual Colores Colores { get; set; }
         public virtual ProductosxColeccion ProductosxColeccion { get; set; }

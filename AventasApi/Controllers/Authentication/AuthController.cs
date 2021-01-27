@@ -114,10 +114,10 @@ namespace AventasApi.Controllers.Authentication
             {
                 using (var db = new AVentasEntities())
                 {
-                    var usuarioId = db.Usuarios.Where(u => u.usuario == logSesion.Usuario).Select(u => u.Id).FirstOrDefault();
+                    var usuario = db.Usuarios.Where(u => u.usuario == logSesion.Usuario).FirstOrDefault();
                     var sesionLog = new LogSesion()
                     {
-                        Usuario = usuarioId,
+                        Usuario = usuario.Id,
                         version_navegador = logSesion.version_navegador,
                         IP_Publica = logSesion.Ip_publica,
                         Latitud = logSesion.latitud,
@@ -126,10 +126,33 @@ namespace AventasApi.Controllers.Authentication
                         Fecha = DateTime.Now
                     };
 
+                    usuario.SesionActiva = true;
+
                     db.LogSesion.Add(sesionLog);
                     var result = await db.SaveChangesAsync();
                     return Ok(result);
                 } 
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/cerrarSesion")]
+        public async Task<IHttpActionResult> CerrarSesion([FromBody] string user)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+                    var usuario = db.Usuarios.Where(u => u.usuario == user).FirstOrDefault();
+                    usuario.SesionActiva = false;
+
+                    var result = await db.SaveChangesAsync();
+                    return Ok(result);
+                }
             }
             catch (Exception e)
             {

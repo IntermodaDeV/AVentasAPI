@@ -22,9 +22,9 @@ namespace DBData.Database
             this.TallasxProducto = new HashSet<TallasxProducto>();
             this.PreciosxProducto = new HashSet<PreciosxProducto>();
             this.FisicoDisponible = new HashSet<FisicoDisponible>();
-            this.FotografiasXProducto = new HashSet<FotografiasXProducto>();
             this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
             this.PedidosDetalle = new HashSet<PedidosDetalle>();
+            this.FotografiasXProducto = new HashSet<FotografiasXProducto>();
         }
     
         public int IdProducto { get; set; }
@@ -57,10 +57,10 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FisicoDisponible> FisicoDisponible { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FotografiasXProducto> FotografiasXProducto { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosDetalle> PedidosDetalle { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FotografiasXProducto> FotografiasXProducto { get; set; }
     }
 }
