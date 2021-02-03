@@ -45,7 +45,9 @@ namespace AventasApi.Models
         public decimal MontoFacturasXVencer { get; set; }
         public Nullable<decimal> LimiteCredito { get; set; }
         public Nullable<decimal> CreditoDisponible { get; set; }
-        public List<PResumenCredito_Result> Credito { get; set; }   
+        public List<PResumenCredito_Result> Credito { get; set; }
+        public bool? IgnorarSecuenciaFactura { get; internal set; }
+
         public ClienteViewModel()
         {
             this.Contacto = new List<ContactosxClienteViewModel>();

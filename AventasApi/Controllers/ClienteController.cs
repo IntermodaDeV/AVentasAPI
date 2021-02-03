@@ -688,6 +688,7 @@ namespace AventasApi.Controllers
                             Codigo = cli.CodigoCliente,
                             Nombre = cli.Nombre,
                             Zona = cli.Zona,
+                            IgnorarSecuenciaFactura=cli.IgnorarSeqFact,
                             ComunidadAutonoma = cli.ComunidadAutonoma,
                             GrupoPrecio = cli.GrupoPrecio,
                             GrupoCliente = cli.GrupoCliente,
@@ -838,6 +839,7 @@ namespace AventasApi.Controllers
                         CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
                         Latitud = cli.Latitud,
                         LimiteCredito = cli.LimiteCredito ?? 0,
+                        IgnorarSecuenciaFactura=cli.IgnorarSeqFact,
                         CreditoDisponible = cli.CreditoDisponible ?? 0,
                         Longitud = cli.Longitud,
                         GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
@@ -941,6 +943,51 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/cliente/sincronizacion")]
+        public async Task<IHttpActionResult> GetClientesSincronizacion()
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    List<string> asesoresHabilitados = new List<string>();
+                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
+                    var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
+
+                    if (usuario.FlagTodosAsesores.Value)
+                    {
+                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+                    else
+                    {
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+
+                    List<ClienteSincronizacionViewModel> listaClientes = new List<ClienteSincronizacionViewModel>();
+
+                    foreach (var asesor in asesoresHabilitados)
+                    {
+                        List<ClienteSincronizacionViewModel> clientes = await ctx.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoAsesor == asesor).Select(cli => new ClienteSincronizacionViewModel
+                        {
+                            EmpresaId=cli.EmpresaId,
+                            Nombre = cli.Nombre,
+                            Codigo=cli.CodigoCliente,
+                            Asesor=ctx.Asesores.FirstOrDefault(x=>x.CodigoAsesor==cli.CodigoAsesor).Nombre
+                        }).ToListAsync();
+
+                        listaClientes.AddRange(clientes);
+                    }
+                    return Ok(listaClientes);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
             }
         }
 
