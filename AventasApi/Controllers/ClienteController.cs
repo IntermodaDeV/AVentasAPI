@@ -714,7 +714,7 @@ namespace AventasApi.Controllers
                                 NumPedido = rec.NumPedido,
                                 CodigoCliente = rec.CodigoCliente
                             }).ToList(),
-                            Pedido = ctx.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.PedidoId) && ped.PedidoId != null && ped.Sincronizado == true).Select(ped => new PedidosXClienteViewModel
+                            Pedido = ctx.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.PedidoId) && ped.PedidoId != null && ped.Sincronizado == true && ped.ModoVenta == "Contado").Select(ped => new PedidosXClienteViewModel
                             {
                                 PedidoId = ped.NumeroPedido,
                                 NumeroPedido = ped.PedidoId,

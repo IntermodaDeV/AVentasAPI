@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using DBData.Database;
 using AventasApi.Models.ViewModels;
-
+using RestSharp;
+using ExternalApiData.Enviroments;
 using System.Data.Entity;
 using AventasApi.Models;
-
+using ExternalApiData.Models.ApiModels;
+using Newtonsoft.Json;
+using System.Globalization;
 namespace AventasApi.Controllers
 {
     public class DeshabilitarProducto
@@ -17,6 +20,14 @@ namespace AventasApi.Controllers
         public string Pais { get; set; }
         public string Producto { get; set; }
     }
+
+    public class ImagenColeccion
+    {
+            public string PACKAGEID { get; set; }
+            public string IMAGE { get; set; }
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     [RoutePrefix("api/ColeccionesXLinea")]
     public class ColeccionesXLineaController : ApiController
@@ -27,6 +38,37 @@ namespace AventasApi.Controllers
         {
            this.context.Database.CommandTimeout = 300;
            this.context.Configuration.LazyLoadingEnabled = false;
+        }
+        [HttpGet]
+        [Route("~/api/colecciones/{codigoColeccion}/{empresa}/imagenesColeccion")]
+        public async Task<IHttpActionResult> GetImagenes(string codigoColeccion, string empresa)
+        {
+            var Imagenes = new List<ImagenColeccion>();
+            var client = new RestClient(Enviroment.CRMWebServiceURLApi);
+            client.Authenticator = new RestSharp.Authenticators.NtlmAuthenticator();
+            var request = new RestRequest($"paquetes/{empresa}/{codigoColeccion}/imagenespaquete", Method.GET);
+            //client.Timeout = 6000;
+            request.AddHeader("Accept", "application/json");
+            IRestResponse respuesta = client.Execute(request);
+
+            if (respuesta.IsSuccessful && respuesta.Content != "null")
+            {
+                Imagenes = JsonConvert.DeserializeObject<List<ImagenColeccion>>(respuesta.Content);
+                using (AVentasEntities db = new AVentasEntities())
+                {
+                    var ImagenDB = await db.Colecciones.FirstOrDefaultAsync(c => c.CodigoColeccion == codigoColeccion && c.EmpresaId == empresa);
+
+                    if(ImagenDB != null && Imagenes.Count() > 0)
+                    {
+                        ImagenDB.ImagenBase64 = Imagenes[0].IMAGE;
+                        var result = await db.SaveChangesAsync();
+                        return Ok(result);
+                    }
+
+                    return BadRequest("el paquete no tiene imagen");
+                }
+            }
+           return BadRequest(respuesta.ErrorMessage);
         }
 
         [HttpGet]
@@ -57,7 +99,7 @@ namespace AventasApi.Controllers
                                Nombre = vw_coleccion.Nombre,
                                ColeccionTipo = vw_coleccion.ColeccionTipo,
                                EmpresaId = vw_coleccion.EmpresaId,
-                               FotoPortada = vw_coleccion.FotoPortada,
+                               FotoPortada = vw_coleccion.ImagenBase64 == null ? vw_coleccion.FotoPortada : "data:image/jpg;base64," + vw_coleccion.ImagenBase64,
                                DisenoInicio = vw_coleccion.DisenoInicio,
                                DisenoFinal = vw_coleccion.DisenoFinal,
                                EntregaInicio = vw_coleccion.EntregaInicio,
@@ -196,7 +238,7 @@ namespace AventasApi.Controllers
                                  Nombre = vw_coleccion.Nombre,
                                  ColeccionTipo = vw_coleccion.ColeccionTipo,
                                  EmpresaId = vw_coleccion.EmpresaId,
-                                 FotoPortada = vw_coleccion.FotoPortada,
+                                 FotoPortada = vw_coleccion.ImagenBase64 == null ? vw_coleccion.FotoPortada : "data:image/jpg;base64," + vw_coleccion.ImagenBase64,
                                  DisenoInicio = vw_coleccion.DisenoInicio,
                                  DisenoFinal = vw_coleccion.DisenoFinal,
                                  EntregaInicio = vw_coleccion.EntregaInicio,
@@ -374,7 +416,7 @@ namespace AventasApi.Controllers
                                                      Nombre = vw_coleccion.Nombre,
                                                      ColeccionTipo = vw_coleccion.ColeccionTipo,
                                                      EmpresaId = vw_coleccion.EmpresaId,
-                                                     FotoPortada = vw_coleccion.FotoPortada,
+                                                     FotoPortada = vw_coleccion.ImagenBase64 == null ? vw_coleccion.FotoPortada : "data:image/jpg;base64," + vw_coleccion.ImagenBase64,
                                                      DisenoInicio = vw_coleccion.DisenoInicio,
                                                      DisenoFinal = vw_coleccion.DisenoFinal,
                                                      EntregaInicio = vw_coleccion.EntregaInicio,
