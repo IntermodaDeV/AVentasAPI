@@ -162,11 +162,8 @@
         <EntityTypeShape EntityType="AventasModel.FisicoDisponible" Width="1.5" PointX="18.5" PointY="45.5" />
         <AssociationConnector Association="AventasModel.FK__FisicoDis__Codig__7B7B4DDC" />
         <AssociationConnector Association="AventasModel.FK__FisicoDis__MinSt__7A8729A3" />
-        <EntityTypeShape EntityType="AventasModel.FotografiasXProducto" Width="1.5" PointX="18.5" PointY="49.5" />
         <EntityTypeShape EntityType="AventasModel.PrecioEspecifico" Width="1.5" PointX="26.75" PointY="40.375" />
-        <AssociationConnector Association="AventasModel.FK__Fotografi__Codig__45C948A1" />
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdFis__396371BC" />
-        <AssociationConnector Association="AventasModel.FK__Fotografi__IdPro__190BB0C3" />
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__Grupo__386F4D83" />
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdMon__36870511" />
         <AssociationConnector Association="AventasModel.FK__PrecioEsp__IdPro__377B294A" />
@@ -219,6 +216,19 @@
         <AssociationConnector Association="AventasModel.FK__EmpresaEn__Encue__74F938D6" />
         <AssociationConnector Association="AventasModel.FK__Secciones__Secci__7BA63665" />
         <AssociationConnector Association="AventasModel.FK__Secciones__Usuar__7C9A5A9E" />
+        <EntityTypeShape EntityType="AventasModel.RespuestaDetalle" Width="1.5" PointX="14.375" PointY="0.75" />
+        <EntityTypeShape EntityType="AventasModel.Respuestas" Width="1.5" PointX="18.375" PointY="4.75" />
+        <AssociationConnector Association="AventasModel.FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE" />
+        <AssociationConnector Association="AventasModel.FK_PREGUNTA_ID_RESPUESTADETALLE_PREGUNTAID" />
+        <AssociationConnector Association="AventasModel.FK_PREGUNTAOPCIONES_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID" />
+        <AssociationConnector Association="AventasModel.FK_RESPUESTA_ID_RESPUESTADETALLE_RESPUESTAID" />
+        <AssociationConnector Association="AventasModel.FK_USUARIOS_ID_RESPUESTA_USUARIOID" />
+        <AssociationConnector Association="AventasModel.FK_ENCUESTA_ID_RESPUESTA_ENCUESTAID" />
+        <EntityTypeShape EntityType="AventasModel.LogSesion" Width="1.5" PointX="5.25" PointY="49.25" />
+        <AssociationConnector Association="AventasModel.FK_LOGSESION_USUARIO_FK_USUARIOS_ID" />
+        <EntityTypeShape EntityType="AventasModel.FotografiasXProducto" Width="1.5" PointX="18.5" PointY="49.5" />
+        <AssociationConnector Association="AventasModel.FK__Fotografi__Codig__45C948A1" />
+        <AssociationConnector Association="AventasModel.FK__Fotografi__IdPro__190BB0C3" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

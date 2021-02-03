@@ -26,6 +26,7 @@ namespace DBData.Database
             this.LimiteCreditoxCliente = new HashSet<LimiteCreditoxCliente>();
             this.SubFacturasxCliente = new HashSet<SubFacturasxCliente>();
             this.PedidosxCliente = new HashSet<PedidosxCliente>();
+            this.Respuestas = new HashSet<Respuestas>();
         }
     
         public string CodigoCliente { get; set; }
@@ -75,5 +76,7 @@ namespace DBData.Database
         public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Respuestas> Respuestas { get; set; }
     }
 }

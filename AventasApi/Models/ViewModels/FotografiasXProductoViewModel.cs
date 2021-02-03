@@ -17,6 +17,6 @@ namespace AventasApi.Models.ViewModels
         public Nullable<int> IdProducto { get; set; }
         public string CodigoColor { get; set; }
         public Nullable<bool> Principal { get; set; }
-
+        public string NombreFotografia { get; internal set; }
     }
 }
