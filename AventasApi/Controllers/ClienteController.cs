@@ -8,6 +8,10 @@ using AventasApi.Models.ViewModels;
 using System;
 using AventasApi.Services.Authentication;
 using System.Data.Entity;
+using RestSharp;
+using ExternalApiData.Models.ApiModels;
+using ExternalApiData.Enviroments;
+using AventasApi.Utils;
 
 namespace AventasApi.Controllers
 {
@@ -15,10 +19,24 @@ namespace AventasApi.Controllers
     {
         AVentasEntities context = new AVentasEntities();
         private readonly AuthenticationAppService _authenticationAppService;
+        private SyncCuentaCorriente syncCuentaCorriente;
         public ClienteController()
         {
             _authenticationAppService = new AuthenticationAppService();
+            syncCuentaCorriente = new SyncCuentaCorriente();
         }
+
+        private bool EnLinea(string empresa, string asesor)
+        {
+            var client = new RestClient(Enviroment.CRMWebServiceURLApi);
+            client.Authenticator = new RestSharp.Authenticators.NtlmAuthenticator();
+            var request = new RestRequest($"asesor/{empresa}/{asesor}", Method.GET);
+            client.Timeout = 6000;
+            IRestResponse<List<AsesorApiModel>> respuesta = client.Execute<List<AsesorApiModel>>(request);
+
+            return respuesta.IsSuccessful;
+        }
+
         [HttpGet]
         public async Task<IHttpActionResult> GetClientes()
         {
@@ -986,6 +1004,38 @@ namespace AventasApi.Controllers
                     return Ok(listaClientes);
                 }
             }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/cliente/sincronizacion/{cliente}")]
+        public async Task<IHttpActionResult> PostClientesSincronizacion(string cliente)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var clienteBd = await ctx.Clientes.FirstOrDefaultAsync(x => x.CodigoCliente == cliente);
+                    if (clienteBd == null)
+                    {
+                        return BadRequest("El cliente no existe.");
+                    }
+
+                    if (EnLinea(clienteBd.EmpresaId, clienteBd.CodigoAsesor))
+                    {
+                        syncCuentaCorriente.SyncFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente);
+                        syncCuentaCorriente.SyncSubFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
+                        return Ok("Cuenta del cliente actualizada exitosamente.");
+                    }
+                    else
+                    {
+                        return BadRequest("Servidor AX no disponible.");
+                    }
+                }
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }
