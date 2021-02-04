@@ -21,7 +21,7 @@ namespace DBData.Database
         public string IdLinea { get; set; }
         public Nullable<int> CodigoAtributo { get; set; }
     
-        public virtual Colecciones Colecciones { get; set; }
         public virtual MaestroLinea MaestroLinea { get; set; }
+        public virtual Colecciones Colecciones { get; set; }
     }
 }

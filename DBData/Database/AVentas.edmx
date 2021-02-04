@@ -257,7 +257,6 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="VentaInicio" Type="datetime" />
           <Property Name="VentaFinal" Type="datetime" />
           <Property Name="FotoPortada" Type="varchar" MaxLength="2500" />
-          <Property Name="ImagenBase64" Type="varchar(max)" />
           <Property Name="FechaUltSincronizacion" Type="datetime" />
         </EntityType>
         <EntityType Name="Colores">
@@ -3629,8 +3628,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Descripcion2" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="CodigoAtributo" Type="Int32" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__Atributos__IdCol__5AC46587" FromRole="AtributosxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="MaestroLinea" Relationship="Self.FK__Atributos__IdLin__5BB889C0" FromRole="AtributosxColeccion" ToRole="MaestroLinea" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Atributos__IdCol__6DF7358C" FromRole="AtributosxColeccion" ToRole="Colecciones" />
         </EntityType>
         <EntityType Name="AtributosxProducto">
           <Key>
@@ -3743,35 +3742,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="Clientes" Relationship="Self.FK__Clientesx__Codig__5C02A283" FromRole="ClientesxRuta" ToRole="Clientes" />
           <NavigationProperty Name="Rutas" Relationship="Self.FK__Clientesx__Codig__5B0E7E4A" FromRole="ClientesxRuta" ToRole="Rutas" />
         </EntityType>
-        <EntityType Name="Colecciones">
-          <Key>
-            <PropertyRef Name="IdColeccion" />
-          </Key>
-          <Property Name="IdColeccion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CodigoColeccion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Nombre" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="ColeccionTipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="DisenoInicio" Type="DateTime" Precision="3" />
-          <Property Name="DisenoFinal" Type="DateTime" Precision="3" />
-          <Property Name="EntregaInicio" Type="DateTime" Precision="3" />
-          <Property Name="EntregaFinal" Type="DateTime" Precision="3" />
-          <Property Name="Estatus" Type="Int32" />
-          <Property Name="ProduccionInicio" Type="DateTime" Precision="3" />
-          <Property Name="ProduccionFinal" Type="DateTime" Precision="3" />
-          <Property Name="VentaInicio" Type="DateTime" Precision="3" />
-          <Property Name="VentaFinal" Type="DateTime" Precision="3" />
-          <Property Name="FotoPortada" Type="String" MaxLength="2500" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="AtributosxColeccion" Relationship="Self.FK__Atributos__IdCol__5AC46587" FromRole="Colecciones" ToRole="AtributosxColeccion" />
-          <NavigationProperty Name="TiposdeColeccion" Relationship="Self.FK__Coleccion__Colec__6A3BB341" FromRole="Colecciones" ToRole="TiposdeColeccion" />
-          <NavigationProperty Name="Empresa" Relationship="Self.FK__Coleccion__FotoP__405A880E" FromRole="Colecciones" ToRole="Empresa" />
-          <NavigationProperty Name="EdadesxColeccion" Relationship="Self.FK__EdadesxCo__IdCol__795DFB40" FromRole="Colecciones" ToRole="EdadesxColeccion" />
-          <NavigationProperty Name="LineasxColeccion" Relationship="Self.FK__LineasxCo__IdCol__442B18F2" FromRole="Colecciones" ToRole="LineasxColeccion" />
-          <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__Productos__IdCol__4DB4832C" FromRole="Colecciones" ToRole="ProductosxColeccion" />
-          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="Colecciones" ToRole="PedidosxCliente" />
-          <Property Name="FechaUltSincronizacion" Type="DateTime" Precision="3" />
-          <Property Name="ImagenBase64" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-        </EntityType>
         <EntityType Name="Colores">
           <Key>
             <PropertyRef Name="CodigoColor" />
@@ -3845,9 +3815,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="IdEdad" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="IdColeccion" Type="Int32" />
           <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__EdadesxCo__IdCol__795DFB40" FromRole="EdadesxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="MaestroEdad" Relationship="Self.FK__EdadesxCo__IdEda__7869D707" FromRole="EdadesxColeccion" ToRole="MaestroEdad" />
           <NavigationProperty Name="MaestroLinea" Relationship="Self.FK__EdadesxCo__IdLin__09946309" FromRole="EdadesxColeccion" ToRole="MaestroLinea" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__EdadesxCo__IdCol__6932806F" FromRole="EdadesxColeccion" ToRole="Colecciones" />
         </EntityType>
         <EntityType Name="Empresa">
           <Key>
@@ -3864,7 +3834,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="AcuerdosxCliente" Relationship="Self.FK__Acuerdosx__Empre__2BE97B0D" FromRole="Empresa" ToRole="AcuerdosxCliente" />
           <NavigationProperty Name="Bancos" Relationship="Self.FK__Bancos__EmpresaI__168449D3" FromRole="Empresa" ToRole="Bancos" />
           <NavigationProperty Name="Clientes" Relationship="Self.FK_Clientes_Empresa" FromRole="Empresa" ToRole="Clientes" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__Coleccion__FotoP__405A880E" FromRole="Empresa" ToRole="Colecciones" />
           <NavigationProperty Name="CuentasBancarias" Relationship="Self.FK__CuentasBa__Empre__1C3D2329" FromRole="Empresa" ToRole="CuentasBancarias" />
           <NavigationProperty Name="FacturasxCliente" Relationship="Self.FK__Facturasx__Empre__7246E95D" FromRole="Empresa" ToRole="FacturasxCliente" />
           <NavigationProperty Name="MonedasxEmpresa" Relationship="Self.FK__MonedasxE__Empre__3D7E1B63" FromRole="Empresa" ToRole="MonedasxEmpresa" />
@@ -3879,6 +3848,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="Usuarios_Empresas" Relationship="AventasModel.FK__Usuarios___Empre__2BBF5DDB" FromRole="Empresa" ToRole="Usuarios_Empresas" />
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK__Usuarios__Empres__28E2F130" FromRole="Empresa" ToRole="Usuarios" />
           <NavigationProperty Name="Empresa_Encuesta" Relationship="AventasModel.FK__EmpresaEn__Empre__7405149D" FromRole="Empresa" ToRole="Empresa_Encuesta" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Coleccion__FotoP__405A880E" FromRole="Empresa" ToRole="Colecciones" />
         </EntityType>
         <EntityType Name="Errores">
           <Key>
@@ -4013,8 +3983,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="IdLineaxColeccion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="IdColeccion" Type="Int32" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__LineasxCo__IdCol__442B18F2" FromRole="LineasxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="MaestroLinea" Relationship="Self.FK__LineasxCo__IdLin__4336F4B9" FromRole="LineasxColeccion" ToRole="MaestroLinea" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__LineasxCo__IdCol__71C7C670" FromRole="LineasxColeccion" ToRole="Colecciones" />
         </EntityType>
         <EntityType Name="MaestroEdad">
           <Key>
@@ -4105,7 +4075,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Multiplo" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="IdEdad" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="AtributosxProducto" Relationship="Self.FK__Atributos__IdPro__2C1E8537" FromRole="ProductosxColeccion" ToRole="AtributosxProducto" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__Productos__IdCol__4DB4832C" FromRole="ProductosxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="ColoresxProducto" Relationship="Self.FK__ColoresxP__IdPro__536D5C82" FromRole="ProductosxColeccion" ToRole="ColoresxProducto" />
           <NavigationProperty Name="GrupoTalla" Relationship="Self.FK__Productos__Codig__4F9CCB9E" FromRole="ProductosxColeccion" ToRole="GrupoTalla" />
           <NavigationProperty Name="MaestroEdad" Relationship="Self.FK__Productos__IdEda__68336F3E" FromRole="ProductosxColeccion" ToRole="MaestroEdad" />
@@ -4121,6 +4090,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion" FromRole="ProductosxColeccion" ToRole="PedidosDetalle" />
           <Property Name="CantidadMinima" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="FotografiasXProducto" Relationship="AventasModel.FK__Fotografi__IdPro__190BB0C3" FromRole="ProductosxColeccion" ToRole="FotografiasXProducto" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Productos__IdCol__4DB4832C" FromRole="ProductosxColeccion" ToRole="Colecciones" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -4248,7 +4218,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ColeccionTipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Descripcion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Icono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__Coleccion__Colec__6A3BB341" FromRole="TiposdeColeccion" ToRole="Colecciones" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Coleccion__Colec__6A3BB341" FromRole="TiposdeColeccion" ToRole="Colecciones" />
         </EntityType>
         <EntityType Name="TiposdePago">
           <Key>
@@ -4593,18 +4563,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Atributos__IdCol__5AC46587">
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
-          <End Role="AtributosxColeccion" Type="Self.AtributosxColeccion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="AtributosxColeccion">
-              <PropertyRef Name="IdColeccion" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Atributos__IdLin__5BB889C0">
           <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="0..1" />
           <End Role="AtributosxColeccion" Type="Self.AtributosxColeccion" Multiplicity="*" />
@@ -4794,66 +4752,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="ClientesxRuta">
               <PropertyRef Name="CodigoRuta" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Coleccion__Colec__6A3BB341">
-          <End Role="TiposdeColeccion" Type="Self.TiposdeColeccion" Multiplicity="0..1" />
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TiposdeColeccion">
-              <PropertyRef Name="ColeccionTipo" />
-            </Principal>
-            <Dependent Role="Colecciones">
-              <PropertyRef Name="ColeccionTipo" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Coleccion__FotoP__405A880E">
-          <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Empresa">
-              <PropertyRef Name="EmpresaId" />
-            </Principal>
-            <Dependent Role="Colecciones">
-              <PropertyRef Name="EmpresaId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__EdadesxCo__IdCol__795DFB40">
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
-          <End Role="EdadesxColeccion" Type="Self.EdadesxColeccion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="EdadesxColeccion">
-              <PropertyRef Name="IdColeccion" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__LineasxCo__IdCol__442B18F2">
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
-          <End Role="LineasxColeccion" Type="Self.LineasxColeccion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="LineasxColeccion">
-              <PropertyRef Name="IdColeccion" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Productos__IdCol__4DB4832C">
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
-          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="ProductosxColeccion">
-              <PropertyRef Name="IdColeccion" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -5254,7 +5152,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="BitacoraVisitasCliente" EntityType="Self.BitacoraVisitasCliente" />
           <EntitySet Name="Clientes" EntityType="Self.Clientes" />
           <EntitySet Name="ClientesxRuta" EntityType="Self.ClientesxRuta" />
-          <EntitySet Name="Colecciones" EntityType="Self.Colecciones" />
           <EntitySet Name="Colores" EntityType="Self.Colores" />
           <EntitySet Name="ColoresxProducto" EntityType="Self.ColoresxProducto" />
           <EntitySet Name="Configuraciones" EntityType="Self.Configuraciones" />
@@ -5371,10 +5268,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="TipoVisitaCliente" EntitySet="TipoVisitaCliente" />
             <End Role="AsignacionxAsesorDetalle" EntitySet="AsignacionxAsesorDetalle" />
           </AssociationSet>
-          <AssociationSet Name="FK__Atributos__IdCol__5AC46587" Association="Self.FK__Atributos__IdCol__5AC46587">
-            <End Role="Colecciones" EntitySet="Colecciones" />
-            <End Role="AtributosxColeccion" EntitySet="AtributosxColeccion" />
-          </AssociationSet>
           <AssociationSet Name="FK__Atributos__IdLin__5BB889C0" Association="Self.FK__Atributos__IdLin__5BB889C0">
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="AtributosxColeccion" EntitySet="AtributosxColeccion" />
@@ -5438,26 +5331,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK__Clientesx__Codig__5B0E7E4A" Association="Self.FK__Clientesx__Codig__5B0E7E4A">
             <End Role="Rutas" EntitySet="Rutas" />
             <End Role="ClientesxRuta" EntitySet="ClientesxRuta" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Coleccion__Colec__6A3BB341" Association="Self.FK__Coleccion__Colec__6A3BB341">
-            <End Role="TiposdeColeccion" EntitySet="TiposdeColeccion" />
-            <End Role="Colecciones" EntitySet="Colecciones" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Coleccion__FotoP__405A880E" Association="Self.FK__Coleccion__FotoP__405A880E">
-            <End Role="Empresa" EntitySet="Empresa" />
-            <End Role="Colecciones" EntitySet="Colecciones" />
-          </AssociationSet>
-          <AssociationSet Name="FK__EdadesxCo__IdCol__795DFB40" Association="Self.FK__EdadesxCo__IdCol__795DFB40">
-            <End Role="Colecciones" EntitySet="Colecciones" />
-            <End Role="EdadesxColeccion" EntitySet="EdadesxColeccion" />
-          </AssociationSet>
-          <AssociationSet Name="FK__LineasxCo__IdCol__442B18F2" Association="Self.FK__LineasxCo__IdCol__442B18F2">
-            <End Role="Colecciones" EntitySet="Colecciones" />
-            <End Role="LineasxColeccion" EntitySet="LineasxColeccion" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Productos__IdCol__4DB4832C" Association="Self.FK__Productos__IdCol__4DB4832C">
-            <End Role="Colecciones" EntitySet="Colecciones" />
-            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
           </AssociationSet>
           <AssociationSet Name="FK__ColoresxP__Codig__52793849" Association="Self.FK__ColoresxP__Codig__52793849">
             <End Role="Colores" EntitySet="Colores" />
@@ -5656,10 +5529,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__Codig__0F183235" Association="AventasModel.FK__PedidosxC__Codig__0F183235">
             <End Role="Clientes" EntitySet="Clientes" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E85" Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E85">
-            <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__Empre__6C390A4C" Association="AventasModel.FK__PedidosxC__Empre__6C390A4C">
@@ -5904,6 +5773,35 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="FotografiasXProducto" EntitySet="FotografiasXProducto" />
           </AssociationSet>
+          <EntitySet Name="Colecciones" EntityType="AventasModel.Colecciones" />
+          <AssociationSet Name="FK__Atributos__IdCol__6DF7358C" Association="AventasModel.FK__Atributos__IdCol__6DF7358C">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="AtributosxColeccion" EntitySet="AtributosxColeccion" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Coleccion__Colec__6A3BB341" Association="AventasModel.FK__Coleccion__Colec__6A3BB341">
+            <End Role="TiposdeColeccion" EntitySet="TiposdeColeccion" />
+            <End Role="Colecciones" EntitySet="Colecciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Coleccion__FotoP__405A880E" Association="AventasModel.FK__Coleccion__FotoP__405A880E">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="Colecciones" EntitySet="Colecciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__EdadesxCo__IdCol__6932806F" Association="AventasModel.FK__EdadesxCo__IdCol__6932806F">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="EdadesxColeccion" EntitySet="EdadesxColeccion" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LineasxCo__IdCol__71C7C670" Association="AventasModel.FK__LineasxCo__IdCol__71C7C670">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="LineasxColeccion" EntitySet="LineasxColeccion" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E85" Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E85">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Productos__IdCol__4DB4832C" Association="AventasModel.FK__Productos__IdCol__4DB4832C">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -6140,7 +6038,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Flete" Type="Decimal" Precision="10" Scale="2" />
           <NavigationProperty Name="Asesores" Relationship="AventasModel.FK__PedidosxC__Codig__6B44E613" FromRole="PedidosxCliente" ToRole="Asesores" />
           <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__PedidosxC__Codig__0F183235" FromRole="PedidosxCliente" ToRole="Clientes" />
-          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="PedidosxCliente" ToRole="Colecciones" />
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C" FromRole="PedidosxCliente" ToRole="Empresa" />
           <NavigationProperty Name="EstadosPedido" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD" FromRole="PedidosxCliente" ToRole="EstadosPedido" />
           <NavigationProperty Name="FirmasxPedido" Relationship="AventasModel.FK__FirmasxPe__Pedid__75C27486" FromRole="PedidosxCliente" ToRole="FirmasxPedido" />
@@ -6152,6 +6049,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosxCliente" ToRole="PedidosDetalle" />
           <Property Name="Procesando" Type="Boolean" />
           <Property Name="ErrorAx" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="PedidosxCliente" ToRole="Colecciones" />
         </EntityType>
         <Association Name="FK__PedidosxC__Codig__6B44E613">
           <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="0..1" />
@@ -6174,18 +6072,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="PedidosxCliente">
               <PropertyRef Name="CodigoCliente" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__IdCol__6D2D2E85">
-          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="IdColeccion" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -7308,6 +7194,118 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Colecciones">
+          <Key>
+            <PropertyRef Name="IdColeccion" />
+          </Key>
+          <Property Name="IdColeccion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodigoColeccion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Nombre" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ColeccionTipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="DisenoInicio" Type="DateTime" Precision="3" />
+          <Property Name="DisenoFinal" Type="DateTime" Precision="3" />
+          <Property Name="EntregaInicio" Type="DateTime" Precision="3" />
+          <Property Name="EntregaFinal" Type="DateTime" Precision="3" />
+          <Property Name="Estatus" Type="Int32" />
+          <Property Name="ProduccionInicio" Type="DateTime" Precision="3" />
+          <Property Name="ProduccionFinal" Type="DateTime" Precision="3" />
+          <Property Name="VentaInicio" Type="DateTime" Precision="3" />
+          <Property Name="VentaFinal" Type="DateTime" Precision="3" />
+          <Property Name="FotoPortada" Type="String" MaxLength="2500" FixedLength="false" Unicode="false" />
+          <Property Name="FechaUltSincronizacion" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AtributosxColeccion" Relationship="AventasModel.FK__Atributos__IdCol__6DF7358C" FromRole="Colecciones" ToRole="AtributosxColeccion" />
+          <NavigationProperty Name="TiposdeColeccion" Relationship="AventasModel.FK__Coleccion__Colec__6A3BB341" FromRole="Colecciones" ToRole="TiposdeColeccion" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__Coleccion__FotoP__405A880E" FromRole="Colecciones" ToRole="Empresa" />
+          <NavigationProperty Name="EdadesxColeccion" Relationship="AventasModel.FK__EdadesxCo__IdCol__6932806F" FromRole="Colecciones" ToRole="EdadesxColeccion" />
+          <NavigationProperty Name="LineasxColeccion" Relationship="AventasModel.FK__LineasxCo__IdCol__71C7C670" FromRole="Colecciones" ToRole="LineasxColeccion" />
+          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="Colecciones" ToRole="PedidosxCliente" />
+          <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__Productos__IdCol__4DB4832C" FromRole="Colecciones" ToRole="ProductosxColeccion" />
+        </EntityType>
+        <Association Name="FK__Atributos__IdCol__6DF7358C">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.AtributosxColeccion" Role="AtributosxColeccion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="AtributosxColeccion">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Coleccion__Colec__6A3BB341">
+          <End Type="AventasModel.TiposdeColeccion" Role="TiposdeColeccion" Multiplicity="0..1" />
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TiposdeColeccion">
+              <PropertyRef Name="ColeccionTipo" />
+            </Principal>
+            <Dependent Role="Colecciones">
+              <PropertyRef Name="ColeccionTipo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Coleccion__FotoP__405A880E">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="Colecciones">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__EdadesxCo__IdCol__6932806F">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.EdadesxColeccion" Role="EdadesxColeccion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="EdadesxColeccion">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LineasxCo__IdCol__71C7C670">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.LineasxColeccion" Role="LineasxColeccion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="LineasxColeccion">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdCol__6D2D2E85">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Productos__IdCol__4DB4832C">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="ProductosxColeccion">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -7502,29 +7500,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="IdClientexRuta" ColumnName="IdClientexRuta" />
                 <ScalarProperty Name="CodigoRuta" ColumnName="CodigoRuta" />
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Colecciones">
-            <EntityTypeMapping TypeName="AventasModel.Colecciones">
-              <MappingFragment StoreEntitySet="Colecciones">
-                <ScalarProperty Name="ImagenBase64" ColumnName="ImagenBase64" />
-                <ScalarProperty Name="FechaUltSincronizacion" ColumnName="FechaUltSincronizacion" />
-                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
-                <ScalarProperty Name="CodigoColeccion" ColumnName="CodigoColeccion" />
-                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
-                <ScalarProperty Name="ColeccionTipo" ColumnName="ColeccionTipo" />
-                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
-                <ScalarProperty Name="DisenoInicio" ColumnName="DisenoInicio" />
-                <ScalarProperty Name="DisenoFinal" ColumnName="DisenoFinal" />
-                <ScalarProperty Name="EntregaInicio" ColumnName="EntregaInicio" />
-                <ScalarProperty Name="EntregaFinal" ColumnName="EntregaFinal" />
-                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
-                <ScalarProperty Name="ProduccionInicio" ColumnName="ProduccionInicio" />
-                <ScalarProperty Name="ProduccionFinal" ColumnName="ProduccionFinal" />
-                <ScalarProperty Name="VentaInicio" ColumnName="VentaInicio" />
-                <ScalarProperty Name="VentaFinal" ColumnName="VentaFinal" />
-                <ScalarProperty Name="FotoPortada" ColumnName="FotoPortada" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -8724,6 +8699,28 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
                 <ScalarProperty Name="Codigo" ColumnName="Codigo" />
                 <ScalarProperty Name="IdFotografia" ColumnName="IdFotografia" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Colecciones">
+            <EntityTypeMapping TypeName="AventasModel.Colecciones">
+              <MappingFragment StoreEntitySet="Colecciones">
+                <ScalarProperty Name="FechaUltSincronizacion" ColumnName="FechaUltSincronizacion" />
+                <ScalarProperty Name="FotoPortada" ColumnName="FotoPortada" />
+                <ScalarProperty Name="VentaFinal" ColumnName="VentaFinal" />
+                <ScalarProperty Name="VentaInicio" ColumnName="VentaInicio" />
+                <ScalarProperty Name="ProduccionFinal" ColumnName="ProduccionFinal" />
+                <ScalarProperty Name="ProduccionInicio" ColumnName="ProduccionInicio" />
+                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
+                <ScalarProperty Name="EntregaFinal" ColumnName="EntregaFinal" />
+                <ScalarProperty Name="EntregaInicio" ColumnName="EntregaInicio" />
+                <ScalarProperty Name="DisenoFinal" ColumnName="DisenoFinal" />
+                <ScalarProperty Name="DisenoInicio" ColumnName="DisenoInicio" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="ColeccionTipo" ColumnName="ColeccionTipo" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="CodigoColeccion" ColumnName="CodigoColeccion" />
+                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

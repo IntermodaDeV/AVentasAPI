@@ -56,7 +56,6 @@ namespace DBData.Database
     
         public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }
-        public virtual Colecciones Colecciones { get; set; }
         public virtual Empresa Empresa { get; set; }
         public virtual EstadosPedido EstadosPedido { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -66,5 +65,6 @@ namespace DBData.Database
         public virtual TiposdePedido TiposdePedido { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosDetalle> PedidosDetalle { get; set; }
+        public virtual Colecciones Colecciones { get; set; }
     }
 }

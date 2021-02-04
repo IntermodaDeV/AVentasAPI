@@ -39,7 +39,6 @@ namespace DBData.Database
         public virtual DbSet<BitacoraVisitasCliente> BitacoraVisitasCliente { get; set; }
         public virtual DbSet<Clientes> Clientes { get; set; }
         public virtual DbSet<ClientesxRuta> ClientesxRuta { get; set; }
-        public virtual DbSet<Colecciones> Colecciones { get; set; }
         public virtual DbSet<Colores> Colores { get; set; }
         public virtual DbSet<ColoresxProducto> ColoresxProducto { get; set; }
         public virtual DbSet<Configuraciones> Configuraciones { get; set; }
@@ -120,6 +119,7 @@ namespace DBData.Database
         public virtual DbSet<Respuestas> Respuestas { get; set; }
         public virtual DbSet<LogSesion> LogSesion { get; set; }
         public virtual DbSet<FotografiasXProducto> FotografiasXProducto { get; set; }
+        public virtual DbSet<Colecciones> Colecciones { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

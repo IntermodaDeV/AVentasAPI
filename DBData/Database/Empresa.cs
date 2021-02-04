@@ -20,7 +20,6 @@ namespace DBData.Database
             this.AcuerdosxCliente = new HashSet<AcuerdosxCliente>();
             this.Bancos = new HashSet<Bancos>();
             this.Clientes = new HashSet<Clientes>();
-            this.Colecciones = new HashSet<Colecciones>();
             this.CuentasBancarias = new HashSet<CuentasBancarias>();
             this.FacturasxCliente = new HashSet<FacturasxCliente>();
             this.MonedasxEmpresa = new HashSet<MonedasxEmpresa>();
@@ -34,6 +33,7 @@ namespace DBData.Database
             this.Usuarios_Empresas = new HashSet<Usuarios_Empresas>();
             this.Usuarios = new HashSet<Usuarios>();
             this.Empresa_Encuesta = new HashSet<Empresa_Encuesta>();
+            this.Colecciones = new HashSet<Colecciones>();
         }
     
         public string EmpresaId { get; set; }
@@ -52,8 +52,6 @@ namespace DBData.Database
         public virtual ICollection<Bancos> Bancos { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Clientes> Clientes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Colecciones> Colecciones { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CuentasBancarias> CuentasBancarias { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -80,5 +78,7 @@ namespace DBData.Database
         public virtual ICollection<Usuarios> Usuarios { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Empresa_Encuesta> Empresa_Encuesta { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Colecciones> Colecciones { get; set; }
     }
 }

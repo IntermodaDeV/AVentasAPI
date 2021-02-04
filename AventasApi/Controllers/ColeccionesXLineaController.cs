@@ -9,9 +9,9 @@ using RestSharp;
 using ExternalApiData.Enviroments;
 using System.Data.Entity;
 using AventasApi.Models;
-using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
-using System.Globalization;
+using System.IO;
+using System.Drawing;
 namespace AventasApi.Controllers
 {
     public class DeshabilitarProducto
@@ -56,12 +56,18 @@ namespace AventasApi.Controllers
                 Imagenes = JsonConvert.DeserializeObject<List<ImagenColeccion>>(respuesta.Content);
                 using (AVentasEntities db = new AVentasEntities())
                 {
-                    var ImagenDB = await db.Colecciones.FirstOrDefaultAsync(c => c.CodigoColeccion == codigoColeccion && c.EmpresaId == empresa);
-
-                    if(ImagenDB != null && Imagenes.Count() > 0)
+                    var Colecciones = db.Colecciones.Where(c => c.CodigoColeccion == codigoColeccion).ToList();
+                    var config = db.Configuraciones.FirstOrDefault(c => c.CodigoConfiguracion == "UrlImages");
+                    if(Colecciones.Count() > 0 && Imagenes.Count() > 0)
                     {
-                        ImagenDB.ImagenBase64 = Imagenes[0].IMAGE;
+                        Base64ToImage(Imagenes[0].IMAGE, Imagenes[0].PACKAGEID);
+                        var url = config.Valor + Imagenes[0].PACKAGEID + ".jpg";
+                        foreach (var coleccion in Colecciones)
+                        {
+                            coleccion.FotoPortada = url;
+                        }
                         var result = await db.SaveChangesAsync();
+                       
                         return Ok(result);
                     }
 
@@ -71,6 +77,19 @@ namespace AventasApi.Controllers
            return BadRequest(respuesta.ErrorMessage);
         }
 
+        public Image Base64ToImage(string base64String, string Nombre)
+        {
+            var filePath = @"\\appserver2\AxAttachedDocuments\" + Nombre +".jpg";
+            // Convert base 64 string to byte[]
+            byte[] imageBytes = Convert.FromBase64String(base64String);
+            // Convert byte[] to Image
+            using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
+            {
+                Image image = Image.FromStream(ms, true);
+                image.Save(filePath);
+                return image;
+            }
+        }
         [HttpGet]
         [Route("{id}/{pais}")]
         public async Task<IHttpActionResult> GetcoleccionesXGrupoPrecio(string id,string pais)
@@ -99,7 +118,7 @@ namespace AventasApi.Controllers
                                Nombre = vw_coleccion.Nombre,
                                ColeccionTipo = vw_coleccion.ColeccionTipo,
                                EmpresaId = vw_coleccion.EmpresaId,
-                               FotoPortada = vw_coleccion.ImagenBase64 == null ? vw_coleccion.FotoPortada : "data:image/jpg;base64," + vw_coleccion.ImagenBase64,
+                               FotoPortada = vw_coleccion.FotoPortada,
                                DisenoInicio = vw_coleccion.DisenoInicio,
                                DisenoFinal = vw_coleccion.DisenoFinal,
                                EntregaInicio = vw_coleccion.EntregaInicio,
@@ -238,7 +257,7 @@ namespace AventasApi.Controllers
                                  Nombre = vw_coleccion.Nombre,
                                  ColeccionTipo = vw_coleccion.ColeccionTipo,
                                  EmpresaId = vw_coleccion.EmpresaId,
-                                 FotoPortada = vw_coleccion.ImagenBase64 == null ? vw_coleccion.FotoPortada : "data:image/jpg;base64," + vw_coleccion.ImagenBase64,
+                                 FotoPortada = vw_coleccion.FotoPortada,
                                  DisenoInicio = vw_coleccion.DisenoInicio,
                                  DisenoFinal = vw_coleccion.DisenoFinal,
                                  EntregaInicio = vw_coleccion.EntregaInicio,
@@ -416,7 +435,7 @@ namespace AventasApi.Controllers
                                                      Nombre = vw_coleccion.Nombre,
                                                      ColeccionTipo = vw_coleccion.ColeccionTipo,
                                                      EmpresaId = vw_coleccion.EmpresaId,
-                                                     FotoPortada = vw_coleccion.ImagenBase64 == null ? vw_coleccion.FotoPortada : "data:image/jpg;base64," + vw_coleccion.ImagenBase64,
+                                                     FotoPortada = vw_coleccion.FotoPortada,
                                                      DisenoInicio = vw_coleccion.DisenoInicio,
                                                      DisenoFinal = vw_coleccion.DisenoFinal,
                                                      EntregaInicio = vw_coleccion.EntregaInicio,
