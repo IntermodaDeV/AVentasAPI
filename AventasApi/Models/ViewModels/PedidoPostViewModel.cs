@@ -38,6 +38,7 @@ namespace AventasApi.Models.ViewModels
         public string ModoVenta { get; set; }
         public decimal Impuesto { get; set; }
         public bool RequiereEntrega { get; set; }
+        public bool PedidoCache { get; set; }
 
         public PedidoPostViewModel()
         {

@@ -93,8 +93,8 @@ namespace AventasApi.Controllers
                         {
                         }
                     }
-
-                    found = ctx.PedidosxCliente.FirstOrDefault(x => (x.Fecha >= DateTime.Now.AddMinutes(minutosValue * -1) && x.Fecha <= DateTime.Now)
+                    var fechaDesde = DateTime.Now.AddMinutes(Convert.ToDouble(minutosValue * -1));
+                    found = ctx.PedidosxCliente.FirstOrDefault(x => (x.Fecha >= fechaDesde  && x.Fecha <= DateTime.Now)
                                                                 && x.CodigoCliente == Pedido.CodigoCliente
                                                                 && x.Colecciones.CodigoColeccion == Pedido.CodigoColeccion
                                                                 && x.TotalPedido == Pedido.TotalXPedido
@@ -103,8 +103,8 @@ namespace AventasApi.Controllers
                 }
 
                 string numeroReferencia = Pedido.NumeroReferencia;
-                int numeroCorelativo = 0;
-                var cache = false;
+                //int numeroCorelativo = 0;
+                //var cache = false;
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
 
                 Asesores asesor;
@@ -158,69 +158,12 @@ namespace AventasApi.Controllers
                         RequiereEntrega = Pedido.RequiereEntrega
                     };
 
-                    if (numeroReferencia == "")
-                    {
-                        cache = true;
-                        numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
-                        string inicialesAsesor = asesor.InicialesNombre;
-                        numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
-                    }
-                    /*var pe = new PedidoCRMApiModel
-                    {
-                        COMPANY = cliente.EmpresaId,
-                        CUSTOMER_ACCOUNT = Pedido.CodigoCliente,
-                        DATE_CONFIRMED_RECEIPT = fechaEntrega.ToString("dd/MM/yyyy"),
-                        DELIVERY_ADDRESS = string.Empty,
-                        DELIVERY_MODE = "",
-                        DISC_GROUP = "",
-                        ID_SALES_AGREEMENT = Pedido.AcuerdoVenta,
-                        LINE = Pedido.Linea,
-                        OBSERVATIONS = (Pedido.Observacion == null) ? "" : Pedido.Observacion,
-                        PACKAGE = coleccion.CodigoColeccion,
-                        PACKAGE_TYPE = coleccion.ColeccionTipo,
-                        PedidoJsonItems = new List<PedidoJsonItems>(),
-                        REFERENCE = numeroReferencia,
-                        SALES_MANAGER = asesor.Usuario,
-                        SALES_ORDER_TYPE = (coleccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
-                        USER = asesor.Usuario,
-                        INCLUDE_TAX = "0"
-                    };
-
-                    if (clienteContado != null)
-                    {
-                        pe.SALES_NAME = clienteContado.Nombre;
-                        pe.FISCAL_DOCUMENT = clienteContado.RTN;
-                        pe.DELIVERY_ADDRESS = clienteContado.Direccion;
-                        pe.PHONE = (SyncTelContado.VALOR == "1") ? clienteContado.Telefono : "";
-                    }
-                    else
-                    {
-                        pe.SALES_NAME = "";
-                        pe.FISCAL_DOCUMENT = "";
-                        pe.DELIVERY_ADDRESS = "";
-                        pe.PHONE = (SyncTelCredito.VALOR == "1") ? cliente.Telefono : "";
-                    }*/
-
                     foreach (var detalle in Pedido.DetallePedido)
                     {
                         int cantidad = 0;
                         int.TryParse(detalle.Cantidad, out cantidad);
                         if (cantidad > 0)
                         {
-                            /*pe.PedidoJsonItems.Add(
-                                    new PedidoJsonItems
-                                    {
-                                        COLOR = detalle.CodigoColor,
-                                        DELIVERY_ADDRESS = "",
-                                        DISC_PERCENTAGE = "0.00",
-                                        ITEM_CODE = detalle.CodigoProducto,
-                                        LOT_NUMBER = coleccion.CodigoColeccion,
-                                        QUANTITY = detalle.Cantidad,
-                                        REFERENCE = numeroReferencia,
-                                        SIZE = detalle.Talla,
-                                        UNIT = "Und",
-                                        UNIT_PRICE = detalle.PrecioUnitario
-                                    });*/
                             PedidoBDAGuardar.TotalUnidades += cantidad;
                             decimal precioUnitario = 0;
                             decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
@@ -251,10 +194,10 @@ namespace AventasApi.Controllers
                     PResumenCredito_Result resultado;
                     using (AVentasEntities context = new AVentasEntities())
                     {
-                        if (cache)
+                        if (Pedido.PedidoCache)
                         {
                             asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                            asesor.CorrelativoPedidos = numeroCorelativo + 1;
+                            asesor.CorrelativoPedidos = asesor.CorrelativoPedidos + 1;
                             context.SaveChanges();
                         }
                         resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
@@ -353,8 +296,8 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/PedidosXCliente/correlativo")]
-        public async Task <IHttpActionResult> GetCorrelativo()
+        [Route("~/api/PedidosXCliente/correlativo/{aumentar}")]
+        public async Task <IHttpActionResult> GetCorrelativo(int aumentar)
         {
             try
             {
@@ -366,12 +309,16 @@ namespace AventasApi.Controllers
                     string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
 
-                    var toUpdate = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == asesor.CodigoAsesor);
-                    if (toUpdate != null)
+                    if (aumentar == 1)
                     {
-                        toUpdate.CorrelativoPedidos = numeroCorelativo + 1;
-                        ctx.SaveChanges();
+                        var toUpdate = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == asesor.CodigoAsesor);
+                        if (toUpdate != null)
+                        {
+                            toUpdate.CorrelativoPedidos = numeroCorelativo + 1;
+                            ctx.SaveChanges();
+                        }
                     }
+
 
                     return Ok(numeroReferencia);
                 }

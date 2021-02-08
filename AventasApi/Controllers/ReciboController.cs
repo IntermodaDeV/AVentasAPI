@@ -43,8 +43,8 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/recibos/correlativo")]
-        public async Task<IHttpActionResult> GetCorrelativo()
+        [Route("~/api/recibos/correlativo/{aumentar}")]
+        public async Task<IHttpActionResult> GetCorrelativo(int aumentar)
         {
             try
             {
@@ -56,11 +56,14 @@ namespace AventasApi.Controllers
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
 
-                    var toUpdate = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == asesor.CodigoAsesor);
-                    if (toUpdate != null)
+                    if (aumentar == 1)
                     {
-                        toUpdate.CorrelativoRecibos = numeroCorelativo + 1;
-                        ctx.SaveChanges();
+                        var toUpdate = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == asesor.CodigoAsesor);
+                        if (toUpdate != null)
+                        {
+                            toUpdate.CorrelativoRecibos = numeroCorelativo + 1;
+                            ctx.SaveChanges();
+                        }
                     }
 
                     return Ok(numeroReferencia);
@@ -707,7 +710,7 @@ namespace AventasApi.Controllers
                                     ASESOR = asesor.Usuario,
                                     ASESOR_NOMBRE = asesor.Nombre,
                                     ASESOR_DIARIO = asesor.CodigoAsesor,
-                                    RECIBO = reciboPost.NumeroRecibo == "No Disponible" ? $"{inicialesAsesor}-1{numeroCorrelativoRecibo.ToString("D5")}" : reciboPost.NumeroRecibo,
+                                    RECIBO =  reciboPost.NumeroRecibo,
                                     CLIENTE = subfactura.CodigoCliente,
                                     MONEDA = pago.IdMoneda,
                                     FECHA = DateTime.Now.ToString("dd/MM/yyyy"),
