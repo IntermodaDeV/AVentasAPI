@@ -572,6 +572,7 @@ namespace AventasApi.Controllers
                                         NombreDistribucion = dis.NombreDistribucion,
                                         NombreTalla = dis.NombreTalla,
                                         Cantidad = dis.Cantidad,
+                                        Orden = dis.Orden
                                     }).ToList()
                                 }).OrderBy(txp => txp.Orden).ToList(),
                                 prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.IdProducto)
@@ -613,6 +614,7 @@ namespace AventasApi.Controllers
                                                          NombreDistribucion = dis.NombreDistribucion,
                                                          NombreTalla = dis.NombreTalla,
                                                          Cantidad = dis.Cantidad,
+                                                         Orden = dis.Orden
                                                      }).ToList()
                                                  }).FirstOrDefault()
                                              }).ToList()
