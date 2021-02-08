@@ -637,6 +637,11 @@ namespace AventasApi.Controllers
                 {
 
                 }
+                var existeRecibo = context.RecibosxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo && x.CodigoCliente == reciboPost.CodigoCliente).Count();
+                if (existeRecibo > 0)
+                {
+                    return Ok("Ya se ha registrado este recibo");
+                }
 
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
 
@@ -650,7 +655,7 @@ namespace AventasApi.Controllers
                 int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
                 string inicialesAsesor = asesor.InicialesNombre;
                 var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(subFac => subFac.FechaVencimiento).ToList();
-
+                
                 List<ReciboApiModel> recibos = new List<ReciboApiModel>();
                 var isOnline = EnLinea(asesor.EmpresaId, asesor.CodigoAsesor);
                 foreach (PagosReciboPostViewModel pago in reciboPost.Pagos.OrderBy(pag => pag.Orden))
@@ -702,7 +707,7 @@ namespace AventasApi.Controllers
                                     ASESOR = asesor.Usuario,
                                     ASESOR_NOMBRE = asesor.Nombre,
                                     ASESOR_DIARIO = asesor.CodigoAsesor,
-                                    RECIBO = reciboPost.NumeroRecibo,
+                                    RECIBO = reciboPost.NumeroRecibo == "No Disponible" ? $"{inicialesAsesor}-1{numeroCorrelativoRecibo.ToString("D5")}" : reciboPost.NumeroRecibo,
                                     CLIENTE = subfactura.CodigoCliente,
                                     MONEDA = pago.IdMoneda,
                                     FECHA = DateTime.Now.ToString("dd/MM/yyyy"),

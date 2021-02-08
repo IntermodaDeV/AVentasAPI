@@ -182,7 +182,7 @@ namespace AventasApi.Controllers
                     var modulos = context.LISTA_EJECUCION_ESPECIFICO.Where(x => x.USUARIO == usuario && x.FECHA >= fechaInicio).ToList();
                     if (modulos.Count <= 0)
                     {
-                        return NotFound();
+                        return Ok(new List<ListaEjecucionManuaVisuallModel>());
                     }
 
                     var modulosList = modulos.Select(x => new ListaEjecucionManuaVisuallModel()
