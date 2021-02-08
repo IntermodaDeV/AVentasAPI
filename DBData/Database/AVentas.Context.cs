@@ -120,6 +120,8 @@ namespace DBData.Database
         public virtual DbSet<LogSesion> LogSesion { get; set; }
         public virtual DbSet<FotografiasXProducto> FotografiasXProducto { get; set; }
         public virtual DbSet<Colecciones> Colecciones { get; set; }
+        public virtual DbSet<PedidosDetalleFlotante> PedidosDetalleFlotante { get; set; }
+        public virtual DbSet<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

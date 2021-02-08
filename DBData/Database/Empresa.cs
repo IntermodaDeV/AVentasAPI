@@ -34,6 +34,7 @@ namespace DBData.Database
             this.Usuarios = new HashSet<Usuarios>();
             this.Empresa_Encuesta = new HashSet<Empresa_Encuesta>();
             this.Colecciones = new HashSet<Colecciones>();
+            this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
         }
     
         public string EmpresaId { get; set; }
@@ -80,5 +81,7 @@ namespace DBData.Database
         public virtual ICollection<Empresa_Encuesta> Empresa_Encuesta { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Colecciones> Colecciones { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
     }
 }

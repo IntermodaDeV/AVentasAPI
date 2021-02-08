@@ -43,6 +43,32 @@ namespace AventasApi.Services.AsyncJobs
 
             });
         }
+
+        public static void IngresarPedidoFlotante(PedidosxClienteFlotante pedido, string firma)
+        {
+            var pedidoTask = Task.Run(() =>
+            {
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    context.PedidosxClienteFlotante.Add(pedido);
+                    context.SaveChanges();
+                    ByteArrayImageConversion firmaConversion = new ByteArrayImageConversion(firma);
+                    if (firmaConversion.IsSuccesful)
+                    {
+
+                        FirmasxPedido firmaAGuardar = new FirmasxPedido
+                        {
+                            PedidoId = pedido.PedidoId,
+                            Firma = firmaConversion.ContentByteArray
+                        };
+                        context.FirmasxPedido.Add(firmaAGuardar);
+                        context.SaveChanges();
+                    }
+                }
+
+            });
+        }
+
         public static  void IngresarRecibos(List<RecibosxClienteViewModel> recibos,bool sincronizado)
         {
             var reciboTask = Task.Run(() =>

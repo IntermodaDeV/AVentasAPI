@@ -66,6 +66,7 @@ namespace AventasApi.Controllers
         {
             try
             {
+                PedidosxCliente found = null;
                 try
                 {
                     var json = new JavaScriptSerializer().Serialize(Pedido);
@@ -75,6 +76,30 @@ namespace AventasApi.Controllers
                 catch (Exception)
                 {
 
+                }
+
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
+                    int minutosValue = 2;
+
+                    if(minutosConf != null)
+                    { 
+                        try
+                        {
+                            int.TryParse(minutosConf.Valor, out minutosValue);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+
+                    found = ctx.PedidosxCliente.FirstOrDefault(x => (x.Fecha >= DateTime.Now.AddMinutes(minutosValue * -1) && x.Fecha <= DateTime.Now)
+                                                                && x.CodigoCliente == Pedido.CodigoCliente
+                                                                && x.Colecciones.CodigoColeccion == Pedido.CodigoColeccion
+                                                                && x.TotalPedido == Pedido.TotalXPedido
+                                                                && x.TotalUnidades == Pedido.TotalUnidades
+                                                                && x.CodigoAsesor == Pedido.Usuario);
                 }
 
                 string numeroReferencia = Pedido.NumeroReferencia;
@@ -107,141 +132,217 @@ namespace AventasApi.Controllers
                     coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
                 }
                 DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
-                PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
-                {
-                    IdTipoPedido = tipoPedido?.IdTipoPedido,
-                    IdColeccion = coleccion.IdColeccion,
-                    CodigoCliente = cliente.CodigoCliente,
-                    AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
-                    EmpresaId = cliente.EmpresaId,
-                    Fecha = DateTime.Now,
-                    FechaEntrega = fechaEntrega,
-                    CodigoAsesor = asesor.CodigoAsesor,
-                    Observacion = Pedido.Observacion,
-                    TotalUnidades = 0,
-                    PedidosDetalle = new List<PedidosDetalle>(),
-                    Subtotal = 0,
-                    Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
-                    Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
-                    IdLinea = Pedido.Linea,
-                    ClienteContadoId = Pedido.ClienteContadoId,
-                    ModoVenta = Pedido.ModoVenta,
-                    Flete = Pedido.Flete,
-                    RequiereEntrega = Pedido.RequiereEntrega
-                };
 
-                if (numeroReferencia == "")
+                if (found == null)
                 {
-                    cache = true;
-                    numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
-                    string inicialesAsesor = asesor.InicialesNombre;
-                    numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
-                }
-                /*var pe = new PedidoCRMApiModel
-                {
-                    COMPANY = cliente.EmpresaId,
-                    CUSTOMER_ACCOUNT = Pedido.CodigoCliente,
-                    DATE_CONFIRMED_RECEIPT = fechaEntrega.ToString("dd/MM/yyyy"),
-                    DELIVERY_ADDRESS = string.Empty,
-                    DELIVERY_MODE = "",
-                    DISC_GROUP = "",
-                    ID_SALES_AGREEMENT = Pedido.AcuerdoVenta,
-                    LINE = Pedido.Linea,
-                    OBSERVATIONS = (Pedido.Observacion == null) ? "" : Pedido.Observacion,
-                    PACKAGE = coleccion.CodigoColeccion,
-                    PACKAGE_TYPE = coleccion.ColeccionTipo,
-                    PedidoJsonItems = new List<PedidoJsonItems>(),
-                    REFERENCE = numeroReferencia,
-                    SALES_MANAGER = asesor.Usuario,
-                    SALES_ORDER_TYPE = (coleccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
-                    USER = asesor.Usuario,
-                    INCLUDE_TAX = "0"
-                };
+                    PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
+                    {
+                        IdTipoPedido = tipoPedido?.IdTipoPedido,
+                        IdColeccion = coleccion.IdColeccion,
+                        CodigoCliente = cliente.CodigoCliente,
+                        AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
+                        EmpresaId = cliente.EmpresaId,
+                        Fecha = DateTime.Now,
+                        FechaEntrega = fechaEntrega,
+                        CodigoAsesor = asesor.CodigoAsesor,
+                        Observacion = Pedido.Observacion,
+                        TotalUnidades = 0,
+                        PedidosDetalle = new List<PedidosDetalle>(),
+                        Subtotal = 0,
+                        Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
+                        Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
+                        IdLinea = Pedido.Linea,
+                        ClienteContadoId = Pedido.ClienteContadoId,
+                        ModoVenta = Pedido.ModoVenta,
+                        Flete = Pedido.Flete,
+                        RequiereEntrega = Pedido.RequiereEntrega
+                    };
 
-                if (clienteContado != null)
-                {
-                    pe.SALES_NAME = clienteContado.Nombre;
-                    pe.FISCAL_DOCUMENT = clienteContado.RTN;
-                    pe.DELIVERY_ADDRESS = clienteContado.Direccion;
-                    pe.PHONE = (SyncTelContado.VALOR == "1") ? clienteContado.Telefono : "";
+                    if (numeroReferencia == "")
+                    {
+                        cache = true;
+                        numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                        string inicialesAsesor = asesor.InicialesNombre;
+                        numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                    }
+                    /*var pe = new PedidoCRMApiModel
+                    {
+                        COMPANY = cliente.EmpresaId,
+                        CUSTOMER_ACCOUNT = Pedido.CodigoCliente,
+                        DATE_CONFIRMED_RECEIPT = fechaEntrega.ToString("dd/MM/yyyy"),
+                        DELIVERY_ADDRESS = string.Empty,
+                        DELIVERY_MODE = "",
+                        DISC_GROUP = "",
+                        ID_SALES_AGREEMENT = Pedido.AcuerdoVenta,
+                        LINE = Pedido.Linea,
+                        OBSERVATIONS = (Pedido.Observacion == null) ? "" : Pedido.Observacion,
+                        PACKAGE = coleccion.CodigoColeccion,
+                        PACKAGE_TYPE = coleccion.ColeccionTipo,
+                        PedidoJsonItems = new List<PedidoJsonItems>(),
+                        REFERENCE = numeroReferencia,
+                        SALES_MANAGER = asesor.Usuario,
+                        SALES_ORDER_TYPE = (coleccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
+                        USER = asesor.Usuario,
+                        INCLUDE_TAX = "0"
+                    };
+
+                    if (clienteContado != null)
+                    {
+                        pe.SALES_NAME = clienteContado.Nombre;
+                        pe.FISCAL_DOCUMENT = clienteContado.RTN;
+                        pe.DELIVERY_ADDRESS = clienteContado.Direccion;
+                        pe.PHONE = (SyncTelContado.VALOR == "1") ? clienteContado.Telefono : "";
+                    }
+                    else
+                    {
+                        pe.SALES_NAME = "";
+                        pe.FISCAL_DOCUMENT = "";
+                        pe.DELIVERY_ADDRESS = "";
+                        pe.PHONE = (SyncTelCredito.VALOR == "1") ? cliente.Telefono : "";
+                    }*/
+
+                    foreach (var detalle in Pedido.DetallePedido)
+                    {
+                        int cantidad = 0;
+                        int.TryParse(detalle.Cantidad, out cantidad);
+                        if (cantidad > 0)
+                        {
+                            /*pe.PedidoJsonItems.Add(
+                                    new PedidoJsonItems
+                                    {
+                                        COLOR = detalle.CodigoColor,
+                                        DELIVERY_ADDRESS = "",
+                                        DISC_PERCENTAGE = "0.00",
+                                        ITEM_CODE = detalle.CodigoProducto,
+                                        LOT_NUMBER = coleccion.CodigoColeccion,
+                                        QUANTITY = detalle.Cantidad,
+                                        REFERENCE = numeroReferencia,
+                                        SIZE = detalle.Talla,
+                                        UNIT = "Und",
+                                        UNIT_PRICE = detalle.PrecioUnitario
+                                    });*/
+                            PedidoBDAGuardar.TotalUnidades += cantidad;
+                            decimal precioUnitario = 0;
+                            decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
+                            PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
+
+                            PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
+                            {
+                                IdProducto = detalle.IdProducto,
+                                CodigoColor = detalle.CodigoColor,
+                                CodigoTalla = detalle.Talla,
+                                Cantidad = cantidad,
+                                MontoLinea = (precioUnitario * cantidad),
+                                Fecha = DateTime.Now,
+                                CodigoAsesor = asesor.CodigoAsesor,
+                                PrecioUnitario = precioUnitario
+                            });
+                        }
+
+                    }
+
+                    PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
+                    PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                    PedidoBDAGuardar.PedidoId = numeroReferencia;
+                    PedidoBDAGuardar.NumeroPedido = "";
+                    PedidoBDAGuardar.Sincronizado = false;
+                    PedidoBDAGuardar.Procesando = false;
+
+                    PResumenCredito_Result resultado;
+                    using (AVentasEntities context = new AVentasEntities())
+                    {
+                        if (cache)
+                        {
+                            asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                            asesor.CorrelativoPedidos = numeroCorelativo + 1;
+                            context.SaveChanges();
+                        }
+                        resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
+                    }
+                    AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
+
+                    if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
+                    {
+                        if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                        {
+                            ReducirStock(PedidoBDAGuardar);
+                        }
+                    }
+
+
+                    //s_ = PostPedidoPendiente(numeroReferencia);
                 }
                 else
                 {
-                    pe.SALES_NAME = "";
-                    pe.FISCAL_DOCUMENT = "";
-                    pe.DELIVERY_ADDRESS = "";
-                    pe.PHONE = (SyncTelCredito.VALOR == "1") ? cliente.Telefono : "";
-                }*/
-
-                foreach (var detalle in Pedido.DetallePedido)
-                {
-                    int cantidad = 0;
-                    int.TryParse(detalle.Cantidad, out cantidad);
-                    if (cantidad > 0)
+                    PedidosxClienteFlotante PedidoBDAGuardar = new PedidosxClienteFlotante
                     {
-                        /*pe.PedidoJsonItems.Add(
-                                new PedidoJsonItems
-                                {
-                                    COLOR = detalle.CodigoColor,
-                                    DELIVERY_ADDRESS = "",
-                                    DISC_PERCENTAGE = "0.00",
-                                    ITEM_CODE = detalle.CodigoProducto,
-                                    LOT_NUMBER = coleccion.CodigoColeccion,
-                                    QUANTITY = detalle.Cantidad,
-                                    REFERENCE = numeroReferencia,
-                                    SIZE = detalle.Talla,
-                                    UNIT = "Und",
-                                    UNIT_PRICE = detalle.PrecioUnitario
-                                });*/
-                        PedidoBDAGuardar.TotalUnidades += cantidad;
-                        decimal precioUnitario = 0;
-                        decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                        PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
+                        IdTipoPedido = tipoPedido?.IdTipoPedido,
+                        IdColeccion = coleccion.IdColeccion,
+                        CodigoCliente = cliente.CodigoCliente,
+                        AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
+                        EmpresaId = cliente.EmpresaId,
+                        Fecha = DateTime.Now,
+                        FechaEntrega = fechaEntrega,
+                        CodigoAsesor = asesor.CodigoAsesor,
+                        Observacion = Pedido.Observacion,
+                        TotalUnidades = 0,
+                        PedidosDetalleFlotante = new List<PedidosDetalleFlotante>(),
+                        Subtotal = 0,
+                        Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
+                        Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
+                        IdLinea = Pedido.Linea,
+                        ClienteContadoId = Pedido.ClienteContadoId,
+                        ModoVenta = Pedido.ModoVenta,
+                        Flete = Pedido.Flete,
+                        RequiereEntrega = Pedido.RequiereEntrega,
+                        ESTADO = 0
+                    };
 
-                        PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
+                    //if (numeroReferencia == "")
+                    //{
+                    //    cache = true;
+                    //    numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                    //    string inicialesAsesor = asesor.InicialesNombre;
+                    //    numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                    //}
+
+                    foreach (var detalle in Pedido.DetallePedido)
+                    {
+                        int cantidad = 0;
+                        int.TryParse(detalle.Cantidad, out cantidad);
+                        if (cantidad > 0)
                         {
-                            IdProducto = detalle.IdProducto,
-                            CodigoColor = detalle.CodigoColor,
-                            CodigoTalla = detalle.Talla,
-                            Cantidad = cantidad,
-                            MontoLinea = (precioUnitario * cantidad),
-                            Fecha = DateTime.Now,
-                            CodigoAsesor = asesor.CodigoAsesor,
-                            PrecioUnitario = precioUnitario
-                        });
+                            PedidoBDAGuardar.TotalUnidades += cantidad;
+                            decimal precioUnitario = 0;
+                            decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
+                            PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
+
+                            PedidoBDAGuardar.PedidosDetalleFlotante.Add(new PedidosDetalleFlotante
+                            {
+                                PedidoId = PedidoBDAGuardar.PedidoId,
+                                IdProducto = detalle.IdProducto,
+                                CodigoColor = detalle.CodigoColor,
+                                CodigoTalla = detalle.Talla,
+                                Cantidad = cantidad,
+                                MontoLinea = (precioUnitario * cantidad),
+                                Fecha = DateTime.Now,
+                                CodigoAsesor = asesor.CodigoAsesor,
+                                PrecioUnitario = precioUnitario
+                            });
+                        }
+
                     }
 
+                    PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
+                    PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                    PedidoBDAGuardar.PedidoId = numeroReferencia;
+                    PedidoBDAGuardar.NumeroPedido = "";
+                    PedidoBDAGuardar.Sincronizado = false;
+                    PedidoBDAGuardar.Procesando = false;
+
+
+                    AsyncSqlInsert.IngresarPedidoFlotante(PedidoBDAGuardar, Pedido.Firma);
                 }
-
-                PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
-                PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
-                PedidoBDAGuardar.PedidoId = numeroReferencia;
-                PedidoBDAGuardar.NumeroPedido = "";
-                PedidoBDAGuardar.Sincronizado = false;
-                PedidoBDAGuardar.Procesando = false;
-
-                PResumenCredito_Result resultado;
-                using (AVentasEntities context = new AVentasEntities())
-                {
-                    if (cache)
-                    {
-                        asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                        asesor.CorrelativoPedidos = numeroCorelativo + 1;
-                        context.SaveChanges();
-                    }
-                    resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
-                }
-                AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
-
-                if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
-                {
-                    if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
-                    {
-                        ReducirStock(PedidoBDAGuardar);
-                    }
-                }
-
-                //s_ = PostPedidoPendiente(numeroReferencia);
 
                 return Ok(numeroReferencia);
             }

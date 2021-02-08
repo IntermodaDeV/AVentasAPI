@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1" ZoomLevel="71">
+      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1" ZoomLevel="29">
         <EntityTypeShape EntityType="AventasModel.AcuerdosxCliente" Width="1.5" PointX="3" PointY="41.125" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AcuerdosxClienteDetalle" Width="1.5" PointX="5.25" PointY="41.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.Asesores" Width="1.5" PointX="14" PointY="28.5" IsExpanded="true" />
@@ -229,6 +229,18 @@
         <AssociationConnector Association="AventasModel.FK__LineasxCo__IdCol__71C7C670" />
         <AssociationConnector Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" />
         <AssociationConnector Association="AventasModel.FK__Productos__IdCol__4DB4832C" />
+        <EntityTypeShape EntityType="AventasModel.PedidosDetalleFlotante" Width="1.5" PointX="29.75" PointY="33.75" />
+        <EntityTypeShape EntityType="AventasModel.PedidosxClienteFlotante" Width="1.5" PointX="27.5" PointY="24.875" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__Codig__6B44E6131" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__Codig__0F1832351" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E851" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__Empre__6C390A4C1" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD1" />
+        <AssociationConnector Association="AventasModel.FK_Linea1" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__idMon__353DDB1D1" />
+        <AssociationConnector Association="AventasModel.FK__PedidosDe__Pedid__70099B3011" />
+        <AssociationConnector Association="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
