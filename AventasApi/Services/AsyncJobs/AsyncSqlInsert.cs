@@ -19,14 +19,25 @@ namespace AventasApi.Services.AsyncJobs
         {
             factory = new TaskFactory();
         }
-        public static  void IngresarPedido(PedidosxCliente pedido, string firma)
+        public static bool IngresarPedido(PedidosxCliente pedido, string firma)
         {
+            bool value = true;
             var pedidoTask = Task.Run(() =>
             {
                 using (AVentasEntities context = new AVentasEntities())
                 {
                     context.PedidosxCliente.Add(pedido);
-                    context.SaveChanges();
+                    int rowAffected =  context.SaveChanges();
+                    if (rowAffected > 0)
+                    {
+                        var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario ==pedido.CodigoAsesor);
+                        asesor.CorrelativoPedidos = asesor.CorrelativoPedidos + 1;
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        value = false;
+                    }
                     ByteArrayImageConversion firmaConversion = new ByteArrayImageConversion(firma);
                     if (firmaConversion.IsSuccesful)
                     {
@@ -39,9 +50,10 @@ namespace AventasApi.Services.AsyncJobs
                         context.FirmasxPedido.Add(firmaAGuardar);
                         context.SaveChanges();
                     }
+                    value = true;
                 }
-
             });
+            return value;
         }
 
         public static void IngresarPedidoFlotante(PedidosxClienteFlotante pedido, string firma)

@@ -196,25 +196,95 @@ namespace AventasApi.Controllers
                     PedidoBDAGuardar.Procesando = false;
 
                     PResumenCredito_Result resultado;
-                    using (AVentasEntities context = new AVentasEntities())
+                    
+                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
+                    if (guardadoExito)
                     {
-                        if (Pedido.PedidoCache)
+                        using (AVentasEntities context = new AVentasEntities())
                         {
-                            asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                            asesor.CorrelativoPedidos = asesor.CorrelativoPedidos + 1;
-                            context.SaveChanges();
+                            resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
                         }
-                        resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
-                    }
-                    AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
 
-                    if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
-                    {
-                        if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                        if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
                         {
-                            ReducirStock(PedidoBDAGuardar);
+                            if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                            {
+                                ReducirStock(PedidoBDAGuardar);
+                            }
                         }
                     }
+                    else
+                    {
+                        PedidosxClienteFlotante PedidoFlotante = new PedidosxClienteFlotante
+                        {
+                            IdTipoPedido = tipoPedido?.IdTipoPedido,
+                            IdColeccion = coleccion.IdColeccion,
+                            CodigoCliente = cliente.CodigoCliente,
+                            AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
+                            EmpresaId = cliente.EmpresaId,
+                            Fecha = DateTime.Now,
+                            FechaEntrega = fechaEntrega,
+                            CodigoAsesor = asesor.CodigoAsesor,
+                            Observacion = Pedido.Observacion,
+                            TotalUnidades = 0,
+                            PedidosDetalleFlotante = new List<PedidosDetalleFlotante>(),
+                            Subtotal = 0,
+                            Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
+                            Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
+                            IdLinea = Pedido.Linea,
+                            ClienteContadoId = Pedido.ClienteContadoId,
+                            ModoVenta = Pedido.ModoVenta,
+                            Flete = Pedido.Flete,
+                            RequiereEntrega = Pedido.RequiereEntrega,
+                            ESTADO = 0
+                        };
+
+                        //if (numeroReferencia == "")
+                        //{
+                        //    cache = true;
+                        //    numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                        //    string inicialesAsesor = asesor.InicialesNombre;
+                        //    numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                        //}
+
+                        foreach (var detalle in Pedido.DetallePedido)
+                        {
+                            int cantidad = 0;
+                            int.TryParse(detalle.Cantidad, out cantidad);
+                            if (cantidad > 0)
+                            {
+                                PedidoFlotante.TotalUnidades += cantidad;
+                                decimal precioUnitario = 0;
+                                decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
+                                PedidoFlotante.Subtotal += (precioUnitario * cantidad);
+
+                                PedidoFlotante.PedidosDetalleFlotante.Add(new PedidosDetalleFlotante
+                                {
+                                    PedidoId = PedidoBDAGuardar.PedidoId,
+                                    IdProducto = detalle.IdProducto,
+                                    CodigoColor = detalle.CodigoColor,
+                                    CodigoTalla = detalle.Talla,
+                                    Cantidad = cantidad,
+                                    MontoLinea = (precioUnitario * cantidad),
+                                    Fecha = DateTime.Now,
+                                    CodigoAsesor = asesor.CodigoAsesor,
+                                    PrecioUnitario = precioUnitario
+                                });
+                            }
+
+                        }
+
+                        PedidoFlotante.TotalImpuesto = Pedido.Impuesto;
+                        PedidoFlotante.TotalPedido = (PedidoFlotante.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                        PedidoFlotante.PedidoId = numeroReferencia;
+                        PedidoFlotante.NumeroPedido = "";
+                        PedidoFlotante.Sincronizado = false;
+                        PedidoFlotante.Procesando = false;
+
+
+                        AsyncSqlInsert.IngresarPedidoFlotante(PedidoFlotante, Pedido.Firma);
+                    }
+                    
 
 
                     //s_ = PostPedidoPendiente(numeroReferencia);
@@ -313,7 +383,7 @@ namespace AventasApi.Controllers
                     string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
 
-                    if (aumentar == 1)
+                    /*if (aumentar == 1)
                     {
                         var toUpdate = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == asesor.CodigoAsesor);
                         if (toUpdate != null)
@@ -321,7 +391,7 @@ namespace AventasApi.Controllers
                             toUpdate.CorrelativoPedidos = numeroCorelativo + 1;
                             ctx.SaveChanges();
                         }
-                    }
+                    }*/
 
 
                     return Ok(numeroReferencia);
