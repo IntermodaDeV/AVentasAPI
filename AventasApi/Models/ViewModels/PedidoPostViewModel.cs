@@ -33,6 +33,7 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> TotalUnidades { get; set; }
         public Nullable<decimal> TotalXPedido { get; set; }
         public decimal Flete { get; set; }
+        public decimal subtotal { get; set; }
 
         public Nullable<int> ClienteContadoId { get; set; }
         public string ModoVenta { get; set; }

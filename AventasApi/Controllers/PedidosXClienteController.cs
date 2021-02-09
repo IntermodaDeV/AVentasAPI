@@ -77,7 +77,7 @@ namespace AventasApi.Controllers
                 {
 
                 }
-
+                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
@@ -93,19 +93,23 @@ namespace AventasApi.Controllers
                         {
                         }
                     }
+
                     var fechaDesde = DateTime.Now.AddMinutes(Convert.ToDouble(minutosValue * -1));
+                    var totalUnidades = Pedido.DetallePedido.Sum(x => decimal.Parse(x.Cantidad));
+                    var totalPedido = Pedido.subtotal + decimal.Parse(Pedido.Impuesto.ToString()) + Pedido.Flete;
+
                     found = ctx.PedidosxCliente.FirstOrDefault(x => (x.Fecha >= fechaDesde  && x.Fecha <= DateTime.Now)
                                                                 && x.CodigoCliente == Pedido.CodigoCliente
                                                                 && x.Colecciones.CodigoColeccion == Pedido.CodigoColeccion
-                                                                && x.TotalPedido == Pedido.TotalXPedido
-                                                                && x.TotalUnidades == Pedido.TotalUnidades
-                                                                && x.CodigoAsesor == Pedido.Usuario);
+                                                                && x.TotalPedido == totalPedido
+                                                                && x.TotalUnidades == totalUnidades
+                                                                && x.CodigoAsesor == user.UserAccount);
                 }
 
                 string numeroReferencia = Pedido.NumeroReferencia;
                 //int numeroCorelativo = 0;
                 //var cache = false;
-                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                
 
                 Asesores asesor;
                 Colecciones coleccion;
