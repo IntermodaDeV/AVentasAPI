@@ -8,6 +8,10 @@ using AventasApi.Models.ViewModels;
 using System;
 using AventasApi.Services.Authentication;
 using System.Data.Entity;
+using RestSharp;
+using ExternalApiData.Models.ApiModels;
+using ExternalApiData.Enviroments;
+using AventasApi.Utils;
 
 namespace AventasApi.Controllers
 {
@@ -15,10 +19,24 @@ namespace AventasApi.Controllers
     {
         AVentasEntities context = new AVentasEntities();
         private readonly AuthenticationAppService _authenticationAppService;
+        private SyncCuentaCorriente syncCuentaCorriente;
         public ClienteController()
         {
             _authenticationAppService = new AuthenticationAppService();
+            syncCuentaCorriente = new SyncCuentaCorriente();
         }
+
+        private bool EnLinea(string empresa, string asesor)
+        {
+            var client = new RestClient(Enviroment.CRMWebServiceURLApi);
+            client.Authenticator = new RestSharp.Authenticators.NtlmAuthenticator();
+            var request = new RestRequest($"asesor/{empresa}/{asesor}", Method.GET);
+            client.Timeout = 6000;
+            IRestResponse<List<AsesorApiModel>> respuesta = client.Execute<List<AsesorApiModel>>(request);
+
+            return respuesta.IsSuccessful;
+        }
+
         [HttpGet]
         public async Task<IHttpActionResult> GetClientes()
         {
@@ -688,6 +706,7 @@ namespace AventasApi.Controllers
                             Codigo = cli.CodigoCliente,
                             Nombre = cli.Nombre,
                             Zona = cli.Zona,
+                            IgnorarSecuenciaFactura=cli.IgnorarSeqFact,
                             ComunidadAutonoma = cli.ComunidadAutonoma,
                             GrupoPrecio = cli.GrupoPrecio,
                             GrupoCliente = cli.GrupoCliente,
@@ -713,7 +732,7 @@ namespace AventasApi.Controllers
                                 NumPedido = rec.NumPedido,
                                 CodigoCliente = rec.CodigoCliente
                             }).ToList(),
-                            Pedido = ctx.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.PedidoId) && ped.PedidoId != null && ped.Sincronizado == true).Select(ped => new PedidosXClienteViewModel
+                            Pedido = ctx.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.PedidoId) && ped.PedidoId != null && ped.Sincronizado == true && ped.ModoVenta == "Contado").Select(ped => new PedidosXClienteViewModel
                             {
                                 PedidoId = ped.NumeroPedido,
                                 NumeroPedido = ped.PedidoId,
@@ -838,6 +857,7 @@ namespace AventasApi.Controllers
                         CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
                         Latitud = cli.Latitud,
                         LimiteCredito = cli.LimiteCredito ?? 0,
+                        IgnorarSecuenciaFactura=cli.IgnorarSeqFact,
                         CreditoDisponible = cli.CreditoDisponible ?? 0,
                         Longitud = cli.Longitud,
                         GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
@@ -941,6 +961,83 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/cliente/sincronizacion")]
+        public async Task<IHttpActionResult> GetClientesSincronizacion()
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    List<string> asesoresHabilitados = new List<string>();
+                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
+                    var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
+
+                    if (usuario.FlagTodosAsesores.Value)
+                    {
+                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+                    else
+                    {
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+
+                    List<ClienteSincronizacionViewModel> listaClientes = new List<ClienteSincronizacionViewModel>();
+
+                    foreach (var asesor in asesoresHabilitados)
+                    {
+                        List<ClienteSincronizacionViewModel> clientes = await ctx.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoAsesor == asesor).Select(cli => new ClienteSincronizacionViewModel
+                        {
+                            EmpresaId=cli.EmpresaId,
+                            Nombre = cli.Nombre,
+                            Codigo=cli.CodigoCliente,
+                            Asesor=ctx.Asesores.FirstOrDefault(x=>x.CodigoAsesor==cli.CodigoAsesor).Nombre
+                        }).ToListAsync();
+
+                        listaClientes.AddRange(clientes);
+                    }
+                    return Ok(listaClientes);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/cliente/sincronizacion/{cliente}")]
+        public async Task<IHttpActionResult> PostClientesSincronizacion(string cliente)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var clienteBd = await ctx.Clientes.FirstOrDefaultAsync(x => x.CodigoCliente == cliente);
+                    if (clienteBd == null)
+                    {
+                        return BadRequest("El cliente no existe.");
+                    }
+
+                    if (EnLinea(clienteBd.EmpresaId, clienteBd.CodigoAsesor))
+                    {
+                        syncCuentaCorriente.SyncFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente);
+                        syncCuentaCorriente.SyncSubFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
+                        return Ok("Cuenta del cliente actualizada exitosamente.");
+                    }
+                    else
+                    {
+                        return BadRequest("Servidor AX no disponible.");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
             }
         }
 

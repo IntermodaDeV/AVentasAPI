@@ -282,7 +282,13 @@
     <Compile Include="Database\PedidosDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\PedidosDetalleFlotante.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\PedidosxCliente.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\PedidosxClienteFlotante.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\PrecioEspecifico.cs">

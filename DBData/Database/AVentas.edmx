@@ -228,6 +228,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Habilitado" Type="bit" Nullable="false" />
           <Property Name="VersionRegistro" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
           <Property Name="VersionRegistroBINT" Type="bigint" StoreGeneratedPattern="Computed" />
+          <Property Name="IgnorarSeqFact" Type="bit" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -703,6 +704,23 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Fecha" Type="datetime" />
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="PedidosDetalleFlotante">
+          <Key>
+            <PropertyRef Name="IdPedidoDetalle" />
+          </Key>
+          <Property Name="IdPedidoDetalle" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdPedidoxClienteFlotante" Type="int" />
+          <Property Name="PedidoId" Type="varchar" MaxLength="250" />
+          <Property Name="IdProducto" Type="int" />
+          <Property Name="CodigoColor" Type="varchar" MaxLength="50" />
+          <Property Name="CodigoTalla" Type="varchar" MaxLength="250" />
+          <Property Name="Linea" Type="int" />
+          <Property Name="Cantidad" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="PrecioUnitario" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="MontoLinea" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Fecha" Type="datetime" />
+          <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="PedidosxCliente">
           <Key>
             <PropertyRef Name="PedidoId" />
@@ -739,6 +757,46 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="RequiereEntrega" Type="bit" Nullable="false" />
           <Property Name="Procesando" Type="bit" />
           <Property Name="ErrorAx" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="PedidosxClienteFlotante">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PedidoId" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="NumeroPedido" Type="varchar" MaxLength="150" />
+          <Property Name="IdTipoPedido" Type="int" />
+          <Property Name="IdColeccion" Type="int" />
+          <Property Name="CodigoCliente" Type="varchar" MaxLength="250" />
+          <Property Name="AcuerdoVenta" Type="varchar" MaxLength="50" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+          <Property Name="Fecha" Type="datetime" />
+          <Property Name="FechaEntrega" Type="datetime" />
+          <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
+          <Property Name="Observacion" Type="varchar(max)" />
+          <Property Name="TotalUnidades" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Subtotal" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="TotalImpuesto" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="TotalDescuento" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="TotalPedido" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Mocked" Type="bit" />
+          <Property Name="Accuracy" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="Altitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="Error" Type="varchar" MaxLength="150" />
+          <Property Name="IdLinea" Type="varchar" MaxLength="250" />
+          <Property Name="idMoneda" Type="varchar" MaxLength="100" />
+          <Property Name="IdEstado" Type="int" />
+          <Property Name="Sincronizado" Type="bit" Nullable="false" />
+          <Property Name="ClienteContadoId" Type="int" />
+          <Property Name="ModoVenta" Type="varchar" MaxLength="50" />
+          <Property Name="Flete" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="RequiereEntrega" Type="bit" Nullable="false" />
+          <Property Name="Procesando" Type="bit" />
+          <Property Name="ErrorAx" Type="varchar(max)" />
+          <Property Name="ESTADO" Type="int" Nullable="false" />
+          <Property Name="PedidoIdGenerado" Type="varchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -2006,6 +2064,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__PedidosDe__Pedid__70099B3011">
+          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="0..1" />
+          <End Role="PedidosDetalleFlotante" Type="Self.PedidosDetalleFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PedidosxClienteFlotante">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PedidosDetalleFlotante">
+              <PropertyRef Name="IdPedidoxClienteFlotante" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__PedidosxC__Codig__0F183235">
           <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
           <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="*" />
@@ -2014,6 +2084,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               <PropertyRef Name="CodigoCliente" />
             </Principal>
             <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="CodigoCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__Codig__0F1832351">
+          <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
+          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="CodigoCliente" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
               <PropertyRef Name="CodigoCliente" />
             </Dependent>
           </ReferentialConstraint>
@@ -2030,6 +2112,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__PedidosxC__Codig__6B44E6131">
+          <End Role="Asesores" Type="Self.Asesores" Multiplicity="0..1" />
+          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Asesores">
+              <PropertyRef Name="CodigoAsesor" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="CodigoAsesor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__PedidosxC__Empre__6C390A4C">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
           <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="*" />
@@ -2038,6 +2132,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               <PropertyRef Name="EmpresaId" />
             </Principal>
             <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__Empre__6C390A4C1">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
+          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
               <PropertyRef Name="EmpresaId" />
             </Dependent>
           </ReferentialConstraint>
@@ -2054,6 +2160,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__PedidosxC__IdCol__6D2D2E851">
+          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
+          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__PedidosxC__IdEst__0ADD8CFD">
           <End Role="EstadosPedido" Type="Self.EstadosPedido" Multiplicity="0..1" />
           <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="*" />
@@ -2062,6 +2180,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               <PropertyRef Name="IdEstado" />
             </Principal>
             <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="IdEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdEst__0ADD8CFD1">
+          <End Role="EstadosPedido" Type="Self.EstadosPedido" Multiplicity="0..1" />
+          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EstadosPedido">
+              <PropertyRef Name="IdEstado" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
               <PropertyRef Name="IdEstado" />
             </Dependent>
           </ReferentialConstraint>
@@ -2078,6 +2208,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__PedidosxC__idMon__353DDB1D1">
+          <End Role="MaestroMoneda" Type="Self.MaestroMoneda" Multiplicity="0..1" />
+          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroMoneda">
+              <PropertyRef Name="IdMoneda" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="idMoneda" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__PedidosxC__IdTip__6A50C1DA">
           <End Role="TiposdePedido" Type="Self.TiposdePedido" Multiplicity="0..1" />
           <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="*" />
@@ -2086,6 +2228,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               <PropertyRef Name="IdTipoPedido" />
             </Principal>
             <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="IdTipoPedido" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdTip__6A50C1DA1">
+          <End Role="TiposdePedido" Type="Self.TiposdePedido" Multiplicity="0..1" />
+          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TiposdePedido">
+              <PropertyRef Name="IdTipoPedido" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
               <PropertyRef Name="IdTipoPedido" />
             </Dependent>
           </ReferentialConstraint>
@@ -2642,6 +2796,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Linea1">
+          <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="0..1" />
+          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroLinea">
+              <PropertyRef Name="IdLinea" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="IdLinea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_LOGSESION_USUARIO_FK_USUARIOS_ID">
           <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
           <End Role="LogSesion" Type="Self.LogSesion" Multiplicity="*" />
@@ -2662,6 +2828,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               <PropertyRef Name="IdProducto" />
             </Principal>
             <Dependent Role="PedidosDetalle">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PedidosDetalle_ProductosxColeccion1">
+          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
+          <End Role="PedidosDetalleFlotante" Type="Self.PedidosDetalleFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductosxColeccion">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="PedidosDetalleFlotante">
               <PropertyRef Name="IdProducto" />
             </Dependent>
           </ReferentialConstraint>
@@ -2887,7 +3065,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="Pantallas_Funciones" EntityType="Self.Pantallas_Funciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PantallasxUsuario" EntityType="Self.PantallasxUsuario" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PedidosDetalle" EntityType="Self.PedidosDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PedidosDetalleFlotante" EntityType="Self.PedidosDetalleFlotante" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PedidosxCliente" EntityType="Self.PedidosxCliente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PedidosxClienteFlotante" EntityType="Self.PedidosxClienteFlotante" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PrecioEspecifico" EntityType="Self.PrecioEspecifico" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PreciosxProducto" EntityType="Self.PreciosxProducto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Preguntas" EntityType="Self.Preguntas" Schema="dbo" store:Type="Tables" />
@@ -3247,33 +3427,65 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
             <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
           </AssociationSet>
+          <AssociationSet Name="FK__PedidosDe__Pedid__70099B3011" Association="Self.FK__PedidosDe__Pedid__70099B3011">
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+            <End Role="PedidosDetalleFlotante" EntitySet="PedidosDetalleFlotante" />
+          </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__Codig__0F183235" Association="Self.FK__PedidosxC__Codig__0F183235">
             <End Role="Clientes" EntitySet="Clientes" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__Codig__0F1832351" Association="Self.FK__PedidosxC__Codig__0F1832351">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
           </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__Codig__6B44E613" Association="Self.FK__PedidosxC__Codig__6B44E613">
             <End Role="Asesores" EntitySet="Asesores" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__Codig__6B44E6131" Association="Self.FK__PedidosxC__Codig__6B44E6131">
+            <End Role="Asesores" EntitySet="Asesores" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__Empre__6C390A4C" Association="Self.FK__PedidosxC__Empre__6C390A4C">
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__Empre__6C390A4C1" Association="Self.FK__PedidosxC__Empre__6C390A4C1">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
           </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E85" Association="Self.FK__PedidosxC__IdCol__6D2D2E85">
             <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E851" Association="Self.FK__PedidosxC__IdCol__6D2D2E851">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__IdEst__0ADD8CFD" Association="Self.FK__PedidosxC__IdEst__0ADD8CFD">
             <End Role="EstadosPedido" EntitySet="EstadosPedido" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdEst__0ADD8CFD1" Association="Self.FK__PedidosxC__IdEst__0ADD8CFD1">
+            <End Role="EstadosPedido" EntitySet="EstadosPedido" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
           </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__idMon__353DDB1D" Association="Self.FK__PedidosxC__idMon__353DDB1D">
             <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__idMon__353DDB1D1" Association="Self.FK__PedidosxC__idMon__353DDB1D1">
+            <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__IdTip__6A50C1DA" Association="Self.FK__PedidosxC__IdTip__6A50C1DA">
             <End Role="TiposdePedido" EntitySet="TiposdePedido" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdTip__6A50C1DA1" Association="Self.FK__PedidosxC__IdTip__6A50C1DA1">
+            <End Role="TiposdePedido" EntitySet="TiposdePedido" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
           </AssociationSet>
           <AssociationSet Name="FK__PrecioEsp__Grupo__386F4D83" Association="Self.FK__PrecioEsp__Grupo__386F4D83">
             <End Role="MaestroGrupoPrecio" EntitySet="MaestroGrupoPrecio" />
@@ -3459,6 +3671,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
+          <AssociationSet Name="FK_Linea1" Association="Self.FK_Linea1">
+            <End Role="MaestroLinea" EntitySet="MaestroLinea" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
           <AssociationSet Name="FK_LOGSESION_USUARIO_FK_USUARIOS_ID" Association="Self.FK_LOGSESION_USUARIO_FK_USUARIOS_ID">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="LogSesion" EntitySet="LogSesion" />
@@ -3466,6 +3682,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK_PedidosDetalle_ProductosxColeccion" Association="Self.FK_PedidosDetalle_ProductosxColeccion">
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PedidosDetalle_ProductosxColeccion1" Association="Self.FK_PedidosDetalle_ProductosxColeccion1">
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+            <End Role="PedidosDetalleFlotante" EntitySet="PedidosDetalleFlotante" />
           </AssociationSet>
           <AssociationSet Name="FK_PREGUNTA_ID_RESPUESTADETALLE_PREGUNTAID" Association="Self.FK_PREGUNTA_ID_RESPUESTADETALLE_PREGUNTAID">
             <End Role="Preguntas" EntitySet="Preguntas" />
@@ -3571,6 +3791,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Codig__6B44E613" FromRole="Asesores" ToRole="PedidosxCliente" />
           <NavigationProperty Name="Usuarios_Asesores" Relationship="AventasModel.FK__Usuarios___Codig__382534C0" FromRole="Asesores" ToRole="Usuarios_Asesores" />
           <Property Name="Activo" Type="Boolean" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Codig__6B44E6131" FromRole="Asesores" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="AsignacionxAsesor">
           <Key>
@@ -3627,8 +3848,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Descripcion2" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="CodigoAtributo" Type="Int32" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__Atributos__IdCol__5AC46587" FromRole="AtributosxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="MaestroLinea" Relationship="Self.FK__Atributos__IdLin__5BB889C0" FromRole="AtributosxColeccion" ToRole="MaestroLinea" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Atributos__IdCol__6DF7358C" FromRole="AtributosxColeccion" ToRole="Colecciones" />
         </EntityType>
         <EntityType Name="AtributosxProducto">
           <Key>
@@ -3729,6 +3950,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="VersionRegistro" Type="Binary" Nullable="false" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" />
           <Property Name="VersionRegistroBINT" Type="Int64" annotation:StoreGeneratedPattern="Computed" />
           <NavigationProperty Name="Respuestas" Relationship="AventasModel.FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE" FromRole="Clientes" ToRole="Respuestas" />
+          <Property Name="IgnorarSeqFact" Type="Boolean" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Codig__0F1832351" FromRole="Clientes" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -3739,34 +3962,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Clientes" Relationship="Self.FK__Clientesx__Codig__5C02A283" FromRole="ClientesxRuta" ToRole="Clientes" />
           <NavigationProperty Name="Rutas" Relationship="Self.FK__Clientesx__Codig__5B0E7E4A" FromRole="ClientesxRuta" ToRole="Rutas" />
-        </EntityType>
-        <EntityType Name="Colecciones">
-          <Key>
-            <PropertyRef Name="IdColeccion" />
-          </Key>
-          <Property Name="IdColeccion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CodigoColeccion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Nombre" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="ColeccionTipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="DisenoInicio" Type="DateTime" Precision="3" />
-          <Property Name="DisenoFinal" Type="DateTime" Precision="3" />
-          <Property Name="EntregaInicio" Type="DateTime" Precision="3" />
-          <Property Name="EntregaFinal" Type="DateTime" Precision="3" />
-          <Property Name="Estatus" Type="Int32" />
-          <Property Name="ProduccionInicio" Type="DateTime" Precision="3" />
-          <Property Name="ProduccionFinal" Type="DateTime" Precision="3" />
-          <Property Name="VentaInicio" Type="DateTime" Precision="3" />
-          <Property Name="VentaFinal" Type="DateTime" Precision="3" />
-          <Property Name="FotoPortada" Type="String" MaxLength="2500" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="AtributosxColeccion" Relationship="Self.FK__Atributos__IdCol__5AC46587" FromRole="Colecciones" ToRole="AtributosxColeccion" />
-          <NavigationProperty Name="TiposdeColeccion" Relationship="Self.FK__Coleccion__Colec__6A3BB341" FromRole="Colecciones" ToRole="TiposdeColeccion" />
-          <NavigationProperty Name="Empresa" Relationship="Self.FK__Coleccion__FotoP__405A880E" FromRole="Colecciones" ToRole="Empresa" />
-          <NavigationProperty Name="EdadesxColeccion" Relationship="Self.FK__EdadesxCo__IdCol__795DFB40" FromRole="Colecciones" ToRole="EdadesxColeccion" />
-          <NavigationProperty Name="LineasxColeccion" Relationship="Self.FK__LineasxCo__IdCol__442B18F2" FromRole="Colecciones" ToRole="LineasxColeccion" />
-          <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__Productos__IdCol__4DB4832C" FromRole="Colecciones" ToRole="ProductosxColeccion" />
-          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="Colecciones" ToRole="PedidosxCliente" />
-          <Property Name="FechaUltSincronizacion" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Colores">
           <Key>
@@ -3841,9 +4036,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="IdEdad" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="IdColeccion" Type="Int32" />
           <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__EdadesxCo__IdCol__795DFB40" FromRole="EdadesxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="MaestroEdad" Relationship="Self.FK__EdadesxCo__IdEda__7869D707" FromRole="EdadesxColeccion" ToRole="MaestroEdad" />
           <NavigationProperty Name="MaestroLinea" Relationship="Self.FK__EdadesxCo__IdLin__09946309" FromRole="EdadesxColeccion" ToRole="MaestroLinea" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__EdadesxCo__IdCol__6932806F" FromRole="EdadesxColeccion" ToRole="Colecciones" />
         </EntityType>
         <EntityType Name="Empresa">
           <Key>
@@ -3860,7 +4055,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="AcuerdosxCliente" Relationship="Self.FK__Acuerdosx__Empre__2BE97B0D" FromRole="Empresa" ToRole="AcuerdosxCliente" />
           <NavigationProperty Name="Bancos" Relationship="Self.FK__Bancos__EmpresaI__168449D3" FromRole="Empresa" ToRole="Bancos" />
           <NavigationProperty Name="Clientes" Relationship="Self.FK_Clientes_Empresa" FromRole="Empresa" ToRole="Clientes" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__Coleccion__FotoP__405A880E" FromRole="Empresa" ToRole="Colecciones" />
           <NavigationProperty Name="CuentasBancarias" Relationship="Self.FK__CuentasBa__Empre__1C3D2329" FromRole="Empresa" ToRole="CuentasBancarias" />
           <NavigationProperty Name="FacturasxCliente" Relationship="Self.FK__Facturasx__Empre__7246E95D" FromRole="Empresa" ToRole="FacturasxCliente" />
           <NavigationProperty Name="MonedasxEmpresa" Relationship="Self.FK__MonedasxE__Empre__3D7E1B63" FromRole="Empresa" ToRole="MonedasxEmpresa" />
@@ -3875,6 +4069,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="Usuarios_Empresas" Relationship="AventasModel.FK__Usuarios___Empre__2BBF5DDB" FromRole="Empresa" ToRole="Usuarios_Empresas" />
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK__Usuarios__Empres__28E2F130" FromRole="Empresa" ToRole="Usuarios" />
           <NavigationProperty Name="Empresa_Encuesta" Relationship="AventasModel.FK__EmpresaEn__Empre__7405149D" FromRole="Empresa" ToRole="Empresa_Encuesta" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Coleccion__FotoP__405A880E" FromRole="Empresa" ToRole="Colecciones" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C1" FromRole="Empresa" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="Errores">
           <Key>
@@ -3891,6 +4087,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="IdEstado" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Estado" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD" FromRole="EstadosPedido" ToRole="PedidosxCliente" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD1" FromRole="EstadosPedido" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="FacturasxCliente">
           <Key>
@@ -4009,8 +4206,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="IdLineaxColeccion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="IdColeccion" Type="Int32" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__LineasxCo__IdCol__442B18F2" FromRole="LineasxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="MaestroLinea" Relationship="Self.FK__LineasxCo__IdLin__4336F4B9" FromRole="LineasxColeccion" ToRole="MaestroLinea" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__LineasxCo__IdCol__71C7C670" FromRole="LineasxColeccion" ToRole="Colecciones" />
         </EntityType>
         <EntityType Name="MaestroEdad">
           <Key>
@@ -4048,6 +4245,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="LineasxColeccion" Relationship="Self.FK__LineasxCo__IdLin__4336F4B9" FromRole="MaestroLinea" ToRole="LineasxColeccion" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__Productos__IdLin__4EA8A765" FromRole="MaestroLinea" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK_Linea" FromRole="MaestroLinea" ToRole="PedidosxCliente" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK_Linea1" FromRole="MaestroLinea" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="MaestroMoneda">
           <Key>
@@ -4065,6 +4263,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D" FromRole="MaestroMoneda" ToRole="PedidosxCliente" />
           <NavigationProperty Name="PreciosxProducto" Relationship="AventasModel.FK__PreciosxP__IdMon__55209ACA" FromRole="MaestroMoneda" ToRole="PreciosxProducto" />
           <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdMon__36870511" FromRole="MaestroMoneda" ToRole="PrecioEspecifico" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D1" FromRole="MaestroMoneda" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="MonedasxEmpresa">
           <Key>
@@ -4101,7 +4300,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Multiplo" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="IdEdad" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="AtributosxProducto" Relationship="Self.FK__Atributos__IdPro__2C1E8537" FromRole="ProductosxColeccion" ToRole="AtributosxProducto" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__Productos__IdCol__4DB4832C" FromRole="ProductosxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="ColoresxProducto" Relationship="Self.FK__ColoresxP__IdPro__536D5C82" FromRole="ProductosxColeccion" ToRole="ColoresxProducto" />
           <NavigationProperty Name="GrupoTalla" Relationship="Self.FK__Productos__Codig__4F9CCB9E" FromRole="ProductosxColeccion" ToRole="GrupoTalla" />
           <NavigationProperty Name="MaestroEdad" Relationship="Self.FK__Productos__IdEda__68336F3E" FromRole="ProductosxColeccion" ToRole="MaestroEdad" />
@@ -4117,6 +4315,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion" FromRole="ProductosxColeccion" ToRole="PedidosDetalle" />
           <Property Name="CantidadMinima" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="FotografiasXProducto" Relationship="AventasModel.FK__Fotografi__IdPro__190BB0C3" FromRole="ProductosxColeccion" ToRole="FotografiasXProducto" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Productos__IdCol__4DB4832C" FromRole="ProductosxColeccion" ToRole="Colecciones" />
+          <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" FromRole="ProductosxColeccion" ToRole="PedidosDetalleFlotante" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -4244,7 +4444,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ColeccionTipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Descripcion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Icono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Colecciones" Relationship="Self.FK__Coleccion__Colec__6A3BB341" FromRole="TiposdeColeccion" ToRole="Colecciones" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Coleccion__Colec__6A3BB341" FromRole="TiposdeColeccion" ToRole="Colecciones" />
         </EntityType>
         <EntityType Name="TiposdePago">
           <Key>
@@ -4285,6 +4485,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="AcuerdosxCliente" Relationship="Self.FK__Acuerdosx__IdTip__2A01329B" FromRole="TiposdePedido" ToRole="AcuerdosxCliente" />
           <NavigationProperty Name="FacturasxCliente" Relationship="Self.FK__Facturasx__IdTip__75235608" FromRole="TiposdePedido" ToRole="FacturasxCliente" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA" FromRole="TiposdePedido" ToRole="PedidosxCliente" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" FromRole="TiposdePedido" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="TipoVisitaCliente">
           <Key>
@@ -4589,18 +4790,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Atributos__IdCol__5AC46587">
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
-          <End Role="AtributosxColeccion" Type="Self.AtributosxColeccion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="AtributosxColeccion">
-              <PropertyRef Name="IdColeccion" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Atributos__IdLin__5BB889C0">
           <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="0..1" />
           <End Role="AtributosxColeccion" Type="Self.AtributosxColeccion" Multiplicity="*" />
@@ -4790,66 +4979,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="ClientesxRuta">
               <PropertyRef Name="CodigoRuta" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Coleccion__Colec__6A3BB341">
-          <End Role="TiposdeColeccion" Type="Self.TiposdeColeccion" Multiplicity="0..1" />
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TiposdeColeccion">
-              <PropertyRef Name="ColeccionTipo" />
-            </Principal>
-            <Dependent Role="Colecciones">
-              <PropertyRef Name="ColeccionTipo" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Coleccion__FotoP__405A880E">
-          <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Empresa">
-              <PropertyRef Name="EmpresaId" />
-            </Principal>
-            <Dependent Role="Colecciones">
-              <PropertyRef Name="EmpresaId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__EdadesxCo__IdCol__795DFB40">
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
-          <End Role="EdadesxColeccion" Type="Self.EdadesxColeccion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="EdadesxColeccion">
-              <PropertyRef Name="IdColeccion" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__LineasxCo__IdCol__442B18F2">
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
-          <End Role="LineasxColeccion" Type="Self.LineasxColeccion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="LineasxColeccion">
-              <PropertyRef Name="IdColeccion" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Productos__IdCol__4DB4832C">
-          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
-          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="ProductosxColeccion">
-              <PropertyRef Name="IdColeccion" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -5250,7 +5379,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="BitacoraVisitasCliente" EntityType="Self.BitacoraVisitasCliente" />
           <EntitySet Name="Clientes" EntityType="Self.Clientes" />
           <EntitySet Name="ClientesxRuta" EntityType="Self.ClientesxRuta" />
-          <EntitySet Name="Colecciones" EntityType="Self.Colecciones" />
           <EntitySet Name="Colores" EntityType="Self.Colores" />
           <EntitySet Name="ColoresxProducto" EntityType="Self.ColoresxProducto" />
           <EntitySet Name="Configuraciones" EntityType="Self.Configuraciones" />
@@ -5367,10 +5495,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="TipoVisitaCliente" EntitySet="TipoVisitaCliente" />
             <End Role="AsignacionxAsesorDetalle" EntitySet="AsignacionxAsesorDetalle" />
           </AssociationSet>
-          <AssociationSet Name="FK__Atributos__IdCol__5AC46587" Association="Self.FK__Atributos__IdCol__5AC46587">
-            <End Role="Colecciones" EntitySet="Colecciones" />
-            <End Role="AtributosxColeccion" EntitySet="AtributosxColeccion" />
-          </AssociationSet>
           <AssociationSet Name="FK__Atributos__IdLin__5BB889C0" Association="Self.FK__Atributos__IdLin__5BB889C0">
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="AtributosxColeccion" EntitySet="AtributosxColeccion" />
@@ -5434,26 +5558,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK__Clientesx__Codig__5B0E7E4A" Association="Self.FK__Clientesx__Codig__5B0E7E4A">
             <End Role="Rutas" EntitySet="Rutas" />
             <End Role="ClientesxRuta" EntitySet="ClientesxRuta" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Coleccion__Colec__6A3BB341" Association="Self.FK__Coleccion__Colec__6A3BB341">
-            <End Role="TiposdeColeccion" EntitySet="TiposdeColeccion" />
-            <End Role="Colecciones" EntitySet="Colecciones" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Coleccion__FotoP__405A880E" Association="Self.FK__Coleccion__FotoP__405A880E">
-            <End Role="Empresa" EntitySet="Empresa" />
-            <End Role="Colecciones" EntitySet="Colecciones" />
-          </AssociationSet>
-          <AssociationSet Name="FK__EdadesxCo__IdCol__795DFB40" Association="Self.FK__EdadesxCo__IdCol__795DFB40">
-            <End Role="Colecciones" EntitySet="Colecciones" />
-            <End Role="EdadesxColeccion" EntitySet="EdadesxColeccion" />
-          </AssociationSet>
-          <AssociationSet Name="FK__LineasxCo__IdCol__442B18F2" Association="Self.FK__LineasxCo__IdCol__442B18F2">
-            <End Role="Colecciones" EntitySet="Colecciones" />
-            <End Role="LineasxColeccion" EntitySet="LineasxColeccion" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Productos__IdCol__4DB4832C" Association="Self.FK__Productos__IdCol__4DB4832C">
-            <End Role="Colecciones" EntitySet="Colecciones" />
-            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
           </AssociationSet>
           <AssociationSet Name="FK__ColoresxP__Codig__52793849" Association="Self.FK__ColoresxP__Codig__52793849">
             <End Role="Colores" EntitySet="Colores" />
@@ -5652,10 +5756,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__Codig__0F183235" Association="AventasModel.FK__PedidosxC__Codig__0F183235">
             <End Role="Clientes" EntitySet="Clientes" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E85" Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E85">
-            <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__Empre__6C390A4C" Association="AventasModel.FK__PedidosxC__Empre__6C390A4C">
@@ -5900,6 +6000,77 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="FotografiasXProducto" EntitySet="FotografiasXProducto" />
           </AssociationSet>
+          <EntitySet Name="Colecciones" EntityType="AventasModel.Colecciones" />
+          <AssociationSet Name="FK__Atributos__IdCol__6DF7358C" Association="AventasModel.FK__Atributos__IdCol__6DF7358C">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="AtributosxColeccion" EntitySet="AtributosxColeccion" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Coleccion__Colec__6A3BB341" Association="AventasModel.FK__Coleccion__Colec__6A3BB341">
+            <End Role="TiposdeColeccion" EntitySet="TiposdeColeccion" />
+            <End Role="Colecciones" EntitySet="Colecciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Coleccion__FotoP__405A880E" Association="AventasModel.FK__Coleccion__FotoP__405A880E">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="Colecciones" EntitySet="Colecciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__EdadesxCo__IdCol__6932806F" Association="AventasModel.FK__EdadesxCo__IdCol__6932806F">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="EdadesxColeccion" EntitySet="EdadesxColeccion" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LineasxCo__IdCol__71C7C670" Association="AventasModel.FK__LineasxCo__IdCol__71C7C670">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="LineasxColeccion" EntitySet="LineasxColeccion" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E85" Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E85">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Productos__IdCol__4DB4832C" Association="AventasModel.FK__Productos__IdCol__4DB4832C">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+          </AssociationSet>
+          <EntitySet Name="PedidosDetalleFlotante" EntityType="AventasModel.PedidosDetalleFlotante" />
+          <EntitySet Name="PedidosxClienteFlotante" EntityType="AventasModel.PedidosxClienteFlotante" />
+          <AssociationSet Name="FK__PedidosxC__Codig__6B44E6131" Association="AventasModel.FK__PedidosxC__Codig__6B44E6131">
+            <End Role="Asesores" EntitySet="Asesores" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__Codig__0F1832351" Association="AventasModel.FK__PedidosxC__Codig__0F1832351">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E851" Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E851">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__Empre__6C390A4C1" Association="AventasModel.FK__PedidosxC__Empre__6C390A4C1">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdEst__0ADD8CFD1" Association="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD1">
+            <End Role="EstadosPedido" EntitySet="EstadosPedido" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Linea1" Association="AventasModel.FK_Linea1">
+            <End Role="MaestroLinea" EntitySet="MaestroLinea" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__idMon__353DDB1D1" Association="AventasModel.FK__PedidosxC__idMon__353DDB1D1">
+            <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosDe__Pedid__70099B3011" Association="AventasModel.FK__PedidosDe__Pedid__70099B3011">
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+            <End Role="PedidosDetalleFlotante" EntitySet="PedidosDetalleFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PedidosDetalle_ProductosxColeccion1" Association="AventasModel.FK_PedidosDetalle_ProductosxColeccion1">
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+            <End Role="PedidosDetalleFlotante" EntitySet="PedidosDetalleFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdTip__6A50C1DA1" Association="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1">
+            <End Role="TiposdePedido" EntitySet="TiposdePedido" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -6136,7 +6307,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Flete" Type="Decimal" Precision="10" Scale="2" />
           <NavigationProperty Name="Asesores" Relationship="AventasModel.FK__PedidosxC__Codig__6B44E613" FromRole="PedidosxCliente" ToRole="Asesores" />
           <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__PedidosxC__Codig__0F183235" FromRole="PedidosxCliente" ToRole="Clientes" />
-          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="PedidosxCliente" ToRole="Colecciones" />
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C" FromRole="PedidosxCliente" ToRole="Empresa" />
           <NavigationProperty Name="EstadosPedido" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD" FromRole="PedidosxCliente" ToRole="EstadosPedido" />
           <NavigationProperty Name="FirmasxPedido" Relationship="AventasModel.FK__FirmasxPe__Pedid__75C27486" FromRole="PedidosxCliente" ToRole="FirmasxPedido" />
@@ -6148,6 +6318,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosxCliente" ToRole="PedidosDetalle" />
           <Property Name="Procesando" Type="Boolean" />
           <Property Name="ErrorAx" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="PedidosxCliente" ToRole="Colecciones" />
         </EntityType>
         <Association Name="FK__PedidosxC__Codig__6B44E613">
           <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="0..1" />
@@ -6170,18 +6341,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="PedidosxCliente">
               <PropertyRef Name="CodigoCliente" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__IdCol__6D2D2E85">
-          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="IdColeccion" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -7304,6 +7463,307 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Colecciones">
+          <Key>
+            <PropertyRef Name="IdColeccion" />
+          </Key>
+          <Property Name="IdColeccion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodigoColeccion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Nombre" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ColeccionTipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="DisenoInicio" Type="DateTime" Precision="3" />
+          <Property Name="DisenoFinal" Type="DateTime" Precision="3" />
+          <Property Name="EntregaInicio" Type="DateTime" Precision="3" />
+          <Property Name="EntregaFinal" Type="DateTime" Precision="3" />
+          <Property Name="Estatus" Type="Int32" />
+          <Property Name="ProduccionInicio" Type="DateTime" Precision="3" />
+          <Property Name="ProduccionFinal" Type="DateTime" Precision="3" />
+          <Property Name="VentaInicio" Type="DateTime" Precision="3" />
+          <Property Name="VentaFinal" Type="DateTime" Precision="3" />
+          <Property Name="FotoPortada" Type="String" MaxLength="2500" FixedLength="false" Unicode="false" />
+          <Property Name="FechaUltSincronizacion" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AtributosxColeccion" Relationship="AventasModel.FK__Atributos__IdCol__6DF7358C" FromRole="Colecciones" ToRole="AtributosxColeccion" />
+          <NavigationProperty Name="TiposdeColeccion" Relationship="AventasModel.FK__Coleccion__Colec__6A3BB341" FromRole="Colecciones" ToRole="TiposdeColeccion" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__Coleccion__FotoP__405A880E" FromRole="Colecciones" ToRole="Empresa" />
+          <NavigationProperty Name="EdadesxColeccion" Relationship="AventasModel.FK__EdadesxCo__IdCol__6932806F" FromRole="Colecciones" ToRole="EdadesxColeccion" />
+          <NavigationProperty Name="LineasxColeccion" Relationship="AventasModel.FK__LineasxCo__IdCol__71C7C670" FromRole="Colecciones" ToRole="LineasxColeccion" />
+          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="Colecciones" ToRole="PedidosxCliente" />
+          <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__Productos__IdCol__4DB4832C" FromRole="Colecciones" ToRole="ProductosxColeccion" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E851" FromRole="Colecciones" ToRole="PedidosxClienteFlotante" />
+        </EntityType>
+        <Association Name="FK__Atributos__IdCol__6DF7358C">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.AtributosxColeccion" Role="AtributosxColeccion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="AtributosxColeccion">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Coleccion__Colec__6A3BB341">
+          <End Type="AventasModel.TiposdeColeccion" Role="TiposdeColeccion" Multiplicity="0..1" />
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TiposdeColeccion">
+              <PropertyRef Name="ColeccionTipo" />
+            </Principal>
+            <Dependent Role="Colecciones">
+              <PropertyRef Name="ColeccionTipo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Coleccion__FotoP__405A880E">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="Colecciones">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__EdadesxCo__IdCol__6932806F">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.EdadesxColeccion" Role="EdadesxColeccion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="EdadesxColeccion">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LineasxCo__IdCol__71C7C670">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.LineasxColeccion" Role="LineasxColeccion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="LineasxColeccion">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdCol__6D2D2E85">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Productos__IdCol__4DB4832C">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="ProductosxColeccion">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PedidosDetalleFlotante">
+          <Key>
+            <PropertyRef Name="IdPedidoDetalle" />
+          </Key>
+          <Property Name="IdPedidoDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdPedidoxClienteFlotante" Type="Int32" />
+          <Property Name="PedidoId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="IdProducto" Type="Int32" />
+          <Property Name="CodigoColor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoTalla" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Linea" Type="Int32" />
+          <Property Name="Cantidad" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="PrecioUnitario" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="MontoLinea" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B3011" FromRole="PedidosDetalleFlotante" ToRole="PedidosxClienteFlotante" />
+          <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" FromRole="PedidosDetalleFlotante" ToRole="ProductosxColeccion" />
+        </EntityType>
+        <EntityType Name="PedidosxClienteFlotante">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PedidoId" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="NumeroPedido" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="IdTipoPedido" Type="Int32" />
+          <Property Name="IdColeccion" Type="Int32" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="AcuerdoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="FechaEntrega" Type="DateTime" Precision="3" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Observacion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TotalUnidades" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Subtotal" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalImpuesto" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalDescuento" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalPedido" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Mocked" Type="Boolean" />
+          <Property Name="Accuracy" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Altitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Error" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="idMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="IdEstado" Type="Int32" />
+          <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
+          <Property Name="ClienteContadoId" Type="Int32" />
+          <Property Name="ModoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Flete" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="RequiereEntrega" Type="Boolean" Nullable="false" />
+          <Property Name="Procesando" Type="Boolean" />
+          <Property Name="ErrorAx" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ESTADO" Type="Int32" Nullable="false" />
+          <Property Name="PedidoIdGenerado" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Asesores" Relationship="AventasModel.FK__PedidosxC__Codig__6B44E6131" FromRole="PedidosxClienteFlotante" ToRole="Asesores" />
+          <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__PedidosxC__Codig__0F1832351" FromRole="PedidosxClienteFlotante" ToRole="Clientes" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E851" FromRole="PedidosxClienteFlotante" ToRole="Colecciones" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C1" FromRole="PedidosxClienteFlotante" ToRole="Empresa" />
+          <NavigationProperty Name="EstadosPedido" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD1" FromRole="PedidosxClienteFlotante" ToRole="EstadosPedido" />
+          <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK_Linea1" FromRole="PedidosxClienteFlotante" ToRole="MaestroLinea" />
+          <NavigationProperty Name="MaestroMoneda" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D1" FromRole="PedidosxClienteFlotante" ToRole="MaestroMoneda" />
+          <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B3011" FromRole="PedidosxClienteFlotante" ToRole="PedidosDetalleFlotante" />
+          <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" FromRole="PedidosxClienteFlotante" ToRole="TiposdePedido" />
+        </EntityType>
+        <Association Name="FK__PedidosxC__Codig__6B44E6131">
+          <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Asesores">
+              <PropertyRef Name="CodigoAsesor" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="CodigoAsesor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__Codig__0F1832351">
+          <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="CodigoCliente" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="CodigoCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdCol__6D2D2E851">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__Empre__6C390A4C1">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdEst__0ADD8CFD1">
+          <End Type="AventasModel.EstadosPedido" Role="EstadosPedido" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EstadosPedido">
+              <PropertyRef Name="IdEstado" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="IdEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Linea1">
+          <End Type="AventasModel.MaestroLinea" Role="MaestroLinea" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroLinea">
+              <PropertyRef Name="IdLinea" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="IdLinea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__idMon__353DDB1D1">
+          <End Type="AventasModel.MaestroMoneda" Role="MaestroMoneda" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroMoneda">
+              <PropertyRef Name="IdMoneda" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="idMoneda" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosDe__Pedid__70099B3011">
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosDetalleFlotante" Role="PedidosDetalleFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PedidosxClienteFlotante">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PedidosDetalleFlotante">
+              <PropertyRef Name="IdPedidoxClienteFlotante" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PedidosDetalle_ProductosxColeccion1">
+          <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosDetalleFlotante" Role="PedidosDetalleFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductosxColeccion">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="PedidosDetalleFlotante">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdTip__6A50C1DA1">
+          <End Type="AventasModel.TiposdePedido" Role="TiposdePedido" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TiposdePedido">
+              <PropertyRef Name="IdTipoPedido" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="IdTipoPedido" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -7463,6 +7923,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Clientes">
             <EntityTypeMapping TypeName="AventasModel.Clientes">
               <MappingFragment StoreEntitySet="Clientes">
+                <ScalarProperty Name="IgnorarSeqFact" ColumnName="IgnorarSeqFact" />
                 <ScalarProperty Name="VersionRegistroBINT" ColumnName="VersionRegistroBINT" />
                 <ScalarProperty Name="VersionRegistro" ColumnName="VersionRegistro" />
                 <ScalarProperty Name="Habilitado" ColumnName="Habilitado" />
@@ -7497,28 +7958,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="IdClientexRuta" ColumnName="IdClientexRuta" />
                 <ScalarProperty Name="CodigoRuta" ColumnName="CodigoRuta" />
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Colecciones">
-            <EntityTypeMapping TypeName="AventasModel.Colecciones">
-              <MappingFragment StoreEntitySet="Colecciones">
-                <ScalarProperty Name="FechaUltSincronizacion" ColumnName="FechaUltSincronizacion" />
-                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
-                <ScalarProperty Name="CodigoColeccion" ColumnName="CodigoColeccion" />
-                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
-                <ScalarProperty Name="ColeccionTipo" ColumnName="ColeccionTipo" />
-                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
-                <ScalarProperty Name="DisenoInicio" ColumnName="DisenoInicio" />
-                <ScalarProperty Name="DisenoFinal" ColumnName="DisenoFinal" />
-                <ScalarProperty Name="EntregaInicio" ColumnName="EntregaInicio" />
-                <ScalarProperty Name="EntregaFinal" ColumnName="EntregaFinal" />
-                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
-                <ScalarProperty Name="ProduccionInicio" ColumnName="ProduccionInicio" />
-                <ScalarProperty Name="ProduccionFinal" ColumnName="ProduccionFinal" />
-                <ScalarProperty Name="VentaInicio" ColumnName="VentaInicio" />
-                <ScalarProperty Name="VentaFinal" ColumnName="VentaFinal" />
-                <ScalarProperty Name="FotoPortada" ColumnName="FotoPortada" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -8718,6 +9157,87 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
                 <ScalarProperty Name="Codigo" ColumnName="Codigo" />
                 <ScalarProperty Name="IdFotografia" ColumnName="IdFotografia" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Colecciones">
+            <EntityTypeMapping TypeName="AventasModel.Colecciones">
+              <MappingFragment StoreEntitySet="Colecciones">
+                <ScalarProperty Name="FechaUltSincronizacion" ColumnName="FechaUltSincronizacion" />
+                <ScalarProperty Name="FotoPortada" ColumnName="FotoPortada" />
+                <ScalarProperty Name="VentaFinal" ColumnName="VentaFinal" />
+                <ScalarProperty Name="VentaInicio" ColumnName="VentaInicio" />
+                <ScalarProperty Name="ProduccionFinal" ColumnName="ProduccionFinal" />
+                <ScalarProperty Name="ProduccionInicio" ColumnName="ProduccionInicio" />
+                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
+                <ScalarProperty Name="EntregaFinal" ColumnName="EntregaFinal" />
+                <ScalarProperty Name="EntregaInicio" ColumnName="EntregaInicio" />
+                <ScalarProperty Name="DisenoFinal" ColumnName="DisenoFinal" />
+                <ScalarProperty Name="DisenoInicio" ColumnName="DisenoInicio" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="ColeccionTipo" ColumnName="ColeccionTipo" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="CodigoColeccion" ColumnName="CodigoColeccion" />
+                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PedidosDetalleFlotante">
+            <EntityTypeMapping TypeName="AventasModel.PedidosDetalleFlotante">
+              <MappingFragment StoreEntitySet="PedidosDetalleFlotante">
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="MontoLinea" ColumnName="MontoLinea" />
+                <ScalarProperty Name="PrecioUnitario" ColumnName="PrecioUnitario" />
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="Linea" ColumnName="Linea" />
+                <ScalarProperty Name="CodigoTalla" ColumnName="CodigoTalla" />
+                <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
+                <ScalarProperty Name="IdPedidoxClienteFlotante" ColumnName="IdPedidoxClienteFlotante" />
+                <ScalarProperty Name="IdPedidoDetalle" ColumnName="IdPedidoDetalle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PedidosxClienteFlotante">
+            <EntityTypeMapping TypeName="AventasModel.PedidosxClienteFlotante">
+              <MappingFragment StoreEntitySet="PedidosxClienteFlotante">
+                <ScalarProperty Name="PedidoIdGenerado" ColumnName="PedidoIdGenerado" />
+                <ScalarProperty Name="ESTADO" ColumnName="ESTADO" />
+                <ScalarProperty Name="ErrorAx" ColumnName="ErrorAx" />
+                <ScalarProperty Name="Procesando" ColumnName="Procesando" />
+                <ScalarProperty Name="RequiereEntrega" ColumnName="RequiereEntrega" />
+                <ScalarProperty Name="Flete" ColumnName="Flete" />
+                <ScalarProperty Name="ModoVenta" ColumnName="ModoVenta" />
+                <ScalarProperty Name="ClienteContadoId" ColumnName="ClienteContadoId" />
+                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
+                <ScalarProperty Name="IdEstado" ColumnName="IdEstado" />
+                <ScalarProperty Name="idMoneda" ColumnName="idMoneda" />
+                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
+                <ScalarProperty Name="Error" ColumnName="Error" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+                <ScalarProperty Name="Accuracy" ColumnName="Accuracy" />
+                <ScalarProperty Name="Mocked" ColumnName="Mocked" />
+                <ScalarProperty Name="TotalPedido" ColumnName="TotalPedido" />
+                <ScalarProperty Name="TotalDescuento" ColumnName="TotalDescuento" />
+                <ScalarProperty Name="TotalImpuesto" ColumnName="TotalImpuesto" />
+                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
+                <ScalarProperty Name="TotalUnidades" ColumnName="TotalUnidades" />
+                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="FechaEntrega" ColumnName="FechaEntrega" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="AcuerdoVenta" ColumnName="AcuerdoVenta" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
+                <ScalarProperty Name="IdTipoPedido" ColumnName="IdTipoPedido" />
+                <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
+                <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

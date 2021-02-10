@@ -66,7 +66,7 @@ namespace AventasApi.Services.Authentication
 
                     if (userBD.SesionActiva == true)
                     {
-                        return new AuthenticationResponse { Message = "Tiene la sesion abierta en otro dispositivo, debe cerrarla para poder ingresar.", Data = null };
+                        return new AuthenticationResponse { Message = "Usuario cuenta con una sesión activa, acceso denegado.", Data = null };
                     }
 
                     var user = new Usuario { IdUsuario = userBD.usuario, Pin = null };

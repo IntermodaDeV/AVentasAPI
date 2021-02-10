@@ -17,7 +17,8 @@ namespace AventasApi.Models.ViewModels
         public string Tipo { get; set; }
         public string NumPedido { get; set; }
         public string EsContado { get; set; }
-
+        public string NumeroRecibo { get; set; }
+        public bool ReciboCache { get; set; }
         public Location location = new Location();
 
         public ReciboPostViewModel()

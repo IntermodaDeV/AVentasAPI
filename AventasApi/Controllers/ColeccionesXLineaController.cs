@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using DBData.Database;
 using AventasApi.Models.ViewModels;
-
+using RestSharp;
+using ExternalApiData.Enviroments;
 using System.Data.Entity;
 using AventasApi.Models;
-
+using Newtonsoft.Json;
+using System.IO;
+using System.Drawing;
 namespace AventasApi.Controllers
 {
     public class DeshabilitarProducto
@@ -17,6 +20,14 @@ namespace AventasApi.Controllers
         public string Pais { get; set; }
         public string Producto { get; set; }
     }
+
+    public class ImagenColeccion
+    {
+            public string PACKAGEID { get; set; }
+            public string IMAGE { get; set; }
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     [RoutePrefix("api/ColeccionesXLinea")]
     public class ColeccionesXLineaController : ApiController
@@ -28,7 +39,57 @@ namespace AventasApi.Controllers
            this.context.Database.CommandTimeout = 300;
            this.context.Configuration.LazyLoadingEnabled = false;
         }
+        [HttpGet]
+        [Route("~/api/colecciones/{codigoColeccion}/{empresa}/imagenesColeccion")]
+        public async Task<IHttpActionResult> GetImagenes(string codigoColeccion, string empresa)
+        {
+            var Imagenes = new List<ImagenColeccion>();
+            var client = new RestClient(Enviroment.CRMWebServiceURLApi);
+            client.Authenticator = new RestSharp.Authenticators.NtlmAuthenticator();
+            var request = new RestRequest($"paquetes/{empresa}/{codigoColeccion}/imagenespaquete", Method.GET);
+            //client.Timeout = 6000;
+            request.AddHeader("Accept", "application/json");
+            IRestResponse respuesta = client.Execute(request);
 
+            if (respuesta.IsSuccessful && respuesta.Content != "null")
+            {
+                Imagenes = JsonConvert.DeserializeObject<List<ImagenColeccion>>(respuesta.Content);
+                using (AVentasEntities db = new AVentasEntities())
+                {
+                    var Colecciones = db.Colecciones.Where(c => c.CodigoColeccion == codigoColeccion).ToList();
+                    var config = db.Configuraciones.FirstOrDefault(c => c.CodigoConfiguracion == "UrlImages");
+                    if(Colecciones.Count() > 0 && Imagenes.Count() > 0)
+                    {
+                        Base64ToImage(Imagenes[0].IMAGE, Imagenes[0].PACKAGEID);
+                        var url = config.Valor + Imagenes[0].PACKAGEID + ".jpg";
+                        foreach (var coleccion in Colecciones)
+                        {
+                            coleccion.FotoPortada = url;
+                        }
+                        var result = await db.SaveChangesAsync();
+                       
+                        return Ok(result);
+                    }
+
+                    return BadRequest("el paquete no tiene imagen");
+                }
+            }
+           return BadRequest(respuesta.ErrorMessage);
+        }
+
+        public Image Base64ToImage(string base64String, string Nombre)
+        {
+            var filePath = @"\\appserver2\AxAttachedDocuments\" + Nombre +".jpg";
+            // Convert base 64 string to byte[]
+            byte[] imageBytes = Convert.FromBase64String(base64String);
+            // Convert byte[] to Image
+            using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
+            {
+                Image image = Image.FromStream(ms, true);
+                image.Save(filePath);
+                return image;
+            }
+        }
         [HttpGet]
         [Route("{id}/{pais}")]
         public async Task<IHttpActionResult> GetcoleccionesXGrupoPrecio(string id,string pais)

@@ -203,7 +203,9 @@ namespace AventasApi.Controllers
                     var coordenadas = ctx.BitacoraGeoposicion.Where(x => x.CodigoAsesor == filter.asesor && x.Fecha>=fechaInicio && x.Fecha<=fechaFin)
                         .Select(x => new { 
                             lat = x.Latitude, 
-                            lng = x.Longitude })
+                            lng = x.Longitude,
+                            fecha = x.Fecha
+                        })
                         .ToList();
 
                     var pedidos = ctx.PedidosxCliente.Where(x => x.CodigoAsesor == filter.asesor && x.Fecha >= fechaInicio && x.Fecha <= fechaFin)
