@@ -79,7 +79,8 @@ namespace AventasApi.Controllers
 
         public Image Base64ToImage(string base64String, string Nombre)
         {
-            var filePath = @"\\appserver2\AxAttachedDocuments\" + Nombre +".jpg";
+            var path = Properties.Settings.Default.PathImagenes;
+            var filePath = $"{path}{Nombre}.jpg";
             // Convert base 64 string to byte[]
             byte[] imageBytes = Convert.FromBase64String(base64String);
             // Convert byte[] to Image

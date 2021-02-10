@@ -380,7 +380,7 @@ namespace AventasApi.Controllers
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount);
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
-                    string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
+                    string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
 
                     /*if (aumentar == 1)
