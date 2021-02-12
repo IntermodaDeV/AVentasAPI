@@ -71,7 +71,7 @@ namespace AventasApi.Controllers
                         return Ok(result);
                     }
 
-                    return BadRequest("el paquete no tiene imagen");
+                    return BadRequest("El paquete no tiene imagen.");
                 }
             }
            return BadRequest(respuesta.ErrorMessage);
@@ -375,6 +375,12 @@ namespace AventasApi.Controllers
                                            }).ToList(),
 
                                        }).ToList(),
+                                       ListaColoresSinStock = pxc.ColoresxProducto.Where(cpp => (vw_coleccion.ColeccionTipo == "F") || cpp.Colores.FisicoDisponible.Where(f => f.IdProducto == pxc.IdProducto).Sum(f => f.Disponible) == 0).OrderBy(cpp => cpp.Colores.Color).Select(cpp => new ColorSinStock
+                                       {
+                                           CodigoColor = cpp.Colores.CodigoColor,
+                                           NombreColor = cpp.Colores.Color,
+                                           Color = cpp.Colores.Rgb,
+                                       }).ToList(),
                                        fisicaDisponible = pxc.FisicoDisponible
                                               /*.Where(f => (vw_coleccion.ColeccionTipo == "F") || f.Disponible >= 0)*/
                                               .Select(f => new FisicoDisponibleViewModel
@@ -526,6 +532,12 @@ namespace AventasApi.Controllers
                                                                                     Principal = foto.Principal ?? false
                                                                                 }).ToList(),
 
+                                                                            }).ToList(),
+                                                                            ListaColoresSinStock = pxc.ColoresxProducto.Where(cpp => (vw_coleccion.ColeccionTipo == "F") || cpp.Colores.FisicoDisponible.Where(f => f.IdProducto == pxc.IdProducto).Sum(f => f.Disponible) == 0).OrderBy(cpp => cpp.Colores.Color).Select(cpp => new ColorSinStock
+                                                                            {
+                                                                                CodigoColor = cpp.Colores.CodigoColor,
+                                                                                NombreColor = cpp.Colores.Color,
+                                                                                Color = cpp.Colores.Rgb,
                                                                             }).ToList(),
                                                                             fisicaDisponible = pxc.FisicoDisponible
                                                                                /*.Where(f => (vw_coleccion.ColeccionTipo == "F") || f.Disponible >= 0)*/
