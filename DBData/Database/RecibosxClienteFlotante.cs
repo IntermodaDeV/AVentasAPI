@@ -12,12 +12,12 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class RecibosxCliente
+    public partial class RecibosxClienteFlotante
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public RecibosxCliente()
+        public RecibosxClienteFlotante()
         {
-            this.RecibosDetalle = new HashSet<RecibosDetalle>();
+            this.RecibosDetalleFlotante = new HashSet<RecibosDetalleFlotante>();
         }
     
         public int ReciboId { get; set; }
@@ -25,6 +25,7 @@ namespace DBData.Database
         public string CodigoCliente { get; set; }
         public Nullable<System.DateTime> Fecha { get; set; }
         public Nullable<int> IdTipoPago { get; set; }
+        public string SpecPago { get; set; }
         public string Referencia { get; set; }
         public Nullable<System.DateTime> FechaCheque { get; set; }
         public Nullable<int> IdBanco { get; set; }
@@ -41,10 +42,13 @@ namespace DBData.Database
         public Nullable<decimal> Descuento { get; set; }
         public Nullable<decimal> Latitude { get; set; }
         public Nullable<decimal> Longitude { get; set; }
-        public string SpecPago { get; set; }
+        public int Estado { get; set; }
+        public string ReciboIdGenerado { get; set; }
+        public string EditedBy { get; set; }
+        public Nullable<System.DateTime> EditedDate { get; set; }
     
         public virtual FacturasxCliente FacturasxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RecibosDetalle> RecibosDetalle { get; set; }
+        public virtual ICollection<RecibosDetalleFlotante> RecibosDetalleFlotante { get; set; }
     }
 }

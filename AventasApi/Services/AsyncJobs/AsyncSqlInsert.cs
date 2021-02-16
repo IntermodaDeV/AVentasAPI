@@ -122,5 +122,48 @@ namespace AventasApi.Services.AsyncJobs
 
             });
         }
+
+        public static void IngresarRecibosFlotante(List<RecibosxClienteFlotanteViewModel> recibos)
+        {
+            var reciboTask = Task.Run(() =>
+            {
+
+                var reciboAAgregar = recibos.Select(rec => new RecibosxClienteFlotante
+                {
+                    NumeroRecibo = rec.NumeroRecibo,
+                    CodigoCliente = rec.CodigoCliente,
+                    Fecha = rec.Fecha,
+                    IdTipoPago = rec.IdTipoPago,
+                    Referencia = rec.Referencia,
+                    FechaCheque = rec.FechaPago,
+                    IdBanco = rec.IdBanco,
+                    Valor = rec.Valor,
+                    IdMoneda = rec.IdMoneda,
+                    Sincronizado = false,
+                    CodigoAsesor = rec.CodigoAsesor,
+                    IdFactura = rec.IdFactura,
+                    Descuento = rec.Descuento,
+                    Longitude = rec.Longitude,
+                    Latitude = rec.Latitude,
+                    SpecPago = rec.SpecPago,
+                    RecibosDetalleFlotante = rec.DetalleRecibo.Select(recDet => new RecibosDetalleFlotante
+                    {
+                        IdReciboDetalle = recDet.IdReciboDetalle,
+                        ReciboId = recDet.ReciboId,
+                        IdSubFactura = recDet.IdSubFactura,
+                        Valor = recDet.Valor,
+                        Descuento = recDet.Descuento,
+                        EsAbono = recDet.EsAbono,
+                    }).ToList()
+                }).ToList();
+
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    context.RecibosxClienteFlotante.AddRange(reciboAAgregar);
+                    context.SaveChanges();
+                }
+
+            });
+        }
     }
 }

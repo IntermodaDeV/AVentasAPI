@@ -321,7 +321,13 @@
     <Compile Include="Database\RecibosDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\RecibosDetalleFlotante.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\RecibosxCliente.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\RecibosxClienteFlotante.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\RespuestaDetalle.cs">

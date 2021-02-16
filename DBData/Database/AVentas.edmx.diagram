@@ -241,6 +241,11 @@
         <AssociationConnector Association="AventasModel.FK__PedidosDe__Pedid__70099B3011" />
         <AssociationConnector Association="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" />
         <AssociationConnector Association="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" />
+        <EntityTypeShape EntityType="AventasModel.RecibosDetalleFlotante" Width="1.5" PointX="20.75" PointY="53.75" />
+        <EntityTypeShape EntityType="AventasModel.RecibosxClienteFlotante" Width="1.5" PointX="15.5" PointY="58.5" />
+        <AssociationConnector Association="AventasModel.FK_ReciboXClienteFlotante___FacturaXCliente" />
+        <AssociationConnector Association="AventasModel.FK__RecibosDetalle__Recibo" />
+        <AssociationConnector Association="AventasModel.FK__RecibosDetalleFlotante_SubFactura" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

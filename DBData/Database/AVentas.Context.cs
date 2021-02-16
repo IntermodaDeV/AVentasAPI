@@ -124,6 +124,8 @@ namespace DBData.Database
         public virtual DbSet<Colecciones> Colecciones { get; set; }
         public virtual DbSet<PedidosDetalleFlotante> PedidosDetalleFlotante { get; set; }
         public virtual DbSet<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
+        public virtual DbSet<RecibosDetalleFlotante> RecibosDetalleFlotante { get; set; }
+        public virtual DbSet<RecibosxClienteFlotante> RecibosxClienteFlotante { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

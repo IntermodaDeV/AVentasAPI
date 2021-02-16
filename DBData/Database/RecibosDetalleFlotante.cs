@@ -12,13 +12,17 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class LimiteCreditoxCliente
+    public partial class RecibosDetalleFlotante
     {
-        public int IdLimiteCreditoxCliente { get; set; }
-        public string Descripcion { get; set; }
+        public int IdReciboDetalle { get; set; }
+        public Nullable<int> ReciboId { get; set; }
+        public Nullable<int> IdSubFactura { get; set; }
         public Nullable<decimal> Valor { get; set; }
-        public string CodigoCliente { get; set; }
+        public Nullable<decimal> Descuento { get; set; }
+        public Nullable<bool> EsAbono { get; set; }
+        public Nullable<decimal> ValorFactura { get; set; }
     
-        public virtual Clientes Clientes { get; set; }
+        public virtual RecibosxClienteFlotante RecibosxClienteFlotante { get; set; }
+        public virtual SubFacturasxCliente SubFacturasxCliente { get; set; }
     }
 }
