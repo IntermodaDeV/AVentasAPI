@@ -22,37 +22,35 @@ namespace AventasApi.Services.AsyncJobs
         public static bool IngresarPedido(PedidosxCliente pedido, string firma)
         {
             bool value = true;
-            var pedidoTask = Task.Run(() =>
+            using (AVentasEntities context = new AVentasEntities())
             {
-                using (AVentasEntities context = new AVentasEntities())
+                context.PedidosxCliente.Add(pedido);
+                int rowAffected = context.SaveChanges();
+                if (rowAffected > 0)
                 {
-                    context.PedidosxCliente.Add(pedido);
-                    int rowAffected =  context.SaveChanges();
-                    if (rowAffected > 0)
-                    {
-                        var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario ==pedido.CodigoAsesor);
-                        asesor.CorrelativoPedidos = asesor.CorrelativoPedidos + 1;
-                        context.SaveChanges();
-                    }
-                    else
-                    {
-                        value = false;
-                    }
-                    ByteArrayImageConversion firmaConversion = new ByteArrayImageConversion(firma);
-                    if (firmaConversion.IsSuccesful)
-                    {
-
-                        FirmasxPedido firmaAGuardar = new FirmasxPedido
-                        {
-                            PedidoId = pedido.PedidoId,
-                            Firma = firmaConversion.ContentByteArray
-                        };
-                        context.FirmasxPedido.Add(firmaAGuardar);
-                        context.SaveChanges();
-                    }
-                    value = true;
+                    var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == pedido.CodigoAsesor);
+                    asesor.CorrelativoPedidos = asesor.CorrelativoPedidos + 1;
+                    context.SaveChanges();
                 }
-            });
+                else
+                {
+                    value = false;
+                }
+                ByteArrayImageConversion firmaConversion = new ByteArrayImageConversion(firma);
+                if (firmaConversion.IsSuccesful)
+                {
+
+                    FirmasxPedido firmaAGuardar = new FirmasxPedido
+                    {
+                        PedidoId = pedido.PedidoId,
+                        Firma = firmaConversion.ContentByteArray
+                    };
+                    context.FirmasxPedido.Add(firmaAGuardar);
+                    context.SaveChanges();
+                }
+                value = true;
+            }
+
             return value;
         }
 

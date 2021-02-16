@@ -260,7 +260,7 @@ namespace AventasApi.Controllers
 
                                 PedidoFlotante.PedidosDetalleFlotante.Add(new PedidosDetalleFlotante
                                 {
-                                    PedidoId = PedidoBDAGuardar.PedidoId,
+                                    PedidoId = numeroReferencia,
                                     IdProducto = detalle.IdProducto,
                                     CodigoColor = detalle.CodigoColor,
                                     CodigoTalla = detalle.Talla,
@@ -336,7 +336,7 @@ namespace AventasApi.Controllers
 
                             PedidoBDAGuardar.PedidosDetalleFlotante.Add(new PedidosDetalleFlotante
                             {
-                                PedidoId = PedidoBDAGuardar.PedidoId,
+                                PedidoId = numeroReferencia,
                                 IdProducto = detalle.IdProducto,
                                 CodigoColor = detalle.CodigoColor,
                                 CodigoTalla = detalle.Talla,
@@ -380,7 +380,7 @@ namespace AventasApi.Controllers
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount);
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
-                    string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
+                    string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
 
                     /*if (aumentar == 1)
@@ -926,6 +926,319 @@ namespace AventasApi.Controllers
                 }
                 return BadRequest(msj);
             }
+        }
+
+        [HttpGet]
+        [Route("~/api/PedidosXCliente/Flotantes/{FechaInicio}/{FechaFin}/{estado}")]
+        public IHttpActionResult GetFlotantes(DateTime FechaInicio, DateTime FechaFin, int estado)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
+                    {
+                        FechaInicio = DateTime.Today.AddDays(-30);
+                        FechaFin = DateTime.Today.AddDays(1);
+                    }
+                    else
+                    {
+                        FechaFin = FechaFin.AddDays(1);
+                    }
+                    List<PedidosXClienteViewModel> pedidosFlotantes = ctx.PedidosxClienteFlotante.Where(x=>x.ESTADO==estado && x.Fecha >= FechaInicio && x.Fecha < FechaFin).OrderByDescending(x => x.PedidoId).Select(ped => new PedidosXClienteViewModel
+                    {
+                        Id = ped.Id,
+                        Asesor = ped.CodigoAsesor,
+                        PedidoId = ped.PedidoId,
+                        NumeroPedido = ped.NumeroPedido,
+                        Sincronizado = ped.Sincronizado,
+                        NombreColeccion = ctx.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
+                        TotalUnidades = ped.TotalUnidades,
+                        TotalXPedido = ped.TotalPedido,
+                        SubTotalXPedido = ped.Subtotal,
+                        Impuesto = ped.TotalImpuesto,
+                        ClienteContadoId = ped.ClienteContadoId,
+                        ModoVenta = ped.ModoVenta,
+                        Flete = ped.Flete,
+                        Estado=ped.ESTADO,
+                        PedidoGenerado=ped.PedidoIdGenerado==null?"No Disponible":ped.PedidoIdGenerado,
+                        Cliente = new ClienteViewModel
+                        {
+                            Codigo = ped.Clientes.CodigoCliente,
+                            Nombre = ped.Clientes.Nombre,
+                            Direccion = ped.Clientes.Direccion,
+                            Moneda = ped.Clientes.IdMoneda,
+                            EmpresaId = ped.Clientes.EmpresaId
+                        },
+                        Linea = ctx.MaestroLinea.Select(ml => new LineaViewModel
+                        {
+                            IdLinea = ml.IdLinea,
+                            Linea = ml.Linea,
+                        }).FirstOrDefault(ml => ml.IdLinea == ped.IdLinea),
+                        TipoPedido = ctx.TiposdePedido.Select(tp => new TipoPedidoViewModel
+                        {
+                            IdTipoPedido = tp.IdTipoPedido,
+                            TipoPedido = tp.TipoPedido,
+                            HabilitaEstilos = tp.HabilitaEstilos ?? false,
+                            Imagen = tp.Url_Imagen,
+                            Aplica_Todos = tp.Aplica_Todos ?? false,
+                            Restrictivo = tp.Restrictivo ?? false
+                        }).FirstOrDefault(tp => tp.IdTipoPedido == ped.IdTipoPedido),
+                        AcuerdoVenta = ped.AcuerdoVenta,
+                        EmpresaId = ped.EmpresaId,
+                        FechaActual = ped.Fecha,
+                        Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == ped.CodigoAsesor).Nombre,
+                        FechaEntrega = ped.FechaEntrega,
+                        Observacion = ped.Observacion,
+                        location = new Location
+                        {
+                            mocked = ped.Mocked ?? false,
+                            accuracy = ped.Accuracy,
+                            altitude = ped.Altitude,
+                            latitude = ped.Latitude,
+                            longitude = ped.Longitude,
+                            error = ped.Error
+                        }
+                    }).ToList();
+
+                    foreach (var pedido in pedidosFlotantes)
+                    {
+                        string imagenB64 = "";
+
+                        var firma = ctx.FirmasxPedido.FirstOrDefault(fir => pedido.PedidoId == fir.PedidoId);
+                        if (firma != null)
+                        {
+                            try
+                            {
+                                imagenB64 = "data:image/png;base64," + Convert.ToBase64String(firma.Firma);
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+
+                            pedido.Firma = imagenB64;
+
+                        }
+                    }
+
+                    return Ok(pedidosFlotantes);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/PedidosXCliente/Flotantes/cancelar/{id}")]
+        public async Task<IHttpActionResult> CancelarPedidoFlotante(int id)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    PedidosxClienteFlotante pedido = await ctx.PedidosxClienteFlotante.FindAsync(id);
+
+                    if (pedido == null)
+                    {
+                        return BadRequest("El pedido no existe.");
+                    }
+
+                    pedido.ESTADO = 2;
+                    pedido.EditedBy = user.UserAccount;
+                    pedido.EditedDate = DateTime.Now;
+                    int res = await ctx.SaveChangesAsync();
+                    return Ok(res);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/PedidosXCliente/Flotantes/sincronizar/{id}")]
+        public async Task<IHttpActionResult> SincronizarPedidoFlotante(int id)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    PedidosxClienteFlotante pedido = await ctx.PedidosxClienteFlotante.FindAsync(id);
+
+                    if (pedido == null)
+                    {
+                        return BadRequest("El pedido no existe.");
+                    }
+
+                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == pedido.CodigoAsesor);
+                    int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                    string numeroReferencia = $"{asesor.InicialesNombre}-1{numeroCorelativo.ToString("D5")}";
+
+                    PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
+                    {
+                        IdTipoPedido = pedido.IdTipoPedido,
+                        IdColeccion = pedido.IdColeccion,
+                        CodigoCliente = pedido.CodigoCliente,
+                        AcuerdoVenta = pedido.AcuerdoVenta,
+                        EmpresaId = pedido.EmpresaId,
+                        Fecha = pedido.Fecha,
+                        FechaEntrega = pedido.FechaEntrega,
+                        CodigoAsesor = pedido.CodigoAsesor,
+                        Observacion = pedido.Observacion,
+                        TotalUnidades = pedido.TotalUnidades,
+                        PedidosDetalle = new List<PedidosDetalle>(),
+                        Subtotal = pedido.Subtotal,
+                        Latitude = pedido.Latitude,
+                        Longitude = pedido.Longitude,
+                        IdLinea = pedido.IdLinea,
+                        ClienteContadoId = pedido.ClienteContadoId,
+                        ModoVenta = pedido.ModoVenta,
+                        Flete = pedido.Flete,
+                        RequiereEntrega = pedido.RequiereEntrega,
+                        TotalImpuesto = pedido.TotalImpuesto,
+                        TotalPedido = pedido.TotalPedido,
+                        Sincronizado = false,
+                        Procesando = false,
+                        PedidoId = numeroReferencia,
+                        NumeroPedido = ""
+                    };
+
+                    foreach (var detalle in pedido.PedidosDetalleFlotante)
+                    {
+                        PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
+                        {
+                            IdProducto = detalle.IdProducto,
+                            CodigoColor = detalle.CodigoColor,
+                            CodigoTalla = detalle.CodigoTalla,
+                            Cantidad = detalle.Cantidad,
+                            MontoLinea = detalle.MontoLinea,
+                            Fecha = detalle.Fecha,
+                            CodigoAsesor = asesor.CodigoAsesor,
+                            PrecioUnitario = detalle.PrecioUnitario
+                        });
+                    }
+
+                    ctx.PedidosxCliente.Add(PedidoBDAGuardar);
+                    int rowAffected = await ctx.SaveChangesAsync();
+                    if (rowAffected > 0)
+                    {
+                        asesor.CorrelativoPedidos = asesor.CorrelativoPedidos + 1;
+                        await ctx.SaveChangesAsync();
+                    }
+
+                    var firma = await ctx.FirmasxPedido.FirstOrDefaultAsync(fir => pedido.PedidoId == fir.PedidoId);
+                    if (firma != null)
+                    {
+                        firma.PedidoId = numeroReferencia;
+                    }
+                    pedido.PedidoIdGenerado = numeroReferencia;
+                    pedido.ESTADO = 1;
+                    pedido.EditedBy = user.UserAccount;
+                    pedido.EditedDate = DateTime.Now;
+                    await ctx.SaveChangesAsync();
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/PedidoDetalle/flotante/{CodigoPedido}")]
+        public IHttpActionResult GetPedidoDetalle(int CodigoPedido)
+        {
+            try
+            {
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    List<PedidosXClienteViewModel> pedidos = context.PedidosxClienteFlotante.Where(p => p.Id == CodigoPedido).Select(ped => new PedidosXClienteViewModel
+                    {
+                        gruposXDetPed = ped.PedidosDetalleFlotante.GroupBy(gruposXDetPed => gruposXDetPed.ProductosxColeccion.CodigoGrupoTalla)
+                            .Select(gruposXDetPed => new GruposTallaXDetPed
+                            {
+                                GrupoTalla = gruposXDetPed.Key,
+                                ListaTalla = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoTalla).Select(pedDet => pedDet.Key).SelectMany(pedDet => context.TallasXGrupo.Where(txp => txp.CodigoTalla == pedDet && txp.CodigoGrupoTalla == gruposXDetPed.Key)).Select(txp => new TallaViewModel
+                                {
+                                    GrupoTallaId = txp.CodigoGrupoTalla,
+                                    Talla = txp.CodigoTalla,
+                                    Orden = txp.Orden ?? 0,
+                                    Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                    {
+                                        IdDistribucion = dis.IdDistribucion,
+                                        IdTallaxGrupo = dis.IdTallaxGrupo,
+                                        NombreDistribucion = dis.NombreDistribucion,
+                                        NombreTalla = dis.NombreTalla,
+                                        Cantidad = dis.Cantidad,
+                                        Orden = dis.Orden
+                                    }).ToList()
+                                }).OrderBy(txp => txp.Orden).ToList(),
+                                prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.IdProducto)
+                            .Select(pedDet => new ProductosXDetPed
+                            {
+                                IdProducto = pedDet.Key,
+                                CodigoProducto = pedDet.FirstOrDefault().ProductosxColeccion.CodigoProducto,
+                                NombreProducto = pedDet.FirstOrDefault().ProductosxColeccion.NombreProducto,
+                                Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
+                                CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
+                                TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
+                                coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod => colXprod.Sum(det => det.Cantidad) > 0).Select(colXprod =>
+                                         new ColoresXProdXDetPed
+                                         {
+                                             CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
+                                             TotalXColor = colXprod.Sum(cant => cant.MontoLinea),
+                                             PrecioXColor = colXprod.FirstOrDefault().PrecioUnitario,
+                                             IdColor = colXprod.Key,
+                                             NombreColor = context.Colores.FirstOrDefault(color => color.CodigoColor == colXprod.Key).Color,
+                                             DetallesXPedido = colXprod.Select(detPed => new DetalleXPedidoViewModel
+                                             {
+                                                 IdRegistro = detPed.IdPedidoDetalle,
+                                                 PedidoId = detPed.PedidoId,
+                                                 Cantidad = detPed.Cantidad,
+
+                                                 Linea = detPed.Linea,
+                                                 MontoLinea = detPed.MontoLinea,
+                                                 PrecioUnitario = detPed.PrecioUnitario,
+                                                 Talla = detPed.CodigoTalla,
+                                                 TallaObject = context.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == detPed.ProductosxColeccion.CodigoGrupoTalla && txp.CodigoTalla == detPed.CodigoTalla)/*.Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0))*/.Select(txp => new TallaViewModel
+                                                 {
+                                                     GrupoTallaId = txp.CodigoGrupoTalla,
+                                                     Talla = txp.CodigoTalla,
+                                                     Orden = txp.Orden ?? 0,
+                                                     Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                                     {
+                                                         IdDistribucion = dis.IdDistribucion,
+                                                         IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                         NombreDistribucion = dis.NombreDistribucion,
+                                                         NombreTalla = dis.NombreTalla,
+                                                         Cantidad = dis.Cantidad,
+                                                         Orden = dis.Orden
+                                                     }).ToList()
+                                                 }).FirstOrDefault()
+                                             }).ToList()
+
+                                         }).ToList()
+                            }).ToList()
+                            }).ToList()
+                    }).ToList();
+                    return Ok(pedidos[0].gruposXDetPed);
+
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+
         }
 
 

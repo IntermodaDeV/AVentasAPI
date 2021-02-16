@@ -474,5 +474,80 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        ///----------------------------RESPUESTA DE ENCUESTAS -------------------------------------------------------------///
+        [HttpGet]
+        [Route("~/api/Encuesta/{empresa}")]
+        public async Task<IHttpActionResult> ObtenerEncuestasActivas(string empresa)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var EncuestaId = ctx.Empresa_Encuesta.Where(e => e.EmpresaId == empresa && e.Status == true).Select(e => e.EncuestaId).ToList();
+                    var ListaEncuesta = await ctx.Encuesta.Where(e => EncuestaId.Contains(e.Id) && e.FechaInicio <= DateTime.Now && e.FechaFin >= DateTime.Now).Select(x => new
+                    {
+                        Id = x.Id,
+                        Nombre = x.Nombre,
+                        Descripcion = x.Descripcion,
+                        FechaInicio = x.FechaInicio,
+                        FechaFin = x.FechaFin
+                    }).ToListAsync();
+                    return Ok(ListaEncuesta);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/EncuestaSelected/{encuestaId}/{usuario}")]
+        public async Task<IHttpActionResult> SeccionesEncuestasSelected(int encuestaId, string usuario)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+                    var SeccionesPermitidas = await db.Secciones_Usuarios.Where(p => p.Usuarios.usuario == usuario && p.Status == true).Select(s=> s.SeccionId).ToListAsync();
+                    var ListaSecciones = await db.SeccionesEncuesta.Where(e => e.EncuestaId == encuestaId && e.Status == true && SeccionesPermitidas.Contains(e.Id)).Select(x => new
+                    {
+                        Id = x.Id,
+                        EncuestaId = x.EncuestaId,
+                        NombreEncuesta = x.Encuesta.Nombre,
+                        Nombre = x.Nombre,
+                        Titulo = x.Titulo,
+                        Descripcion = x.Descripcion,
+                        Obligatorio = x.Obligatorio,
+                        Status = x.Status,
+                        Preguntas = x.Preguntas.Where(p => p.SeccionEncuestaId == x.Id && p.Status == true).Select(p => new
+                        {
+                            PreguntaId = p.Id,
+                            TipoIngresoId = p.TipoIngresoId,
+                            TipoIngreso = p.TiposIngreso.Nombre,
+                            GrupoOpcionesId = p.GrupoOpcionesId,
+                            GrupoOpciones = p.GrupoOpciones.Nombre,
+                            PreguntasOpciones = p.PreguntasOpciones.Where(o => o.Status == true).Select(po => new
+                            {
+                                PreguntasOpcionesId = po.Id,
+                                GrupoOpcionesDetalleId = po.GrupoOpcionesDetalleId,
+                                GOpcionesDetalleNombre = po.GrupoOpcionesDetalle.Nombre
+                            }),
+                            Nombre = p.Nombre,
+                            Descripcion = p.Descripcion,
+                            Obligatorio = p.Obligatorio,
+                            RespuestaObligatorio = p.RespuestaObligatorio,
+                            Status = p.Status
+                        })
+                    }).ToListAsync();
+                    return Ok(ListaSecciones);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }

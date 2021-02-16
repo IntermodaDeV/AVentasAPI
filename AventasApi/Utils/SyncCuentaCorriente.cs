@@ -47,7 +47,7 @@ namespace AventasApi.Utils
 
                             if (newEntity.PendienteFactura > 0)
                             {
-                                newEntity.Saldo = newEntity.Saldo - newEntity.PendienteFactura - newEntity.Descuento;
+                                newEntity.Saldo = newEntity.Saldo - newEntity.PendienteFactura - (entityFound.FechaMaxDescuento < DateTime.Today ? 0 : entityFound.Descuento);
                             }
                             
                             newEntity.FacturaStatus = factura.STATUS;
@@ -77,7 +77,7 @@ namespace AventasApi.Utils
 
                             if (entityFound.PendienteFactura > 0)
                             {
-                                entityFound.Saldo = entityFound.Saldo - entityFound.PendienteFactura - entityFound.Descuento;
+                                entityFound.Saldo = entityFound.Saldo - entityFound.PendienteFactura - (entityFound.FechaMaxDescuento < DateTime.Today ? 0 : entityFound.Descuento);
                             }
 
                             entityFound.FacturaStatus = factura.STATUS;

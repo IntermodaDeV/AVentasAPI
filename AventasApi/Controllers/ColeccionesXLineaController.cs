@@ -71,7 +71,7 @@ namespace AventasApi.Controllers
                         return Ok(result);
                     }
 
-                    return BadRequest("el paquete no tiene imagen");
+                    return BadRequest("El paquete no tiene imagen.");
                 }
             }
            return BadRequest(respuesta.ErrorMessage);
@@ -79,7 +79,8 @@ namespace AventasApi.Controllers
 
         public Image Base64ToImage(string base64String, string Nombre)
         {
-            var filePath = @"\\appserver2\AxAttachedDocuments\" + Nombre +".jpg";
+            var path = Properties.Settings.Default.PathImagenes;
+            var filePath = $"{path}{Nombre}.jpg";
             // Convert base 64 string to byte[]
             byte[] imageBytes = Convert.FromBase64String(base64String);
             // Convert byte[] to Image
@@ -374,6 +375,12 @@ namespace AventasApi.Controllers
                                            }).ToList(),
 
                                        }).ToList(),
+                                       ListaColoresSinStock = pxc.ColoresxProducto.Where(cpp => (vw_coleccion.ColeccionTipo == "F") || cpp.Colores.FisicoDisponible.Where(f => f.IdProducto == pxc.IdProducto).Sum(f => f.Disponible) == 0).OrderBy(cpp => cpp.Colores.Color).Select(cpp => new ColorSinStock
+                                       {
+                                           CodigoColor = cpp.Colores.CodigoColor,
+                                           NombreColor = cpp.Colores.Color,
+                                           Color = cpp.Colores.Rgb,
+                                       }).ToList(),
                                        fisicaDisponible = pxc.FisicoDisponible
                                               /*.Where(f => (vw_coleccion.ColeccionTipo == "F") || f.Disponible >= 0)*/
                                               .Select(f => new FisicoDisponibleViewModel
@@ -525,6 +532,12 @@ namespace AventasApi.Controllers
                                                                                     Principal = foto.Principal ?? false
                                                                                 }).ToList(),
 
+                                                                            }).ToList(),
+                                                                            ListaColoresSinStock = pxc.ColoresxProducto.Where(cpp => (vw_coleccion.ColeccionTipo == "F") || cpp.Colores.FisicoDisponible.Where(f => f.IdProducto == pxc.IdProducto).Sum(f => f.Disponible) == 0).OrderBy(cpp => cpp.Colores.Color).Select(cpp => new ColorSinStock
+                                                                            {
+                                                                                CodigoColor = cpp.Colores.CodigoColor,
+                                                                                NombreColor = cpp.Colores.Color,
+                                                                                Color = cpp.Colores.Rgb,
                                                                             }).ToList(),
                                                                             fisicaDisponible = pxc.FisicoDisponible
                                                                                /*.Where(f => (vw_coleccion.ColeccionTipo == "F") || f.Disponible >= 0)*/

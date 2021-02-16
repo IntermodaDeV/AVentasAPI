@@ -105,6 +105,10 @@ namespace AventasApi.Models.ViewModels
         public bool Sincronizado { get; set; }
         public Nullable<bool> Procesando { get; set; }
         public string ErrorAx { get; set; }
+        public int Id { get; internal set; }
+        public string PedidoGenerado { get; internal set; }
+        public int Estado { get; internal set; }
+
         public PedidosXClienteViewModel()
         {
             Productos = new List<ProductosXPedidoViewModel>();
