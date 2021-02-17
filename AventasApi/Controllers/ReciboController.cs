@@ -1125,6 +1125,216 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("~/api/Recibo/flotante/{FechaInicio}/{FechaFin}/{estado}")]
+        public IHttpActionResult GetFlotantes(DateTime FechaInicio, DateTime FechaFin,int estado)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                    if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
+                    {
+                        FechaInicio = DateTime.Today.AddDays(-30);
+                        FechaFin = DateTime.Today.AddDays(1);
+                    }
+                    else
+                    {
+                        FechaFin = FechaFin.AddDays(1);
+                    }
+
+                    var Recibos = ctx.RecibosxClienteFlotante.Where(r => r.Estado == estado && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
+                    {
+                        Id=rec.ReciboId,
+                        Anticipo = false,
+                        Estado=rec.Estado,
+                        NombreAsesor = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == rec.CodigoAsesor).Nombre,
+                        Asesor = rec.CodigoAsesor,
+                        NumeroRecibo = rec.NumeroRecibo,
+                        CodigoCliente = rec.CodigoCliente,
+                        Fecha = rec.Fecha,
+                        IdTipoPago = rec.IdTipoPago,
+                        Referencia = rec.Referencia,
+                        FechaPago = rec.FechaCheque,
+                        IdBanco = rec.IdBanco,
+                        Valor = rec.Valor,
+                        IdMoneda = ctx.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == rec.IdMoneda).Moneda,
+                        Sincronizado = rec.Sincronizado,
+                        CodigoAsesor = rec.CodigoAsesor,
+                        IdFactura = rec.IdFactura,
+                        Longitude = rec.Longitude,
+                        Latitude = rec.Latitude,
+                        DescripcionBanco = ctx.Bancos.Where(banco => banco.IdBanco == rec.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
+                        Descuento = rec.Descuento,
+                        Cliente = ctx.Clientes.Where(cli => cli.CodigoCliente == rec.CodigoCliente).Select(cli => new ClienteViewModel
+                        {
+                            Codigo = cli.CodigoCliente,
+                            Nombre = cli.Nombre,
+                            Direccion = cli.Direccion,
+                            Moneda = cli.IdMoneda
+                        }).FirstOrDefault(),
+                        TipoPago = ctx.TiposdePago.Where(tp => tp.IdTipoPago == rec.IdTipoPago).Select(tp => new TipoPagoViewModel
+                        {
+                            IdTipoPago = tp.IdTipoPago,
+                            Codigo = tp.Codigo,
+                            Descripcion = tp.Descripcion,
+                            Tipo = tp.Tipo,
+                            EmpresaId = tp.EmpresaId,
+                            TiposdePagoDetalle = tp.TiposdePagoDetalle.Where(d => d.CodigoDetalle == rec.SpecPago).Select(pd => new TipoPagoDetalleViewModel
+                            {
+                                Codigo = pd.Codigo,
+                                CodigoDetalle = pd.CodigoDetalle,
+                                Descripcion = pd.Descripcion
+                            }).ToList(),
+                        }).FirstOrDefault(),
+                        DetalleRecibo = rec.RecibosDetalleFlotante.Select(recDet =>
+                        recDet.SubFacturasxCliente != null ?
+                        new RecibosDetalleViewModel
+                        {
+                            IdReciboDetalle = recDet.IdReciboDetalle,
+                            Factura = recDet.SubFacturasxCliente.Factura,
+                            NumeroFel = recDet.SubFacturasxCliente.NumeroFEL,
+                            FechaFactura = recDet.SubFacturasxCliente.FacturasxCliente.FechaFactura,
+                            Tipo = rec.FacturasxCliente.Tipo,
+                            ReciboId = recDet.ReciboId,
+                            IdSubFactura = recDet.IdSubFactura,
+                            Valor = recDet.Valor,
+                            ValorFactura = recDet.SubFacturasxCliente.FacturasxCliente.TotalFactura,
+                            ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
+                            Descuento = recDet.Descuento,
+                            EsAbono = recDet.EsAbono,
+                            DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0
+                        } : new RecibosDetalleViewModel
+                        {
+                            IdReciboDetalle = recDet.IdReciboDetalle,
+                            Factura = "SALDO_FAVOR",
+                            NumeroFel = "",
+                            FechaFactura = null,
+                            Tipo = "Pago",
+                            ReciboId = recDet.ReciboId,
+                            IdSubFactura = null,
+                            Valor = recDet.Valor,
+                            ValorFactura = 0,
+                            ValorSinDescuento = recDet.Valor,
+                            Descuento = 0,
+                            EsAbono = true,
+                            DiasVencimiento = 0,
+                        }
+                        ).ToList()
+                    }).ToList();
+
+                    return Ok(Recibos);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/Recibo/flotante/cancelar/{id}")]
+        public async Task<IHttpActionResult> CancelarFlotante(int id)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var recibo = await ctx.RecibosxClienteFlotante.FirstOrDefaultAsync(x => x.ReciboId == id);
+
+                    if (recibo == null)
+                    {
+                        return BadRequest("El recibo no existe.");
+                    }
+
+                    recibo.EditedBy = user.UserAccount;
+                    recibo.EditedDate = DateTime.Now;
+                    recibo.Estado = 2;
+                    int res = await ctx.SaveChangesAsync();
+                    return Ok(res);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/Recibo/flotante/sincronizar/{id}")]
+        public async Task<IHttpActionResult> SincronizarFlotante(int id)
+        {
+            try
+            {
+                using(AVentasEntities ctx=new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var recibo = await ctx.RecibosxClienteFlotante.FirstOrDefaultAsync(x => x.ReciboId == id);
+
+                    if (recibo == null)
+                    {
+                        return BadRequest("El recibo no existe.");
+                    }
+
+                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == recibo.CodigoAsesor);
+                    int numeroCorelativo = asesor.CorrelativoRecibos ?? 0;
+                    string inicialesAsesor = asesor.InicialesNombre;
+                    string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+
+                    var reciboBD = new RecibosxCliente()
+                    {
+                        NumeroRecibo = numeroReferencia,
+                        CodigoCliente = recibo.CodigoCliente,
+                        Fecha = recibo.Fecha,
+                        IdTipoPago = recibo.IdTipoPago,
+                        SpecPago = recibo.SpecPago,
+                        Referencia = recibo.Referencia,
+                        FechaCheque = recibo.FechaCheque,
+                        IdBanco = recibo.IdBanco,
+                        IdCuentaBancaria = recibo.IdCuentaBancaria,
+                        Valor = recibo.Valor,
+                        IdMoneda = recibo.IdMoneda,
+                        CodigoAsesor = recibo.CodigoAsesor,
+                        FechaCreacion = recibo.FechaCreacion,
+                        UsuarioCreacion = recibo.UsuarioCreacion,
+                        FechaModificacion = recibo.FechaModificacion,
+                        UsuarioModificacion = recibo.UsuarioModificacion,
+                        IdFactura = recibo.IdFactura,
+                        Descuento = recibo.Descuento,
+                        Latitude = recibo.Latitude,
+                        Longitude = recibo.Longitude,
+                        RecibosDetalle = recibo.RecibosDetalleFlotante.Select(d => new RecibosDetalle() {
+                            IdReciboDetalle = d.IdReciboDetalle,
+                            ReciboId = d.ReciboId,
+                            IdSubFactura = d.IdSubFactura,
+                            Valor = d.Valor,
+                            Descuento = d.Descuento,
+                            EsAbono = d.EsAbono,
+                        }).ToList()
+                    };
+
+                    ctx.RecibosxCliente.Add(reciboBD);
+                    int resultado = await ctx.SaveChangesAsync();
+
+                    if (resultado > 0)
+                    {
+                        recibo.ReciboIdGenerado = numeroReferencia;
+                        recibo.EditedBy = user.UserAccount;
+                        recibo.Estado = 1;
+                        recibo.EditedDate = DateTime.Now;
+                        asesor.CorrelativoRecibos = asesor.CorrelativoRecibos + 1;
+                        await ctx.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
         public void EscribirEnArchivo(string Message)
         {
             try
