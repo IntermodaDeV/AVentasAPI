@@ -42,5 +42,6 @@ namespace AventasApi.Models.ViewModels
         public string NombreAsesor { get; internal set; }
         public int Estado { get; internal set; }
         public int Id { get; internal set; }
+        public string ReciboGenerado { get; internal set; }
     }
 }
