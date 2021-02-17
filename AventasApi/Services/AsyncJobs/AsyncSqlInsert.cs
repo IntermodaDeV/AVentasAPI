@@ -102,6 +102,8 @@ namespace AventasApi.Services.AsyncJobs
                     Longitude = rec.Longitude,
                     Latitude = rec.Latitude,
                     SpecPago = rec.SpecPago,
+                    UsuarioCreacion = rec.UsuarioCreacion,
+                    FechaCreacion = rec.FechaCreacion,
                     RecibosDetalle = rec.DetalleRecibo.Select(recDet => new RecibosDetalle
                     {
                         IdReciboDetalle = recDet.IdReciboDetalle,
@@ -146,6 +148,8 @@ namespace AventasApi.Services.AsyncJobs
                     Longitude = rec.Longitude,
                     Latitude = rec.Latitude,
                     SpecPago = rec.SpecPago,
+                    UsuarioCreacion = rec.UsuarioCreacion,
+                    FechaCreacion = rec.FechaCreacion,
                     RecibosDetalleFlotante = rec.DetalleRecibo.Select(recDet => new RecibosDetalleFlotante
                     {
                         IdReciboDetalle = recDet.IdReciboDetalle,

@@ -106,7 +106,7 @@ namespace AventasApi.Controllers
             {
                 using (var emp = new AVentasEntities())
                 {
-                    var EmpresasPermitidas = emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToList();
+                    var EmpresasPermitidas = await emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToListAsync();
 
                     var ListaEmpresas = await emp.Empresa.Where(e => EmpresasPermitidas.Contains(e.EmpresaId)).Select(e => new EmpresaViewModel
                     {
@@ -131,7 +131,7 @@ namespace AventasApi.Controllers
             {
                 using (var emp = new AVentasEntities())
                 {
-                    var EmpresasPermitidas = emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToList();
+                    var EmpresasPermitidas = await emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToListAsync();
 
                     var ListaEmpresas = await emp.Empresa.Where(e => !EmpresasPermitidas.Contains(e.EmpresaId)).Select(e => new EmpresaViewModel
                     {
@@ -224,9 +224,9 @@ namespace AventasApi.Controllers
             {
                 using (var db = new AVentasEntities())
                 {
-                    var SeccionesPermitidas = db.Secciones_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.SeccionId).ToList();
+                    var SeccionesPermitidas = await db.Secciones_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.SeccionId).ToListAsync();
 
-                    var ListaSecciones = await db.Secciones.Where(e => SeccionesPermitidas.Contains(e.Id)).Select(e => new Secciones
+                    var ListaSecciones = await db.Secciones.Where(e => SeccionesPermitidas.Contains(e.Id)).Select(e => new SeccionEncuestaViewModel
                     {
                         Id = e.Id,
                         Nombre = e.Nombre,
@@ -250,9 +250,9 @@ namespace AventasApi.Controllers
             {
                 using (var db = new AVentasEntities())
                 {
-                    var SeccionesPermitidas = db.Secciones_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.SeccionId).ToList();
+                    var SeccionesNoPermitidas = await db.Secciones_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.SeccionId).ToListAsync();
 
-                    var ListaSecciones = await db.Secciones.Where(e => !SeccionesPermitidas.Contains(e.Id)).Select(e => new Secciones
+                    var ListaSecciones = await db.Secciones.Where(e => !SeccionesNoPermitidas.Contains(e.Id) && e.Status == true).Select(e => new SeccionEncuestaViewModel
                     {
                         Id = e.Id,
                         Nombre = e.Nombre,
@@ -268,8 +268,8 @@ namespace AventasApi.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("~/api/Encuesta/Secciones/{EncuestaId}/{seccionId}/{usuario}")]
+        [HttpPost]
+        [Route("~/api/Encuesta/AsignarSecciones/{EncuestaId}/{seccionId}/{usuario}")]
         public async Task<IHttpActionResult> AsignarEncuestaSeccion(int EncuestaId, int seccionId, string usuario)
         {
             try
@@ -343,7 +343,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var SeccionesList = await ctx.Secciones_Encuesta.Where(e => e.EncuestaId == encuestaId).Select(x => x.SeccionId).ToListAsync();
+                    var SeccionesList = await ctx.Secciones_Encuesta.Where(e => e.EncuestaId == encuestaId && e.Status == true).Select(x => x.SeccionId).ToListAsync();
                     var ListaSecciones = await ctx.Secciones.Where(e=> SeccionesList.Contains(e.Id)).Select(x => new
                     {
                         Id = x.Id,

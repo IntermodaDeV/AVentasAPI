@@ -547,7 +547,7 @@ namespace AventasApi.Controllers
                             var anticipo = new AnticiposxCliente
                             {
                                 CodigoCliente = anticipoPost.CodigoCliente,
-                                Fecha = anticipoPost.Fecha,
+                                Fecha = DateTime.Now,
                                 IdTipoPago = int.Parse(pago.CodigoTipoPago),
                                 Referencia = pago.Referencia,
                                 FechaCheque = anticipoPost.FechaPago,
@@ -563,6 +563,8 @@ namespace AventasApi.Controllers
                                 Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
                                 SpecPago = pago.TipoPagoDetalle,
                                 EsContado = anticipoPost.EsContado == "1" ? true : false,
+                                UsuarioCreacion = user.UserAccount,
+                                FechaCreacion = DateTime.Now,
                                 Descuento = 0
                             };
                             context.AnticiposxCliente.Add(anticipo);
@@ -573,7 +575,7 @@ namespace AventasApi.Controllers
                             {
                                 NumeroRecibo = anticipoPost.NumeroRecibo,
                                 CodigoCliente = anticipoPost.CodigoCliente,
-                                Fecha = anticipoPost.Fecha,
+                                Fecha = DateTime.Now,
                                 IdTipoPago = int.Parse(pago.CodigoTipoPago),
                                 Referencia = pago.Referencia,
                                 FechaCheque = anticipoPost.FechaPago,
@@ -815,7 +817,9 @@ namespace AventasApi.Controllers
                                     Descuento = 0,
                                     Latitude = (reciboPost.location != null) ? reciboPost.location.latitude : null,
                                     Longitude = (reciboPost.location != null) ? reciboPost.location.longitude : null,
-                                    SpecPago = pago.TipoPagoDetalle
+                                    SpecPago = pago.TipoPagoDetalle,
+                                    UsuarioCreacion = user.UserAccount,
+                                    FechaCreacion = DateTime.Now,
                                 };
                                 recibosxCliente.Add(reciboXCliente);
                             }
@@ -840,6 +844,8 @@ namespace AventasApi.Controllers
                                     Latitude = (reciboPost.location != null) ? reciboPost.location.latitude : null,
                                     Longitude = (reciboPost.location != null) ? reciboPost.location.longitude : null,
                                     SpecPago = pago.TipoPagoDetalle,
+                                    UsuarioCreacion = user.UserAccount,
+                                    FechaCreacion = DateTime.Now,
                                     Estado = 0  ///0: Pendiente, 1: Sincronizado, 2:Cancelado
                                 };
                                 recibosxClienteFlotante.Add(reciboXClienteFlotante);

@@ -40,5 +40,7 @@ namespace AventasApi.Models.ViewModels
         public List<RecibosDetalleViewModel> DetalleRecibo { get; set; }
         public bool Anticipo { get;  set; }
         public string NombreAsesor { get; internal set; }
+        public string UsuarioCreacion { get; set; }
+        public Nullable<DateTime> FechaCreacion { get; set; }
     }
 }
