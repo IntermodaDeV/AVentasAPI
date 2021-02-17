@@ -1188,27 +1188,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/Recibo/flotante/{FechaInicio}/{FechaFin}/{estado}")]
-        public async Task<IHttpActionResult> GetFlotantes(DateTime FechaInicio, DateTime FechaFin, int estado)
+        [Route("~/api/Recibo/flotante/{FechaInicio}/{FechaFin}/{estado}/{asesor}")]
+        public IHttpActionResult GetFlotantes(DateTime FechaInicio, DateTime FechaFin, int estado,string asesor)
         {
             try
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    List<string> asesoresHabilitados = new List<string>();
-                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
-                    var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
-
-                    if (usuario.FlagTodosAsesores.Value)
-                    {
-                        asesoresHabilitados = await ctx.Asesores.Where(x => x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
-                    }
-                    else
-                    {
-                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
-                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
-                    }
+                    
 
                     if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
                     {
@@ -1219,96 +1207,89 @@ namespace AventasApi.Controllers
                     {
                         FechaFin = FechaFin.AddDays(1);
                     }
-
-                    List<RecibosxClienteViewModel> RecibosCliente = new List<RecibosxClienteViewModel>();
-
-                    foreach (var asesor in asesoresHabilitados)
+                    
+                    List<RecibosxClienteViewModel> Recibos = ctx.RecibosxClienteFlotante.Where(r => r.Estado == estado && r.Fecha >= FechaInicio && r.Fecha < FechaFin && r.CodigoAsesor==asesor).Select(rec => new RecibosxClienteViewModel
                     {
-                        List<RecibosxClienteViewModel> Recibos = ctx.RecibosxClienteFlotante.Where(r => r.Estado == estado && r.Fecha >= FechaInicio && r.Fecha < FechaFin && r.CodigoAsesor==asesor).Select(rec => new RecibosxClienteViewModel
+                        Id = rec.ReciboId,
+                        ReciboGenerado = rec.ReciboIdGenerado == null ? "No Disponible" : rec.ReciboIdGenerado,
+                        Anticipo = false,
+                        Estado = rec.Estado,
+                        NombreAsesor = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == rec.CodigoAsesor).Nombre,
+                        Asesor = rec.CodigoAsesor,
+                        NumeroRecibo = rec.NumeroRecibo,
+                        CodigoCliente = rec.CodigoCliente,
+                        Fecha = rec.Fecha,
+                        IdTipoPago = rec.IdTipoPago,
+                        Referencia = rec.Referencia,
+                        FechaPago = rec.FechaCheque,
+                        IdBanco = rec.IdBanco,
+                        Valor = rec.Valor,
+                        IdMoneda = ctx.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == rec.IdMoneda).Moneda,
+                        Sincronizado = rec.Sincronizado,
+                        CodigoAsesor = rec.CodigoAsesor,
+                        IdFactura = rec.IdFactura,
+                        Longitude = rec.Longitude,
+                        Latitude = rec.Latitude,
+                        DescripcionBanco = ctx.Bancos.Where(banco => banco.IdBanco == rec.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
+                        Descuento = rec.Descuento,
+                        Cliente = ctx.Clientes.Where(cli => cli.CodigoCliente == rec.CodigoCliente).Select(cli => new ClienteViewModel
                         {
-                            Id = rec.ReciboId,
-                            ReciboGenerado = rec.ReciboIdGenerado == null ? "No Disponible" : rec.ReciboIdGenerado,
-                            Anticipo = false,
-                            Estado = rec.Estado,
-                            NombreAsesor = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == rec.CodigoAsesor).Nombre,
-                            Asesor = rec.CodigoAsesor,
-                            NumeroRecibo = rec.NumeroRecibo,
-                            CodigoCliente = rec.CodigoCliente,
-                            Fecha = rec.Fecha,
-                            IdTipoPago = rec.IdTipoPago,
-                            Referencia = rec.Referencia,
-                            FechaPago = rec.FechaCheque,
-                            IdBanco = rec.IdBanco,
-                            Valor = rec.Valor,
-                            IdMoneda = ctx.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == rec.IdMoneda).Moneda,
-                            Sincronizado = rec.Sincronizado,
-                            CodigoAsesor = rec.CodigoAsesor,
-                            IdFactura = rec.IdFactura,
-                            Longitude = rec.Longitude,
-                            Latitude = rec.Latitude,
-                            DescripcionBanco = ctx.Bancos.Where(banco => banco.IdBanco == rec.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
-                            Descuento = rec.Descuento,
-                            Cliente = ctx.Clientes.Where(cli => cli.CodigoCliente == rec.CodigoCliente).Select(cli => new ClienteViewModel
+                            Codigo = cli.CodigoCliente,
+                            Nombre = cli.Nombre,
+                            Direccion = cli.Direccion,
+                            Moneda = cli.IdMoneda
+                        }).FirstOrDefault(),
+                        TipoPago = ctx.TiposdePago.Where(tp => tp.IdTipoPago == rec.IdTipoPago).Select(tp => new TipoPagoViewModel
+                        {
+                            IdTipoPago = tp.IdTipoPago,
+                            Codigo = tp.Codigo,
+                            Descripcion = tp.Descripcion,
+                            Tipo = tp.Tipo,
+                            EmpresaId = tp.EmpresaId,
+                            TiposdePagoDetalle = tp.TiposdePagoDetalle.Where(d => d.CodigoDetalle == rec.SpecPago).Select(pd => new TipoPagoDetalleViewModel
                             {
-                                Codigo = cli.CodigoCliente,
-                                Nombre = cli.Nombre,
-                                Direccion = cli.Direccion,
-                                Moneda = cli.IdMoneda
-                            }).FirstOrDefault(),
-                            TipoPago = ctx.TiposdePago.Where(tp => tp.IdTipoPago == rec.IdTipoPago).Select(tp => new TipoPagoViewModel
-                            {
-                                IdTipoPago = tp.IdTipoPago,
-                                Codigo = tp.Codigo,
-                                Descripcion = tp.Descripcion,
-                                Tipo = tp.Tipo,
-                                EmpresaId = tp.EmpresaId,
-                                TiposdePagoDetalle = tp.TiposdePagoDetalle.Where(d => d.CodigoDetalle == rec.SpecPago).Select(pd => new TipoPagoDetalleViewModel
-                                {
-                                    Codigo = pd.Codigo,
-                                    CodigoDetalle = pd.CodigoDetalle,
-                                    Descripcion = pd.Descripcion
-                                }).ToList(),
-                            }).FirstOrDefault(),
-                            DetalleRecibo = rec.RecibosDetalleFlotante.Select(recDet =>
-                            recDet.SubFacturasxCliente != null ?
-                            new RecibosDetalleViewModel
-                            {
-                                IdReciboDetalle = recDet.IdReciboDetalle,
-                                Factura = recDet.SubFacturasxCliente.Factura,
-                                NumeroFel = recDet.SubFacturasxCliente.NumeroFEL,
-                                FechaFactura = recDet.SubFacturasxCliente.FacturasxCliente.FechaFactura,
-                                Tipo = rec.FacturasxCliente.Tipo,
-                                ReciboId = recDet.ReciboId,
-                                IdSubFactura = recDet.IdSubFactura,
-                                Valor = recDet.Valor,
-                                ValorFactura = recDet.SubFacturasxCliente.FacturasxCliente.TotalFactura,
-                                ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
-                                Descuento = recDet.Descuento,
-                                EsAbono = recDet.EsAbono,
-                                DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0
-                            } : new RecibosDetalleViewModel
-                            {
-                                IdReciboDetalle = recDet.IdReciboDetalle,
-                                Factura = "SALDO_FAVOR",
-                                NumeroFel = "",
-                                FechaFactura = null,
-                                Tipo = "Pago",
-                                ReciboId = recDet.ReciboId,
-                                IdSubFactura = null,
-                                Valor = recDet.Valor,
-                                ValorFactura = 0,
-                                ValorSinDescuento = recDet.Valor,
-                                Descuento = 0,
-                                EsAbono = true,
-                                DiasVencimiento = 0,
-                            }
-                            ).ToList()
-                        }).ToList();
+                                Codigo = pd.Codigo,
+                                CodigoDetalle = pd.CodigoDetalle,
+                                Descripcion = pd.Descripcion
+                            }).ToList(),
+                        }).FirstOrDefault(),
+                        DetalleRecibo = rec.RecibosDetalleFlotante.Select(recDet =>
+                        recDet.SubFacturasxCliente != null ?
+                        new RecibosDetalleViewModel
+                        {
+                            IdReciboDetalle = recDet.IdReciboDetalle,
+                            Factura = recDet.SubFacturasxCliente.Factura,
+                            NumeroFel = recDet.SubFacturasxCliente.NumeroFEL,
+                            FechaFactura = recDet.SubFacturasxCliente.FacturasxCliente.FechaFactura,
+                            Tipo = rec.FacturasxCliente.Tipo,
+                            ReciboId = recDet.ReciboId,
+                            IdSubFactura = recDet.IdSubFactura,
+                            Valor = recDet.Valor,
+                            ValorFactura = recDet.SubFacturasxCliente.FacturasxCliente.TotalFactura,
+                            ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
+                            Descuento = recDet.Descuento,
+                            EsAbono = recDet.EsAbono,
+                            DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0
+                        } : new RecibosDetalleViewModel
+                        {
+                            IdReciboDetalle = recDet.IdReciboDetalle,
+                            Factura = "SALDO_FAVOR",
+                            NumeroFel = "",
+                            FechaFactura = null,
+                            Tipo = "Pago",
+                            ReciboId = recDet.ReciboId,
+                            IdSubFactura = null,
+                            Valor = recDet.Valor,
+                            ValorFactura = 0,
+                            ValorSinDescuento = recDet.Valor,
+                            Descuento = 0,
+                            EsAbono = true,
+                            DiasVencimiento = 0,
+                        }
+                        ).ToList()
+                    }).ToList();
 
-                        RecibosCliente.AddRange(Recibos);
-                    }
-
-                    return Ok(RecibosCliente);
+                    return Ok(Recibos);
                 }
             }
             catch (Exception e)
