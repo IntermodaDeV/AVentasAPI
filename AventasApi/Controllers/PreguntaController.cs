@@ -25,7 +25,7 @@ namespace AventasApi.Controllers
                     {
                        Id = x.Id,
                        SeccionEncuestaId = x.SeccionEncuestaId,
-                       NombreSeccion = x.SeccionesEncuesta.Nombre,
+                       //NombreSeccion = x.SeccionesEncuesta.Nombre,
                        TipoIngresoId = x.TipoIngresoId,
                        GrupoOpcionesId = x.GrupoOpcionesId,
                        Nombre = x.Nombre,

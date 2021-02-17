@@ -17,10 +17,10 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Encuesta()
         {
-            this.SeccionesEncuesta = new HashSet<SeccionesEncuesta>();
             this.Preguntas = new HashSet<Preguntas>();
             this.Empresa_Encuesta = new HashSet<Empresa_Encuesta>();
             this.Respuestas = new HashSet<Respuestas>();
+            this.Secciones_Encuesta = new HashSet<Secciones_Encuesta>();
         }
     
         public int Id { get; set; }
@@ -34,12 +34,12 @@ namespace DBData.Database
         public Nullable<System.DateTime> ModifiedDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SeccionesEncuesta> SeccionesEncuesta { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Preguntas> Preguntas { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Empresa_Encuesta> Empresa_Encuesta { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Respuestas> Respuestas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Secciones_Encuesta> Secciones_Encuesta { get; set; }
     }
 }

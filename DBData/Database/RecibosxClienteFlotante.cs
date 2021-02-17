@@ -34,18 +34,19 @@ namespace DBData.Database
         public string IdMoneda { get; set; }
         public Nullable<bool> Sincronizado { get; set; }
         public string CodigoAsesor { get; set; }
-        public Nullable<System.DateTime> FechaCreacion { get; set; }
-        public string UsuarioCreacion { get; set; }
-        public Nullable<System.DateTime> FechaModificacion { get; set; }
-        public string UsuarioModificacion { get; set; }
         public Nullable<int> IdFactura { get; set; }
         public Nullable<decimal> Descuento { get; set; }
         public Nullable<decimal> Latitude { get; set; }
         public Nullable<decimal> Longitude { get; set; }
         public int Estado { get; set; }
         public string ReciboIdGenerado { get; set; }
-        public string EditedBy { get; set; }
-        public Nullable<System.DateTime> EditedDate { get; set; }
+        public Nullable<bool> EsContado { get; set; }
+        public string NumPedido { get; set; }
+        public string Tipo { get; set; }
+        public string UsuarioCreacion { get; set; }
+        public Nullable<System.DateTime> FechaCreacion { get; set; }
+        public string UsuarioModificacion { get; set; }
+        public Nullable<System.DateTime> FechaModificacion { get; set; }
     
         public virtual FacturasxCliente FacturasxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

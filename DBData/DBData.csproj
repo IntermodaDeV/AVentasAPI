@@ -345,7 +345,10 @@
     <Compile Include="Database\RutasxAsesor.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
-    <Compile Include="Database\SeccionesEncuesta.cs">
+    <Compile Include="Database\Secciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Secciones_Encuesta.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\Secciones_Usuarios.cs">

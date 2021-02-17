@@ -507,40 +507,96 @@ namespace AventasApi.Controllers
             try
             {
                 RespuestaRecibo respuestaPagoRecibo = new RespuestaRecibo();
-
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                 var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
                 if (anticipoPost.Pagos != null)
                 {
+                    var existeAnticipo = 0;
                     List<ReciboApiModel> recibos = new List<ReciboApiModel>();
                     foreach (var pag in anticipoPost.Pagos)
                     {
                         int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
-                        string inicialesAsesor = asesor.Nombre.Split(' ').Aggregate("", (iniacialesAcumuladas, nombreSiguiente) => iniacialesAcumuladas + nombreSiguiente[0]);
+                        string inicialesAsesor = asesor.InicialesNombre;
                         var pago = pag;
                         int.TryParse(pago.IdBanco, out int codigobanco);
+
                         decimal.TryParse(pago.Valor.ToString(), out decimal valorPago);
-                        var anticipo = new AnticiposxCliente
+                        var minutosConf = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotanteRecibo");
+                        double minutosValue = 1;
+
+                        if (minutosConf != null)
                         {
-                            CodigoCliente = anticipoPost.CodigoCliente,
-                            Fecha = anticipoPost.Fecha,
-                            IdTipoPago = int.Parse(pago.CodigoTipoPago),
-                            Referencia = pago.Referencia,
-                            FechaCheque = anticipoPost.FechaPago,
-                            IdBanco = codigobanco,
-                            Sincronizado = false,
-                            Valor = valorPago,
-                            IdMoneda = pago.IdMoneda,
-                            CodigoAsesor = user.UserAccount,
-                            Tipo = anticipoPost.Tipo,
-                            NumeroRecibo = $"{inicialesAsesor}-1{numeroCorrelativoRecibo.ToString("D5")}",
-                            NumPedido = anticipoPost.NumPedido,
-                            Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
-                            Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
-                            SpecPago = pago.TipoPagoDetalle,
-                            EsContado = anticipoPost.EsContado == "1" ? true : false,
-                            Descuento = 0
-                        };
+                            try
+                            {
+                                double.TryParse(minutosConf.Valor, out minutosValue);
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                        var fechaDesde = DateTime.Now.AddMinutes(minutosValue * -1).AddSeconds(-30);
+                        var TipoPago = int.Parse(pago.CodigoTipoPago);
+                        existeAnticipo = context.AnticiposxCliente.Where(x => x.CodigoCliente == anticipoPost.CodigoCliente
+                                                                            && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
+                                                                            && x.IdTipoPago == TipoPago
+                                                                            && x.SpecPago == pago.TipoPagoDetalle
+                                                                            && x.Valor == valorPago).Count();
+
+                        if(existeAnticipo == 0)
+                        {
+                            var anticipo = new AnticiposxCliente
+                            {
+                                CodigoCliente = anticipoPost.CodigoCliente,
+                                Fecha = anticipoPost.Fecha,
+                                IdTipoPago = int.Parse(pago.CodigoTipoPago),
+                                Referencia = pago.Referencia,
+                                FechaCheque = anticipoPost.FechaPago,
+                                IdBanco = codigobanco,
+                                Sincronizado = false,
+                                Valor = valorPago,
+                                IdMoneda = pago.IdMoneda,
+                                CodigoAsesor = user.UserAccount,
+                                Tipo = anticipoPost.Tipo,
+                                NumeroRecibo = anticipoPost.NumeroRecibo,
+                                NumPedido = anticipoPost.NumPedido,
+                                Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
+                                Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
+                                SpecPago = pago.TipoPagoDetalle,
+                                EsContado = anticipoPost.EsContado == "1" ? true : false,
+                                Descuento = 0
+                            };
+                            context.AnticiposxCliente.Add(anticipo);
+                        }
+                        else
+                        {
+                           var reciboXClienteFlotante = new RecibosxClienteFlotante
+                            {
+                                NumeroRecibo = anticipoPost.NumeroRecibo,
+                                CodigoCliente = anticipoPost.CodigoCliente,
+                                Fecha = anticipoPost.Fecha,
+                                IdTipoPago = int.Parse(pago.CodigoTipoPago),
+                                Referencia = pago.Referencia,
+                                FechaCheque = anticipoPost.FechaPago,
+                                IdBanco = codigobanco,
+                                Valor = valorPago,
+                                IdMoneda = pago.IdMoneda,
+                                Sincronizado = false,
+                                CodigoAsesor = asesor.CodigoAsesor,
+                                IdFactura = null,
+                                Descuento = 0,
+                                Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
+                                Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
+                                SpecPago = pago.TipoPagoDetalle,
+                                EsContado = anticipoPost.EsContado == "1" ? true : false,
+                                NumPedido = anticipoPost.NumPedido,
+                                Tipo = anticipoPost.Tipo,
+                                UsuarioCreacion = user.UserAccount,
+                                FechaCreacion = DateTime.Now,
+                                Estado = 0  ///0: Pendiente, 1: Sincronizado, 2:Cancelado
+                            };
+                            context.RecibosxClienteFlotante.Add(reciboXClienteFlotante);
+                        }
+                       
                         var pagoBD = context.TiposdePago.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
                         var pagoDetalleBD = context.TiposdePagoDetalle.FirstOrDefault(pd => pd.IdTipoPago.ToString() == pago.CodigoTipoPago && pd.CodigoDetalle == pago.TipoPagoDetalle);
                         var respuestapago = new RespuestaPago
@@ -557,7 +613,7 @@ namespace AventasApi.Controllers
                             respuestapago.Banco = bank.Descripcion;
                         }
                         respuestaPagoRecibo.Pagos.Add(respuestapago);
-                        context.AnticiposxCliente.Add(anticipo);
+                       
                         asesor.CorrelativoRecibos = numeroCorrelativoRecibo + 1;
 
                         RespuestaFactura pagoAplicado = new RespuestaFactura
@@ -571,7 +627,7 @@ namespace AventasApi.Controllers
                             Parcial2 = 0,
                         };
                         respuestaPagoRecibo.Total = pago.Valor;
-                        respuestaPagoRecibo.CodigoUltimoRecibo = anticipo.NumeroRecibo;
+                        respuestaPagoRecibo.CodigoUltimoRecibo = anticipoPost.NumeroRecibo;
                         respuestaPagoRecibo.Facturas.Add(pagoAplicado);
 
                         ReciboApiModel anticipoAX = new ReciboApiModel
@@ -580,8 +636,8 @@ namespace AventasApi.Controllers
                             ASESOR = asesor.Usuario,
                             ASESOR_NOMBRE = asesor.Nombre,
                             ASESOR_DIARIO = asesor.CodigoAsesor,
-                            RECIBO = anticipo.NumeroRecibo,
-                            CLIENTE = anticipo.CodigoCliente,
+                            RECIBO = anticipoPost.NumeroRecibo,
+                            CLIENTE = anticipoPost.CodigoCliente,
                             MONEDA = pago.IdMoneda,
                             FECHA = DateTime.Now.ToString("dd/MM/yyyy"),
                             DESCRIPCION = anticipoPost.Descripcion,
@@ -603,7 +659,7 @@ namespace AventasApi.Controllers
                         recibos.Add(anticipoAX);
                     }
 
-                    _ = PostReciboAx(recibos);
+                    _ = PostAnticipoAx(recibos);
 
                     context.SaveChanges();
                     return Ok(respuestaPagoRecibo);
@@ -1052,8 +1108,8 @@ namespace AventasApi.Controllers
                         using(var ctx = new AVentasEntities())
                         {
                             var numeroRecibo = recibos[0].RECIBO;
-                            var recibo = await ctx.RecibosxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo == numeroRecibo);
-                            recibo.Sincronizado = true;
+                                var recibo = await ctx.RecibosxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo == numeroRecibo);
+                                recibo.Sincronizado = true;
                             await ctx.SaveChangesAsync();
                         }
 
@@ -1127,11 +1183,11 @@ namespace AventasApi.Controllers
 
         [HttpGet]
         [Route("~/api/Recibo/flotante/{FechaInicio}/{FechaFin}/{estado}")]
-        public IHttpActionResult GetFlotantes(DateTime FechaInicio, DateTime FechaFin,int estado)
+        public IHttpActionResult GetFlotantes(DateTime FechaInicio, DateTime FechaFin, int estado)
         {
             try
             {
-                using(AVentasEntities ctx = new AVentasEntities())
+                using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
 
@@ -1147,9 +1203,9 @@ namespace AventasApi.Controllers
 
                     var Recibos = ctx.RecibosxClienteFlotante.Where(r => r.Estado == estado && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
-                        Id=rec.ReciboId,
+                        Id = rec.ReciboId,
                         Anticipo = false,
-                        Estado=rec.Estado,
+                        Estado = rec.Estado,
                         NombreAsesor = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == rec.CodigoAsesor).Nombre,
                         Asesor = rec.CodigoAsesor,
                         NumeroRecibo = rec.NumeroRecibo,
@@ -1227,7 +1283,8 @@ namespace AventasApi.Controllers
 
                     return Ok(Recibos);
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }
@@ -1239,7 +1296,7 @@ namespace AventasApi.Controllers
         {
             try
             {
-                using(AVentasEntities ctx = new AVentasEntities())
+                using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var recibo = await ctx.RecibosxClienteFlotante.FirstOrDefaultAsync(x => x.ReciboId == id);
@@ -1249,13 +1306,14 @@ namespace AventasApi.Controllers
                         return BadRequest("El recibo no existe.");
                     }
 
-                    recibo.EditedBy = user.UserAccount;
-                    recibo.EditedDate = DateTime.Now;
+                    recibo.UsuarioModificacion = user.UserAccount;
+                    recibo.FechaModificacion = DateTime.Now;
                     recibo.Estado = 2;
                     int res = await ctx.SaveChangesAsync();
                     return Ok(res);
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }
@@ -1267,7 +1325,7 @@ namespace AventasApi.Controllers
         {
             try
             {
-                using(AVentasEntities ctx=new AVentasEntities())
+                using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var recibo = await ctx.RecibosxClienteFlotante.FirstOrDefaultAsync(x => x.ReciboId == id);
@@ -1304,7 +1362,8 @@ namespace AventasApi.Controllers
                         Descuento = recibo.Descuento,
                         Latitude = recibo.Latitude,
                         Longitude = recibo.Longitude,
-                        RecibosDetalle = recibo.RecibosDetalleFlotante.Select(d => new RecibosDetalle() {
+                        RecibosDetalle = recibo.RecibosDetalleFlotante.Select(d => new RecibosDetalle()
+                        {
                             IdReciboDetalle = d.IdReciboDetalle,
                             ReciboId = d.ReciboId,
                             IdSubFactura = d.IdSubFactura,
@@ -1320,21 +1379,21 @@ namespace AventasApi.Controllers
                     if (resultado > 0)
                     {
                         recibo.ReciboIdGenerado = numeroReferencia;
-                        recibo.EditedBy = user.UserAccount;
+                        recibo.UsuarioModificacion = user.UserAccount;
                         recibo.Estado = 1;
-                        recibo.EditedDate = DateTime.Now;
+                        recibo.FechaModificacion = DateTime.Now;
                         asesor.CorrelativoRecibos = asesor.CorrelativoRecibos + 1;
                         await ctx.SaveChangesAsync();
                     }
 
                     return Ok();
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }
         }
-
         public void EscribirEnArchivo(string Message)
         {
             try

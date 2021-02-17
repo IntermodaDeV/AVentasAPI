@@ -22,7 +22,7 @@ namespace DBData.Database
         public Nullable<bool> EsAbono { get; set; }
         public Nullable<decimal> ValorFactura { get; set; }
     
-        public virtual RecibosxClienteFlotante RecibosxClienteFlotante { get; set; }
         public virtual SubFacturasxCliente SubFacturasxCliente { get; set; }
+        public virtual RecibosxClienteFlotante RecibosxClienteFlotante { get; set; }
     }
 }

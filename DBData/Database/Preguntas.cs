@@ -40,8 +40,8 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PreguntasOpciones> PreguntasOpciones { get; set; }
         public virtual TiposIngreso TiposIngreso { get; set; }
-        public virtual SeccionesEncuesta SeccionesEncuesta { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RespuestaDetalle> RespuestaDetalle { get; set; }
+        public virtual Secciones Secciones { get; set; }
     }
 }
