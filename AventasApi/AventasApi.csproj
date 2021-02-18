@@ -15,8 +15,7 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -183,6 +182,7 @@
     <Compile Include="Controllers\ConfiguracionesController.cs" />
     <Compile Include="Controllers\CoordenadasXClienteController.cs" />
     <Compile Include="Controllers\CorreoController.cs" />
+    <Compile Include="Controllers\DocumentosPendientesController.cs" />
     <Compile Include="Controllers\EmpresaController.cs" />
     <Compile Include="Controllers\RespuestaController.cs" />
     <Compile Include="Controllers\PreguntaController.cs" />
@@ -232,6 +232,7 @@
     <Compile Include="Models\CustomerLocationApp\RutaConCoordenadaViewModel.cs" />
     <Compile Include="Models\Empresa.cs" />
     <Compile Include="Models\EmpresaTransporte.cs" />
+    <Compile Include="Models\FacturaPendiente.cs" />
     <Compile Include="Models\GestorModel.cs" />
     <Compile Include="Models\GruposImpuestosArticulos.cs" />
     <Compile Include="Models\GruposImpuestosClientes.cs" />
