@@ -27,6 +27,7 @@ namespace DBData.Database
             this.PreciosxProducto = new HashSet<PreciosxProducto>();
             this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
             this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
+            this.DocumentosTransitoxFactura = new HashSet<DocumentosTransitoxFactura>();
         }
     
         public string IdMoneda { get; set; }
@@ -53,5 +54,7 @@ namespace DBData.Database
         public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DocumentosTransitoxFactura> DocumentosTransitoxFactura { get; set; }
     }
 }

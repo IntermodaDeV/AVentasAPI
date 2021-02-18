@@ -14,6 +14,12 @@ namespace DBData.Database
     
     public partial class Secciones_Encuesta
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Secciones_Encuesta()
+        {
+            this.Secciones_Usuarios = new HashSet<Secciones_Usuarios>();
+        }
+    
         public int Id { get; set; }
         public int EncuestaId { get; set; }
         public int SeccionId { get; set; }
@@ -25,5 +31,7 @@ namespace DBData.Database
     
         public virtual Encuesta Encuesta { get; set; }
         public virtual Secciones Secciones { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Secciones_Usuarios> Secciones_Usuarios { get; set; }
     }
 }

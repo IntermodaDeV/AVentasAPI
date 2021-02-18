@@ -25,5 +25,6 @@ namespace DBData.Database
     
         public virtual Usuarios Usuarios { get; set; }
         public virtual Secciones Secciones { get; set; }
+        public virtual Secciones_Encuesta Secciones_Encuesta { get; set; }
     }
 }

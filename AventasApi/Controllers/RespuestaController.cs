@@ -75,6 +75,7 @@ namespace AventasApi.Controllers
                    
                     foreach(var detalle in RespuestasDetalle)
                     {
+                    var pregunta = db.Preguntas.Where(p => p.Id == detalle.PreguntaId).FirstOrDefault();
                         if(detalle.PreguntasOpciones != null && detalle.PreguntasOpciones.Count() > 0)
                         {
                             foreach (var det in detalle.PreguntasOpciones)
@@ -91,6 +92,20 @@ namespace AventasApi.Controllers
                                 };
                                 db.RespuestaDetalle.Add(RespuestaDetalle);
                             }
+                        }
+                        else if(pregunta.GrupoOpcionesId == null && detalle.PreguntasOpcionesId != null)
+                        {
+                            var RespuestaDetalle = new RespuestaDetalle()
+                            {
+                                RespuestaId = respuestaId,
+                                PreguntaId = detalle.PreguntaId,
+                                PreguntaOpcionesId = null,
+                                RespuestaAlfanumerica = detalle.RespuestaAlfanumerica,
+                                RespuestaNumerica = detalle.PreguntasOpcionesId,
+                                CreatedBy = Usuario,
+                                CreatedDate = DateTime.Now
+                            };
+                            db.RespuestaDetalle.Add(RespuestaDetalle);
                         }
                         else
                         {

@@ -248,6 +248,13 @@
         <EntityTypeShape EntityType="AventasModel.RecibosxClienteFlotante" Width="1.5" PointX="15.5" PointY="59.375" />
         <AssociationConnector Association="AventasModel.FK_ReciboXClienteFlotante___FacturaXCliente" />
         <AssociationConnector Association="AventasModel.FK__RecibosDetalle__Recibo" />
+        <AssociationConnector Association="AventasModel.FK__Secciones__SeccionEncuestId" />
+        <EntityTypeShape EntityType="AventasModel.DocumentosTransitoxFactura" Width="1.5" PointX="25.5" PointY="45.375" />
+        <AssociationConnector Association="AventasModel.FK__Documento__Codig__0D5AD24C" />
+        <AssociationConnector Association="AventasModel.FK__Documento__Empre__0E4EF685" />
+        <AssociationConnector Association="AventasModel.FK__Documento__IdFac__0F431ABE" />
+        <AssociationConnector Association="AventasModel.FK__Documento__IdMon__0C66AE13" />
+        <AssociationConnector Association="AventasModel.FK__Documento__IdSub__10373EF7" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

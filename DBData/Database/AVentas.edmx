@@ -324,6 +324,29 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Cantidad" Type="varchar" MaxLength="250" />
           <Property Name="Orden" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
+        <EntityType Name="DocumentosTransitoxFactura">
+          <Key>
+            <PropertyRef Name="IdDocumentoTransito" />
+          </Key>
+          <Property Name="IdDocumentoTransito" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TablaId" Type="int" />
+          <Property Name="Tipo" Type="varchar" MaxLength="150" />
+          <Property Name="ReferenciaSubFactura" Type="varchar(max)" />
+          <Property Name="Valor" Type="decimal" Precision="15" Scale="4" />
+          <Property Name="IdMoneda" Type="varchar" MaxLength="100" />
+          <Property Name="FechaCreacion" Type="datetime" />
+          <Property Name="Referencia" Type="varchar(max)" />
+          <Property Name="CodigoCliente" Type="varchar" MaxLength="250" />
+          <Property Name="Factura" Type="varchar" MaxLength="250" />
+          <Property Name="NumeroFEL" Type="varchar" MaxLength="250" />
+          <Property Name="NumeroDocumento" Type="varchar" MaxLength="250" />
+          <Property Name="Estado" Type="varchar" MaxLength="100" />
+          <Property Name="CreadoPor" Type="varchar" MaxLength="150" />
+          <Property Name="ReferenciaFacturas" Type="varchar(max)" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+          <Property Name="IdFactura" Type="int" />
+          <Property Name="IdSubFactura" Type="int" />
+        </EntityType>
         <EntityType Name="EdadesxColeccion">
           <Key>
             <PropertyRef Name="IdEdadXColeccion" />
@@ -376,7 +399,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="150" Nullable="false" />
-          <Property Name="Descripcion" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="150" />
           <Property Name="FechaInicio" Type="datetime" Nullable="false" />
           <Property Name="FechaFin" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
@@ -1762,6 +1785,66 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Documento__Codig__0D5AD24C">
+          <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
+          <End Role="DocumentosTransitoxFactura" Type="Self.DocumentosTransitoxFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="CodigoCliente" />
+            </Principal>
+            <Dependent Role="DocumentosTransitoxFactura">
+              <PropertyRef Name="CodigoCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Documento__Empre__0E4EF685">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
+          <End Role="DocumentosTransitoxFactura" Type="Self.DocumentosTransitoxFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="DocumentosTransitoxFactura">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Documento__IdFac__0F431ABE">
+          <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
+          <End Role="DocumentosTransitoxFactura" Type="Self.DocumentosTransitoxFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FacturasxCliente">
+              <PropertyRef Name="IdFactura" />
+            </Principal>
+            <Dependent Role="DocumentosTransitoxFactura">
+              <PropertyRef Name="IdFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Documento__IdMon__0C66AE13">
+          <End Role="MaestroMoneda" Type="Self.MaestroMoneda" Multiplicity="0..1" />
+          <End Role="DocumentosTransitoxFactura" Type="Self.DocumentosTransitoxFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroMoneda">
+              <PropertyRef Name="IdMoneda" />
+            </Principal>
+            <Dependent Role="DocumentosTransitoxFactura">
+              <PropertyRef Name="IdMoneda" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Documento__IdSub__10373EF7">
+          <End Role="SubFacturasxCliente" Type="Self.SubFacturasxCliente" Multiplicity="0..1" />
+          <End Role="DocumentosTransitoxFactura" Type="Self.DocumentosTransitoxFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubFacturasxCliente">
+              <PropertyRef Name="IdSubFactura" />
+            </Principal>
+            <Dependent Role="DocumentosTransitoxFactura">
+              <PropertyRef Name="IdSubFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__EdadesxCo__IdCol__6932806F">
           <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
           <End Role="EdadesxColeccion" Type="Self.EdadesxColeccion" Multiplicity="*" />
@@ -2590,11 +2673,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Secciones__Secci__7BA63665">
-          <End Role="Secciones" Type="Self.Secciones" Multiplicity="1" />
+        <Association Name="FK__Secciones__SeccionEncuestId">
+          <End Role="Secciones_Encuesta" Type="Self.Secciones_Encuesta" Multiplicity="1" />
           <End Role="Secciones_Usuarios" Type="Self.Secciones_Usuarios" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Secciones">
+            <Principal Role="Secciones_Encuesta">
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Secciones_Usuarios">
@@ -3138,6 +3221,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="Configuraciones" EntityType="Self.Configuraciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CuentasBancarias" EntityType="Self.CuentasBancarias" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DistribucionxTalla" EntityType="Self.DistribucionxTalla" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DocumentosTransitoxFactura" EntityType="Self.DocumentosTransitoxFactura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EdadesxColeccion" EntityType="Self.EdadesxColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Empresa" EntityType="Self.Empresa" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Empresa_Encuesta" EntityType="Self.Empresa_Encuesta" Schema="dbo" store:Type="Tables" />
@@ -3416,6 +3500,26 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="TallasXGrupo" EntitySet="TallasXGrupo" />
             <End Role="DistribucionxTalla" EntitySet="DistribucionxTalla" />
           </AssociationSet>
+          <AssociationSet Name="FK__Documento__Codig__0D5AD24C" Association="Self.FK__Documento__Codig__0D5AD24C">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Documento__Empre__0E4EF685" Association="Self.FK__Documento__Empre__0E4EF685">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Documento__IdFac__0F431ABE" Association="Self.FK__Documento__IdFac__0F431ABE">
+            <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
+            <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Documento__IdMon__0C66AE13" Association="Self.FK__Documento__IdMon__0C66AE13">
+            <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
+            <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Documento__IdSub__10373EF7" Association="Self.FK__Documento__IdSub__10373EF7">
+            <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
+            <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
+          </AssociationSet>
           <AssociationSet Name="FK__EdadesxCo__IdCol__6932806F" Association="Self.FK__EdadesxCo__IdCol__6932806F">
             <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="EdadesxColeccion" EntitySet="EdadesxColeccion" />
@@ -3692,8 +3796,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="Asesores" EntitySet="Asesores" />
             <End Role="RutasxAsesor" EntitySet="RutasxAsesor" />
           </AssociationSet>
-          <AssociationSet Name="FK__Secciones__Secci__7BA63665" Association="Self.FK__Secciones__Secci__7BA63665">
-            <End Role="Secciones" EntitySet="Secciones" />
+          <AssociationSet Name="FK__Secciones__SeccionEncuestId" Association="Self.FK__Secciones__SeccionEncuestId">
+            <End Role="Secciones_Encuesta" EntitySet="Secciones_Encuesta" />
             <End Role="Secciones_Usuarios" EntitySet="Secciones_Usuarios" />
           </AssociationSet>
           <AssociationSet Name="FK__Secciones__Usuar__7C9A5A9E" Association="Self.FK__Secciones__Usuar__7C9A5A9E">
@@ -4077,6 +4181,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="Respuestas" Relationship="AventasModel.FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE" FromRole="Clientes" ToRole="Respuestas" />
           <Property Name="IgnorarSeqFact" Type="Boolean" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Codig__0F1832351" FromRole="Clientes" ToRole="PedidosxClienteFlotante" />
+          <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__Codig__0D5AD24C" FromRole="Clientes" ToRole="DocumentosTransitoxFactura" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -4196,6 +4301,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="Empresa_Encuesta" Relationship="AventasModel.FK__EmpresaEn__Empre__7405149D" FromRole="Empresa" ToRole="Empresa_Encuesta" />
           <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Coleccion__FotoP__405A880E" FromRole="Empresa" ToRole="Colecciones" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C1" FromRole="Empresa" ToRole="PedidosxClienteFlotante" />
+          <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__Empre__0E4EF685" FromRole="Empresa" ToRole="DocumentosTransitoxFactura" />
         </EntityType>
         <EntityType Name="Errores">
           <Key>
@@ -4247,6 +4353,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="RecibosxCliente" Relationship="AventasModel.FK__RecibosxC__IdFac__00EA0E6F" FromRole="FacturasxCliente" ToRole="RecibosxCliente" />
           <Property Name="NumeroFEL" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="RecibosxClienteFlotante" Relationship="AventasModel.FK_ReciboXClienteFlotante___FacturaXCliente" FromRole="FacturasxCliente" ToRole="RecibosxClienteFlotante" />
+          <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__IdFac__0F431ABE" FromRole="FacturasxCliente" ToRole="DocumentosTransitoxFactura" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -4390,6 +4497,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PreciosxProducto" Relationship="AventasModel.FK__PreciosxP__IdMon__55209ACA" FromRole="MaestroMoneda" ToRole="PreciosxProducto" />
           <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdMon__36870511" FromRole="MaestroMoneda" ToRole="PrecioEspecifico" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D1" FromRole="MaestroMoneda" ToRole="PedidosxClienteFlotante" />
+          <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__IdMon__0C66AE13" FromRole="MaestroMoneda" ToRole="DocumentosTransitoxFactura" />
         </EntityType>
         <EntityType Name="MonedasxEmpresa">
           <Key>
@@ -4531,6 +4639,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="RecibosDetalle" Relationship="Self.FK__RecibosDe__IdSub__7FF5EA36" FromRole="SubFacturasxCliente" ToRole="RecibosDetalle" />
           <Property Name="NumeroFEL" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="RecibosDetalleFlotante" Relationship="AventasModel.FK__RecibosDetalleFlotante_SubFactura" FromRole="SubFacturasxCliente" ToRole="RecibosDetalleFlotante" />
+          <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__IdSub__10373EF7" FromRole="SubFacturasxCliente" ToRole="DocumentosTransitoxFactura" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -6217,6 +6326,31 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="RecibosxClienteFlotante" EntitySet="RecibosxClienteFlotante" />
             <End Role="RecibosDetalleFlotante" EntitySet="RecibosDetalleFlotante" />
           </AssociationSet>
+          <AssociationSet Name="FK__Secciones__SeccionEncuestId" Association="AventasModel.FK__Secciones__SeccionEncuestId">
+            <End Role="Secciones_Encuesta" EntitySet="Secciones_Encuesta" />
+            <End Role="Secciones_Usuarios" EntitySet="Secciones_Usuarios" />
+          </AssociationSet>
+          <EntitySet Name="DocumentosTransitoxFactura" EntityType="AventasModel.DocumentosTransitoxFactura" />
+          <AssociationSet Name="FK__Documento__Codig__0D5AD24C" Association="AventasModel.FK__Documento__Codig__0D5AD24C">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Documento__Empre__0E4EF685" Association="AventasModel.FK__Documento__Empre__0E4EF685">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Documento__IdFac__0F431ABE" Association="AventasModel.FK__Documento__IdFac__0F431ABE">
+            <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
+            <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Documento__IdMon__0C66AE13" Association="AventasModel.FK__Documento__IdMon__0C66AE13">
+            <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
+            <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Documento__IdSub__10373EF7" Association="AventasModel.FK__Documento__IdSub__10373EF7">
+            <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
+            <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -7205,7 +7339,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Nombre" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="Descripcion" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="FechaInicio" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="FechaFin" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -7346,6 +7480,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK__Secciones__Usuar__7C9A5A9E" FromRole="Secciones_Usuarios" ToRole="Usuarios" />
           <NavigationProperty Name="Secciones" Relationship="AventasModel.FK__Secciones__Secci__7BA636651" FromRole="Secciones_Usuarios" ToRole="Secciones" />
+          <NavigationProperty Name="Secciones_Encuesta" Relationship="AventasModel.FK__Secciones__SeccionEncuestId" FromRole="Secciones_Usuarios" ToRole="Secciones_Encuesta" />
         </EntityType>
         <Association Name="FK__EmpresaEn__Empre__7405149D">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -7939,6 +8074,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="Encuesta" Relationship="AventasModel.FK_Secciones_Encuesta_Encuesta_12332" FromRole="Secciones_Encuesta" ToRole="Encuesta" />
           <NavigationProperty Name="Secciones" Relationship="AventasModel.FK_Secciones_Encuesta_Encuesta_Id" FromRole="Secciones_Encuesta" ToRole="Secciones" />
           <Property Name="Status" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Secciones_Usuarios" Relationship="AventasModel.FK__Secciones__SeccionEncuestId" FromRole="Secciones_Encuesta" ToRole="Secciones_Usuarios" />
         </EntityType>
         <Association Name="FK_Secciones_Encuesta_Encuesta_12332">
           <End Type="AventasModel.Encuesta" Role="Encuesta" Multiplicity="1" />
@@ -8019,6 +8155,106 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="RecibosDetalleFlotante">
               <PropertyRef Name="ReciboId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Secciones__SeccionEncuestId">
+          <End Type="AventasModel.Secciones_Encuesta" Role="Secciones_Encuesta" Multiplicity="1" />
+          <End Type="AventasModel.Secciones_Usuarios" Role="Secciones_Usuarios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Secciones_Encuesta">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Secciones_Usuarios">
+              <PropertyRef Name="SeccionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="DocumentosTransitoxFactura">
+          <Key>
+            <PropertyRef Name="IdDocumentoTransito" />
+          </Key>
+          <Property Name="IdDocumentoTransito" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TablaId" Type="Int32" />
+          <Property Name="Tipo" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="ReferenciaSubFactura" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="Referencia" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Factura" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="NumeroFEL" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="NumeroDocumento" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CreadoPor" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="ReferenciaFacturas" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="IdFactura" Type="Int32" />
+          <Property Name="IdSubFactura" Type="Int32" />
+          <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__Documento__Codig__0D5AD24C" FromRole="DocumentosTransitoxFactura" ToRole="Clientes" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__Documento__Empre__0E4EF685" FromRole="DocumentosTransitoxFactura" ToRole="Empresa" />
+          <NavigationProperty Name="FacturasxCliente" Relationship="AventasModel.FK__Documento__IdFac__0F431ABE" FromRole="DocumentosTransitoxFactura" ToRole="FacturasxCliente" />
+          <NavigationProperty Name="MaestroMoneda" Relationship="AventasModel.FK__Documento__IdMon__0C66AE13" FromRole="DocumentosTransitoxFactura" ToRole="MaestroMoneda" />
+          <NavigationProperty Name="SubFacturasxCliente" Relationship="AventasModel.FK__Documento__IdSub__10373EF7" FromRole="DocumentosTransitoxFactura" ToRole="SubFacturasxCliente" />
+        </EntityType>
+        <Association Name="FK__Documento__Codig__0D5AD24C">
+          <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
+          <End Type="AventasModel.DocumentosTransitoxFactura" Role="DocumentosTransitoxFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="CodigoCliente" />
+            </Principal>
+            <Dependent Role="DocumentosTransitoxFactura">
+              <PropertyRef Name="CodigoCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Documento__Empre__0E4EF685">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.DocumentosTransitoxFactura" Role="DocumentosTransitoxFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="DocumentosTransitoxFactura">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Documento__IdFac__0F431ABE">
+          <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.DocumentosTransitoxFactura" Role="DocumentosTransitoxFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FacturasxCliente">
+              <PropertyRef Name="IdFactura" />
+            </Principal>
+            <Dependent Role="DocumentosTransitoxFactura">
+              <PropertyRef Name="IdFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Documento__IdMon__0C66AE13">
+          <End Type="AventasModel.MaestroMoneda" Role="MaestroMoneda" Multiplicity="0..1" />
+          <End Type="AventasModel.DocumentosTransitoxFactura" Role="DocumentosTransitoxFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroMoneda">
+              <PropertyRef Name="IdMoneda" />
+            </Principal>
+            <Dependent Role="DocumentosTransitoxFactura">
+              <PropertyRef Name="IdMoneda" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Documento__IdSub__10373EF7">
+          <End Type="AventasModel.SubFacturasxCliente" Role="SubFacturasxCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.DocumentosTransitoxFactura" Role="DocumentosTransitoxFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubFacturasxCliente">
+              <PropertyRef Name="IdSubFactura" />
+            </Principal>
+            <Dependent Role="DocumentosTransitoxFactura">
+              <PropertyRef Name="IdSubFactura" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -9557,6 +9793,30 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
                 <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
                 <ScalarProperty Name="ReciboId" ColumnName="ReciboId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DocumentosTransitoxFactura">
+            <EntityTypeMapping TypeName="AventasModel.DocumentosTransitoxFactura">
+              <MappingFragment StoreEntitySet="DocumentosTransitoxFactura">
+                <ScalarProperty Name="IdSubFactura" ColumnName="IdSubFactura" />
+                <ScalarProperty Name="IdFactura" ColumnName="IdFactura" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="ReferenciaFacturas" ColumnName="ReferenciaFacturas" />
+                <ScalarProperty Name="CreadoPor" ColumnName="CreadoPor" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="NumeroDocumento" ColumnName="NumeroDocumento" />
+                <ScalarProperty Name="NumeroFEL" ColumnName="NumeroFEL" />
+                <ScalarProperty Name="Factura" ColumnName="Factura" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="ReferenciaSubFactura" ColumnName="ReferenciaSubFactura" />
+                <ScalarProperty Name="Tipo" ColumnName="Tipo" />
+                <ScalarProperty Name="TablaId" ColumnName="TablaId" />
+                <ScalarProperty Name="IdDocumentoTransito" ColumnName="IdDocumentoTransito" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

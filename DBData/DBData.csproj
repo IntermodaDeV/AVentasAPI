@@ -159,6 +159,9 @@
     <Compile Include="Database\DistribucionxTalla.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\DocumentosTransitoxFactura.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\EdadesxColeccion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

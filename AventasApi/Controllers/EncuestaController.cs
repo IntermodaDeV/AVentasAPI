@@ -364,6 +364,34 @@ namespace AventasApi.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("~/api/Encuesta/Seccion")]
+        public async Task<IHttpActionResult> ObtenerSeccion()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var ListaSecciones = await ctx.Secciones.Select(x => new
+                    {
+                        Id = x.Id,
+                        Nombre = x.Nombre,
+                        Titulo = x.Titulo,
+                        Descripcion = x.Descripcion,
+                        Obligatorio = x.Obligatorio,
+                        Status = x.Status
+                    }).ToListAsync();
+                    return Ok(ListaSecciones);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+
         [HttpPost]
         [Route("~/api/Encuesta/Secciones/registrar")]
         public async Task<IHttpActionResult> RegistrarSecciones([FromBody] SeccionEncuestaViewModel seccion)
@@ -407,7 +435,6 @@ namespace AventasApi.Controllers
                     {
                         return BadRequest("No se encuentra la seccione de encuesta");
                     }
-                    //EncuestaBD.EncuestaId = secciones.EncuestaId;
                     EncuestaBD.Nombre = secciones.Nombre;
                     EncuestaBD.Descripcion = secciones.Descripcion;
                     EncuestaBD.Titulo = secciones.Titulo;
@@ -455,15 +482,16 @@ namespace AventasApi.Controllers
         ///---------------SECCIONES USUARIOS --------------------------------------------------------------------------------
 
         [HttpGet]
-        [Route("~/api/secciones/usuarios/{Id}")]
-        public async Task<IHttpActionResult> GetUsuariosConAcceso(int Id)
+        [Route("~/api/secciones/usuarios/{Id}/{encuestaId}")]
+        public async Task<IHttpActionResult> GetUsuariosConAcceso(int Id, int encuestaId)
         {
             try
             {
-                using (var emp = new AVentasEntities())
+                using (var db = new AVentasEntities())
                 {
-                    var UsuariosConAcceso = emp.Secciones_Usuarios.Where(x => x.SeccionId == Id && x.Status == true).Select(x => x.UsuarioId).ToList();
-                    var ListaUsuarios = await emp.Usuarios.Where(e => UsuariosConAcceso.Contains(e.Id)).Select(e => new UsuarioModel
+                    var encuesta = await db.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == Id && e.EncuestaId == encuestaId);
+                    var UsuariosConAcceso = db.Secciones_Usuarios.Where(x => x.SeccionId == encuesta.Id && x.Status == true).Select(x => x.UsuarioId).ToList();
+                    var ListaUsuarios = await db.Usuarios.Where(e => UsuariosConAcceso.Contains(e.Id)).Select(e => new UsuarioModel
                     {
                         Id = e.Id,
                         Nombre = e.nombre                        
@@ -479,16 +507,16 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/secciones/usuariosSinAcceso/{Id}")]
-        public async Task<IHttpActionResult> GetUsuariosSinAcceso(int Id)
+        [Route("~/api/secciones/usuariosSinAcceso/{Id}/{encuestaId}")]
+        public async Task<IHttpActionResult> GetUsuariosSinAcceso(int Id , int encuestaId)
         {
             try
             {
                 using (var db = new AVentasEntities())
                 {
-                    var UsuariosConAcceso = db.Secciones_Usuarios.Where(x => x.SeccionId == Id && x.Status == true).Select(x => x.UsuarioId).ToList();
-                    var encuesta = db.Secciones_Encuesta.Where(e => e.SeccionId == Id).Select(x => x.EncuestaId).FirstOrDefault();
-                    var EmpresaEncuesta = db.Empresa_Encuesta.Where(x => x.EncuestaId == encuesta && x.Status == true).Select(x=> x.EmpresaId).ToList();
+                    var encuesta = await db.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == Id && e.EncuestaId == encuestaId);
+                    var UsuariosConAcceso = await db.Secciones_Usuarios.Where(x => x.SeccionId == encuesta.Id && x.Status == true).Select(x => x.UsuarioId).ToListAsync();
+                    var EmpresaEncuesta = await db.Empresa_Encuesta.Where(x => x.EncuestaId == encuestaId && x.Status == true).Select(x=> x.EmpresaId).ToListAsync();
                     var ListaUsuarios = await db.Usuarios.Where(e => !UsuariosConAcceso.Contains(e.Id) && EmpresaEncuesta.Contains(e.EmpresaId)).Select(e => new UsuarioModel
                     {
                         Id = e.Id,
@@ -505,14 +533,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        [Route("~/api/secciones/AsignarAccesoUsuario/{seccionId}/{usuarioId}/{usuario}")]
-        public async Task<IHttpActionResult> AsignarAccesoUsuario(int seccionId, int usuarioId, string usuario)
+        [Route("~/api/secciones/AsignarAccesoUsuario/{seccionId}/{usuarioId}/{usuario}/{encuestaId}")]
+        public async Task<IHttpActionResult> AsignarAccesoUsuario(int seccionId, int usuarioId, string usuario, int encuestaId)
         {
             try
             {
                 using (var db = new AVentasEntities())
                 {
-                    var ListaUsuarios = await db.Secciones_Usuarios.FirstOrDefaultAsync(u => u.UsuarioId == usuarioId && u.SeccionId == seccionId);
+                    var encuesta = await db.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == seccionId && e.EncuestaId == encuestaId);
+                    var ListaUsuarios = await db.Secciones_Usuarios.FirstOrDefaultAsync(u => u.UsuarioId == usuarioId && u.SeccionId == encuesta.Id);
 
                     if (ListaUsuarios != null)
                     {
@@ -524,7 +553,7 @@ namespace AventasApi.Controllers
                     {
                         var Secciones_Usuarios = new Secciones_Usuarios()
                         {
-                            SeccionId  =  seccionId,
+                            SeccionId  = encuesta.Id,
                             UsuarioId = usuarioId,
                             Status = true,
                             CreatedBy = usuario,
@@ -544,14 +573,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        [Route("~/api/secciones/RemoverUsuario/{usuarioId}/{seccionId}/{usuario}")]
-        public async Task<IHttpActionResult> RemoverAccesoUsuario(int usuarioId, int seccionId, string usuario)
+        [Route("~/api/secciones/RemoverUsuario/{usuarioId}/{seccionId}/{usuario}/{encuestaId}")]
+        public async Task<IHttpActionResult> RemoverAccesoUsuario(int usuarioId, int seccionId, string usuario, int encuestaId)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var UsuarioSeccion = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.UsuarioId == usuarioId && x.SeccionId == seccionId);
+                    var encuesta = await ctx.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == seccionId && e.EncuestaId == encuestaId);
+                    var UsuarioSeccion = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.UsuarioId == usuarioId && x.SeccionId == encuesta.Id);
 
                     if (UsuarioSeccion == null)
                     {
@@ -606,12 +636,13 @@ namespace AventasApi.Controllers
             {
                 using (var db = new AVentasEntities())
                 {
-                    var SeccionesPermitidas = await db.Secciones_Usuarios.Where(p => p.Usuarios.usuario == usuario && p.Status == true).Select(s=> s.SeccionId).ToListAsync();
-                    var ListaSecciones = await db.Secciones.Where(e => e.Status == true && SeccionesPermitidas.Contains(e.Id)).Select(x => new
+                    var SeccionesPermitidas = await db.Secciones_Usuarios.Where(p => p.Usuarios.usuario == usuario && p.Status == true).Select(s => s.SeccionId).ToListAsync();
+                    var ListaSeccion = await db.Secciones_Encuesta.Where(p => SeccionesPermitidas.Contains(p.Id) && p.EncuestaId == encuestaId && p.Status == true).Select(s => s.SeccionId).ToListAsync();
+                    var ListaSecciones = await db.Secciones.Where(e => e.Status == true && ListaSeccion.Contains(e.Id)).Select(x => new
                     {
                         Id = x.Id,
-                        //EncuestaId = x.EncuestaId,
-                        //NombreEncuesta = x.Encuesta.Nombre,
+                        EncuestaId = encuestaId,
+                        NombreEncuesta = db.Encuesta.FirstOrDefault(e => e.Id == encuestaId).Nombre,
                         Nombre = x.Nombre,
                         Titulo = x.Titulo,
                         Descripcion = x.Descripcion,
@@ -635,7 +666,7 @@ namespace AventasApi.Controllers
                             Obligatorio = p.Obligatorio,
                             RespuestaObligatorio = p.RespuestaObligatorio,
                             Status = p.Status
-                        })
+                        }).OrderBy(p => p.PreguntaId)
                     }).ToListAsync();
                     return Ok(ListaSecciones);
                 }

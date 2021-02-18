@@ -19,6 +19,7 @@ namespace DBData.Database
         {
             this.RecibosDetalle = new HashSet<RecibosDetalle>();
             this.RecibosDetalleFlotante = new HashSet<RecibosDetalleFlotante>();
+            this.DocumentosTransitoxFactura = new HashSet<DocumentosTransitoxFactura>();
         }
     
         public int IdSubFactura { get; set; }
@@ -53,5 +54,7 @@ namespace DBData.Database
         public virtual ICollection<RecibosDetalle> RecibosDetalle { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RecibosDetalleFlotante> RecibosDetalleFlotante { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DocumentosTransitoxFactura> DocumentosTransitoxFactura { get; set; }
     }
 }
