@@ -22,18 +22,15 @@ namespace AventasApi.Controllers
             {
                 using (var db = new AVentasEntities())
                 {
-                    if(Respuestas.RespuestasDetalle.Count() > 0)
+                    if (Respuestas.RespuestasDetalle.Count() > 0)
                     {
-                    List<RespuestasViewModel> RespuestasEncuestas = new List<RespuestasViewModel>();
-                    RespuestasEncuestas.Add(Respuestas);
+                        List<RespuestasViewModel> RespuestasEncuestas = new List<RespuestasViewModel>();
+                        RespuestasEncuestas.Add(Respuestas);
 
-                    var usuario = db.Usuarios.FirstOrDefault(u => u.usuario == Respuestas.Usuario);
-                    var RespuestaDB = await db.Respuestas.FirstOrDefaultAsync(r => r.CodigoCliente == Respuestas.CodigoCliente && r.EncuestaId == Respuestas.EncuestaId && r.UsuarioId == usuario.Id);
+                        var usuario = db.Usuarios.FirstOrDefault(u => u.usuario == Respuestas.Usuario);
 
+                        var respuestaId = 0;
 
-                    var respuestaId = 0;
-                    if(RespuestaDB == null)
-                    {
                         var Respuesta = new Respuestas()
                         {
                             CodigoCliente = Respuestas.CodigoCliente,
@@ -47,11 +44,7 @@ namespace AventasApi.Controllers
                         var result = await db.SaveChangesAsync();
 
                         respuestaId = db.Respuestas.OrderByDescending(r => r.Id).Select(r => r.Id).FirstOrDefault();
-                    }
-                    else
-                    {
-                        respuestaId = RespuestaDB.Id;
-                    }
+                    
 
                     _ = RegistrarRespuestasDetalle(Respuestas.RespuestasDetalle, respuestaId, Respuestas.Usuario);
 

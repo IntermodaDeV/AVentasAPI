@@ -232,6 +232,7 @@
     <Compile Include="Models\CustomerLocationApp\RutaConCoordenadaViewModel.cs" />
     <Compile Include="Models\Empresa.cs" />
     <Compile Include="Models\EmpresaTransporte.cs" />
+    <Compile Include="Models\EncuestaCompletada.cs" />
     <Compile Include="Models\FacturaPendiente.cs" />
     <Compile Include="Models\GestorModel.cs" />
     <Compile Include="Models\GruposImpuestosArticulos.cs" />

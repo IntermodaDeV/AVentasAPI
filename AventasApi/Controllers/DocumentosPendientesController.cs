@@ -50,7 +50,7 @@ namespace AventasApi.Controllers
                     }
 
                     List<FacturaPendiente> listaFacturasPendientes = await ctx.DocumentosTransitoxFactura
-                        .Where(x => clientes.Contains(x.CodigoCliente))
+                        .Where(x => clientes.Contains(x.CodigoCliente) && x.Valor>0 )
                         .Select(c => new FacturaPendiente() {
                             CodigoCliente=c.CodigoCliente,
                             Valor=c.Valor,

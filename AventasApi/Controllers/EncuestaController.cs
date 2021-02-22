@@ -1,16 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using AventasApi.Models;
 using AventasApi.Models.ViewModels;
+using AventasApi.Services.Authentication;
 using DBData.Database;
 
 namespace AventasApi.Controllers
 {
     public class EncuestaController : ApiController
     {
+        private readonly AuthenticationAppService _authenticationAppService;
+
+        public EncuestaController()
+        {
+            _authenticationAppService = new AuthenticationAppService();
+        }
 
         ///--------------- ENCUESTAS
         [HttpGet]
@@ -672,6 +680,111 @@ namespace AventasApi.Controllers
                 }
             }
             catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/encuesta/resueltas/{inicio}/{final}/{asesor}")]
+        public async Task<IHttpActionResult> EncuestasResueltas(DateTime inicio,DateTime final,string asesor)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                    List<EncuestaCompletada> encuestasResueltas = await (from e in ctx.Encuesta
+                                              join r in ctx.Respuestas on e.Id equals r.EncuestaId
+                                              where r.CreatedDate >= inicio && r.CreatedDate <= final && r.CreatedBy==asesor
+                                              select new EncuestaCompletada()
+                                              {
+                                                  EncuestaId=e.Id,
+                                                  Encuesta = e.Nombre,
+                                                  Cliente = r.CodigoCliente,
+                                                  Usuario = r.CreatedBy,
+                                                  Fecha = r.CreatedDate
+                                              }).ToListAsync();
+
+                    return Ok(encuestasResueltas);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/encuesta/resueltas/{inicio}/{final}/todos")]
+        public async Task<IHttpActionResult> EncuestasResueltasTodos(DateTime inicio, DateTime final)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                    List<string> asesoresHabilitados = new List<string>();
+                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
+                    var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
+
+                    if (usuario.FlagTodosAsesores.Value)
+                    {
+                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+                    else
+                    {
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+
+                    List<EncuestaCompletada> encuestasCompletadas = new List<EncuestaCompletada>();
+
+                    foreach(var asesor in asesoresHabilitados) {
+                        List<EncuestaCompletada> encuestasResueltas = await (from e in ctx.Encuesta
+                                                                             join r in ctx.Respuestas on e.Id equals r.EncuestaId
+                                                                             where r.CreatedDate >= inicio && r.CreatedDate <= final && r.CreatedBy == asesor
+                                                                             select new EncuestaCompletada()
+                                                                             {
+                                                                                 EncuestaId = e.Id,
+                                                                                 Encuesta = e.Nombre,
+                                                                                 Cliente = r.CodigoCliente,
+                                                                                 Usuario = r.CreatedBy,
+                                                                                 Fecha = r.CreatedDate
+                                                                             }).ToListAsync();
+                        encuestasCompletadas.AddRange(encuestasResueltas);
+                    }
+
+                    return Ok(encuestasCompletadas);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/encuesta/resueltas/detalle/{cliente}/{asesor}/{encuesta}")]
+        public async Task<IHttpActionResult> EncuestaResueltaDetalle(string cliente,string asesor,int encuesta)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                    /*var respuestas = await (
+                            from e in ctx.Encuesta 
+                            join se in ctx.Secciones_Encuesta on e.Id equals se.EncuestaId
+                            join sec in ctx.Secciones on se.SeccionId equals sec.Id
+                            join secu in ctx.Secciones_Usuarios on 
+                        ).ToListAsync();*/
+
+                    return Ok();
+                }
+            }catch(Exception e)
             {
                 return BadRequest(e.ToString());
             }
