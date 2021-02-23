@@ -104,6 +104,11 @@ namespace AventasApi.Controllers
                                                                 && x.TotalPedido == totalPedido
                                                                 && x.TotalUnidades == totalUnidades
                                                                 && x.CodigoAsesor == user.UserAccount);
+
+                    if (found == null)
+                    {
+                        found = ctx.PedidosxCliente.FirstOrDefault(x => x.PedidoId == Pedido.NumeroReferencia);
+                    }
                 }
 
                 string numeroReferencia = Pedido.NumeroReferencia;
