@@ -225,6 +225,32 @@ namespace AventasApi.Controllers
 
         }
 
+        [HttpPost]
+        [Route("~/api/cliente/coordenadas")]
+        public async Task<IHttpActionResult> PostCoordendas([FromBody] Coordenadas coordenada)
+        {
+            try
+            {
+                using(AVentasEntities ctx=new AVentasEntities())
+                {
+                    var cliente = await ctx.Clientes.FirstOrDefaultAsync(x => x.CodigoCliente == coordenada.cliente);
+                    if (cliente == null)
+                    {
+                        return BadRequest("El cliente no existe.");
+                    }
+
+                    cliente.Longitud = coordenada.longitude;
+                    cliente.Latitud = coordenada.latitude;
+                    await ctx.SaveChangesAsync();
+
+                    return Ok(new {latitud=coordenada.latitude,longitud=coordenada.longitude });
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
         [HttpGet]
         [Route("~/api/cliente/{asesor}")]
         public async Task<IHttpActionResult> GetClientes(string asesor)

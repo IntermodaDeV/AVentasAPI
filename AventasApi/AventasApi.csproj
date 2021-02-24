@@ -227,6 +227,7 @@
     <Compile Include="Models\ClienteImpuestoModel.cs" />
     <Compile Include="Models\ComunidadAutonoma.cs" />
     <Compile Include="Models\Coordenada.cs" />
+    <Compile Include="Models\Coordenadas.cs" />
     <Compile Include="Models\CustomerLocationApp\ClientesConCoordendasViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\CoordenadasXClienteViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\RutaConCoordenadaViewModel.cs" />
