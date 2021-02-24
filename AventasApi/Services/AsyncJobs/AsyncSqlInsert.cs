@@ -86,50 +86,53 @@ namespace AventasApi.Services.AsyncJobs
             });
         }
 
-        public static  void IngresarRecibos(List<RecibosxClienteViewModel> recibos,bool sincronizado)
+        public static bool IngresarRecibos(List<RecibosxClienteViewModel> recibos,bool sincronizado)
         {
-            var reciboTask = Task.Run(() =>
+            try
             {
 
-                var reciboAAgregar = recibos.Select(rec => new RecibosxCliente
-                {
-                    NumeroRecibo = rec.NumeroRecibo,
-                    CodigoCliente = rec.CodigoCliente,
-                    Fecha = rec.Fecha,
-                    IdTipoPago = rec.IdTipoPago,
-                    Referencia = rec.Referencia,
-                    FechaCheque = rec.FechaPago,
-                    IdBanco = rec.IdBanco,
-                    Valor = rec.Valor,
-                    IdMoneda = rec.IdMoneda,
-                    Sincronizado = sincronizado,
-                    CodigoAsesor = rec.CodigoAsesor,
-                    IdFactura = rec.IdFactura,
-                    Descuento = rec.Descuento,
-                    Longitude = rec.Longitude,
-                    Latitude = rec.Latitude,
-                    SpecPago = rec.SpecPago,
-                    UsuarioCreacion = rec.UsuarioCreacion,
-                    FechaCreacion = rec.FechaCreacion,
-                    RecibosDetalle = rec.DetalleRecibo.Select(recDet => new RecibosDetalle
+                    var reciboAAgregar = recibos.Select(rec => new RecibosxCliente
                     {
-                        IdReciboDetalle = recDet.IdReciboDetalle,
-                        ReciboId = recDet.ReciboId,
-                        IdSubFactura = recDet.IdSubFactura,
-                        Valor = recDet.Valor,
-                        Descuento = recDet.Descuento,
-                        EsAbono = recDet.EsAbono,
-                    }).ToList()
-                }).ToList();
+                        NumeroRecibo = rec.NumeroRecibo,
+                        CodigoCliente = rec.CodigoCliente,
+                        Fecha = rec.Fecha,
+                        IdTipoPago = rec.IdTipoPago,
+                        Referencia = rec.Referencia,
+                        FechaCheque = rec.FechaPago,
+                        IdBanco = rec.IdBanco,
+                        Valor = rec.Valor,
+                        IdMoneda = rec.IdMoneda,
+                        Sincronizado = sincronizado,
+                        CodigoAsesor = rec.CodigoAsesor,
+                        IdFactura = rec.IdFactura,
+                        Descuento = rec.Descuento,
+                        Longitude = rec.Longitude,
+                        Latitude = rec.Latitude,
+                        SpecPago = rec.SpecPago,
+                        UsuarioCreacion = rec.UsuarioCreacion,
+                        FechaCreacion = rec.FechaCreacion,
+                        RecibosDetalle = rec.DetalleRecibo.Select(recDet => new RecibosDetalle
+                        {
+                            IdReciboDetalle = recDet.IdReciboDetalle,
+                            ReciboId = recDet.ReciboId,
+                            IdSubFactura = recDet.IdSubFactura,
+                            Valor = recDet.Valor,
+                            Descuento = recDet.Descuento,
+                            EsAbono = recDet.EsAbono,
+                        }).ToList()
+                    }).ToList();
 
-                using (AVentasEntities context = new AVentasEntities())
-                {
-                    context.RecibosxCliente.AddRange(reciboAAgregar);
-                    context.SaveChanges();
-
-                }
-
-            });
+                    using (AVentasEntities context = new AVentasEntities())
+                    {
+                        context.RecibosxCliente.AddRange(reciboAAgregar);
+                        context.SaveChanges();
+                        return false;
+                    }
+            }
+            catch
+            {
+                return true;
+            }
         }
 
         public static void IngresarRecibosFlotante(List<RecibosxClienteFlotanteViewModel> recibos)
