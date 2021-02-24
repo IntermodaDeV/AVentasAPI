@@ -1132,17 +1132,21 @@ namespace AventasApi.Controllers
                     }
                     else
                     {
+                        using (AVentasEntities ctx = new AVentasEntities())
+                        {
+                            asesor = ctx.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                            if (reciboPost.Pagos.Count() == 1)
+                            {
+                                numeroCorrelativoRecibo++;
+                                asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
+                                ctx.SaveChanges();
+                            }
+                        }
                         foreach (var iter in recibos)
                         {
                             using (AVentasEntities ctx = new AVentasEntities())
                             {
-                                asesor = ctx.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                                if (reciboPost.Pagos.Count() == 1)
-                                {
-                                    numeroCorrelativoRecibo++;
-                                    asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
-                                    ctx.SaveChanges();
-                                }
+                                
                                 var factura = ctx.FacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA && x.EmpresaId == iter.COMPANY);
 
                                 if (factura != null)
