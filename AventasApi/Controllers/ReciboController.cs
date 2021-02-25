@@ -664,10 +664,10 @@ namespace AventasApi.Controllers
                         };
                         recibos.Add(anticipoAX);
                     }
-
+                    context.SaveChanges();
+                    
                     _ = PostAnticipoAx(recibos);
 
-                    context.SaveChanges();
                     return Ok(respuestaPagoRecibo);
                 }
                 return BadRequest();
