@@ -1039,16 +1039,18 @@ namespace AventasApi.Controllers
                             }
                             else
                             {
-                                using (AVentasEntities context = new AVentasEntities())
-                                {
-                                    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                                    if (reciboPost.Pagos.Count() == 1)
-                                    {
-                                        numeroCorrelativoRecibo++;
-                                        asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
-                                        context.SaveChanges();
-                                    }
-                                }
+                                //using (AVentasEntities context = new AVentasEntities())
+                                //{
+                                //    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                                //    if (reciboPost.Pagos.Count() == 1)
+                                //    {
+                                //        numeroCorrelativoRecibo++;
+                                //        asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
+                                //        context.SaveChanges();
+                                //    }
+                                //}
+                                ValidarCorrelativoRecibo(asesor.CodigoAsesor);
+
                                 foreach (var iter in recibos)
                                 {
                                     using (AVentasEntities ctx = new AVentasEntities())
@@ -1132,16 +1134,19 @@ namespace AventasApi.Controllers
                     }
                     else
                     {
-                        using (AVentasEntities ctx = new AVentasEntities())
-                        {
-                            asesor = ctx.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                            if (reciboPost.Pagos.Count() == 1)
-                            {
-                                numeroCorrelativoRecibo++;
-                                asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
-                                ctx.SaveChanges();
-                            }
-                        }
+                        //using (AVentasEntities ctx = new AVentasEntities())
+                        //{
+                        //    asesor = ctx.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                        //    if (reciboPost.Pagos.Count() == 1)
+                        //    {
+                        //        numeroCorrelativoRecibo++;
+                        //        asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
+                        //        ctx.SaveChanges();
+                        //    }
+                        //}
+                        ValidarCorrelativoRecibo(asesor.CodigoAsesor);
+
+
                         foreach (var iter in recibos)
                         {
                             using (AVentasEntities ctx = new AVentasEntities())
@@ -1171,6 +1176,35 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.ToString());
+            }
+        }
+
+        private void ValidarCorrelativoRecibo(string CodigoAsesor)
+        {
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                try
+                {
+                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor);
+                    asesor.CorrelativoRecibos = (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0) + 1;
+                    context.SaveChanges();
+
+                    var correlativo = $"{asesor.InicialesNombre}-{100000 + (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0)}";
+
+                    if (context.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo == correlativo) == null)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        ValidarCorrelativoRecibo(CodigoAsesor);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
         }
 

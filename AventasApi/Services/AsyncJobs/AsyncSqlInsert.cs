@@ -30,9 +30,7 @@ namespace AventasApi.Services.AsyncJobs
                     int rowAffected = context.SaveChanges();
                     if (rowAffected > 0)
                     {
-                        var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == pedido.CodigoAsesor);
-                        asesor.CorrelativoPedidos = asesor.CorrelativoPedidos + 1;
-                        context.SaveChanges();
+                        ValidarCorrelativoPedido(pedido.CodigoAsesor);
                     }
                     else
                     {
@@ -58,6 +56,35 @@ namespace AventasApi.Services.AsyncJobs
             catch(Exception e)
             {
                 return false;
+            }
+        }
+
+        private static void ValidarCorrelativoPedido(string CodigoAsesor)
+        {
+            using(AVentasEntities context = new AVentasEntities())
+            {
+                try
+                {
+                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor);
+                    asesor.CorrelativoPedidos = (asesor.CorrelativoPedidos != null ? asesor.CorrelativoPedidos : 0) + 1;
+                    context.SaveChanges();
+
+                    var correlativo = $"{asesor.InicialesNombre}-{100000+ (asesor.CorrelativoPedidos != null ? asesor.CorrelativoPedidos : 0)}";
+
+                    if(context.PedidosxCliente.FirstOrDefault(x => x.PedidoId == correlativo) == null)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        ValidarCorrelativoPedido(CodigoAsesor);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
         }
 
