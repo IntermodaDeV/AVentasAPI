@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1" ZoomLevel="29">
+      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1" ZoomLevel="48">
         <EntityTypeShape EntityType="AventasModel.AcuerdosxCliente" Width="1.5" PointX="3" PointY="41.125" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AcuerdosxClienteDetalle" Width="1.5" PointX="5.25" PointY="41.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.Asesores" Width="1.5" PointX="14" PointY="28.5" IsExpanded="true" />
@@ -187,13 +187,11 @@
         <AssociationConnector Association="AventasModel.FK_USUARIO" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__2CB38214" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__37311087" />
-        <EntityTypeShape EntityType="AventasModel.SeccionesEncuesta" Width="1.5" PointX="8.375" PointY="15.75" />
         <EntityTypeShape EntityType="AventasModel.TiposIngreso" Width="1.5" PointX="10.375" PointY="15.75" />
         <EntityTypeShape EntityType="AventasModel.GrupoOpcionesDetalle" Width="1.5" PointX="18.375" PointY="0.75" />
         <EntityTypeShape EntityType="AventasModel.GrupoOpciones" Width="1.5" PointX="3.375" PointY="18.75" />
         <AssociationConnector Association="AventasModel.FK__GrupoOpci__Grupo__47326E26" />
         <EntityTypeShape EntityType="AventasModel.Encuesta" Width="1.5" PointX="6.125" PointY="18" />
-        <AssociationConnector Association="AventasModel.FK__Secciones__Encue__2018A105" />
         <EntityTypeShape EntityType="AventasModel.PreguntasOpciones" Width="1.5" PointX="20.625" PointY="10.75" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__Grupo__60F24029" />
         <EntityTypeShape EntityType="AventasModel.Preguntas" Width="1.5" PointX="12.625" PointY="19.5" />
@@ -201,12 +199,10 @@
         <AssociationConnector Association="AventasModel.FK__Preguntas__Grupo__5D21AF45" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__Pregu__5FFE1BF0" />
         <AssociationConnector Association="AventasModel.FK__Preguntas__TipoI__5C2D8B0C" />
-        <AssociationConnector Association="AventasModel.FK__Preguntas__Secci__5B3966D31" />
         <EntityTypeShape EntityType="AventasModel.Empresa_Encuesta" Width="1.5" PointX="8.375" PointY="25.625" />
         <EntityTypeShape EntityType="AventasModel.Secciones_Usuarios" Width="1.5" PointX="10.625" PointY="25.375" />
         <AssociationConnector Association="AventasModel.FK__EmpresaEn__Empre__7405149D" />
         <AssociationConnector Association="AventasModel.FK__EmpresaEn__Encue__74F938D6" />
-        <AssociationConnector Association="AventasModel.FK__Secciones__Secci__7BA63665" />
         <AssociationConnector Association="AventasModel.FK__Secciones__Usuar__7C9A5A9E" />
         <EntityTypeShape EntityType="AventasModel.RespuestaDetalle" Width="1.5" PointX="14.375" PointY="0.75" />
         <EntityTypeShape EntityType="AventasModel.Respuestas" Width="1.5" PointX="18.375" PointY="4.75" />
@@ -241,6 +237,24 @@
         <AssociationConnector Association="AventasModel.FK__PedidosDe__Pedid__70099B3011" />
         <AssociationConnector Association="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" />
         <AssociationConnector Association="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" />
+        <EntityTypeShape EntityType="AventasModel.RecibosDetalleFlotante" Width="1.5" PointX="20.75" PointY="53.75" />
+        <AssociationConnector Association="AventasModel.FK__RecibosDetalleFlotante_SubFactura" />
+        <EntityTypeShape EntityType="AventasModel.Secciones" Width="1.5" PointX="18.375" PointY="15" />
+        <AssociationConnector Association="AventasModel.FK__Preguntas__Secci__5B3966D32" />
+        <AssociationConnector Association="AventasModel.FK__Secciones__Secci__7BA636651" />
+        <EntityTypeShape EntityType="AventasModel.Secciones_Encuesta" Width="1.5" PointX="20.625" PointY="16.875" />
+        <AssociationConnector Association="AventasModel.FK_Secciones_Encuesta_Encuesta_12332" />
+        <AssociationConnector Association="AventasModel.FK_Secciones_Encuesta_Encuesta_Id" />
+        <EntityTypeShape EntityType="AventasModel.RecibosxClienteFlotante" Width="1.5" PointX="15.5" PointY="59.375" />
+        <AssociationConnector Association="AventasModel.FK_ReciboXClienteFlotante___FacturaXCliente" />
+        <AssociationConnector Association="AventasModel.FK__RecibosDetalle__Recibo" />
+        <AssociationConnector Association="AventasModel.FK__Secciones__SeccionEncuestId" />
+        <EntityTypeShape EntityType="AventasModel.DocumentosTransitoxFactura" Width="1.5" PointX="25.5" PointY="45.375" />
+        <AssociationConnector Association="AventasModel.FK__Documento__Codig__0D5AD24C" />
+        <AssociationConnector Association="AventasModel.FK__Documento__Empre__0E4EF685" />
+        <AssociationConnector Association="AventasModel.FK__Documento__IdFac__0F431ABE" />
+        <AssociationConnector Association="AventasModel.FK__Documento__IdMon__0C66AE13" />
+        <AssociationConnector Association="AventasModel.FK__Documento__IdSub__10373EF7" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

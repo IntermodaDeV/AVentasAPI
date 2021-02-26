@@ -159,6 +159,9 @@
     <Compile Include="Database\DistribucionxTalla.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\DocumentosTransitoxFactura.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\EdadesxColeccion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -321,7 +324,13 @@
     <Compile Include="Database\RecibosDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\RecibosDetalleFlotante.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\RecibosxCliente.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\RecibosxClienteFlotante.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\RespuestaDetalle.cs">
@@ -339,7 +348,10 @@
     <Compile Include="Database\RutasxAsesor.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
-    <Compile Include="Database\SeccionesEncuesta.cs">
+    <Compile Include="Database\Secciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Secciones_Encuesta.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\Secciones_Usuarios.cs">

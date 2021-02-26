@@ -104,6 +104,11 @@ namespace AventasApi.Controllers
                                                                 && x.TotalPedido == totalPedido
                                                                 && x.TotalUnidades == totalUnidades
                                                                 && x.CodigoAsesor == user.UserAccount);
+
+                    if (found == null)
+                    {
+                        found = ctx.PedidosxCliente.FirstOrDefault(x => x.PedidoId == Pedido.NumeroReferencia);
+                    }
                 }
 
                 string numeroReferencia = Pedido.NumeroReferencia;
@@ -929,14 +934,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/PedidosXCliente/Flotantes/{FechaInicio}/{FechaFin}/{estado}")]
-        public IHttpActionResult GetFlotantes(DateTime FechaInicio, DateTime FechaFin, int estado)
+        [Route("~/api/PedidosXCliente/Flotantes/{FechaInicio}/{FechaFin}/{estado}/{asesor}")]
+        public async Task<IHttpActionResult> GetFlotantes(DateTime FechaInicio, DateTime FechaFin, int estado,string asesor)
         {
             try
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);                    
+
                     if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
                     {
                         FechaInicio = DateTime.Today.AddDays(-30);
@@ -946,7 +952,8 @@ namespace AventasApi.Controllers
                     {
                         FechaFin = FechaFin.AddDays(1);
                     }
-                    List<PedidosXClienteViewModel> pedidosFlotantes = ctx.PedidosxClienteFlotante.Where(x=>x.ESTADO==estado && x.Fecha >= FechaInicio && x.Fecha < FechaFin).OrderByDescending(x => x.PedidoId).Select(ped => new PedidosXClienteViewModel
+                    
+                    List<PedidosXClienteViewModel> pedidosFlotantes = ctx.PedidosxClienteFlotante.Where(x => x.ESTADO == estado && x.Fecha >= FechaInicio && x.Fecha < FechaFin && x.CodigoAsesor==asesor).OrderByDescending(x => x.PedidoId).Select(ped => new PedidosXClienteViewModel
                     {
                         Id = ped.Id,
                         Asesor = ped.CodigoAsesor,
@@ -961,8 +968,8 @@ namespace AventasApi.Controllers
                         ClienteContadoId = ped.ClienteContadoId,
                         ModoVenta = ped.ModoVenta,
                         Flete = ped.Flete,
-                        Estado=ped.ESTADO,
-                        PedidoGenerado=ped.PedidoIdGenerado==null?"No Disponible":ped.PedidoIdGenerado,
+                        Estado = ped.ESTADO,
+                        PedidoGenerado = ped.PedidoIdGenerado == null ? "No Disponible" : ped.PedidoIdGenerado,
                         Cliente = new ClienteViewModel
                         {
                             Codigo = ped.Clientes.CodigoCliente,

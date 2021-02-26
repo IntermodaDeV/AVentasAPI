@@ -1,16 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using AventasApi.Models;
 using AventasApi.Models.ViewModels;
+using AventasApi.Services.Authentication;
 using DBData.Database;
 
 namespace AventasApi.Controllers
 {
     public class EncuestaController : ApiController
     {
+        private readonly AuthenticationAppService _authenticationAppService;
+
+        public EncuestaController()
+        {
+            _authenticationAppService = new AuthenticationAppService();
+        }
 
         ///--------------- ENCUESTAS
         [HttpGet]
@@ -106,7 +114,7 @@ namespace AventasApi.Controllers
             {
                 using (var emp = new AVentasEntities())
                 {
-                    var EmpresasPermitidas = emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToList();
+                    var EmpresasPermitidas = await emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToListAsync();
 
                     var ListaEmpresas = await emp.Empresa.Where(e => EmpresasPermitidas.Contains(e.EmpresaId)).Select(e => new EmpresaViewModel
                     {
@@ -131,7 +139,7 @@ namespace AventasApi.Controllers
             {
                 using (var emp = new AVentasEntities())
                 {
-                    var EmpresasPermitidas = emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToList();
+                    var EmpresasPermitidas = await emp.Empresa_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.EmpresaId).ToListAsync();
 
                     var ListaEmpresas = await emp.Empresa.Where(e => !EmpresasPermitidas.Contains(e.EmpresaId)).Select(e => new EmpresaViewModel
                     {
@@ -217,23 +225,116 @@ namespace AventasApi.Controllers
         }
         ///---------------SECCIONES ENCUESTAS -----------------------------------------------------------------------------
         [HttpGet]
-        [Route("~/api/Encuesta/Secciones")]
-        public async Task<IHttpActionResult> ObtenerSeccionesEncuestas()
+        [Route("~/api/Encuesta/SeccionesPermitidas/{Id}")]
+        public async Task<IHttpActionResult> GetSeccionesEncuestaPermitidas(int Id)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+                    var SeccionesPermitidas = await db.Secciones_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.SeccionId).ToListAsync();
+
+                    var ListaSecciones = await db.Secciones.Where(e => SeccionesPermitidas.Contains(e.Id)).Select(e => new SeccionEncuestaViewModel
+                    {
+                        Id = e.Id,
+                        Nombre = e.Nombre,
+                        Titulo = e.Titulo
+                    }).ToListAsync();
+
+                    return Ok(ListaSecciones);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/Encuesta/SeccionesNoPermitidas/{Id}")]
+        public async Task<IHttpActionResult> GetSeccionesEncuestaNoPermitidas(int Id)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+                    var SeccionesNoPermitidas = await db.Secciones_Encuesta.Where(x => x.EncuestaId == Id && x.Status == true).Select(x => x.SeccionId).ToListAsync();
+
+                    var ListaSecciones = await db.Secciones.Where(e => !SeccionesNoPermitidas.Contains(e.Id) && e.Status == true).Select(e => new SeccionEncuestaViewModel
+                    {
+                        Id = e.Id,
+                        Nombre = e.Nombre,
+                        Titulo = e.Titulo
+                    }).ToListAsync();
+
+                    return Ok(ListaSecciones);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/Encuesta/AsignarSecciones/{EncuestaId}/{seccionId}/{usuario}")]
+        public async Task<IHttpActionResult> AsignarEncuestaSeccion(int EncuestaId, int seccionId, string usuario)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var ListaSecciones = await ctx.SeccionesEncuesta.Select(x => new
+                    var SeccionesEncuesta = await ctx.Secciones_Encuesta.FirstOrDefaultAsync(x => x.EncuestaId == EncuestaId && x.SeccionId == seccionId);
+
+                    if (SeccionesEncuesta != null)
                     {
-                        EncuestaId = x.EncuestaId,
-                        Nombre = x.Nombre,
-                        Titulo = x.Titulo,
-                        Descripcion = x.Descripcion,
-                        Obligatorio = x.Obligatorio,
-                        Status = x.Status
-                    }).ToListAsync();
-                    return Ok(ListaSecciones);
+                        SeccionesEncuesta.Status = true;
+                        SeccionesEncuesta.ModifiedBy = usuario;
+                        SeccionesEncuesta.ModifiedDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        var Secciones_Encuesta = new Secciones_Encuesta()
+                        {
+                            SeccionId = seccionId,
+                            EncuestaId = EncuestaId,
+                            Status = true,
+                            CreatedBy = usuario,
+                            CreatedDate = DateTime.Now
+                        };
+                        ctx.Secciones_Encuesta.Add(Secciones_Encuesta);
+                    }
+
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/Encuesta/RemoverSeccion/{seccionId}/{EncuestaId}/{usuario}")]
+        public async Task<IHttpActionResult> RemoverSeccionesEncuesta(int seccionId, int EncuestaId, string usuario)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var SeccionEncuesta = await ctx.Secciones_Encuesta.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.EncuestaId == EncuestaId);
+
+                    if (SeccionEncuesta == null)
+                    {
+                        return BadRequest("No se encontro el registro, contacte al administrador");
+                    }
+
+                    SeccionEncuesta.Status = false;
+                    SeccionEncuesta.ModifiedBy = usuario;
+                    SeccionEncuesta.ModifiedDate = DateTime.Now;
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
                 }
             }
             catch (Exception e)
@@ -250,11 +351,12 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var ListaSecciones = await ctx.SeccionesEncuesta.Where(e=> e.EncuestaId == encuestaId).Select(x => new
+                    var SeccionesList = await ctx.Secciones_Encuesta.Where(e => e.EncuestaId == encuestaId && e.Status == true).Select(x => x.SeccionId).ToListAsync();
+                    var ListaSecciones = await ctx.Secciones.Where(e=> SeccionesList.Contains(e.Id)).Select(x => new
                     {
                         Id = x.Id,
-                        EncuestaId = x.EncuestaId,
-                        NombreEncuesta = x.Encuesta.Nombre,
+                        EncuestaId = encuestaId,
+                        NombreEncuesta = "",
                         Nombre = x.Nombre,
                         Titulo = x.Titulo,
                         Descripcion = x.Descripcion,
@@ -270,17 +372,44 @@ namespace AventasApi.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("~/api/Encuesta/Secciones/registrar")]
-        public async Task<IHttpActionResult> RegistrarSeccionesEncuesta([FromBody] SeccionEncuestaViewModel seccion)
+
+        [HttpGet]
+        [Route("~/api/Encuesta/Seccion")]
+        public async Task<IHttpActionResult> ObtenerSeccion()
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var seccionEncuesta = new SeccionesEncuesta()
+                    var ListaSecciones = await ctx.Secciones.Select(x => new
                     {
-                        EncuestaId = seccion.EncuestaId,
+                        Id = x.Id,
+                        Nombre = x.Nombre,
+                        Titulo = x.Titulo,
+                        Descripcion = x.Descripcion,
+                        Obligatorio = x.Obligatorio,
+                        Status = x.Status
+                    }).ToListAsync();
+                    return Ok(ListaSecciones);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+
+        [HttpPost]
+        [Route("~/api/Encuesta/Secciones/registrar")]
+        public async Task<IHttpActionResult> RegistrarSecciones([FromBody] SeccionEncuestaViewModel seccion)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var seccionEncuesta = new Secciones()
+                    {
                         Nombre = seccion.Nombre,
                         Descripcion = seccion.Descripcion,
                         Titulo = seccion.Titulo,
@@ -289,7 +418,7 @@ namespace AventasApi.Controllers
                         CreatedBy = seccion.Usuario,
                         CreatedDate = DateTime.Now
                     };
-                    ctx.SeccionesEncuesta.Add(seccionEncuesta);
+                    ctx.Secciones.Add(seccionEncuesta);
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }
@@ -302,19 +431,18 @@ namespace AventasApi.Controllers
 
         [HttpPost]
         [Route("~/api/secciones/modificar")]
-        public async Task<IHttpActionResult> ModificarSeccionEncuesta([FromBody] SeccionEncuestaViewModel secciones)
+        public async Task<IHttpActionResult> ModificarSeccion([FromBody] SeccionEncuestaViewModel secciones)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var EncuestaBD = await ctx.SeccionesEncuesta.FindAsync(secciones.Id);
+                    var EncuestaBD = await ctx.Secciones.FindAsync(secciones.Id);
 
                     if (EncuestaBD == null)
                     {
                         return BadRequest("No se encuentra la seccione de encuesta");
                     }
-                    EncuestaBD.EncuestaId = secciones.EncuestaId;
                     EncuestaBD.Nombre = secciones.Nombre;
                     EncuestaBD.Descripcion = secciones.Descripcion;
                     EncuestaBD.Titulo = secciones.Titulo;
@@ -340,7 +468,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var seccion = await ctx.SeccionesEncuesta.FindAsync(Id);
+                    var seccion = await ctx.Secciones.FindAsync(Id);
 
                     if (seccion == null)
                     {
@@ -358,16 +486,20 @@ namespace AventasApi.Controllers
             }
         }
 
+
+        ///---------------SECCIONES USUARIOS --------------------------------------------------------------------------------
+
         [HttpGet]
-        [Route("~/api/secciones/usuarios/{Id}")]
-        public async Task<IHttpActionResult> GetUsuariosConAcceso(int Id)
+        [Route("~/api/secciones/usuarios/{Id}/{encuestaId}")]
+        public async Task<IHttpActionResult> GetUsuariosConAcceso(int Id, int encuestaId)
         {
             try
             {
-                using (var emp = new AVentasEntities())
+                using (var db = new AVentasEntities())
                 {
-                    var UsuariosConAcceso = emp.Secciones_Usuarios.Where(x => x.SeccionId == Id && x.Status == true).Select(x => x.UsuarioId).ToList();
-                    var ListaUsuarios = await emp.Usuarios.Where(e => UsuariosConAcceso.Contains(e.Id)).Select(e => new UsuarioModel
+                    var encuesta = await db.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == Id && e.EncuestaId == encuestaId);
+                    var UsuariosConAcceso = db.Secciones_Usuarios.Where(x => x.SeccionId == encuesta.Id && x.Status == true).Select(x => x.UsuarioId).ToList();
+                    var ListaUsuarios = await db.Usuarios.Where(e => UsuariosConAcceso.Contains(e.Id)).Select(e => new UsuarioModel
                     {
                         Id = e.Id,
                         Nombre = e.nombre                        
@@ -383,16 +515,16 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/secciones/usuariosSinAcceso/{Id}")]
-        public async Task<IHttpActionResult> GetUsuariosSinAcceso(int Id)
+        [Route("~/api/secciones/usuariosSinAcceso/{Id}/{encuestaId}")]
+        public async Task<IHttpActionResult> GetUsuariosSinAcceso(int Id , int encuestaId)
         {
             try
             {
                 using (var db = new AVentasEntities())
                 {
-                    var UsuariosConAcceso = db.Secciones_Usuarios.Where(x => x.SeccionId == Id && x.Status == true).Select(x => x.UsuarioId).ToList();
-                    var encuesta = db.SeccionesEncuesta.Where(e => e.Id == Id).Select(x => x.EncuestaId).FirstOrDefault();
-                    var EmpresaEncuesta = db.Empresa_Encuesta.Where(x => x.EncuestaId == encuesta && x.Status == true).Select(x=> x.EmpresaId).ToList();
+                    var encuesta = await db.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == Id && e.EncuestaId == encuestaId);
+                    var UsuariosConAcceso = await db.Secciones_Usuarios.Where(x => x.SeccionId == encuesta.Id && x.Status == true).Select(x => x.UsuarioId).ToListAsync();
+                    var EmpresaEncuesta = await db.Empresa_Encuesta.Where(x => x.EncuestaId == encuestaId && x.Status == true).Select(x=> x.EmpresaId).ToListAsync();
                     var ListaUsuarios = await db.Usuarios.Where(e => !UsuariosConAcceso.Contains(e.Id) && EmpresaEncuesta.Contains(e.EmpresaId)).Select(e => new UsuarioModel
                     {
                         Id = e.Id,
@@ -409,14 +541,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        [Route("~/api/secciones/AsignarAccesoUsuario/{seccionId}/{usuarioId}/{usuario}")]
-        public async Task<IHttpActionResult> AsignarAccesoUsuario(int seccionId, int usuarioId, string usuario)
+        [Route("~/api/secciones/AsignarAccesoUsuario/{seccionId}/{usuarioId}/{usuario}/{encuestaId}")]
+        public async Task<IHttpActionResult> AsignarAccesoUsuario(int seccionId, int usuarioId, string usuario, int encuestaId)
         {
             try
             {
                 using (var db = new AVentasEntities())
                 {
-                    var ListaUsuarios = await db.Secciones_Usuarios.FirstOrDefaultAsync(u => u.UsuarioId == usuarioId && u.SeccionId == seccionId);
+                    var encuesta = await db.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == seccionId && e.EncuestaId == encuestaId);
+                    var ListaUsuarios = await db.Secciones_Usuarios.FirstOrDefaultAsync(u => u.UsuarioId == usuarioId && u.SeccionId == encuesta.Id);
 
                     if (ListaUsuarios != null)
                     {
@@ -428,7 +561,7 @@ namespace AventasApi.Controllers
                     {
                         var Secciones_Usuarios = new Secciones_Usuarios()
                         {
-                            SeccionId  =  seccionId,
+                            SeccionId  = encuesta.Id,
                             UsuarioId = usuarioId,
                             Status = true,
                             CreatedBy = usuario,
@@ -448,14 +581,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        [Route("~/api/secciones/RemoverUsuario/{usuarioId}/{seccionId}/{usuario}")]
-        public async Task<IHttpActionResult> RemoverAccesoUsuario(int usuarioId, int seccionId, string usuario)
+        [Route("~/api/secciones/RemoverUsuario/{usuarioId}/{seccionId}/{usuario}/{encuestaId}")]
+        public async Task<IHttpActionResult> RemoverAccesoUsuario(int usuarioId, int seccionId, string usuario, int encuestaId)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var UsuarioSeccion = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.UsuarioId == usuarioId && x.SeccionId == seccionId);
+                    var encuesta = await ctx.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == seccionId && e.EncuestaId == encuestaId);
+                    var UsuarioSeccion = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.UsuarioId == usuarioId && x.SeccionId == encuesta.Id);
 
                     if (UsuarioSeccion == null)
                     {
@@ -510,12 +644,13 @@ namespace AventasApi.Controllers
             {
                 using (var db = new AVentasEntities())
                 {
-                    var SeccionesPermitidas = await db.Secciones_Usuarios.Where(p => p.Usuarios.usuario == usuario && p.Status == true).Select(s=> s.SeccionId).ToListAsync();
-                    var ListaSecciones = await db.SeccionesEncuesta.Where(e => e.EncuestaId == encuestaId && e.Status == true && SeccionesPermitidas.Contains(e.Id)).Select(x => new
+                    var SeccionesPermitidas = await db.Secciones_Usuarios.Where(p => p.Usuarios.usuario == usuario && p.Status == true).Select(s => s.SeccionId).ToListAsync();
+                    var ListaSeccion = await db.Secciones_Encuesta.Where(p => SeccionesPermitidas.Contains(p.Id) && p.EncuestaId == encuestaId && p.Status == true).Select(s => s.SeccionId).ToListAsync();
+                    var ListaSecciones = await db.Secciones.Where(e => e.Status == true && ListaSeccion.Contains(e.Id)).Select(x => new
                     {
                         Id = x.Id,
-                        EncuestaId = x.EncuestaId,
-                        NombreEncuesta = x.Encuesta.Nombre,
+                        EncuestaId = encuestaId,
+                        NombreEncuesta = db.Encuesta.FirstOrDefault(e => e.Id == encuestaId).Nombre,
                         Nombre = x.Nombre,
                         Titulo = x.Titulo,
                         Descripcion = x.Descripcion,
@@ -539,12 +674,117 @@ namespace AventasApi.Controllers
                             Obligatorio = p.Obligatorio,
                             RespuestaObligatorio = p.RespuestaObligatorio,
                             Status = p.Status
-                        })
+                        }).OrderBy(p => p.PreguntaId)
                     }).ToListAsync();
                     return Ok(ListaSecciones);
                 }
             }
             catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/encuesta/resueltas/{inicio}/{final}/{asesor}")]
+        public async Task<IHttpActionResult> EncuestasResueltas(DateTime inicio,DateTime final,string asesor)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                    List<EncuestaCompletada> encuestasResueltas = await (from e in ctx.Encuesta
+                                              join r in ctx.Respuestas on e.Id equals r.EncuestaId
+                                              where r.CreatedDate >= inicio && r.CreatedDate <= final && r.CreatedBy==asesor
+                                              select new EncuestaCompletada()
+                                              {
+                                                  EncuestaId=e.Id,
+                                                  Encuesta = e.Nombre,
+                                                  Cliente = r.CodigoCliente,
+                                                  Usuario = r.CreatedBy,
+                                                  Fecha = r.CreatedDate
+                                              }).ToListAsync();
+
+                    return Ok(encuestasResueltas);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/encuesta/resueltas/{inicio}/{final}/todos")]
+        public async Task<IHttpActionResult> EncuestasResueltasTodos(DateTime inicio, DateTime final)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                    List<string> asesoresHabilitados = new List<string>();
+                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
+                    var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
+
+                    if (usuario.FlagTodosAsesores.Value)
+                    {
+                        asesoresHabilitados = await ctx.Asesores.Where(x => empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+                    else
+                    {
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+
+                    List<EncuestaCompletada> encuestasCompletadas = new List<EncuestaCompletada>();
+
+                    foreach(var asesor in asesoresHabilitados) {
+                        List<EncuestaCompletada> encuestasResueltas = await (from e in ctx.Encuesta
+                                                                             join r in ctx.Respuestas on e.Id equals r.EncuestaId
+                                                                             where r.CreatedDate >= inicio && r.CreatedDate <= final && r.CreatedBy == asesor
+                                                                             select new EncuestaCompletada()
+                                                                             {
+                                                                                 EncuestaId = e.Id,
+                                                                                 Encuesta = e.Nombre,
+                                                                                 Cliente = r.CodigoCliente,
+                                                                                 Usuario = r.CreatedBy,
+                                                                                 Fecha = r.CreatedDate
+                                                                             }).ToListAsync();
+                        encuestasCompletadas.AddRange(encuestasResueltas);
+                    }
+
+                    return Ok(encuestasCompletadas);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/encuesta/resueltas/detalle/{cliente}/{asesor}/{encuesta}")]
+        public async Task<IHttpActionResult> EncuestaResueltaDetalle(string cliente,string asesor,int encuesta)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                    /*var respuestas = await (
+                            from e in ctx.Encuesta 
+                            join se in ctx.Secciones_Encuesta on e.Id equals se.EncuestaId
+                            join sec in ctx.Secciones on se.SeccionId equals sec.Id
+                            join secu in ctx.Secciones_Usuarios on 
+                        ).ToListAsync();*/
+
+                    return Ok();
+                }
+            }catch(Exception e)
             {
                 return BadRequest(e.ToString());
             }

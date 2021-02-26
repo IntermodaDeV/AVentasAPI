@@ -25,7 +25,7 @@ namespace AventasApi.Controllers
                     {
                        Id = x.Id,
                        SeccionEncuestaId = x.SeccionEncuestaId,
-                       NombreSeccion = x.SeccionesEncuesta.Nombre,
+                       //NombreSeccion = x.SeccionesEncuesta.Nombre,
                        TipoIngresoId = x.TipoIngresoId,
                        GrupoOpcionesId = x.GrupoOpcionesId,
                        Nombre = x.Nombre,
@@ -74,12 +74,12 @@ namespace AventasApi.Controllers
                         CreatedDate = DateTime.Now
                     };
                     db.Preguntas.Add(PreguntasEncuesta);
-                    var result = await db.SaveChangesAsync();
+                    var result = db.SaveChanges();
 
                     var preguntaId = db.Preguntas.OrderByDescending(p => p.Id).Select(p => p.Id).FirstOrDefault();
                     if (preguntasEncuesta.GrupoOpcionesDetalle.Count() > 0)
                     {
-                        _= RegistrarPreguntasOpciones(preguntasEncuesta.GrupoOpcionesDetalle, preguntaId, preguntasEncuesta.Usuario);
+                        _= RegistrarPreguntasOpciones(preguntasEncuesta.GrupoOpcionesDetalle, preguntaId, preguntasEncuesta.Usuario, preguntasEncuesta.GrupoOpcionesId);
                     }
                     return Ok("Ok");
                 }
@@ -92,13 +92,14 @@ namespace AventasApi.Controllers
 
         [HttpPost]
         [Route("~/api/preguntaOpciones/registrar")]
-        public async Task<IHttpActionResult> RegistrarPreguntasOpciones(List<int> preguntaOpciones, int preguntaId, string usuario)
+        public async Task<IHttpActionResult> RegistrarPreguntasOpciones(List<int> preguntaOpciones, int preguntaId, string usuario , int? GrupoOpcionesId)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    foreach(var opcion in preguntaOpciones)
+                    var grupoOpcionesDetalle = ctx.GrupoOpcionesDetalle.Where(g => g.GrupoOpcionesId == GrupoOpcionesId && preguntaOpciones.Contains(g.Id)).Select(g => g.Id).ToList();
+                    foreach (var opcion in grupoOpcionesDetalle)
                     {
                         var PreguntasOpciones = new PreguntasOpciones()
                         {
@@ -112,7 +113,7 @@ namespace AventasApi.Controllers
                     }
                    
                    
-                    var result = await ctx.SaveChangesAsync();
+                    var result = ctx.SaveChanges();
                     return Ok(result);
                 }
             }
@@ -150,7 +151,7 @@ namespace AventasApi.Controllers
 
                     if (preguntasEncuesta.GrupoOpcionesDetalle.Count() > 0 && preguntasEncuesta.RequiereOpciones == true)
                     {
-                        _ = ModificarPreguntasOpciones(preguntasEncuesta.GrupoOpcionesDetalle, PreguntasBD.Id, preguntasEncuesta.Usuario);
+                        _ = ModificarPreguntasOpciones(preguntasEncuesta.GrupoOpcionesDetalle, PreguntasBD.Id, preguntasEncuesta.Usuario, preguntasEncuesta.GrupoOpcionesId);
                     }
                     else
                     {
@@ -175,13 +176,14 @@ namespace AventasApi.Controllers
 
         [HttpPost]
         [Route("~/api/preguntaOpciones/registrar")]
-        public async Task<IHttpActionResult> ModificarPreguntasOpciones(List<int> preguntaOpciones, int preguntaId, string usuario)
+        public async Task<IHttpActionResult> ModificarPreguntasOpciones(List<int> preguntaOpciones, int preguntaId, string usuario, int? GrupoOpcionesId)
         {
             try
             {
                 using (var db = new AVentasEntities())
                 {
-                    var preguntasOpciones = db.PreguntasOpciones.Where(p => p.PreguntaId == preguntaId && !preguntaOpciones.Contains(p.GrupoOpcionesDetalleId)).ToList();
+                    var grupoOpcionesDetalle = db.GrupoOpcionesDetalle.Where(g => g.GrupoOpcionesId == GrupoOpcionesId && preguntaOpciones.Contains(g.Id)).Select(g => g.Id).ToList();
+                    var preguntasOpciones = db.PreguntasOpciones.Where(p => p.PreguntaId == preguntaId && !grupoOpcionesDetalle.Contains(p.GrupoOpcionesDetalleId)).ToList();
                     foreach (var pregunta in preguntasOpciones)
                     {
                         pregunta.Status = false;
@@ -189,10 +191,9 @@ namespace AventasApi.Controllers
                         pregunta.ModifiedDate = DateTime.Now;
                     }
 
-                    foreach (var opcion in preguntaOpciones)
+                    foreach (var opcion in grupoOpcionesDetalle)
                     {
-                        var PreguntaOpcionesDB = await db.PreguntasOpciones.FirstOrDefaultAsync(p => p.PreguntaId == preguntaId && p.GrupoOpcionesDetalleId == opcion);
-
+                        var PreguntaOpcionesDB = db.PreguntasOpciones.FirstOrDefault(p => p.PreguntaId == preguntaId && p.GrupoOpcionesDetalleId == opcion);
                         if(PreguntaOpcionesDB != null)
                         {
                             PreguntaOpcionesDB.Status = true;
@@ -213,9 +214,7 @@ namespace AventasApi.Controllers
                         }
                        
                     }
-
-
-                    var result = await db.SaveChangesAsync();
+                    var result = db.SaveChanges();
                     return Ok(result);
                 }
             }
