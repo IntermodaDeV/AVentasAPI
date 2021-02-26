@@ -688,7 +688,7 @@ namespace AventasApi.Controllers
         [HttpGet]
         [Route("~/api/encuesta/resueltas/{inicio}/{final}/{asesor}")]
         public async Task<IHttpActionResult> EncuestasResueltas(DateTime inicio,DateTime final,string asesor)
-        {
+       {
             try
             {
                 using(AVentasEntities ctx = new AVentasEntities())
@@ -700,7 +700,8 @@ namespace AventasApi.Controllers
                                               where r.CreatedDate >= inicio && r.CreatedDate <= final && r.CreatedBy==asesor
                                               select new EncuestaCompletada()
                                               {
-                                                  EncuestaId=e.Id,
+                                                  RespuestaId = r.Id,
+                                                  EncuestaId =e.Id,
                                                   Encuesta = e.Nombre,
                                                   Cliente = r.CodigoCliente,
                                                   Usuario = r.CreatedBy,
@@ -766,25 +767,30 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/encuesta/resueltas/detalle/{cliente}/{asesor}/{encuesta}")]
-        public async Task<IHttpActionResult> EncuestaResueltaDetalle(string cliente,string asesor,int encuesta)
+        [Route("~/api/encuesta/resueltas/detalle/{respuestaId}")]
+        public async Task<IHttpActionResult> EncuestaResueltaDetalle(int respuestaId)
         {
             try
             {
                 using(AVentasEntities ctx = new AVentasEntities())
                 {
-                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-
-                    /*var respuestas = await (
-                            from e in ctx.Encuesta 
-                            join se in ctx.Secciones_Encuesta on e.Id equals se.EncuestaId
-                            join sec in ctx.Secciones on se.SeccionId equals sec.Id
-                            join secu in ctx.Secciones_Usuarios on 
-                        ).ToListAsync();*/
-
-                    return Ok();
+                    List<RespuestasViewModel> Respuestas = await ctx.Respuestas.Where(r => r.Id == respuestaId).Select(r => new RespuestasViewModel
+                    {
+                        EncuestaId = r.EncuestaId,
+                        CodigoCliente = r.CodigoCliente,
+                        UsuarioId = r.UsuarioId,
+                        RespuestasDetalle = r.RespuestaDetalle.Where(d=> d.RespuestaId == r.Id).Select(d => new RespuestasDetalleViewModel
+                        {
+                            PreguntaId = d.PreguntaId,
+                            PreguntasOpcionesId = d.PreguntaOpcionesId,
+                            RespuestaAlfanumerica = d.RespuestaAlfanumerica,
+                            RespuestaNumerica = d.RespuestaNumerica
+                        }).ToList()
+                    }).ToListAsync();
+                    return Ok(Respuestas);
                 }
-            }catch(Exception e)
+            }
+            catch(Exception e)
             {
                 return BadRequest(e.ToString());
             }

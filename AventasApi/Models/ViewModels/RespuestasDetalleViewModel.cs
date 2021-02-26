@@ -13,7 +13,7 @@ namespace AventasApi.Models.ViewModels
         public int? PreguntasOpcionesId { get; set; }
         public List<string> PreguntasOpciones { get; set; }
         public string RespuestaAlfanumerica { get; set; }
-        public int RespuestaNumerica { get; set; }
+        public int? RespuestaNumerica { get; set; }
         public string Usuario { get; set; }
     }
 }
