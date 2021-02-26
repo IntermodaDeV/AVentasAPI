@@ -1041,7 +1041,7 @@ namespace AventasApi.Controllers
                                     recibosxClienteFlotante.Add(reciboXClienteFlotante);
                                 }
                                 AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
-                                respuestaPagoRecibo.Mensaje = "El recibo ha sido guardado en flotante. Contacte al supervisor para su aprobación";
+                                respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
                                 return Ok(respuestaPagoRecibo);
                             }
                             else
@@ -1103,7 +1103,7 @@ namespace AventasApi.Controllers
                     if(existeRecibo > 0)
                     {
                         AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
-                        respuestaPagoRecibo.Mensaje = "El recibo ha sido guardado en flotante. Contacte al supervisor para su aprobación";
+                        respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
                         return Ok(respuestaPagoRecibo);
                     }
 
@@ -1139,7 +1139,7 @@ namespace AventasApi.Controllers
                             recibosxClienteFlotante.Add(reciboXClienteFlotante);
                         }
                         AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
-                        respuestaPagoRecibo.Mensaje = "El recibo ha sido guardado en flotante. Contacte al supervisor para su aprobación";
+                        respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
                         return Ok(respuestaPagoRecibo);
                     }
                     else

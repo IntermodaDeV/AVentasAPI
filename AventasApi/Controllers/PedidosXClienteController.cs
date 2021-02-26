@@ -292,7 +292,7 @@ namespace AventasApi.Controllers
                         AsyncSqlInsert.IngresarPedidoFlotante(PedidoFlotante, Pedido.Firma);
                     }
 
-                    return Ok(new { correlativo = numeroReferencia, mensaje = "El pedido ha sido guardado en flotante. Contacte al supervisor para su aprobación" });
+                    return Ok(new { correlativo = numeroReferencia, mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de pedidos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento comercial para que procedan a revisar y gestionar su pedido para que sea válido." });
 
                     //s_ = PostPedidoPendiente(numeroReferencia);
                 }
@@ -368,7 +368,7 @@ namespace AventasApi.Controllers
                     AsyncSqlInsert.IngresarPedidoFlotante(PedidoBDAGuardar, Pedido.Firma);
                 }
 
-                return Ok(new { correlativo= numeroReferencia,mensaje="El pedido ha sido guardado en flotante. Contacte al supervisor para su aprobación" });
+                return Ok(new { correlativo= numeroReferencia,mensaje= "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de pedidos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento comercial para que procedan a revisar y gestionar su pedido para que sea válido." });
             }
             catch (Exception e)
             {
