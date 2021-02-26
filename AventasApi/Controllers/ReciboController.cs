@@ -216,7 +216,12 @@ namespace AventasApi.Controllers
                             Descripcion = tp.Descripcion,
                             Tipo = tp.Tipo,
                             EmpresaId = tp.EmpresaId,
-
+                            TiposdePagoDetalle = tp.TiposdePagoDetalle.Where(d => d.CodigoDetalle == ant.SpecPago).Select(pd => new TipoPagoDetalleViewModel
+                            {
+                                Codigo = pd.Codigo,
+                                CodigoDetalle = pd.CodigoDetalle,
+                                Descripcion = pd.Descripcion
+                            }).ToList()
                         }).FirstOrDefault(),
                         Pedido = context.PedidosxCliente.Where(p => p.NumeroPedido == ant.NumPedido).Select(ped => new PedidosXClienteViewModel
                         {
