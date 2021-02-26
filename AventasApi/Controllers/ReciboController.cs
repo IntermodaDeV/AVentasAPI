@@ -668,6 +668,7 @@ namespace AventasApi.Controllers
                     
                     _ = PostAnticipoAx(recibos);
 
+                    respuestaPagoRecibo.Mensaje = "";
                     return Ok(respuestaPagoRecibo);
                 }
                 return BadRequest();
@@ -1035,6 +1036,7 @@ namespace AventasApi.Controllers
                                     recibosxClienteFlotante.Add(reciboXClienteFlotante);
                                 }
                                 AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
+                                respuestaPagoRecibo.Mensaje = "El recibo ha sido guardado en flotante. Contacte al supervisor para su aprobación";
                                 return Ok(respuestaPagoRecibo);
                             }
                             else
@@ -1076,6 +1078,7 @@ namespace AventasApi.Controllers
                             syncCuentaCorriente.SyncFacturas(asesor.EmpresaId, codigoCliente);
                             syncCuentaCorriente.SyncSubFacturas(asesor.EmpresaId, codigoCliente, asesor.CodigoAsesor);
 
+                            respuestaPagoRecibo.Mensaje = "El recibo ha sido sincronizado exitosamente.";
                             return Ok(respuestaPagoRecibo);
                         }
                         else
@@ -1095,6 +1098,7 @@ namespace AventasApi.Controllers
                     if(existeRecibo > 0)
                     {
                         AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
+                        respuestaPagoRecibo.Mensaje = "El recibo ha sido guardado en flotante. Contacte al supervisor para su aprobación";
                         return Ok(respuestaPagoRecibo);
                     }
 
@@ -1130,6 +1134,7 @@ namespace AventasApi.Controllers
                             recibosxClienteFlotante.Add(reciboXClienteFlotante);
                         }
                         AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
+                        respuestaPagoRecibo.Mensaje = "El recibo ha sido guardado en flotante. Contacte al supervisor para su aprobación";
                         return Ok(respuestaPagoRecibo);
                     }
                     else
@@ -1170,6 +1175,7 @@ namespace AventasApi.Controllers
                             }
                         }
                     }
+                    respuestaPagoRecibo.Mensaje = "El recibo ha sido sincronizado exitosamente.";
                     return Ok(respuestaPagoRecibo);
                 }
             }
@@ -1752,6 +1758,7 @@ namespace AventasApi.Controllers
         public string CodigoUltimoRecibo { get; set; }
         public List<RespuestaPago> Pagos { get; set; }
         public List<RespuestaFactura> Facturas { get; set; }
+        public string Mensaje { get; set; }
         public RespuestaRecibo()
         {
             Fecha = DateTime.Now;

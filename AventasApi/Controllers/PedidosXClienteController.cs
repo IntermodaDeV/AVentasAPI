@@ -217,6 +217,8 @@ namespace AventasApi.Controllers
                                 ReducirStock(PedidoBDAGuardar);
                             }
                         }
+
+                        return Ok(new { correlativo = numeroReferencia, mensaje = "El pedido ha sido registrado con exito." });
                     }
                     else
                     {
@@ -289,8 +291,8 @@ namespace AventasApi.Controllers
 
                         AsyncSqlInsert.IngresarPedidoFlotante(PedidoFlotante, Pedido.Firma);
                     }
-                    
 
+                    return Ok(new { correlativo = numeroReferencia, mensaje = "El pedido ha sido guardado en flotante. Contacte al supervisor para su aprobación" });
 
                     //s_ = PostPedidoPendiente(numeroReferencia);
                 }
@@ -366,7 +368,7 @@ namespace AventasApi.Controllers
                     AsyncSqlInsert.IngresarPedidoFlotante(PedidoBDAGuardar, Pedido.Firma);
                 }
 
-                return Ok(numeroReferencia);
+                return Ok(new { correlativo= numeroReferencia,mensaje="El pedido ha sido guardado en flotante. Contacte al supervisor para su aprobación" });
             }
             catch (Exception e)
             {

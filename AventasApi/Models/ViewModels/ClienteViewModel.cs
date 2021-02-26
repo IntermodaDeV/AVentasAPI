@@ -81,6 +81,9 @@ namespace AventasApi.Models
         public Nullable<decimal> LimiteCredito { get; set; }
         public Nullable<decimal> CreditoDisponible { get; set; }
         public List<PResumenCredito_Result> Credito { get; set; }
+        public decimal? Longitud { get; internal set; }
+        public decimal? Latitud { get; internal set; }
+
         public ClientePedidoViewModel()
         {
             this.Credito = new List<PResumenCredito_Result>();
