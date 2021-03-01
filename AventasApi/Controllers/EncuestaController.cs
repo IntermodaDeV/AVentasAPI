@@ -619,7 +619,7 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var EncuestaId = ctx.Empresa_Encuesta.Where(e => e.EmpresaId == empresa && e.Status == true).Select(e => e.EncuestaId).ToList();
-                    var ListaEncuesta = await ctx.Encuesta.Where(e => EncuestaId.Contains(e.Id) && e.FechaInicio <= DateTime.Now && e.FechaFin >= DateTime.Now).Select(x => new
+                    var ListaEncuesta = await ctx.Encuesta.Where(e => EncuestaId.Contains(e.Id) && e.FechaInicio <= DateTime.Today && e.FechaFin >= DateTime.Today).Select(x => new
                     {
                         Id = x.Id,
                         Nombre = x.Nombre,
