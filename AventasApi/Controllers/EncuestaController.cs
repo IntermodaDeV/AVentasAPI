@@ -697,7 +697,8 @@ namespace AventasApi.Controllers
 
                     List<EncuestaCompletada> encuestasResueltas = await (from e in ctx.Encuesta
                                               join r in ctx.Respuestas on e.Id equals r.EncuestaId
-                                              where r.CreatedDate >= inicio && r.CreatedDate <= final && r.CreatedBy==asesor
+                                              join x in ctx.Clientes on r.CodigoCliente equals x.CodigoCliente
+                                              where r.CreatedDate >= inicio && r.CreatedDate <= final && x.CodigoAsesor == asesor
                                               select new EncuestaCompletada()
                                               {
                                                   RespuestaId = r.Id,
