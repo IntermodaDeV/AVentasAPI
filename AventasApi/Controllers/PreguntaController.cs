@@ -37,6 +37,7 @@ namespace AventasApi.Controllers
                        {
                            Id = p.Id,
                            GrupoOpcionesDetalleId = p.GrupoOpcionesDetalleId,
+                           GrupoOpcionesDetalle = p.GrupoOpcionesDetalle.Nombre,
                            PreguntaId = p.PreguntaId,
                            Status = p.Status
                        })
@@ -76,7 +77,7 @@ namespace AventasApi.Controllers
                     db.Preguntas.Add(PreguntasEncuesta);
                     var result = db.SaveChanges();
 
-                    var preguntaId = db.Preguntas.OrderByDescending(p => p.Id).Select(p => p.Id).FirstOrDefault();
+                    var preguntaId = await db.Preguntas.OrderByDescending(p => p.Id).Select(p => p.Id).FirstOrDefaultAsync();
                     if (preguntasEncuesta.GrupoOpcionesDetalle.Count() > 0)
                     {
                         _= RegistrarPreguntasOpciones(preguntasEncuesta.GrupoOpcionesDetalle, preguntaId, preguntasEncuesta.Usuario, preguntasEncuesta.GrupoOpcionesId);
@@ -98,7 +99,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var grupoOpcionesDetalle = ctx.GrupoOpcionesDetalle.Where(g => g.GrupoOpcionesId == GrupoOpcionesId && preguntaOpciones.Contains(g.Id)).Select(g => g.Id).ToList();
+                    var grupoOpcionesDetalle = await ctx.GrupoOpcionesDetalle.Where(g => g.GrupoOpcionesId == GrupoOpcionesId && preguntaOpciones.Contains(g.Id)).Select(g => g.Id).ToListAsync();
                     foreach (var opcion in grupoOpcionesDetalle)
                     {
                         var PreguntasOpciones = new PreguntasOpciones()
@@ -182,7 +183,7 @@ namespace AventasApi.Controllers
             {
                 using (var db = new AVentasEntities())
                 {
-                    var grupoOpcionesDetalle = db.GrupoOpcionesDetalle.Where(g => g.GrupoOpcionesId == GrupoOpcionesId && preguntaOpciones.Contains(g.Id)).Select(g => g.Id).ToList();
+                    var grupoOpcionesDetalle = await db.GrupoOpcionesDetalle.Where(g => g.GrupoOpcionesId == GrupoOpcionesId && preguntaOpciones.Contains(g.Id)).Select(g => g.Id).ToListAsync();
                     var preguntasOpciones = db.PreguntasOpciones.Where(p => p.PreguntaId == preguntaId && !grupoOpcionesDetalle.Contains(p.GrupoOpcionesDetalleId)).ToList();
                     foreach (var pregunta in preguntasOpciones)
                     {
@@ -241,6 +242,80 @@ namespace AventasApi.Controllers
 
                     pregunta.Status = !pregunta.Status;
                     var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+
+        [HttpPost]
+        [Route("~/api/preguntas/Anidadas")]
+        public async Task<IHttpActionResult> RegistrarPreguntasAnidadas([FromBody] PreguntasAnidadasViewModel preguntasEncuesta)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+
+                    List<PreguntasAnidadasViewModel> Preguntas = new List<PreguntasAnidadasViewModel>();
+                    Preguntas.Add(preguntasEncuesta);
+
+                    var PreguntasEncuesta = new PreguntasAnidadas()
+                    {
+                        PreguntasOpcionesId = preguntasEncuesta.PreguntasOpcionesId,
+                        TipoIngresoId = preguntasEncuesta.TipoIngresoId,
+                        GrupoOpcionesId = preguntasEncuesta.GrupoOpcionesId,
+                        Nombre = preguntasEncuesta.Nombre,
+                        Descripcion = preguntasEncuesta.Descripcion,
+                        RespuestaObligatorio = preguntasEncuesta.RespuestaObligatorio,
+                        Status = preguntasEncuesta.Status,
+                        CreatedBy = preguntasEncuesta.Usuario,
+                        CreatedDate = DateTime.Now
+                    };
+                    db.PreguntasAnidadas.Add(PreguntasEncuesta);
+                    var result = db.SaveChanges();
+
+                    var preguntaId = await db.PreguntasAnidadas.OrderByDescending(p => p.Id).Select(p => p.Id).FirstOrDefaultAsync();
+                    if (preguntasEncuesta.GrupoOpcionesDetalle.Count() > 0)
+                    {
+                        _ = RegistrarPreguntasOpcionesAnidadas(preguntasEncuesta.GrupoOpcionesDetalle, preguntaId, preguntasEncuesta.Usuario, preguntasEncuesta.GrupoOpcionesId);
+                    }
+                    return Ok("Ok");
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/preguntaOpciones/registrar")]
+        public async Task<IHttpActionResult> RegistrarPreguntasOpcionesAnidadas(List<int> preguntaOpciones, int preguntaId, string usuario, int? GrupoOpcionesId)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var grupoOpcionesDetalle = await ctx.GrupoOpcionesDetalle.Where(g => g.GrupoOpcionesId == GrupoOpcionesId && preguntaOpciones.Contains(g.Id)).Select(g => g.Id).ToListAsync();
+                    foreach (var opcion in grupoOpcionesDetalle)
+                    {
+                        var PreguntasOpcionesAnidadas = new PreguntasOpcionesAnidadas()
+                        {
+                            PreguntaId = preguntaId,
+                            GrupoOpcionesDetalleId = opcion,
+                            Status = true,
+                            CreatedBy = usuario,
+                            CreatedDate = DateTime.Now
+                        };
+                        ctx.PreguntasOpcionesAnidadas.Add(PreguntasOpcionesAnidadas);
+                    }
+
+                    var result = ctx.SaveChanges();
                     return Ok(result);
                 }
             }
