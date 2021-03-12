@@ -255,6 +255,13 @@
         <AssociationConnector Association="AventasModel.FK__Documento__IdFac__0F431ABE" />
         <AssociationConnector Association="AventasModel.FK__Documento__IdMon__0C66AE13" />
         <AssociationConnector Association="AventasModel.FK__Documento__IdSub__10373EF7" />
+        <EntityTypeShape EntityType="AventasModel.PreguntasAnidadas" Width="1.5" PointX="22.875" PointY="14.125" />
+        <EntityTypeShape EntityType="AventasModel.PreguntasOpcionesAnidadas" Width="1.5" PointX="25.125" PointY="8" />
+        <AssociationConnector Association="AventasModel.FK__PreguntasAnidadas__GrupoOpciones_Id" />
+        <AssociationConnector Association="AventasModel.FK__PreguntasAnidadas__Grupo__60F24029" />
+        <AssociationConnector Association="AventasModel.FK__PreguntasAnidadas__Pregu__5FFE1BF0" />
+        <AssociationConnector Association="AventasModel.FK__PreguntasAnidadas__PreguntasOpciones_Id" />
+        <AssociationConnector Association="AventasModel.FK__PreguntasAnidadas__TipoIngreso_Id" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

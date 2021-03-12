@@ -5,8 +5,8 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="AventasModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="Acciones">
           <Key>
             <PropertyRef Name="IdAccion" />
@@ -866,7 +866,37 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="PreguntasAnidadas">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PreguntasOpcionesId" Type="int" Nullable="false" />
+          <Property Name="TipoIngresoId" Type="int" Nullable="false" />
+          <Property Name="GrupoOpcionesId" Type="int" />
+          <Property Name="Nombre" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="200" />
+          <Property Name="RespuestaObligatorio" Type="bit" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="PreguntasOpciones">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PreguntaId" Type="int" Nullable="false" />
+          <Property Name="GrupoOpcionesDetalleId" Type="int" Nullable="false" />
+          <Property Name="Status" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="PreguntasOpcionesAnidadas">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -1210,6 +1240,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="Etiqueta" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="TipoVisitaCliente">
           <Key>
@@ -1290,8 +1321,8 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
           <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_AtributosxColeccion">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -1303,8 +1334,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have 
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
           <Property Name="CodigoAtributo" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_ClientesxRuta">
           <Key>
             <PropertyRef Name="CodigoCliente" />
@@ -1324,8 +1355,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a prim
           <Property Name="Longitud" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Ruta" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_ColoresxProducto">
           <Key>
             <PropertyRef Name="IdColorxProducto" />
@@ -1336,8 +1367,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a p
           <Property Name="Rgb" Type="varchar" MaxLength="250" />
           <Property Name="IdProducto" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_FisicoDisponible">
           <Key>
             <PropertyRef Name="IdFisicoDisponible" />
@@ -1349,8 +1380,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a p
           <Property Name="Disponible" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_TallasxProducto">
           <Key>
             <PropertyRef Name="IdProducto" />
@@ -2517,6 +2548,66 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__PreguntasAnidadas__Grupo__60F24029">
+          <End Role="GrupoOpcionesDetalle" Type="Self.GrupoOpcionesDetalle" Multiplicity="1" />
+          <End Role="PreguntasOpcionesAnidadas" Type="Self.PreguntasOpcionesAnidadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GrupoOpcionesDetalle">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PreguntasOpcionesAnidadas">
+              <PropertyRef Name="GrupoOpcionesDetalleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PreguntasAnidadas__GrupoOpciones_Id">
+          <End Role="GrupoOpciones" Type="Self.GrupoOpciones" Multiplicity="0..1" />
+          <End Role="PreguntasAnidadas" Type="Self.PreguntasAnidadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GrupoOpciones">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PreguntasAnidadas">
+              <PropertyRef Name="GrupoOpcionesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PreguntasAnidadas__Pregu__5FFE1BF0">
+          <End Role="PreguntasAnidadas" Type="Self.PreguntasAnidadas" Multiplicity="1" />
+          <End Role="PreguntasOpcionesAnidadas" Type="Self.PreguntasOpcionesAnidadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PreguntasAnidadas">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PreguntasOpcionesAnidadas">
+              <PropertyRef Name="PreguntaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PreguntasAnidadas__PreguntasOpciones_Id">
+          <End Role="PreguntasOpciones" Type="Self.PreguntasOpciones" Multiplicity="1" />
+          <End Role="PreguntasAnidadas" Type="Self.PreguntasAnidadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PreguntasOpciones">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PreguntasAnidadas">
+              <PropertyRef Name="PreguntasOpcionesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PreguntasAnidadas__TipoIngreso_Id">
+          <End Role="TiposIngreso" Type="Self.TiposIngreso" Multiplicity="1" />
+          <End Role="PreguntasAnidadas" Type="Self.PreguntasAnidadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TiposIngreso">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PreguntasAnidadas">
+              <PropertyRef Name="TipoIngresoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Productos__Codig__4F9CCB9E">
           <End Role="GrupoTalla" Type="Self.GrupoTalla" Multiplicity="0..1" />
           <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="*" />
@@ -3261,7 +3352,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="PrecioEspecifico" EntityType="Self.PrecioEspecifico" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PreciosxProducto" EntityType="Self.PreciosxProducto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Preguntas" EntityType="Self.Preguntas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PreguntasAnidadas" EntityType="Self.PreguntasAnidadas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PreguntasOpciones" EntityType="Self.PreguntasOpciones" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PreguntasOpcionesAnidadas" EntityType="Self.PreguntasOpcionesAnidadas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PrioridadAsignacion" EntityType="Self.PrioridadAsignacion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductosxColeccion" EntityType="Self.ProductosxColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RazonNoVentaCausa" EntityType="Self.RazonNoVentaCausa" Schema="dbo" store:Type="Tables" />
@@ -3743,6 +3836,26 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK__Preguntas__TipoI__5C2D8B0C" Association="Self.FK__Preguntas__TipoI__5C2D8B0C">
             <End Role="TiposIngreso" EntitySet="TiposIngreso" />
             <End Role="Preguntas" EntitySet="Preguntas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PreguntasAnidadas__Grupo__60F24029" Association="Self.FK__PreguntasAnidadas__Grupo__60F24029">
+            <End Role="GrupoOpcionesDetalle" EntitySet="GrupoOpcionesDetalle" />
+            <End Role="PreguntasOpcionesAnidadas" EntitySet="PreguntasOpcionesAnidadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PreguntasAnidadas__GrupoOpciones_Id" Association="Self.FK__PreguntasAnidadas__GrupoOpciones_Id">
+            <End Role="GrupoOpciones" EntitySet="GrupoOpciones" />
+            <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PreguntasAnidadas__Pregu__5FFE1BF0" Association="Self.FK__PreguntasAnidadas__Pregu__5FFE1BF0">
+            <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
+            <End Role="PreguntasOpcionesAnidadas" EntitySet="PreguntasOpcionesAnidadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PreguntasAnidadas__PreguntasOpciones_Id" Association="Self.FK__PreguntasAnidadas__PreguntasOpciones_Id">
+            <End Role="PreguntasOpciones" EntitySet="PreguntasOpciones" />
+            <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PreguntasAnidadas__TipoIngreso_Id" Association="Self.FK__PreguntasAnidadas__TipoIngreso_Id">
+            <End Role="TiposIngreso" EntitySet="TiposIngreso" />
+            <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
           </AssociationSet>
           <AssociationSet Name="FK__Productos__Codig__4F9CCB9E" Association="Self.FK__Productos__Codig__4F9CCB9E">
             <End Role="GrupoTalla" EntitySet="GrupoTalla" />
@@ -6351,6 +6464,28 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
             <End Role="DocumentosTransitoxFactura" EntitySet="DocumentosTransitoxFactura" />
           </AssociationSet>
+          <EntitySet Name="PreguntasAnidadas" EntityType="AventasModel.PreguntasAnidadas" />
+          <EntitySet Name="PreguntasOpcionesAnidadas" EntityType="AventasModel.PreguntasOpcionesAnidadas" />
+          <AssociationSet Name="FK__PreguntasAnidadas__GrupoOpciones_Id" Association="AventasModel.FK__PreguntasAnidadas__GrupoOpciones_Id">
+            <End Role="GrupoOpciones" EntitySet="GrupoOpciones" />
+            <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PreguntasAnidadas__Grupo__60F24029" Association="AventasModel.FK__PreguntasAnidadas__Grupo__60F24029">
+            <End Role="GrupoOpcionesDetalle" EntitySet="GrupoOpcionesDetalle" />
+            <End Role="PreguntasOpcionesAnidadas" EntitySet="PreguntasOpcionesAnidadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PreguntasAnidadas__Pregu__5FFE1BF0" Association="AventasModel.FK__PreguntasAnidadas__Pregu__5FFE1BF0">
+            <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
+            <End Role="PreguntasOpcionesAnidadas" EntitySet="PreguntasOpcionesAnidadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PreguntasAnidadas__PreguntasOpciones_Id" Association="AventasModel.FK__PreguntasAnidadas__PreguntasOpciones_Id">
+            <End Role="PreguntasOpciones" EntitySet="PreguntasOpciones" />
+            <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PreguntasAnidadas__TipoIngreso_Id" Association="AventasModel.FK__PreguntasAnidadas__TipoIngreso_Id">
+            <End Role="TiposIngreso" EntitySet="TiposIngreso" />
+            <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -7292,6 +7427,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Preguntas" Relationship="AventasModel.FK__Preguntas__TipoI__5C2D8B0C" FromRole="TiposIngreso" ToRole="Preguntas" />
+          <NavigationProperty Name="PreguntasAnidadas" Relationship="AventasModel.FK__PreguntasAnidadas__TipoIngreso_Id" FromRole="TiposIngreso" ToRole="PreguntasAnidadas" />
+          <Property Name="Etiqueta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="GrupoOpcionesDetalle">
           <Key>
@@ -7306,6 +7443,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="GrupoOpciones" Relationship="AventasModel.FK__GrupoOpci__Grupo__47326E26" FromRole="GrupoOpcionesDetalle" ToRole="GrupoOpciones" />
           <NavigationProperty Name="PreguntasOpciones" Relationship="AventasModel.FK__Preguntas__Grupo__60F24029" FromRole="GrupoOpcionesDetalle" ToRole="PreguntasOpciones" />
+          <NavigationProperty Name="PreguntasOpcionesAnidadas" Relationship="AventasModel.FK__PreguntasAnidadas__Grupo__60F24029" FromRole="GrupoOpcionesDetalle" ToRole="PreguntasOpcionesAnidadas" />
         </EntityType>
         <EntityType Name="GrupoOpciones">
           <Key>
@@ -7320,6 +7458,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="GrupoOpcionesDetalle" Relationship="AventasModel.FK__GrupoOpci__Grupo__47326E26" FromRole="GrupoOpciones" ToRole="GrupoOpcionesDetalle" />
           <NavigationProperty Name="Preguntas" Relationship="AventasModel.FK__Preguntas__Grupo__5D21AF45" FromRole="GrupoOpciones" ToRole="Preguntas" />
+          <NavigationProperty Name="PreguntasAnidadas" Relationship="AventasModel.FK__PreguntasAnidadas__GrupoOpciones_Id" FromRole="GrupoOpciones" ToRole="PreguntasAnidadas" />
         </EntityType>
         <Association Name="FK__GrupoOpci__Grupo__47326E26">
           <End Type="AventasModel.GrupoOpciones" Role="GrupoOpciones" Multiplicity="1" />
@@ -7366,6 +7505,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="GrupoOpcionesDetalle" Relationship="AventasModel.FK__Preguntas__Grupo__60F24029" FromRole="PreguntasOpciones" ToRole="GrupoOpcionesDetalle" />
           <NavigationProperty Name="Preguntas" Relationship="AventasModel.FK__Preguntas__Pregu__5FFE1BF0" FromRole="PreguntasOpciones" ToRole="Preguntas" />
           <NavigationProperty Name="RespuestaDetalle" Relationship="AventasModel.FK_PREGUNTAOPCIONES_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID" FromRole="PreguntasOpciones" ToRole="RespuestaDetalle" />
+          <NavigationProperty Name="PreguntasAnidadas" Relationship="AventasModel.FK__PreguntasAnidadas__PreguntasOpciones_Id" FromRole="PreguntasOpciones" ToRole="PreguntasAnidadas" />
         </EntityType>
         <Association Name="FK__Preguntas__Grupo__60F24029">
           <End Type="AventasModel.GrupoOpcionesDetalle" Role="GrupoOpcionesDetalle" Multiplicity="1" />
@@ -8255,6 +8395,102 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="DocumentosTransitoxFactura">
               <PropertyRef Name="IdSubFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PreguntasAnidadas">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PreguntasOpcionesId" Type="Int32" Nullable="false" />
+          <Property Name="TipoIngresoId" Type="Int32" Nullable="false" />
+          <Property Name="GrupoOpcionesId" Type="Int32" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="RespuestaObligatorio" Type="Boolean" Nullable="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="GrupoOpciones" Relationship="AventasModel.FK__PreguntasAnidadas__GrupoOpciones_Id" FromRole="PreguntasAnidadas" ToRole="GrupoOpciones" />
+          <NavigationProperty Name="PreguntasOpcionesAnidadas" Relationship="AventasModel.FK__PreguntasAnidadas__Pregu__5FFE1BF0" FromRole="PreguntasAnidadas" ToRole="PreguntasOpcionesAnidadas" />
+          <NavigationProperty Name="PreguntasOpciones" Relationship="AventasModel.FK__PreguntasAnidadas__PreguntasOpciones_Id" FromRole="PreguntasAnidadas" ToRole="PreguntasOpciones" />
+          <NavigationProperty Name="TiposIngreso" Relationship="AventasModel.FK__PreguntasAnidadas__TipoIngreso_Id" FromRole="PreguntasAnidadas" ToRole="TiposIngreso" />
+        </EntityType>
+        <EntityType Name="PreguntasOpcionesAnidadas">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PreguntaId" Type="Int32" Nullable="false" />
+          <Property Name="GrupoOpcionesDetalleId" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="GrupoOpcionesDetalle" Relationship="AventasModel.FK__PreguntasAnidadas__Grupo__60F24029" FromRole="PreguntasOpcionesAnidadas" ToRole="GrupoOpcionesDetalle" />
+          <NavigationProperty Name="PreguntasAnidadas" Relationship="AventasModel.FK__PreguntasAnidadas__Pregu__5FFE1BF0" FromRole="PreguntasOpcionesAnidadas" ToRole="PreguntasAnidadas" />
+        </EntityType>
+        <Association Name="FK__PreguntasAnidadas__GrupoOpciones_Id">
+          <End Type="AventasModel.GrupoOpciones" Role="GrupoOpciones" Multiplicity="0..1" />
+          <End Type="AventasModel.PreguntasAnidadas" Role="PreguntasAnidadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GrupoOpciones">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PreguntasAnidadas">
+              <PropertyRef Name="GrupoOpcionesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PreguntasAnidadas__Grupo__60F24029">
+          <End Type="AventasModel.GrupoOpcionesDetalle" Role="GrupoOpcionesDetalle" Multiplicity="1" />
+          <End Type="AventasModel.PreguntasOpcionesAnidadas" Role="PreguntasOpcionesAnidadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GrupoOpcionesDetalle">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PreguntasOpcionesAnidadas">
+              <PropertyRef Name="GrupoOpcionesDetalleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PreguntasAnidadas__Pregu__5FFE1BF0">
+          <End Type="AventasModel.PreguntasAnidadas" Role="PreguntasAnidadas" Multiplicity="1" />
+          <End Type="AventasModel.PreguntasOpcionesAnidadas" Role="PreguntasOpcionesAnidadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PreguntasAnidadas">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PreguntasOpcionesAnidadas">
+              <PropertyRef Name="PreguntaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PreguntasAnidadas__PreguntasOpciones_Id">
+          <End Type="AventasModel.PreguntasOpciones" Role="PreguntasOpciones" Multiplicity="1" />
+          <End Type="AventasModel.PreguntasAnidadas" Role="PreguntasAnidadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PreguntasOpciones">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PreguntasAnidadas">
+              <PropertyRef Name="PreguntasOpcionesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PreguntasAnidadas__TipoIngreso_Id">
+          <End Type="AventasModel.TiposIngreso" Role="TiposIngreso" Multiplicity="1" />
+          <End Type="AventasModel.PreguntasAnidadas" Role="PreguntasAnidadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TiposIngreso">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PreguntasAnidadas">
+              <PropertyRef Name="TipoIngresoId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -9467,6 +9703,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="TiposIngreso">
             <EntityTypeMapping TypeName="AventasModel.TiposIngreso">
               <MappingFragment StoreEntitySet="TiposIngreso">
+                <ScalarProperty Name="Etiqueta" ColumnName="Etiqueta" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
@@ -9817,6 +10054,38 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="Tipo" ColumnName="Tipo" />
                 <ScalarProperty Name="TablaId" ColumnName="TablaId" />
                 <ScalarProperty Name="IdDocumentoTransito" ColumnName="IdDocumentoTransito" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PreguntasAnidadas">
+            <EntityTypeMapping TypeName="AventasModel.PreguntasAnidadas">
+              <MappingFragment StoreEntitySet="PreguntasAnidadas">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="RespuestaObligatorio" ColumnName="RespuestaObligatorio" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="GrupoOpcionesId" ColumnName="GrupoOpcionesId" />
+                <ScalarProperty Name="TipoIngresoId" ColumnName="TipoIngresoId" />
+                <ScalarProperty Name="PreguntasOpcionesId" ColumnName="PreguntasOpcionesId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PreguntasOpcionesAnidadas">
+            <EntityTypeMapping TypeName="AventasModel.PreguntasOpcionesAnidadas">
+              <MappingFragment StoreEntitySet="PreguntasOpcionesAnidadas">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="GrupoOpcionesDetalleId" ColumnName="GrupoOpcionesDetalleId" />
+                <ScalarProperty Name="PreguntaId" ColumnName="PreguntaId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

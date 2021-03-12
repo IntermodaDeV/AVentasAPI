@@ -12,28 +12,31 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class Pantallas
+    public partial class PreguntasAnidadas
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Pantallas()
+        public PreguntasAnidadas()
         {
-            this.Pantallas_Funciones = new HashSet<Pantallas_Funciones>();
-            this.PantallasxUsuario = new HashSet<PantallasxUsuario>();
+            this.PreguntasOpcionesAnidadas = new HashSet<PreguntasOpcionesAnidadas>();
         }
     
-        public int IdPantalla { get; set; }
+        public int Id { get; set; }
+        public int PreguntasOpcionesId { get; set; }
+        public int TipoIngresoId { get; set; }
+        public Nullable<int> GrupoOpcionesId { get; set; }
         public string Nombre { get; set; }
-        public string Ruta { get; set; }
-        public Nullable<bool> Status { get; set; }
+        public string Descripcion { get; set; }
+        public bool RespuestaObligatorio { get; set; }
+        public bool Status { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
-        public Nullable<bool> ModoOffline { get; set; }
     
+        public virtual GrupoOpciones GrupoOpciones { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Pantallas_Funciones> Pantallas_Funciones { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PantallasxUsuario> PantallasxUsuario { get; set; }
+        public virtual ICollection<PreguntasOpcionesAnidadas> PreguntasOpcionesAnidadas { get; set; }
+        public virtual PreguntasOpciones PreguntasOpciones { get; set; }
+        public virtual TiposIngreso TiposIngreso { get; set; }
     }
 }
