@@ -11,6 +11,20 @@ using DBData.Database;
 
 namespace AventasApi.Controllers
 {
+    class EncuestaResueltaDetalle
+    {
+        public string Pregunta { get; set; }
+        public string Respuesta { get; set; }
+    }
+    class EncuestaResuelta
+    {
+        public int RespuestaId { get; set; }
+        public int? EncuestaId { get; set; }
+        public string Cliente { get; set; }
+        public string Fecha { get; set; }
+        public string Asesor { get; set; }
+        public List<EncuestaResueltaDetalle> Detalle { get; set; }
+    }
     public class EncuestaController : ApiController
     {
         private readonly AuthenticationAppService _authenticationAppService;
@@ -663,17 +677,38 @@ namespace AventasApi.Controllers
                             TipoIngreso = p.TiposIngreso.Nombre,
                             GrupoOpcionesId = p.GrupoOpcionesId,
                             GrupoOpciones = p.GrupoOpciones.Nombre,
-                            PreguntasOpciones = p.PreguntasOpciones.Where(o => o.Status == true).Select(po => new
-                            {
-                                PreguntasOpcionesId = po.Id,
-                                GrupoOpcionesDetalleId = po.GrupoOpcionesDetalleId,
-                                GOpcionesDetalleNombre = po.GrupoOpcionesDetalle.Nombre
-                            }),
                             Nombre = p.Nombre,
                             Descripcion = p.Descripcion,
                             Obligatorio = p.Obligatorio,
                             RespuestaObligatorio = p.RespuestaObligatorio,
-                            Status = p.Status
+                            Status = p.Status,
+                            preguntaAnidada = false,
+                            PreguntasOpciones = p.PreguntasOpciones.Where(o => o.Status == true).Select(po => new
+                            {
+                                PreguntasOpcionesId = po.Id,
+                                GrupoOpcionesDetalleId = po.GrupoOpcionesDetalleId,
+                                GOpcionesDetalleNombre = po.GrupoOpcionesDetalle.Nombre,
+                                PreguntasAnidadas = po.PreguntasAnidadas.Where(s => s.PreguntasOpcionesId == po.Id).Select(a => new {
+                                    PreguntaId = a.Id,
+                                    PreguntasOpcionesId = a.PreguntasOpcionesId,
+                                    TipoIngresoId = a.TipoIngresoId,
+                                    TipoIngreso = a.TiposIngreso.Nombre,
+                                    GrupoOpcionesId = a.GrupoOpcionesId,
+                                    GrupoOpciones = p.GrupoOpciones.Nombre,
+                                    Nombre = a.Nombre,
+                                    Descripcion = a.Descripcion,
+                                    RespuestaObligatorio = a.RespuestaObligatorio,
+                                    Status = a.Status,
+                                    hidden = true,
+                                    PreguntasOpciones = a.PreguntasOpcionesAnidadas.Where(l => l.Status == true).Select(l => new
+                                    {
+                                        PreguntasOpcionesId = l.Id,
+                                        GrupoOpcionesDetalleId = l.GrupoOpcionesDetalleId,
+                                        GOpcionesDetalleNombre = l.GrupoOpcionesDetalle.Nombre,
+                                    }),
+                                    preguntaAnidada = true,
+                                })
+                            }),
                         }).OrderBy(p => p.PreguntaId)
                     }).ToListAsync();
                     return Ok(ListaSecciones);
@@ -792,6 +827,69 @@ namespace AventasApi.Controllers
                 }
             }
             catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/encuesta/excel/{inicio}/{final}/{encuestaId}")]
+        public async Task<IHttpActionResult> EncuestaResuelta(DateTime inicio, DateTime final,int encuestaId)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    List<EncuestaResuelta> Respuestas = await ctx.Respuestas.Where(x => x.EncuestaId == encuestaId && x.CreatedDate>=inicio && x.CreatedDate <= final).Select(e => new EncuestaResuelta { 
+                        EncuestaId=e.EncuestaId,
+                        Cliente=e.CodigoCliente,
+                        Asesor=e.CreatedBy,
+                        RespuestaId=e.Id,
+                        Fecha=e.CreatedDate.ToString()
+                    }).ToListAsync();
+
+                    if (Respuestas.Count() == 0)
+                    {
+                        return Ok(new List<EncuestaResuelta>());
+                    }
+
+                    foreach(var respuesta in Respuestas)
+                    {
+                        List<EncuestaResueltaDetalle> encuestaResueltaDetalles = new List<EncuestaResueltaDetalle>();
+                        
+
+                        var detalles = await ctx.RespuestaDetalle.Where(x => x.RespuestaId == respuesta.RespuestaId).ToListAsync();
+
+                        foreach(var d in detalles)
+                        {
+                            EncuestaResueltaDetalle respuestaDetalle = new EncuestaResueltaDetalle();
+                            var pregunta = await ctx.Preguntas.FirstOrDefaultAsync(x => x.Id == d.PreguntaId);
+                            respuestaDetalle.Pregunta = pregunta.Nombre;
+
+                            if (d.PreguntaOpcionesId != null)
+                            {
+                                var preguntaOpciones = await ctx.PreguntasOpciones.FirstOrDefaultAsync(x => x.Id == d.PreguntaOpcionesId);
+                                var preguntaOpcionesDetalle = await ctx.GrupoOpcionesDetalle.FirstOrDefaultAsync(x => x.Id == preguntaOpciones.GrupoOpcionesDetalleId);
+                                respuestaDetalle.Respuesta = preguntaOpcionesDetalle.Nombre;
+                            }
+                            else if (d.RespuestaAlfanumerica != null)
+                            {
+                                respuestaDetalle.Respuesta = d.RespuestaAlfanumerica;
+                            }else if (d.RespuestaNumerica != null)
+                            {
+                                respuestaDetalle.Respuesta = d.RespuestaNumerica.ToString();
+                            }
+
+                            encuestaResueltaDetalles.Add(respuestaDetalle);
+                        }
+
+                        respuesta.Detalle = encuestaResueltaDetalles;
+                    }
+
+                    return Ok(Respuestas);
+                }
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }
