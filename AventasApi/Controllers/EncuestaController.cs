@@ -728,7 +728,6 @@ namespace AventasApi.Controllers
             {
                 using(AVentasEntities ctx = new AVentasEntities())
                 {
-                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
 
                     List<EncuestaCompletada> encuestasResueltas = await (from e in ctx.Encuesta
                                               join r in ctx.Respuestas on e.Id equals r.EncuestaId
@@ -821,7 +820,14 @@ namespace AventasApi.Controllers
                             PreguntasOpcionesId = d.PreguntaOpcionesId,
                             RespuestaAlfanumerica = d.RespuestaAlfanumerica,
                             RespuestaNumerica = d.RespuestaNumerica
-                        }).ToList()
+                        }).ToList(),
+                        RespuestasAnidadasDetalle = r.RespuestaAnidadaDetalle.Where(d => d.RespuestaId == r.Id).Select(d => new RespuestasDetalleViewModel
+                        {
+                            PreguntaId = d.PreguntaAnidadaId,
+                            PreguntasOpcionesId = d.PreguntaOpcionesAnidadasId,
+                            RespuestaAlfanumerica = d.RespuestaAlfanumerica,
+                            RespuestaNumerica = d.RespuestaNumerica
+                        }).ToList(),
                     }).ToListAsync();
                     return Ok(Respuestas);
                 }

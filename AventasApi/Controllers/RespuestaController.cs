@@ -44,9 +44,8 @@ namespace AventasApi.Controllers
                         var result = await db.SaveChangesAsync();
 
                         respuestaId = db.Respuestas.OrderByDescending(r => r.Id).Select(r => r.Id).FirstOrDefault();
-                    
-
-                    _ = RegistrarRespuestasDetalle(Respuestas.RespuestasDetalle, respuestaId, Respuestas.Usuario);
+                        _ = RegistrarRespuestasDetalle(Respuestas.RespuestasDetalle, respuestaId, Respuestas.Usuario);
+                        _ = RegistrarRespuestasAnidadaDetalle(Respuestas.RespuestasAnidadasDetalle, respuestaId, Respuestas.Usuario);
 
                     return Ok("Ok");
                     }
@@ -118,6 +117,67 @@ namespace AventasApi.Controllers
                     var result = await db.SaveChangesAsync();
                     return Ok(result);
                 }
+        }
+
+        [HttpPost]
+        [Route("~/api/respuestasdetalleAnidada/registrar")]
+        public async Task<IHttpActionResult> RegistrarRespuestasAnidadaDetalle(List<RespuestasDetalleViewModel> RespuestasDetalle, int respuestaId, string Usuario)
+        {
+            using (var db = new AVentasEntities())
+            {
+
+                foreach (var detalle in RespuestasDetalle)
+                {
+                    var pregunta = db.PreguntasAnidadas.Where(p => p.Id == detalle.PreguntaId).FirstOrDefault();
+                    if (detalle.PreguntasOpciones != null && detalle.PreguntasOpciones.Count() > 0)
+                    {
+                        foreach (var det in detalle.PreguntasOpciones)
+                        {
+                            var RespuestaDetalle = new RespuestaAnidadaDetalle()
+                            {
+                                RespuestaId = respuestaId,
+                                PreguntaAnidadaId = detalle.PreguntaId,
+                                PreguntaOpcionesAnidadasId = Convert.ToInt32(det),
+                                RespuestaAlfanumerica = detalle.RespuestaAlfanumerica,
+                                RespuestaNumerica = detalle.RespuestaNumerica,
+                                CreatedBy = Usuario,
+                                CreatedDate = DateTime.Now
+                            };
+                            db.RespuestaAnidadaDetalle.Add(RespuestaDetalle);
+                        }
+                    }
+                    else if (pregunta.GrupoOpcionesId == null && detalle.PreguntasOpcionesId != null)
+                    {
+                        var RespuestaDetalle = new RespuestaAnidadaDetalle()
+                        {
+                            RespuestaId = respuestaId,
+                            PreguntaAnidadaId = detalle.PreguntaId,
+                            PreguntaOpcionesAnidadasId = null,
+                            RespuestaAlfanumerica = detalle.RespuestaAlfanumerica,
+                            RespuestaNumerica = detalle.PreguntasOpcionesId,
+                            CreatedBy = Usuario,
+                            CreatedDate = DateTime.Now
+                        };
+                        db.RespuestaAnidadaDetalle.Add(RespuestaDetalle);
+                    }
+                    else
+                    {
+                        var RespuestaDetalle = new RespuestaAnidadaDetalle()
+                        {
+                            RespuestaId = respuestaId,
+                            PreguntaAnidadaId = detalle.PreguntaId,
+                            PreguntaOpcionesAnidadasId = detalle.PreguntasOpcionesId,
+                            RespuestaAlfanumerica = detalle.RespuestaAlfanumerica,
+                            RespuestaNumerica = detalle.RespuestaNumerica,
+                            CreatedBy = Usuario,
+                            CreatedDate = DateTime.Now
+                        };
+                        db.RespuestaAnidadaDetalle.Add(RespuestaDetalle);
+                    }
+                }
+                var result = await db.SaveChangesAsync();
+                return Ok(result);
+            }
         }
     }
 }
