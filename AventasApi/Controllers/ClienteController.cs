@@ -239,11 +239,11 @@ namespace AventasApi.Controllers
                         return BadRequest("El cliente no existe.");
                     }
 
-                    cliente.Longitud = coordenada.longitude;
-                    cliente.Latitud = coordenada.latitude;
+                    cliente.Longitud = coordenada.longitud;
+                    cliente.Latitud = coordenada.latitud;
                     await ctx.SaveChangesAsync();
 
-                    return Ok(new {latitud=coordenada.latitude,longitud=coordenada.longitude });
+                    return Ok(new {latitud=coordenada.latitud,longitud=coordenada.longitud });
                 }
             }catch(Exception e)
             {
