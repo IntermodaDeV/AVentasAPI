@@ -440,6 +440,9 @@ namespace AventasApi.Controllers
                             CreatedDate = DateTime.Now
                         };
 
+                        ctx.Secciones_Encuesta.Add(Secciones_Encuesta);
+                        await ctx.SaveChangesAsync();
+
                         var empresas = await ctx.Empresa_Encuesta.Where(x => x.EncuestaId == EncuestaId && x.Status == true).Select(x => x.EmpresaId).ToListAsync();
                         if (empresas.Count() > 0)
                         {
@@ -459,7 +462,7 @@ namespace AventasApi.Controllers
                                     {
                                         var Secciones_Usuarios = new Secciones_Usuarios()
                                         {
-                                            SeccionId = seccionId,
+                                            SeccionId = Secciones_Encuesta.Id,
                                             UsuarioId = user,
                                             Status = true,
                                             CreatedBy = usuario,
@@ -468,12 +471,10 @@ namespace AventasApi.Controllers
                                         ctx.Secciones_Usuarios.Add(Secciones_Usuarios);
                                     }
 
-                                    await ctx.SaveChangesAsync();
+                                   
                                 }
                             }
                         }
-
-                        ctx.Secciones_Encuesta.Add(Secciones_Encuesta);
                     }
 
                     var result = await ctx.SaveChangesAsync();

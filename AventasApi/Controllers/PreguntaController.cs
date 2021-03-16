@@ -337,7 +337,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var grupoOpcionesDetalle = await ctx.GrupoOpcionesDetalle.Where(g => g.GrupoOpcionesId == GrupoOpcionesId && preguntaOpciones.Contains(g.Id)).Select(g => g.Id).ToListAsync();
+                    var grupoOpcionesDetalle = ctx.GrupoOpcionesDetalle.Where(g => g.GrupoOpcionesId == GrupoOpcionesId && preguntaOpciones.Contains(g.Id)).Select(g => g.Id).ToList();
                     foreach (var opcion in grupoOpcionesDetalle)
                     {
                         var PreguntasOpcionesAnidadas = new PreguntasOpcionesAnidadas()
