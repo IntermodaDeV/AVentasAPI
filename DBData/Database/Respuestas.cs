@@ -18,6 +18,7 @@ namespace DBData.Database
         public Respuestas()
         {
             this.RespuestaDetalle = new HashSet<RespuestaDetalle>();
+            this.RespuestaAnidadaDetalle = new HashSet<RespuestaAnidadaDetalle>();
         }
     
         public int Id { get; set; }
@@ -34,5 +35,7 @@ namespace DBData.Database
         public virtual ICollection<RespuestaDetalle> RespuestaDetalle { get; set; }
         public virtual Usuarios Usuarios { get; set; }
         public virtual Encuesta Encuesta { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RespuestaAnidadaDetalle> RespuestaAnidadaDetalle { get; set; }
     }
 }

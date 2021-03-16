@@ -1035,6 +1035,21 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="UsuarioModificacion" Type="varchar" MaxLength="250" />
           <Property Name="FechaModificacion" Type="datetime" />
         </EntityType>
+        <EntityType Name="RespuestaAnidadaDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RespuestaId" Type="int" Nullable="false" />
+          <Property Name="PreguntaAnidadaId" Type="int" Nullable="false" />
+          <Property Name="PreguntaOpcionesAnidadasId" Type="int" />
+          <Property Name="RespuestaAlfanumerica" Type="varchar" MaxLength="150" />
+          <Property Name="RespuestaNumerica" Type="int" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="RespuestaDetalle">
           <Key>
             <PropertyRef Name="Id" />
@@ -3088,6 +3103,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PREGUNTA_ID_RESPUESTAANIDADADETALLE_PREGUNTAID">
+          <End Role="PreguntasAnidadas" Type="Self.PreguntasAnidadas" Multiplicity="1" />
+          <End Role="RespuestaAnidadaDetalle" Type="Self.RespuestaAnidadaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PreguntasAnidadas">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RespuestaAnidadaDetalle">
+              <PropertyRef Name="PreguntaAnidadaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PREGUNTA_ID_RESPUESTADETALLE_PREGUNTAID">
           <End Role="Preguntas" Type="Self.Preguntas" Multiplicity="1" />
           <End Role="RespuestaDetalle" Type="Self.RespuestaDetalle" Multiplicity="*" />
@@ -3112,6 +3139,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID">
+          <End Role="PreguntasOpcionesAnidadas" Type="Self.PreguntasOpcionesAnidadas" Multiplicity="0..1" />
+          <End Role="RespuestaAnidadaDetalle" Type="Self.RespuestaAnidadaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PreguntasOpcionesAnidadas">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RespuestaAnidadaDetalle">
+              <PropertyRef Name="PreguntaOpcionesAnidadasId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ReciboXClienteFlotante___FacturaXCliente">
           <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
           <End Role="RecibosxClienteFlotante" Type="Self.RecibosxClienteFlotante" Multiplicity="*" />
@@ -3132,6 +3171,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="RespuestaDetalle">
+              <PropertyRef Name="RespuestaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RESPUESTAANIDADA_ID_RESPUESTADETALLE_RESPUESTAID">
+          <End Role="Respuestas" Type="Self.Respuestas" Multiplicity="1" />
+          <End Role="RespuestaAnidadaDetalle" Type="Self.RespuestaAnidadaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Respuestas">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RespuestaAnidadaDetalle">
               <PropertyRef Name="RespuestaId" />
             </Dependent>
           </ReferentialConstraint>
@@ -3363,6 +3414,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="RecibosDetalleFlotante" EntityType="Self.RecibosDetalleFlotante" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecibosxCliente" EntityType="Self.RecibosxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecibosxClienteFlotante" EntityType="Self.RecibosxClienteFlotante" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RespuestaAnidadaDetalle" EntityType="Self.RespuestaAnidadaDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RespuestaDetalle" EntityType="Self.RespuestaDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Respuestas" EntityType="Self.Respuestas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
@@ -4017,6 +4069,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="PedidosDetalleFlotante" EntitySet="PedidosDetalleFlotante" />
           </AssociationSet>
+          <AssociationSet Name="FK_PREGUNTA_ID_RESPUESTAANIDADADETALLE_PREGUNTAID" Association="Self.FK_PREGUNTA_ID_RESPUESTAANIDADADETALLE_PREGUNTAID">
+            <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
+            <End Role="RespuestaAnidadaDetalle" EntitySet="RespuestaAnidadaDetalle" />
+          </AssociationSet>
           <AssociationSet Name="FK_PREGUNTA_ID_RESPUESTADETALLE_PREGUNTAID" Association="Self.FK_PREGUNTA_ID_RESPUESTADETALLE_PREGUNTAID">
             <End Role="Preguntas" EntitySet="Preguntas" />
             <End Role="RespuestaDetalle" EntitySet="RespuestaDetalle" />
@@ -4025,6 +4081,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="PreguntasOpciones" EntitySet="PreguntasOpciones" />
             <End Role="RespuestaDetalle" EntitySet="RespuestaDetalle" />
           </AssociationSet>
+          <AssociationSet Name="FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID" Association="Self.FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID">
+            <End Role="PreguntasOpcionesAnidadas" EntitySet="PreguntasOpcionesAnidadas" />
+            <End Role="RespuestaAnidadaDetalle" EntitySet="RespuestaAnidadaDetalle" />
+          </AssociationSet>
           <AssociationSet Name="FK_ReciboXClienteFlotante___FacturaXCliente" Association="Self.FK_ReciboXClienteFlotante___FacturaXCliente">
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
             <End Role="RecibosxClienteFlotante" EntitySet="RecibosxClienteFlotante" />
@@ -4032,6 +4092,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK_RESPUESTA_ID_RESPUESTADETALLE_RESPUESTAID" Association="Self.FK_RESPUESTA_ID_RESPUESTADETALLE_RESPUESTAID">
             <End Role="Respuestas" EntitySet="Respuestas" />
             <End Role="RespuestaDetalle" EntitySet="RespuestaDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RESPUESTAANIDADA_ID_RESPUESTADETALLE_RESPUESTAID" Association="Self.FK_RESPUESTAANIDADA_ID_RESPUESTADETALLE_RESPUESTAID">
+            <End Role="Respuestas" EntitySet="Respuestas" />
+            <End Role="RespuestaAnidadaDetalle" EntitySet="RespuestaAnidadaDetalle" />
           </AssociationSet>
           <AssociationSet Name="FK_ROL" Association="Self.FK_ROL">
             <End Role="Roles" EntitySet="Roles" />
@@ -6486,6 +6550,19 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="TiposIngreso" EntitySet="TiposIngreso" />
             <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
           </AssociationSet>
+          <EntitySet Name="RespuestaAnidadaDetalle" EntityType="AventasModel.RespuestaAnidadaDetalle" />
+          <AssociationSet Name="FK_PREGUNTA_ID_RESPUESTAANIDADADETALLE_PREGUNTAID" Association="AventasModel.FK_PREGUNTA_ID_RESPUESTAANIDADADETALLE_PREGUNTAID">
+            <End Role="PreguntasAnidadas" EntitySet="PreguntasAnidadas" />
+            <End Role="RespuestaAnidadaDetalle" EntitySet="RespuestaAnidadaDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID" Association="AventasModel.FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID">
+            <End Role="PreguntasOpcionesAnidadas" EntitySet="PreguntasOpcionesAnidadas" />
+            <End Role="RespuestaAnidadaDetalle" EntitySet="RespuestaAnidadaDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RESPUESTAANIDADA_ID_RESPUESTADETALLE_RESPUESTAID" Association="AventasModel.FK_RESPUESTAANIDADA_ID_RESPUESTADETALLE_RESPUESTAID">
+            <End Role="Respuestas" EntitySet="Respuestas" />
+            <End Role="RespuestaAnidadaDetalle" EntitySet="RespuestaAnidadaDetalle" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -7692,6 +7769,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_USUARIOS_ID_RESPUESTA_USUARIOID" FromRole="Respuestas" ToRole="Usuarios" />
           <Property Name="EncuestaId" Type="Int32" />
           <NavigationProperty Name="Encuesta" Relationship="AventasModel.FK_ENCUESTA_ID_RESPUESTA_ENCUESTAID" FromRole="Respuestas" ToRole="Encuesta" />
+          <NavigationProperty Name="RespuestaAnidadaDetalle" Relationship="AventasModel.FK_RESPUESTAANIDADA_ID_RESPUESTADETALLE_RESPUESTAID" FromRole="Respuestas" ToRole="RespuestaAnidadaDetalle" />
         </EntityType>
         <Association Name="FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE">
           <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
@@ -8418,6 +8496,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PreguntasOpcionesAnidadas" Relationship="AventasModel.FK__PreguntasAnidadas__Pregu__5FFE1BF0" FromRole="PreguntasAnidadas" ToRole="PreguntasOpcionesAnidadas" />
           <NavigationProperty Name="PreguntasOpciones" Relationship="AventasModel.FK__PreguntasAnidadas__PreguntasOpciones_Id" FromRole="PreguntasAnidadas" ToRole="PreguntasOpciones" />
           <NavigationProperty Name="TiposIngreso" Relationship="AventasModel.FK__PreguntasAnidadas__TipoIngreso_Id" FromRole="PreguntasAnidadas" ToRole="TiposIngreso" />
+          <NavigationProperty Name="RespuestaAnidadaDetalle" Relationship="AventasModel.FK_PREGUNTA_ID_RESPUESTAANIDADADETALLE_PREGUNTAID" FromRole="PreguntasAnidadas" ToRole="RespuestaAnidadaDetalle" />
         </EntityType>
         <EntityType Name="PreguntasOpcionesAnidadas">
           <Key>
@@ -8433,6 +8512,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <NavigationProperty Name="GrupoOpcionesDetalle" Relationship="AventasModel.FK__PreguntasAnidadas__Grupo__60F24029" FromRole="PreguntasOpcionesAnidadas" ToRole="GrupoOpcionesDetalle" />
           <NavigationProperty Name="PreguntasAnidadas" Relationship="AventasModel.FK__PreguntasAnidadas__Pregu__5FFE1BF0" FromRole="PreguntasOpcionesAnidadas" ToRole="PreguntasAnidadas" />
+          <NavigationProperty Name="RespuestaAnidadaDetalle" Relationship="AventasModel.FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID" FromRole="PreguntasOpcionesAnidadas" ToRole="RespuestaAnidadaDetalle" />
         </EntityType>
         <Association Name="FK__PreguntasAnidadas__GrupoOpciones_Id">
           <End Type="AventasModel.GrupoOpciones" Role="GrupoOpciones" Multiplicity="0..1" />
@@ -8491,6 +8571,60 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="PreguntasAnidadas">
               <PropertyRef Name="TipoIngresoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="RespuestaAnidadaDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RespuestaId" Type="Int32" Nullable="false" />
+          <Property Name="PreguntaAnidadaId" Type="Int32" Nullable="false" />
+          <Property Name="PreguntaOpcionesAnidadasId" Type="Int32" />
+          <Property Name="RespuestaAlfanumerica" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="RespuestaNumerica" Type="Int32" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="PreguntasAnidadas" Relationship="AventasModel.FK_PREGUNTA_ID_RESPUESTAANIDADADETALLE_PREGUNTAID" FromRole="RespuestaAnidadaDetalle" ToRole="PreguntasAnidadas" />
+          <NavigationProperty Name="PreguntasOpcionesAnidadas" Relationship="AventasModel.FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID" FromRole="RespuestaAnidadaDetalle" ToRole="PreguntasOpcionesAnidadas" />
+          <NavigationProperty Name="Respuestas" Relationship="AventasModel.FK_RESPUESTAANIDADA_ID_RESPUESTADETALLE_RESPUESTAID" FromRole="RespuestaAnidadaDetalle" ToRole="Respuestas" />
+        </EntityType>
+        <Association Name="FK_PREGUNTA_ID_RESPUESTAANIDADADETALLE_PREGUNTAID">
+          <End Type="AventasModel.PreguntasAnidadas" Role="PreguntasAnidadas" Multiplicity="1" />
+          <End Type="AventasModel.RespuestaAnidadaDetalle" Role="RespuestaAnidadaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PreguntasAnidadas">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RespuestaAnidadaDetalle">
+              <PropertyRef Name="PreguntaAnidadaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID">
+          <End Type="AventasModel.PreguntasOpcionesAnidadas" Role="PreguntasOpcionesAnidadas" Multiplicity="0..1" />
+          <End Type="AventasModel.RespuestaAnidadaDetalle" Role="RespuestaAnidadaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PreguntasOpcionesAnidadas">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RespuestaAnidadaDetalle">
+              <PropertyRef Name="PreguntaOpcionesAnidadasId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RESPUESTAANIDADA_ID_RESPUESTADETALLE_RESPUESTAID">
+          <End Type="AventasModel.Respuestas" Role="Respuestas" Multiplicity="1" />
+          <End Type="AventasModel.RespuestaAnidadaDetalle" Role="RespuestaAnidadaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Respuestas">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RespuestaAnidadaDetalle">
+              <PropertyRef Name="RespuestaId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -10085,6 +10219,22 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="GrupoOpcionesDetalleId" ColumnName="GrupoOpcionesDetalleId" />
                 <ScalarProperty Name="PreguntaId" ColumnName="PreguntaId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RespuestaAnidadaDetalle">
+            <EntityTypeMapping TypeName="AventasModel.RespuestaAnidadaDetalle">
+              <MappingFragment StoreEntitySet="RespuestaAnidadaDetalle">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="RespuestaNumerica" ColumnName="RespuestaNumerica" />
+                <ScalarProperty Name="RespuestaAlfanumerica" ColumnName="RespuestaAlfanumerica" />
+                <ScalarProperty Name="PreguntaOpcionesAnidadasId" ColumnName="PreguntaOpcionesAnidadasId" />
+                <ScalarProperty Name="PreguntaAnidadaId" ColumnName="PreguntaAnidadaId" />
+                <ScalarProperty Name="RespuestaId" ColumnName="RespuestaId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

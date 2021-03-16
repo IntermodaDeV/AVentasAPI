@@ -18,6 +18,7 @@ namespace DBData.Database
         public PreguntasAnidadas()
         {
             this.PreguntasOpcionesAnidadas = new HashSet<PreguntasOpcionesAnidadas>();
+            this.RespuestaAnidadaDetalle = new HashSet<RespuestaAnidadaDetalle>();
         }
     
         public int Id { get; set; }
@@ -38,5 +39,7 @@ namespace DBData.Database
         public virtual ICollection<PreguntasOpcionesAnidadas> PreguntasOpcionesAnidadas { get; set; }
         public virtual PreguntasOpciones PreguntasOpciones { get; set; }
         public virtual TiposIngreso TiposIngreso { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RespuestaAnidadaDetalle> RespuestaAnidadaDetalle { get; set; }
     }
 }

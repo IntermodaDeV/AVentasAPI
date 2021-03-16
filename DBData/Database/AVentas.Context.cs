@@ -129,6 +129,7 @@ namespace DBData.Database
         public virtual DbSet<DocumentosTransitoxFactura> DocumentosTransitoxFactura { get; set; }
         public virtual DbSet<PreguntasAnidadas> PreguntasAnidadas { get; set; }
         public virtual DbSet<PreguntasOpcionesAnidadas> PreguntasOpcionesAnidadas { get; set; }
+        public virtual DbSet<RespuestaAnidadaDetalle> RespuestaAnidadaDetalle { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

@@ -12,26 +12,21 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class PreguntasOpcionesAnidadas
+    public partial class RespuestaAnidadaDetalle
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public PreguntasOpcionesAnidadas()
-        {
-            this.RespuestaAnidadaDetalle = new HashSet<RespuestaAnidadaDetalle>();
-        }
-    
         public int Id { get; set; }
-        public int PreguntaId { get; set; }
-        public int GrupoOpcionesDetalleId { get; set; }
-        public bool Status { get; set; }
+        public int RespuestaId { get; set; }
+        public int PreguntaAnidadaId { get; set; }
+        public Nullable<int> PreguntaOpcionesAnidadasId { get; set; }
+        public string RespuestaAlfanumerica { get; set; }
+        public Nullable<int> RespuestaNumerica { get; set; }
         public string CreatedBy { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
     
-        public virtual GrupoOpcionesDetalle GrupoOpcionesDetalle { get; set; }
         public virtual PreguntasAnidadas PreguntasAnidadas { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RespuestaAnidadaDetalle> RespuestaAnidadaDetalle { get; set; }
+        public virtual PreguntasOpcionesAnidadas PreguntasOpcionesAnidadas { get; set; }
+        public virtual Respuestas Respuestas { get; set; }
     }
 }

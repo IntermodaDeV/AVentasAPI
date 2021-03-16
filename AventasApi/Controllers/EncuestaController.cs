@@ -186,6 +186,40 @@ namespace AventasApi.Controllers
                         EncuestaEmpresa.Status = true;
                         EncuestaEmpresa.ModifiedBy = usuario;
                         EncuestaEmpresa.ModifiedDate = DateTime.Now;
+
+                        var secciones = await ctx.Secciones_Encuesta.Where(x => x.EncuestaId == encuestaId && x.Status == true).Select(x => x.Id).ToListAsync();
+                        if (secciones.Count() > 0)
+                        {
+                            var usuariosEmpresa = await ctx.Usuarios.Where(x => x.EmpresaId == EmpresaId && x.status == true).Select(x => x.Id).ToListAsync();
+
+                            foreach (var seccionId in secciones)
+                            {
+                                foreach (var usuarioEmpresa in usuariosEmpresa)
+                                {
+                                    var seccionUsuario = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.UsuarioId == usuarioEmpresa);
+                                    if (seccionUsuario != null)
+                                    {
+                                        seccionUsuario.Status = true;
+                                        seccionUsuario.ModifiedBy = usuario;
+                                        seccionUsuario.ModifiedDate = DateTime.Now;
+                                    }
+                                    else
+                                    {
+                                        var Secciones_Usuarios = new Secciones_Usuarios()
+                                        {
+                                            SeccionId = seccionId,
+                                            UsuarioId = usuarioEmpresa,
+                                            Status = true,
+                                            CreatedBy = usuario,
+                                            CreatedDate = DateTime.Now
+                                        };
+                                        ctx.Secciones_Usuarios.Add(Secciones_Usuarios);
+                                    }
+
+                                    await ctx.SaveChangesAsync();
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -197,6 +231,41 @@ namespace AventasApi.Controllers
                             CreatedBy = usuario,
                             CreatedDate = DateTime.Now
                         };
+
+                        var secciones = await ctx.Secciones_Encuesta.Where(x => x.EncuestaId == encuestaId && x.Status == true).Select(x => x.Id).ToListAsync();
+                        if (secciones.Count() > 0)
+                        {
+                            var usuariosEmpresa = await ctx.Usuarios.Where(x => x.EmpresaId == EmpresaId && x.status == true).Select(x => x.Id).ToListAsync();
+
+                            foreach (var seccionId in secciones)
+                            {
+                                foreach (var usuarioEmpresa in usuariosEmpresa)
+                                {
+                                    var seccionUsuario = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.UsuarioId == usuarioEmpresa);
+                                    if (seccionUsuario != null)
+                                    {
+                                        seccionUsuario.Status = true;
+                                        seccionUsuario.ModifiedBy = usuario;
+                                        seccionUsuario.ModifiedDate = DateTime.Now;
+                                    }
+                                    else
+                                    {
+                                        var Secciones_Usuarios = new Secciones_Usuarios()
+                                        {
+                                            SeccionId = seccionId,
+                                            UsuarioId = usuarioEmpresa,
+                                            Status = true,
+                                            CreatedBy = usuario,
+                                            CreatedDate = DateTime.Now
+                                        };
+                                        ctx.Secciones_Usuarios.Add(Secciones_Usuarios);
+                                    }
+
+                                    await ctx.SaveChangesAsync();
+                                }
+                            }
+                        }
+
                         ctx.Empresa_Encuesta.Add(Empresa_Encuesta);
                     }
 
@@ -223,6 +292,27 @@ namespace AventasApi.Controllers
                     if (EmpresaEncuesta == null)
                     {
                         return BadRequest("No se encontro el registro, contacte al administrador");
+                    }
+
+                    var secciones = await ctx.Secciones_Encuesta.Where(x => x.EncuestaId == EncuestaId).Select(x => x.Id).ToListAsync();
+                    if (secciones.Count() > 0)
+                    {
+                        var usuariosEmpresa = await ctx.Usuarios.Where(x => x.EmpresaId == EmpresaId).Select(x => x.Id).ToListAsync();
+
+                        foreach (var seccionId in secciones)
+                        {
+                            foreach (var usuarioEmpresa in usuariosEmpresa)
+                            {
+                                var seccionUsuario = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.UsuarioId == usuarioEmpresa);
+                                if (seccionUsuario != null)
+                                {
+                                    seccionUsuario.Status = false;
+                                    seccionUsuario.ModifiedBy = usuario;
+                                    seccionUsuario.ModifiedDate = DateTime.Now;
+                                    await ctx.SaveChangesAsync();
+                                }
+                            }
+                        }
                     }
 
                     EmpresaEncuesta.Status = false;
@@ -305,6 +395,39 @@ namespace AventasApi.Controllers
                         SeccionesEncuesta.Status = true;
                         SeccionesEncuesta.ModifiedBy = usuario;
                         SeccionesEncuesta.ModifiedDate = DateTime.Now;
+
+                        var empresas = await ctx.Empresa_Encuesta.Where(x => x.EncuestaId == EncuestaId && x.Status == true).Select(x => x.EmpresaId).ToListAsync();
+                        if (empresas.Count() > 0)
+                        {
+                            foreach (var empresa in empresas)
+                            {
+                                var usuarios = await ctx.Usuarios.Where(x => x.EmpresaId == empresa && x.status == true).Select(x => x.Id).ToListAsync();
+                                foreach (var user in usuarios)
+                                {
+                                    var seccionUsuario = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.UsuarioId == user);
+                                    if (seccionUsuario != null)
+                                    {
+                                        seccionUsuario.Status = true;
+                                        seccionUsuario.ModifiedBy = usuario;
+                                        seccionUsuario.ModifiedDate = DateTime.Now;
+                                    }
+                                    else
+                                    {
+                                        var Secciones_Usuarios = new Secciones_Usuarios()
+                                        {
+                                            SeccionId = seccionId,
+                                            UsuarioId = user,
+                                            Status = true,
+                                            CreatedBy = usuario,
+                                            CreatedDate = DateTime.Now
+                                        };
+                                        ctx.Secciones_Usuarios.Add(Secciones_Usuarios);
+                                    }
+
+                                    await ctx.SaveChangesAsync();
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -316,6 +439,40 @@ namespace AventasApi.Controllers
                             CreatedBy = usuario,
                             CreatedDate = DateTime.Now
                         };
+
+                        var empresas = await ctx.Empresa_Encuesta.Where(x => x.EncuestaId == EncuestaId && x.Status == true).Select(x => x.EmpresaId).ToListAsync();
+                        if (empresas.Count() > 0)
+                        {
+                            foreach (var empresa in empresas)
+                            {
+                                var usuarios = await ctx.Usuarios.Where(x => x.EmpresaId == empresa && x.status == true).Select(x => x.Id).ToListAsync();
+                                foreach (var user in usuarios)
+                                {
+                                    var seccionUsuario = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.UsuarioId == user);
+                                    if (seccionUsuario != null)
+                                    {
+                                        seccionUsuario.Status = true;
+                                        seccionUsuario.ModifiedBy = usuario;
+                                        seccionUsuario.ModifiedDate = DateTime.Now;
+                                    }
+                                    else
+                                    {
+                                        var Secciones_Usuarios = new Secciones_Usuarios()
+                                        {
+                                            SeccionId = seccionId,
+                                            UsuarioId = user,
+                                            Status = true,
+                                            CreatedBy = usuario,
+                                            CreatedDate = DateTime.Now
+                                        };
+                                        ctx.Secciones_Usuarios.Add(Secciones_Usuarios);
+                                    }
+
+                                    await ctx.SaveChangesAsync();
+                                }
+                            }
+                        }
+
                         ctx.Secciones_Encuesta.Add(Secciones_Encuesta);
                     }
 
