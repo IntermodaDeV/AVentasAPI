@@ -379,6 +379,7 @@ namespace AventasApi.Controllers
                     }
 
                     List<AsignacionxAsesor> listaGuardadas = new List<AsignacionxAsesor>();
+                    List<int> indiceErrores = new List<int>();
 
                     for (int x = 0; x < listaDominio.Count(); x++)
                     {
@@ -388,12 +389,14 @@ namespace AventasApi.Controllers
 
                         if (entityFound == null)
                         {
-                            return BadRequest($"El cliente no existe o no esta asignado al asesor. En asignacion {x + 1}");
+                            //return BadRequest($"El cliente no existe o no esta asignado al asesor. En asignacion {x + 1}");
+                            indiceErrores.Add(x);
                         }
 
                         if (asignacion.Fecha < DateTime.Today)
                         {
-                            return BadRequest($"Una o más asignaciones no se pueden crear ya que pertenecen a una fecha anterior. En asignacion {x + 1}");
+                            //return BadRequest($"Una o más asignaciones no se pueden crear ya que pertenecen a una fecha anterior. En asignacion {x + 1}");
+                            indiceErrores.Add(x);
                         }
                     }
 
@@ -439,20 +442,27 @@ namespace AventasApi.Controllers
                             if ((asignacion.HoraInicio >= listaComparacion[y].HoraInicio) && (asignacion.HoraInicio <= listaComparacion[y].HoraFinal) && asignacion.CodigoAsesor == listaComparacion[y].CodigoAsesor)
                             {
                                 var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacion.CodigoCliente);
-                                return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
+                                indiceErrores.Add(indice);
+                                //return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
                             }
 
                             if ((asignacion.HoraFinal >= listaComparacion[y].HoraInicio) && (asignacion.HoraFinal <= listaComparacion[y].HoraFinal) && asignacion.CodigoAsesor == listaComparacion[y].CodigoAsesor)
                             {
                                 var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacion.CodigoCliente);
-                                return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
+                                indiceErrores.Add(indice);
+                                //return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
                             }
                         }
                     }
 
+                    if (indiceErrores.Count() > 0)
+                    {
+                        return Ok(new { StatusCode = 400, Lista = indiceErrores,Message="Una o más asignaciones no se pueden registrar por conflictos de horario o el cliente no pertenece al asesor." });
+                    }
+
                     ctx.AsignacionxAsesor.AddRange(listaGuardar);
                     var result = await ctx.SaveChangesAsync();
-                    var response = new { Message = $"Se han registrado {result} asignaciones." };
+                    var response = new { StatusCode=200,Message = $"Se han registrado {result} asignaciones." };
                     return Ok(response);
                 }
             }
