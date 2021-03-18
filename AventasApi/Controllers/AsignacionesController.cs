@@ -426,7 +426,7 @@ namespace AventasApi.Controllers
                     {
                         var asignacion = listaDominio[x];
                         var listaComparacion = listaGuardadas.Where(cli=>cli.CodigoAsesor==asignacion.CodigoAsesor).ToList();
-                        listaDominio.RemoveAt(x);
+                        //listaDominio.RemoveAt(x);
                         var asignacionesAsesor = listaDominio.Where(cli => cli.CodigoAsesor == asignacion.CodigoAsesor);
                         listaComparacion.AddRange(asignacionesAsesor);
 
