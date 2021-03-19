@@ -175,55 +175,77 @@ namespace AventasApi.Controllers
             
         }
 
+        private bool GuardarAsignaciones(List<AsignacionxAsesor> asignacionxAsesor)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    if (asignacionxAsesor.Count() > 0)
+                    {
+                        ctx.AsignacionxAsesor.AddRange(asignacionxAsesor);
+                        int guardadas = ctx.SaveChanges();
+
+                        if (guardadas > 0)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            }catch(Exception e)
+            {
+                return false;
+            }
+        }
+
         [HttpPost]
         public async Task<IHttpActionResult> Post([FromBody] List<AsignacionesXFechaViewModel> asignacionesNuevas)
         {
             try
             {
-                List<AsignacionxAsesor> ListAsignaciones = new List<AsignacionxAsesor>();
-                foreach (var asignacionNueva in asignacionesNuevas)
+                using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    DateTime FechaInicio = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,
-                        asignacionNueva.fecha.Value.Day);
-                    DateTime FechaFin = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,
-                        asignacionNueva.fecha.Value.Day);
-                    FechaFin = FechaFin.AddDays(1);
-                    List<AsignacionxAsesor> asignaciones = asignacionNueva.asignaciones.Select(asi => new AsignacionxAsesor
+                    List<AsignacionxAsesor> ListAsignaciones = new List<AsignacionxAsesor>();
+                    foreach (var asignacionNueva in asignacionesNuevas)
                     {
-                        Fecha = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
-                        FechaAsignacion = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
-                        CodigoCliente = asi.cliente,
-                        CodigoAsesor = asi.Asesor,
-                        HoraInicio = asi.HoraInicio,
-                        HoraFinal = asi.HoraFin,
-                        idPrioridad = asi.IdPrioridad,
-                        idTipoVisita = asi.IdTipoVisita,
-                        Observacion = asi.Observacion,
-                        BloqueoCheckin = false,
-                        BloqueoCheckout = true
-                    }).ToList();
-
-                    foreach (var asignacion in asignaciones)
-                    {
-                        var asignacionesDB = context.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == asignacion.CodigoAsesor && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).ToList();
-
-                        var ListAsignacionesDB = asignacionesDB.Where(axa => axa.HoraInicio == asignacion.HoraInicio && axa.HoraFinal == asignacion.HoraFinal).ToList();
-
-                        if (ListAsignacionesDB.Count == 0)
+                        DateTime FechaInicio = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,
+                            asignacionNueva.fecha.Value.Day);
+                        DateTime FechaFin = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,
+                            asignacionNueva.fecha.Value.Day);
+                        FechaFin = FechaFin.AddDays(1);
+                        List<AsignacionxAsesor> asignaciones = asignacionNueva.asignaciones.Select(asi => new AsignacionxAsesor
                         {
-                            ListAsignaciones.Add(asignacion);
+                            Fecha = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
+                            FechaAsignacion = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
+                            CodigoCliente = asi.cliente,
+                            CodigoAsesor = asi.Asesor,
+                            HoraInicio = asi.HoraInicio,
+                            HoraFinal = asi.HoraFin,
+                            idPrioridad = asi.IdPrioridad,
+                            idTipoVisita = asi.IdTipoVisita,
+                            Observacion = asi.Observacion,
+                            BloqueoCheckin = false,
+                            BloqueoCheckout = true
+                        }).ToList();
+
+                        foreach (var asignacion in asignaciones)
+                        {
+                            var asignacionesDB = ctx.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == asignacion.CodigoAsesor && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).ToList();
+
+                            var ListAsignacionesDB = asignacionesDB.Where(axa => axa.HoraInicio == asignacion.HoraInicio && axa.HoraFinal == asignacion.HoraFinal).ToList();
+
+                            if (ListAsignacionesDB.Count == 0)
+                            {
+                                ListAsignaciones.Add(asignacion);
+                            }
                         }
+                        GuardarAsignaciones(ListAsignaciones);
                     }
 
-                    if (ListAsignaciones.Count() > 0)
-                    {
-
-                        context.AsignacionxAsesor.AddRange(ListAsignaciones);
-                    }
-                    context.SaveChanges();
+                    return StatusCode(HttpStatusCode.NoContent);
                 }
-
-                return StatusCode(HttpStatusCode.NoContent);
             }catch(Exception e)
             {
                 return BadRequest(e.ToString());

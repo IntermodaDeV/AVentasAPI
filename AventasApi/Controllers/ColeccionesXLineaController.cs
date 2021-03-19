@@ -343,7 +343,7 @@ namespace AventasApi.Controllers
                                                   CodigoColor = foto.CodigoColor,
                                                   Principal = foto.Principal ?? false
                                               }).ToList(),
-                                       ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) >= 0)
+                                       ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo != null).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) >= 0)
                                            .Select(txp => new TallaViewModel
                                            {
                                                Talla = txp.CodigoTalla,
@@ -502,7 +502,7 @@ namespace AventasApi.Controllers
                                                                                    CodigoColor = foto.CodigoColor,
                                                                                    Principal = foto.Principal ?? false
                                                                                }).ToList(),
-                                                                            ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) >= 0)
+                                                                            ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo!=null).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) >= 0)
                                                                             .Select(txp => new TallaViewModel
                                                                             {
                                                                                 Talla = txp.CodigoTalla,
