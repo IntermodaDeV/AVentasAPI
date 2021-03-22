@@ -244,7 +244,7 @@ namespace AventasApi.Controllers
             {
                 using(AVentasEntities ctx = new AVentasEntities())
                 {
-                    var colecciones = await ctx.Colecciones.Where(x => x.ColeccionTipo != "F" && x.ColeccionTipo != "N/A" && x.ColeccionTipo != "W" && x.Estatus==1).Select(x => new { Codigo=x.CodigoColeccion }).Distinct().ToListAsync();
+                    var colecciones = await ctx.Colecciones.Where(x => x.ColeccionTipo != "F" && x.ColeccionTipo != "N/A" && x.ColeccionTipo != "W").Select(x => new { Codigo=x.CodigoColeccion,Empresa=x.EmpresaId }).ToListAsync();
                     return Ok(colecciones);
                 }
             }catch(Exception e)

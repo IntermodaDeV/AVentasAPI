@@ -760,6 +760,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ModificadoPor" Type="varchar" MaxLength="50" />
           <Property Name="FechaCreacion" Type="datetime" />
           <Property Name="FechaModificacion" Type="datetime" />
+          <Property Name="SitioId" Type="int" />
+          <Property Name="AlmacenId" Type="int" />
         </EntityType>
         <EntityType Name="PedidosDetalle">
           <Key>
@@ -2368,7 +2370,19 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__PaqueteBo__Colec__46934FA8">
+        <Association Name="FK__PaqueteBo__Almac__5F5EFD72">
+          <End Role="MaestroBodegaAlmacenes" Type="Self.MaestroBodegaAlmacenes" Multiplicity="0..1" />
+          <End Role="PaqueteBodegaEspecifico" Type="Self.PaqueteBodegaEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroBodegaAlmacenes">
+              <PropertyRef Name="AlmacenId" />
+            </Principal>
+            <Dependent Role="PaqueteBodegaEspecifico">
+              <PropertyRef Name="AlmacenId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PaqueteBo__Colec__5D76B500">
           <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
           <End Role="PaqueteBodegaEspecifico" Type="Self.PaqueteBodegaEspecifico" Multiplicity="*" />
           <ReferentialConstraint>
@@ -2380,7 +2394,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__PaqueteBo__Empre__459F2B6F">
+        <Association Name="FK__PaqueteBo__Empre__5C8290C7">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
           <End Role="PaqueteBodegaEspecifico" Type="Self.PaqueteBodegaEspecifico" Multiplicity="*" />
           <ReferentialConstraint>
@@ -2389,6 +2403,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="PaqueteBodegaEspecifico">
               <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PaqueteBo__Sitio__5E6AD939">
+          <End Role="MaestroBodegaSitios" Type="Self.MaestroBodegaSitios" Multiplicity="0..1" />
+          <End Role="PaqueteBodegaEspecifico" Type="Self.PaqueteBodegaEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroBodegaSitios">
+              <PropertyRef Name="SitioId" />
+            </Principal>
+            <Dependent Role="PaqueteBodegaEspecifico">
+              <PropertyRef Name="SitioId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3962,12 +3988,20 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Pantallas" EntitySet="Pantallas" />
             <End Role="Pantallas_Funciones" EntitySet="Pantallas_Funciones" />
           </AssociationSet>
-          <AssociationSet Name="FK__PaqueteBo__Colec__46934FA8" Association="Self.FK__PaqueteBo__Colec__46934FA8">
+          <AssociationSet Name="FK__PaqueteBo__Almac__5F5EFD72" Association="Self.FK__PaqueteBo__Almac__5F5EFD72">
+            <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
+            <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PaqueteBo__Colec__5D76B500" Association="Self.FK__PaqueteBo__Colec__5D76B500">
             <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
           </AssociationSet>
-          <AssociationSet Name="FK__PaqueteBo__Empre__459F2B6F" Association="Self.FK__PaqueteBo__Empre__459F2B6F">
+          <AssociationSet Name="FK__PaqueteBo__Empre__5C8290C7" Association="Self.FK__PaqueteBo__Empre__5C8290C7">
             <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PaqueteBo__Sitio__5E6AD939" Association="Self.FK__PaqueteBo__Sitio__5E6AD939">
+            <End Role="MaestroBodegaSitios" EntitySet="MaestroBodegaSitios" />
             <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
           </AssociationSet>
           <AssociationSet Name="FK__PedidosDe__Pedid__70099B30" Association="Self.FK__PedidosDe__Pedid__70099B30">
@@ -6793,6 +6827,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="MaestroBodegaSitios" EntitySet="MaestroBodegaSitios" />
             <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
           </AssociationSet>
+          <AssociationSet Name="FK__PaqueteBo__Almac__59A6241C" Association="AventasModel.FK__PaqueteBo__Almac__59A6241C">
+            <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
+            <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PaqueteBo__Sitio__58B1FFE3" Association="AventasModel.FK__PaqueteBo__Sitio__58B1FFE3">
+            <End Role="MaestroBodegaSitios" EntitySet="MaestroBodegaSitios" />
+            <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -8895,6 +8937,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Estatus" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__MaestroBo__Empre__3FE65219" FromRole="MaestroBodegaAlmacenes" ToRole="Empresa" />
           <NavigationProperty Name="MaestroBodegaSitios" Relationship="AventasModel.FK__MaestroBo__Sitio__3EF22DE0" FromRole="MaestroBodegaAlmacenes" ToRole="MaestroBodegaSitios" />
+          <NavigationProperty Name="PaqueteBodegaEspecifico" Relationship="AventasModel.FK__PaqueteBo__Almac__59A6241C" FromRole="MaestroBodegaAlmacenes" ToRole="PaqueteBodegaEspecifico" />
         </EntityType>
         <EntityType Name="MaestroBodegaSitios">
           <Key>
@@ -8907,6 +8950,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Estatus" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__MaestroBo__Empre__3C15C135" FromRole="MaestroBodegaSitios" ToRole="Empresa" />
           <NavigationProperty Name="MaestroBodegaAlmacenes" Relationship="AventasModel.FK__MaestroBo__Sitio__3EF22DE0" FromRole="MaestroBodegaSitios" ToRole="MaestroBodegaAlmacenes" />
+          <NavigationProperty Name="PaqueteBodegaEspecifico" Relationship="AventasModel.FK__PaqueteBo__Sitio__58B1FFE3" FromRole="MaestroBodegaSitios" ToRole="PaqueteBodegaEspecifico" />
         </EntityType>
         <EntityType Name="PaqueteBodegaEspecifico">
           <Key>
@@ -8925,6 +8969,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PaqueteBo__Colec__46934FA8" FromRole="PaqueteBodegaEspecifico" ToRole="Colecciones" />
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__PaqueteBo__Empre__459F2B6F" FromRole="PaqueteBodegaEspecifico" ToRole="Empresa" />
+          <Property Name="SitioId" Type="Int32" />
+          <Property Name="AlmacenId" Type="Int32" />
+          <NavigationProperty Name="MaestroBodegaAlmacenes" Relationship="AventasModel.FK__PaqueteBo__Almac__59A6241C" FromRole="PaqueteBodegaEspecifico" ToRole="MaestroBodegaAlmacenes" />
+          <NavigationProperty Name="MaestroBodegaSitios" Relationship="AventasModel.FK__PaqueteBo__Sitio__58B1FFE3" FromRole="PaqueteBodegaEspecifico" ToRole="MaestroBodegaSitios" />
         </EntityType>
         <Association Name="FK__ListasPre__IdCol__652CE561">
           <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
@@ -9018,6 +9066,30 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               <PropertyRef Name="SitioId" />
             </Principal>
             <Dependent Role="MaestroBodegaAlmacenes">
+              <PropertyRef Name="SitioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PaqueteBo__Almac__59A6241C">
+          <End Type="AventasModel.MaestroBodegaAlmacenes" Role="MaestroBodegaAlmacenes" Multiplicity="0..1" />
+          <End Type="AventasModel.PaqueteBodegaEspecifico" Role="PaqueteBodegaEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroBodegaAlmacenes">
+              <PropertyRef Name="AlmacenId" />
+            </Principal>
+            <Dependent Role="PaqueteBodegaEspecifico">
+              <PropertyRef Name="AlmacenId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PaqueteBo__Sitio__58B1FFE3">
+          <End Type="AventasModel.MaestroBodegaSitios" Role="MaestroBodegaSitios" Multiplicity="0..1" />
+          <End Type="AventasModel.PaqueteBodegaEspecifico" Role="PaqueteBodegaEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroBodegaSitios">
+              <PropertyRef Name="SitioId" />
+            </Principal>
+            <Dependent Role="PaqueteBodegaEspecifico">
               <PropertyRef Name="SitioId" />
             </Dependent>
           </ReferentialConstraint>
@@ -10680,6 +10752,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PaqueteBodegaEspecifico">
             <EntityTypeMapping TypeName="AventasModel.PaqueteBodegaEspecifico">
               <MappingFragment StoreEntitySet="PaqueteBodegaEspecifico">
+                <ScalarProperty Name="AlmacenId" ColumnName="AlmacenId" />
+                <ScalarProperty Name="SitioId" ColumnName="SitioId" />
                 <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
                 <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
                 <ScalarProperty Name="ModificadoPor" ColumnName="ModificadoPor" />

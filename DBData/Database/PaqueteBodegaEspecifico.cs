@@ -25,8 +25,12 @@ namespace DBData.Database
         public string ModificadoPor { get; set; }
         public Nullable<System.DateTime> FechaCreacion { get; set; }
         public Nullable<System.DateTime> FechaModificacion { get; set; }
+        public Nullable<int> SitioId { get; set; }
+        public Nullable<int> AlmacenId { get; set; }
     
         public virtual Colecciones Colecciones { get; set; }
         public virtual Empresa Empresa { get; set; }
+        public virtual MaestroBodegaAlmacenes MaestroBodegaAlmacenes { get; set; }
+        public virtual MaestroBodegaSitios MaestroBodegaSitios { get; set; }
     }
 }

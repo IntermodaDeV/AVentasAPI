@@ -14,6 +14,12 @@ namespace DBData.Database
     
     public partial class MaestroBodegaAlmacenes
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public MaestroBodegaAlmacenes()
+        {
+            this.PaqueteBodegaEspecifico = new HashSet<PaqueteBodegaEspecifico>();
+        }
+    
         public int AlmacenId { get; set; }
         public string Almacen { get; set; }
         public string Nombre { get; set; }
@@ -24,5 +30,7 @@ namespace DBData.Database
     
         public virtual Empresa Empresa { get; set; }
         public virtual MaestroBodegaSitios MaestroBodegaSitios { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PaqueteBodegaEspecifico> PaqueteBodegaEspecifico { get; set; }
     }
 }

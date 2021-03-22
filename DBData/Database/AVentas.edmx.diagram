@@ -278,6 +278,8 @@
         <AssociationConnector Association="AventasModel.FK__PaqueteBo__Empre__459F2B6F" />
         <AssociationConnector Association="AventasModel.FK__ListasPre__Grupo__6621099A" />
         <AssociationConnector Association="AventasModel.FK__MaestroBo__Sitio__3EF22DE0" />
+        <AssociationConnector Association="AventasModel.FK__PaqueteBo__Almac__59A6241C" />
+        <AssociationConnector Association="AventasModel.FK__PaqueteBo__Sitio__58B1FFE3" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
