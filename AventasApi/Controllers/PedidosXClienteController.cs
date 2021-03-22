@@ -246,7 +246,10 @@ namespace AventasApi.Controllers
                             ModoVenta = Pedido.ModoVenta,
                             Flete = Pedido.Flete,
                             RequiereEntrega = Pedido.RequiereEntrega,
-                            ESTADO = 0
+                            ESTADO = 0,
+                            BodegaEspecifica = Pedido.BodegaEspecifica,
+                            Sitio = Pedido.Sitio,
+                            Almacen = Pedido.Almacen
                         };
 
                         //if (numeroReferencia == "")
@@ -322,7 +325,10 @@ namespace AventasApi.Controllers
                         ModoVenta = Pedido.ModoVenta,
                         Flete = Pedido.Flete,
                         RequiereEntrega = Pedido.RequiereEntrega,
-                        ESTADO = 0
+                        ESTADO = 0,
+                        BodegaEspecifica = Pedido.BodegaEspecifica,
+                        Sitio = Pedido.Sitio,
+                        Almacen = Pedido.Almacen
                     };
 
                     //if (numeroReferencia == "")

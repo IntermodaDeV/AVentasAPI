@@ -86,9 +86,16 @@ namespace AventasApi.Controllers
             {
                 using(AVentasEntities ctx=new AVentasEntities())
                 {
-                    var coleccion = await ctx.Colecciones.FirstOrDefaultAsync(x => x.CodigoColeccion == postPaquete.coleccion);                  
+                    var coleccion = await ctx.Colecciones.FirstOrDefaultAsync(x => x.CodigoColeccion == postPaquete.coleccion && x.EmpresaId==postPaquete.empresa);                  
                     var sitio = await ctx.MaestroBodegaSitios.FirstOrDefaultAsync(x => x.SitioId == postPaquete.sitio);
                     var almacen = await ctx.MaestroBodegaAlmacenes.FirstOrDefaultAsync(x => x.Almacen == postPaquete.almacen);
+
+                    var paqueteExistente = await ctx.PaqueteBodegaEspecifico.FirstOrDefaultAsync(x=>x.ColeccionId==coleccion.IdColeccion && x.EmpresaId==postPaquete.empresa && x.Almacen==postPaquete.almacen && x.Sitio==sitio.Sitio);
+
+                    if (paqueteExistente != null)
+                    {
+                        return BadRequest("El paquete ya ha sido registrado anteriormente");
+                    }
 
                     PaqueteBodegaEspecifico nuevoPaquete = new PaqueteBodegaEspecifico()
                     {
