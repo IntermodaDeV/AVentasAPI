@@ -465,6 +465,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="IdProducto" Type="int" Nullable="false" />
           <Property Name="Disponible" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Sitio" Type="varchar" MaxLength="100" />
+          <Property Name="Almacen" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="FormularioIntroDetalle">
           <Key>
@@ -616,6 +618,16 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
           <Property Name="IdColeccion" Type="int" />
         </EntityType>
+        <EntityType Name="ListasPreciosPaquetes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdColeccion" Type="int" />
+          <Property Name="GrupoPrecio" Type="varchar" MaxLength="50" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+          <Property Name="FechaUltSincronizacion" Type="datetime" />
+        </EntityType>
         <EntityType Name="LogSesion">
           <Key>
             <PropertyRef Name="Id" />
@@ -628,6 +640,28 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Longitud" Type="varchar" MaxLength="80" />
           <Property Name="Version_App" Type="varchar" MaxLength="50" />
           <Property Name="Fecha" Type="datetime" />
+        </EntityType>
+        <EntityType Name="MaestroBodegaAlmacenes">
+          <Key>
+            <PropertyRef Name="AlmacenId" />
+          </Key>
+          <Property Name="AlmacenId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Almacen" Type="varchar" MaxLength="100" />
+          <Property Name="Nombre" Type="varchar" MaxLength="250" />
+          <Property Name="SitioId" Type="int" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+          <Property Name="Etiqueta" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Estatus" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MaestroBodegaSitios">
+          <Key>
+            <PropertyRef Name="SitioId" />
+          </Key>
+          <Property Name="SitioId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Sitio" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="250" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+          <Property Name="Estatus" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="MaestroEdad">
           <Key>
@@ -711,6 +745,22 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
           <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="PaqueteBodegaEspecifico">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+          <Property Name="ColeccionId" Type="int" />
+          <Property Name="Etiqueta" Type="varchar" MaxLength="50" />
+          <Property Name="Estado" Type="bit" />
+          <Property Name="Sitio" Type="varchar" MaxLength="50" />
+          <Property Name="Almacen" Type="varchar" MaxLength="50" />
+          <Property Name="CreadoPor" Type="varchar" MaxLength="50" />
+          <Property Name="ModificadoPor" Type="varchar" MaxLength="50" />
+          <Property Name="FechaCreacion" Type="datetime" />
+          <Property Name="FechaModificacion" Type="datetime" />
+        </EntityType>
         <EntityType Name="PedidosDetalle">
           <Key>
             <PropertyRef Name="IdPedidoDetalle" />
@@ -780,6 +830,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="RequiereEntrega" Type="bit" Nullable="false" />
           <Property Name="Procesando" Type="bit" />
           <Property Name="ErrorAx" Type="varchar(max)" />
+          <Property Name="BodegaEspecifica" Type="bit" />
+          <Property Name="Sitio" Type="varchar" MaxLength="50" />
+          <Property Name="Almacen" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -822,6 +875,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="PedidoIdGenerado" Type="varchar" MaxLength="250" />
           <Property Name="EditedBy" Type="varchar" MaxLength="50" />
           <Property Name="EditedDate" Type="datetime" />
+          <Property Name="BodegaEspecifica" Type="bit" />
+          <Property Name="Sitio" Type="varchar" MaxLength="50" />
+          <Property Name="Almacen" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -1058,7 +1114,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="RespuestaId" Type="int" Nullable="false" />
           <Property Name="PreguntaId" Type="int" Nullable="false" />
           <Property Name="PreguntaOpcionesId" Type="int" />
-          <Property Name="RespuestaAlfanumerica" Type="varchar" MaxLength="150" />
+          <Property Name="RespuestaAlfanumerica" Type="varchar(max)" />
           <Property Name="RespuestaNumerica" Type="int" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -1309,6 +1365,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="FlagUsuarioOficina" Type="bit" />
           <Property Name="FlagAdministradorProductos" Type="bit" />
           <Property Name="SesionActiva" Type="bit" />
+          <Property Name="FlagBodegaEspecifico" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Usuarios_Asesores">
           <Key>
@@ -2179,6 +2236,78 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__ListasPre__Empre__67152DD3">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
+          <End Role="ListasPreciosPaquetes" Type="Self.ListasPreciosPaquetes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="ListasPreciosPaquetes">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ListasPre__Grupo__6621099A">
+          <End Role="MaestroGrupoPrecio" Type="Self.MaestroGrupoPrecio" Multiplicity="0..1" />
+          <End Role="ListasPreciosPaquetes" Type="Self.ListasPreciosPaquetes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroGrupoPrecio">
+              <PropertyRef Name="GrupoPrecio" />
+            </Principal>
+            <Dependent Role="ListasPreciosPaquetes">
+              <PropertyRef Name="GrupoPrecio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ListasPre__IdCol__652CE561">
+          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
+          <End Role="ListasPreciosPaquetes" Type="Self.ListasPreciosPaquetes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="ListasPreciosPaquetes">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MaestroBo__Empre__3C15C135">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
+          <End Role="MaestroBodegaSitios" Type="Self.MaestroBodegaSitios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="MaestroBodegaSitios">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MaestroBo__Empre__3FE65219">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
+          <End Role="MaestroBodegaAlmacenes" Type="Self.MaestroBodegaAlmacenes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="MaestroBodegaAlmacenes">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MaestroBo__Sitio__3EF22DE0">
+          <End Role="MaestroBodegaSitios" Type="Self.MaestroBodegaSitios" Multiplicity="0..1" />
+          <End Role="MaestroBodegaAlmacenes" Type="Self.MaestroBodegaAlmacenes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroBodegaSitios">
+              <PropertyRef Name="SitioId" />
+            </Principal>
+            <Dependent Role="MaestroBodegaAlmacenes">
+              <PropertyRef Name="SitioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__MonedasxE__Empre__3D7E1B63">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
           <End Role="MonedasxEmpresa" Type="Self.MonedasxEmpresa" Multiplicity="*" />
@@ -2236,6 +2365,30 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="Pantallas_Funciones">
               <PropertyRef Name="IdPantalla" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PaqueteBo__Colec__46934FA8">
+          <End Role="Colecciones" Type="Self.Colecciones" Multiplicity="0..1" />
+          <End Role="PaqueteBodegaEspecifico" Type="Self.PaqueteBodegaEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="PaqueteBodegaEspecifico">
+              <PropertyRef Name="ColeccionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PaqueteBo__Empre__459F2B6F">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
+          <End Role="PaqueteBodegaEspecifico" Type="Self.PaqueteBodegaEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="PaqueteBodegaEspecifico">
+              <PropertyRef Name="EmpresaId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3387,7 +3540,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="GrupoTalla" EntityType="Self.GrupoTalla" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LimiteCreditoxCliente" EntityType="Self.LimiteCreditoxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LineasxColeccion" EntityType="Self.LineasxColeccion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ListasPreciosPaquetes" EntityType="Self.ListasPreciosPaquetes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LogSesion" EntityType="Self.LogSesion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MaestroBodegaAlmacenes" EntityType="Self.MaestroBodegaAlmacenes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MaestroBodegaSitios" EntityType="Self.MaestroBodegaSitios" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaestroEdad" EntityType="Self.MaestroEdad" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaestroGrupoPrecio" EntityType="Self.MaestroGrupoPrecio" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaestroLinea" EntityType="Self.MaestroLinea" Schema="dbo" store:Type="Tables" />
@@ -3396,6 +3552,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="Pantallas" EntityType="Self.Pantallas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pantallas_Funciones" EntityType="Self.Pantallas_Funciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PantallasxUsuario" EntityType="Self.PantallasxUsuario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PaqueteBodegaEspecifico" EntityType="Self.PaqueteBodegaEspecifico" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PedidosDetalle" EntityType="Self.PedidosDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PedidosDetalleFlotante" EntityType="Self.PedidosDetalleFlotante" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PedidosxCliente" EntityType="Self.PedidosxCliente" Schema="dbo" store:Type="Tables" />
@@ -3761,6 +3918,30 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="LineasxColeccion" EntitySet="LineasxColeccion" />
           </AssociationSet>
+          <AssociationSet Name="FK__ListasPre__Empre__67152DD3" Association="Self.FK__ListasPre__Empre__67152DD3">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="ListasPreciosPaquetes" EntitySet="ListasPreciosPaquetes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ListasPre__Grupo__6621099A" Association="Self.FK__ListasPre__Grupo__6621099A">
+            <End Role="MaestroGrupoPrecio" EntitySet="MaestroGrupoPrecio" />
+            <End Role="ListasPreciosPaquetes" EntitySet="ListasPreciosPaquetes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ListasPre__IdCol__652CE561" Association="Self.FK__ListasPre__IdCol__652CE561">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="ListasPreciosPaquetes" EntitySet="ListasPreciosPaquetes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MaestroBo__Empre__3C15C135" Association="Self.FK__MaestroBo__Empre__3C15C135">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="MaestroBodegaSitios" EntitySet="MaestroBodegaSitios" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MaestroBo__Empre__3FE65219" Association="Self.FK__MaestroBo__Empre__3FE65219">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MaestroBo__Sitio__3EF22DE0" Association="Self.FK__MaestroBo__Sitio__3EF22DE0">
+            <End Role="MaestroBodegaSitios" EntitySet="MaestroBodegaSitios" />
+            <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
+          </AssociationSet>
           <AssociationSet Name="FK__MonedasxE__Empre__3D7E1B63" Association="Self.FK__MonedasxE__Empre__3D7E1B63">
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="MonedasxEmpresa" EntitySet="MonedasxEmpresa" />
@@ -3780,6 +3961,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK__Pantallas__IdPan__783FB9D5" Association="Self.FK__Pantallas__IdPan__783FB9D5">
             <End Role="Pantallas" EntitySet="Pantallas" />
             <End Role="Pantallas_Funciones" EntitySet="Pantallas_Funciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PaqueteBo__Colec__46934FA8" Association="Self.FK__PaqueteBo__Colec__46934FA8">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PaqueteBo__Empre__459F2B6F" Association="Self.FK__PaqueteBo__Empre__459F2B6F">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
           </AssociationSet>
           <AssociationSet Name="FK__PedidosDe__Pedid__70099B30" Association="Self.FK__PedidosDe__Pedid__70099B30">
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
@@ -4479,6 +4668,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Coleccion__FotoP__405A880E" FromRole="Empresa" ToRole="Colecciones" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C1" FromRole="Empresa" ToRole="PedidosxClienteFlotante" />
           <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__Empre__0E4EF685" FromRole="Empresa" ToRole="DocumentosTransitoxFactura" />
+          <NavigationProperty Name="ListasPreciosPaquetes" Relationship="AventasModel.FK__ListasPre__Empre__67152DD3" FromRole="Empresa" ToRole="ListasPreciosPaquetes" />
+          <NavigationProperty Name="MaestroBodegaSitios" Relationship="AventasModel.FK__MaestroBo__Empre__3C15C135" FromRole="Empresa" ToRole="MaestroBodegaSitios" />
+          <NavigationProperty Name="MaestroBodegaAlmacenes" Relationship="AventasModel.FK__MaestroBo__Empre__3FE65219" FromRole="Empresa" ToRole="MaestroBodegaAlmacenes" />
+          <NavigationProperty Name="PaqueteBodegaEspecifico" Relationship="AventasModel.FK__PaqueteBo__Empre__459F2B6F" FromRole="Empresa" ToRole="PaqueteBodegaEspecifico" />
         </EntityType>
         <EntityType Name="Errores">
           <Key>
@@ -4638,6 +4831,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Clientes" Relationship="Self.FK__Clientes__GrupoP__3A5795F5" FromRole="MaestroGrupoPrecio" ToRole="Clientes" />
           <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__Grupo__386F4D83" FromRole="MaestroGrupoPrecio" ToRole="PrecioEspecifico" />
+          <NavigationProperty Name="ListasPreciosPaquetes" Relationship="AventasModel.FK__ListasPre__Grupo__6621099A" FromRole="MaestroGrupoPrecio" ToRole="ListasPreciosPaquetes" />
         </EntityType>
         <EntityType Name="MaestroLinea">
           <Key>
@@ -6563,6 +6757,42 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Respuestas" EntitySet="Respuestas" />
             <End Role="RespuestaAnidadaDetalle" EntitySet="RespuestaAnidadaDetalle" />
           </AssociationSet>
+          <EntitySet Name="ListasPreciosPaquetes" EntityType="AventasModel.ListasPreciosPaquetes" />
+          <EntitySet Name="MaestroBodegaAlmacenes" EntityType="AventasModel.MaestroBodegaAlmacenes" />
+          <EntitySet Name="MaestroBodegaSitios" EntityType="AventasModel.MaestroBodegaSitios" />
+          <EntitySet Name="PaqueteBodegaEspecifico" EntityType="AventasModel.PaqueteBodegaEspecifico" />
+          <AssociationSet Name="FK__ListasPre__IdCol__652CE561" Association="AventasModel.FK__ListasPre__IdCol__652CE561">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="ListasPreciosPaquetes" EntitySet="ListasPreciosPaquetes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PaqueteBo__Colec__46934FA8" Association="AventasModel.FK__PaqueteBo__Colec__46934FA8">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ListasPre__Empre__67152DD3" Association="AventasModel.FK__ListasPre__Empre__67152DD3">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="ListasPreciosPaquetes" EntitySet="ListasPreciosPaquetes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MaestroBo__Empre__3C15C135" Association="AventasModel.FK__MaestroBo__Empre__3C15C135">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="MaestroBodegaSitios" EntitySet="MaestroBodegaSitios" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MaestroBo__Empre__3FE65219" Association="AventasModel.FK__MaestroBo__Empre__3FE65219">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PaqueteBo__Empre__459F2B6F" Association="AventasModel.FK__PaqueteBo__Empre__459F2B6F">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ListasPre__Grupo__6621099A" Association="AventasModel.FK__ListasPre__Grupo__6621099A">
+            <End Role="MaestroGrupoPrecio" EntitySet="MaestroGrupoPrecio" />
+            <End Role="ListasPreciosPaquetes" EntitySet="ListasPreciosPaquetes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MaestroBo__Sitio__3EF22DE0" Association="AventasModel.FK__MaestroBo__Sitio__3EF22DE0">
+            <End Role="MaestroBodegaSitios" EntitySet="MaestroBodegaSitios" />
+            <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -6811,6 +7041,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Procesando" Type="Boolean" />
           <Property Name="ErrorAx" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="PedidosxCliente" ToRole="Colecciones" />
+          <Property Name="BodegaEspecifica" Type="Boolean" />
+          <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK__PedidosxC__Codig__6B44E613">
           <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="0..1" />
@@ -7000,6 +7233,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Colores" Relationship="AventasModel.FK__FisicoDis__Codig__7B7B4DDC" FromRole="FisicoDisponible" ToRole="Colores" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__FisicoDis__MinSt__7A8729A3" FromRole="FisicoDisponible" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdFis__396371BC" FromRole="FisicoDisponible" ToRole="PrecioEspecifico" />
+          <Property Name="Sitio" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Almacen" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK__FisicoDis__Codig__7B7B4DDC">
           <End Type="AventasModel.Colores" Role="Colores" Multiplicity="0..1" />
@@ -7423,6 +7658,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Respuestas" Relationship="AventasModel.FK_USUARIOS_ID_RESPUESTA_USUARIOID" FromRole="Usuarios" ToRole="Respuestas" />
           <NavigationProperty Name="LogSesion" Relationship="AventasModel.FK_LOGSESION_USUARIO_FK_USUARIOS_ID" FromRole="Usuarios" ToRole="LogSesion" />
           <Property Name="SesionActiva" Type="Boolean" />
+          <Property Name="FlagBodegaEspecifico" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK__Usuarios__Empres__28E2F130">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -7743,7 +7979,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="RespuestaId" Type="Int32" Nullable="false" />
           <Property Name="PreguntaId" Type="Int32" Nullable="false" />
           <Property Name="PreguntaOpcionesId" Type="Int32" />
-          <Property Name="RespuestaAlfanumerica" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="RespuestaAlfanumerica" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="RespuestaNumerica" Type="Int32" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
@@ -7935,6 +8171,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="Colecciones" ToRole="PedidosxCliente" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__Productos__IdCol__4DB4832C" FromRole="Colecciones" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E851" FromRole="Colecciones" ToRole="PedidosxClienteFlotante" />
+          <NavigationProperty Name="ListasPreciosPaquetes" Relationship="AventasModel.FK__ListasPre__IdCol__652CE561" FromRole="Colecciones" ToRole="ListasPreciosPaquetes" />
+          <NavigationProperty Name="PaqueteBodegaEspecifico" Relationship="AventasModel.FK__PaqueteBo__Colec__46934FA8" FromRole="Colecciones" ToRole="PaqueteBodegaEspecifico" />
         </EntityType>
         <Association Name="FK__Atributos__IdCol__6DF7358C">
           <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
@@ -8089,6 +8327,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" FromRole="PedidosxClienteFlotante" ToRole="TiposdePedido" />
           <Property Name="EditedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="EditedDate" Type="DateTime" Precision="3" />
+          <Property Name="BodegaEspecifica" Type="Boolean" />
+          <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK__PedidosxC__Codig__6B44E6131">
           <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="0..1" />
@@ -8625,6 +8866,159 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="RespuestaAnidadaDetalle">
               <PropertyRef Name="RespuestaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ListasPreciosPaquetes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdColeccion" Type="Int32" />
+          <Property Name="GrupoPrecio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FechaUltSincronizacion" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__ListasPre__IdCol__652CE561" FromRole="ListasPreciosPaquetes" ToRole="Colecciones" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__ListasPre__Empre__67152DD3" FromRole="ListasPreciosPaquetes" ToRole="Empresa" />
+          <NavigationProperty Name="MaestroGrupoPrecio" Relationship="AventasModel.FK__ListasPre__Grupo__6621099A" FromRole="ListasPreciosPaquetes" ToRole="MaestroGrupoPrecio" />
+        </EntityType>
+        <EntityType Name="MaestroBodegaAlmacenes">
+          <Key>
+            <PropertyRef Name="AlmacenId" />
+          </Key>
+          <Property Name="AlmacenId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Almacen" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Nombre" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="SitioId" Type="Int32" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Etiqueta" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Estatus" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__MaestroBo__Empre__3FE65219" FromRole="MaestroBodegaAlmacenes" ToRole="Empresa" />
+          <NavigationProperty Name="MaestroBodegaSitios" Relationship="AventasModel.FK__MaestroBo__Sitio__3EF22DE0" FromRole="MaestroBodegaAlmacenes" ToRole="MaestroBodegaSitios" />
+        </EntityType>
+        <EntityType Name="MaestroBodegaSitios">
+          <Key>
+            <PropertyRef Name="SitioId" />
+          </Key>
+          <Property Name="SitioId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Sitio" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Nombre" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Estatus" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__MaestroBo__Empre__3C15C135" FromRole="MaestroBodegaSitios" ToRole="Empresa" />
+          <NavigationProperty Name="MaestroBodegaAlmacenes" Relationship="AventasModel.FK__MaestroBo__Sitio__3EF22DE0" FromRole="MaestroBodegaSitios" ToRole="MaestroBodegaAlmacenes" />
+        </EntityType>
+        <EntityType Name="PaqueteBodegaEspecifico">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="ColeccionId" Type="Int32" />
+          <Property Name="Etiqueta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Boolean" />
+          <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreadoPor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ModificadoPor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PaqueteBo__Colec__46934FA8" FromRole="PaqueteBodegaEspecifico" ToRole="Colecciones" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__PaqueteBo__Empre__459F2B6F" FromRole="PaqueteBodegaEspecifico" ToRole="Empresa" />
+        </EntityType>
+        <Association Name="FK__ListasPre__IdCol__652CE561">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.ListasPreciosPaquetes" Role="ListasPreciosPaquetes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="ListasPreciosPaquetes">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PaqueteBo__Colec__46934FA8">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.PaqueteBodegaEspecifico" Role="PaqueteBodegaEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="PaqueteBodegaEspecifico">
+              <PropertyRef Name="ColeccionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ListasPre__Empre__67152DD3">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.ListasPreciosPaquetes" Role="ListasPreciosPaquetes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="ListasPreciosPaquetes">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MaestroBo__Empre__3C15C135">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.MaestroBodegaSitios" Role="MaestroBodegaSitios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="MaestroBodegaSitios">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MaestroBo__Empre__3FE65219">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.MaestroBodegaAlmacenes" Role="MaestroBodegaAlmacenes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="MaestroBodegaAlmacenes">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PaqueteBo__Empre__459F2B6F">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.PaqueteBodegaEspecifico" Role="PaqueteBodegaEspecifico" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="PaqueteBodegaEspecifico">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ListasPre__Grupo__6621099A">
+          <End Type="AventasModel.MaestroGrupoPrecio" Role="MaestroGrupoPrecio" Multiplicity="0..1" />
+          <End Type="AventasModel.ListasPreciosPaquetes" Role="ListasPreciosPaquetes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroGrupoPrecio">
+              <PropertyRef Name="GrupoPrecio" />
+            </Principal>
+            <Dependent Role="ListasPreciosPaquetes">
+              <PropertyRef Name="GrupoPrecio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MaestroBo__Sitio__3EF22DE0">
+          <End Type="AventasModel.MaestroBodegaSitios" Role="MaestroBodegaSitios" Multiplicity="0..1" />
+          <End Type="AventasModel.MaestroBodegaAlmacenes" Role="MaestroBodegaAlmacenes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroBodegaSitios">
+              <PropertyRef Name="SitioId" />
+            </Principal>
+            <Dependent Role="MaestroBodegaAlmacenes">
+              <PropertyRef Name="SitioId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -9540,6 +9934,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="Almacen" ColumnName="Almacen" />
+                <ScalarProperty Name="Sitio" ColumnName="Sitio" />
+                <ScalarProperty Name="BodegaEspecifica" ColumnName="BodegaEspecifica" />
                 <ScalarProperty Name="ErrorAx" ColumnName="ErrorAx" />
                 <ScalarProperty Name="Procesando" ColumnName="Procesando" />
                 <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
@@ -9623,6 +10020,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="FisicoDisponible">
             <EntityTypeMapping TypeName="AventasModel.FisicoDisponible">
               <MappingFragment StoreEntitySet="FisicoDisponible">
+                <ScalarProperty Name="Almacen" ColumnName="Almacen" />
+                <ScalarProperty Name="Sitio" ColumnName="Sitio" />
                 <ScalarProperty Name="MinStock" ColumnName="MinStock" />
                 <ScalarProperty Name="Disponible" ColumnName="Disponible" />
                 <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
@@ -9805,6 +10204,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Usuarios">
             <EntityTypeMapping TypeName="AventasModel.Usuarios">
               <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="FlagBodegaEspecifico" ColumnName="FlagBodegaEspecifico" />
                 <ScalarProperty Name="SesionActiva" ColumnName="SesionActiva" />
                 <ScalarProperty Name="FlagAdministradorProductos" ColumnName="FlagAdministradorProductos" />
                 <ScalarProperty Name="FlagUsuarioOficina" ColumnName="FlagUsuarioOficina" />
@@ -10051,6 +10451,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosxClienteFlotante">
             <EntityTypeMapping TypeName="AventasModel.PedidosxClienteFlotante">
               <MappingFragment StoreEntitySet="PedidosxClienteFlotante">
+                <ScalarProperty Name="Almacen" ColumnName="Almacen" />
+                <ScalarProperty Name="Sitio" ColumnName="Sitio" />
+                <ScalarProperty Name="BodegaEspecifica" ColumnName="BodegaEspecifica" />
                 <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
                 <ScalarProperty Name="EditedBy" ColumnName="EditedBy" />
                 <ScalarProperty Name="PedidoIdGenerado" ColumnName="PedidoIdGenerado" />
@@ -10235,6 +10638,58 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="PreguntaOpcionesAnidadasId" ColumnName="PreguntaOpcionesAnidadasId" />
                 <ScalarProperty Name="PreguntaAnidadaId" ColumnName="PreguntaAnidadaId" />
                 <ScalarProperty Name="RespuestaId" ColumnName="RespuestaId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ListasPreciosPaquetes">
+            <EntityTypeMapping TypeName="AventasModel.ListasPreciosPaquetes">
+              <MappingFragment StoreEntitySet="ListasPreciosPaquetes">
+                <ScalarProperty Name="FechaUltSincronizacion" ColumnName="FechaUltSincronizacion" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="GrupoPrecio" ColumnName="GrupoPrecio" />
+                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MaestroBodegaAlmacenes">
+            <EntityTypeMapping TypeName="AventasModel.MaestroBodegaAlmacenes">
+              <MappingFragment StoreEntitySet="MaestroBodegaAlmacenes">
+                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
+                <ScalarProperty Name="Etiqueta" ColumnName="Etiqueta" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="SitioId" ColumnName="SitioId" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Almacen" ColumnName="Almacen" />
+                <ScalarProperty Name="AlmacenId" ColumnName="AlmacenId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MaestroBodegaSitios">
+            <EntityTypeMapping TypeName="AventasModel.MaestroBodegaSitios">
+              <MappingFragment StoreEntitySet="MaestroBodegaSitios">
+                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Sitio" ColumnName="Sitio" />
+                <ScalarProperty Name="SitioId" ColumnName="SitioId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PaqueteBodegaEspecifico">
+            <EntityTypeMapping TypeName="AventasModel.PaqueteBodegaEspecifico">
+              <MappingFragment StoreEntitySet="PaqueteBodegaEspecifico">
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="ModificadoPor" ColumnName="ModificadoPor" />
+                <ScalarProperty Name="CreadoPor" ColumnName="CreadoPor" />
+                <ScalarProperty Name="Almacen" ColumnName="Almacen" />
+                <ScalarProperty Name="Sitio" ColumnName="Sitio" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Etiqueta" ColumnName="Etiqueta" />
+                <ScalarProperty Name="ColeccionId" ColumnName="ColeccionId" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

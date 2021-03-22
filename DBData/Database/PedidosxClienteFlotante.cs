@@ -57,6 +57,9 @@ namespace DBData.Database
         public string PedidoIdGenerado { get; set; }
         public string EditedBy { get; set; }
         public Nullable<System.DateTime> EditedDate { get; set; }
+        public Nullable<bool> BodegaEspecifica { get; set; }
+        public string Sitio { get; set; }
+        public string Almacen { get; set; }
     
         public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }

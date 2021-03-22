@@ -36,6 +36,10 @@ namespace DBData.Database
             this.Colecciones = new HashSet<Colecciones>();
             this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
             this.DocumentosTransitoxFactura = new HashSet<DocumentosTransitoxFactura>();
+            this.ListasPreciosPaquetes = new HashSet<ListasPreciosPaquetes>();
+            this.MaestroBodegaSitios = new HashSet<MaestroBodegaSitios>();
+            this.MaestroBodegaAlmacenes = new HashSet<MaestroBodegaAlmacenes>();
+            this.PaqueteBodegaEspecifico = new HashSet<PaqueteBodegaEspecifico>();
         }
     
         public string EmpresaId { get; set; }
@@ -86,5 +90,13 @@ namespace DBData.Database
         public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DocumentosTransitoxFactura> DocumentosTransitoxFactura { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ListasPreciosPaquetes> ListasPreciosPaquetes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MaestroBodegaSitios> MaestroBodegaSitios { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MaestroBodegaAlmacenes> MaestroBodegaAlmacenes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PaqueteBodegaEspecifico> PaqueteBodegaEspecifico { get; set; }
     }
 }

@@ -53,6 +53,9 @@ namespace DBData.Database
         public bool Sincronizado { get; set; }
         public Nullable<bool> Procesando { get; set; }
         public string ErrorAx { get; set; }
+        public Nullable<bool> BodegaEspecifica { get; set; }
+        public string Sitio { get; set; }
+        public string Almacen { get; set; }
     
         public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }

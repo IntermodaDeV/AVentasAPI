@@ -130,6 +130,10 @@ namespace DBData.Database
         public virtual DbSet<PreguntasAnidadas> PreguntasAnidadas { get; set; }
         public virtual DbSet<PreguntasOpcionesAnidadas> PreguntasOpcionesAnidadas { get; set; }
         public virtual DbSet<RespuestaAnidadaDetalle> RespuestaAnidadaDetalle { get; set; }
+        public virtual DbSet<ListasPreciosPaquetes> ListasPreciosPaquetes { get; set; }
+        public virtual DbSet<MaestroBodegaAlmacenes> MaestroBodegaAlmacenes { get; set; }
+        public virtual DbSet<MaestroBodegaSitios> MaestroBodegaSitios { get; set; }
+        public virtual DbSet<PaqueteBodegaEspecifico> PaqueteBodegaEspecifico { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

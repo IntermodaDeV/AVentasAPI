@@ -266,6 +266,18 @@
         <AssociationConnector Association="AventasModel.FK_PREGUNTA_ID_RESPUESTAANIDADADETALLE_PREGUNTAID" />
         <AssociationConnector Association="AventasModel.FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID" />
         <AssociationConnector Association="AventasModel.FK_RESPUESTAANIDADA_ID_RESPUESTADETALLE_RESPUESTAID" />
+        <EntityTypeShape EntityType="AventasModel.ListasPreciosPaquetes" Width="1.5" PointX="27.75" PointY="45.25" />
+        <EntityTypeShape EntityType="AventasModel.MaestroBodegaAlmacenes" Width="1.5" PointX="13.25" PointY="55.125" />
+        <EntityTypeShape EntityType="AventasModel.MaestroBodegaSitios" Width="1.5" PointX="3" PointY="37.625" />
+        <EntityTypeShape EntityType="AventasModel.PaqueteBodegaEspecifico" Width="1.5" PointX="21.25" PointY="37.375" />
+        <AssociationConnector Association="AventasModel.FK__ListasPre__IdCol__652CE561" />
+        <AssociationConnector Association="AventasModel.FK__PaqueteBo__Colec__46934FA8" />
+        <AssociationConnector Association="AventasModel.FK__ListasPre__Empre__67152DD3" />
+        <AssociationConnector Association="AventasModel.FK__MaestroBo__Empre__3C15C135" />
+        <AssociationConnector Association="AventasModel.FK__MaestroBo__Empre__3FE65219" />
+        <AssociationConnector Association="AventasModel.FK__PaqueteBo__Empre__459F2B6F" />
+        <AssociationConnector Association="AventasModel.FK__ListasPre__Grupo__6621099A" />
+        <AssociationConnector Association="AventasModel.FK__MaestroBo__Sitio__3EF22DE0" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

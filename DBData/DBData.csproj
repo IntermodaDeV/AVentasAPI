@@ -237,6 +237,9 @@
     <Compile Include="Database\LineasxColeccion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ListasPreciosPaquetes.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\LISTA_EJECUCION.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
@@ -251,6 +254,12 @@
     </Compile>
     <Compile Include="Database\LOG_EJECUCION.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\MaestroBodegaAlmacenes.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\MaestroBodegaSitios.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\MaestroEdad.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
@@ -277,6 +286,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\Pantallas_Funciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\PaqueteBodegaEspecifico.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\PARAMETROS_LE_ESPECIFICO.cs">

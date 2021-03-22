@@ -164,7 +164,10 @@ namespace AventasApi.Controllers
                         ClienteContadoId = Pedido.ClienteContadoId,
                         ModoVenta = Pedido.ModoVenta,
                         Flete = Pedido.Flete,
-                        RequiereEntrega = Pedido.RequiereEntrega
+                        RequiereEntrega = Pedido.RequiereEntrega,
+                        BodegaEspecifica=Pedido.BodegaEspecifica,
+                        Sitio=Pedido.Sitio,
+                        Almacen=Pedido.Almacen
                     };
 
                     foreach (var detalle in Pedido.DetallePedido)
@@ -748,9 +751,10 @@ namespace AventasApi.Controllers
                         SALES_MANAGER = pedidoDB.Asesores.Usuario,
                         SALES_ORDER_TYPE = (pedidoDB.Colecciones.TiposdeColeccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
                         USER = pedidoDB.Asesores.Usuario,
-                        INCLUDE_TAX = "0"
-
-
+                        INCLUDE_TAX = "0",
+                        ESPEC_INV = pedidoDB.BodegaEspecifica == null ? "0" : (pedidoDB.BodegaEspecifica.Value ? "1" : "0"),
+                        LOCATION = pedidoDB.Almacen,
+                        SITE = pedidoDB.Sitio
                     };
                     if (pedidoDB.ClienteContadoId != null)
                     {
@@ -1116,7 +1120,10 @@ namespace AventasApi.Controllers
                         Sincronizado = false,
                         Procesando = false,
                         PedidoId = numeroReferencia,
-                        NumeroPedido = ""
+                        NumeroPedido = "",
+                        BodegaEspecifica=pedido.BodegaEspecifica,
+                        Sitio=pedido.Sitio,
+                        Almacen=pedido.Almacen
                     };
 
                     foreach (var detalle in pedido.PedidosDetalleFlotante)

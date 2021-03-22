@@ -12,25 +12,22 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class MaestroGrupoPrecio
+    public partial class MaestroBodegaSitios
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public MaestroGrupoPrecio()
+        public MaestroBodegaSitios()
         {
-            this.Clientes = new HashSet<Clientes>();
-            this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
-            this.ListasPreciosPaquetes = new HashSet<ListasPreciosPaquetes>();
+            this.MaestroBodegaAlmacenes = new HashSet<MaestroBodegaAlmacenes>();
         }
     
-        public string GrupoPrecio { get; set; }
-        public string Descripcion { get; set; }
+        public int SitioId { get; set; }
+        public string Sitio { get; set; }
+        public string Nombre { get; set; }
         public string EmpresaId { get; set; }
+        public bool Estatus { get; set; }
     
+        public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Clientes> Clientes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ListasPreciosPaquetes> ListasPreciosPaquetes { get; set; }
+        public virtual ICollection<MaestroBodegaAlmacenes> MaestroBodegaAlmacenes { get; set; }
     }
 }

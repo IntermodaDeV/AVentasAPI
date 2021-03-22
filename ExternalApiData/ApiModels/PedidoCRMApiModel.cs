@@ -30,6 +30,9 @@ namespace ExternalApiData.Models.ApiModels
         public string FISCAL_DOCUMENT { get; set; }
         public string PHONE { get; set; }
         public string INCLUDE_TAX { get; set; }
+        public string ESPEC_INV { get; set; }
+        public string SITE { get; set; }
+        public string LOCATION { get; set; }
 
         public List<PedidoJsonItems> PedidoJsonItems { get; set; }
     }

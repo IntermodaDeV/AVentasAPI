@@ -237,6 +237,22 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/colecciones/bodega")]
+        public async Task<IHttpActionResult> ObtenerColeccionesBodega()
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var colecciones = await ctx.Colecciones.Where(x => x.ColeccionTipo != "F" && x.ColeccionTipo != "N/A" && x.ColeccionTipo != "W" && x.Estatus==1).Select(x => new { Codigo=x.CodigoColeccion }).Distinct().ToListAsync();
+                    return Ok(colecciones);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+        [HttpGet]
         [Route("~/api/colecciones/{linea}/{pais}")]
         public async Task<IHttpActionResult> GetColeccionesPorLinea(string linea,string pais)
         {
