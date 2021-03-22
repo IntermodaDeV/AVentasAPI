@@ -671,7 +671,7 @@ namespace AventasApi.Controllers
                 {
                     var encuesta = await db.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == Id && e.EncuestaId == encuestaId);
                     var UsuariosConAcceso = db.Secciones_Usuarios.Where(x => x.SeccionId == encuesta.Id && x.Status == true).Select(x => x.UsuarioId).ToList();
-                    var ListaUsuarios = await db.Usuarios.Where(e => UsuariosConAcceso.Contains(e.Id)).Select(e => new UsuarioModel
+                    var ListaUsuarios = await db.Usuarios.Where(e => UsuariosConAcceso.Contains(e.Id) && e.status == true).Select(e => new UsuarioModel
                     {
                         Id = e.Id,
                         Nombre = e.nombre                        
@@ -697,7 +697,7 @@ namespace AventasApi.Controllers
                     var encuesta = await db.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == Id && e.EncuestaId == encuestaId);
                     var UsuariosConAcceso = await db.Secciones_Usuarios.Where(x => x.SeccionId == encuesta.Id && x.Status == true).Select(x => x.UsuarioId).ToListAsync();
                     var EmpresaEncuesta = await db.Empresa_Encuesta.Where(x => x.EncuestaId == encuestaId && x.Status == true).Select(x=> x.EmpresaId).ToListAsync();
-                    var ListaUsuarios = await db.Usuarios.Where(e => !UsuariosConAcceso.Contains(e.Id) && EmpresaEncuesta.Contains(e.EmpresaId)).Select(e => new UsuarioModel
+                    var ListaUsuarios = await db.Usuarios.Where(e => !UsuariosConAcceso.Contains(e.Id) && EmpresaEncuesta.Contains(e.EmpresaId) && e.status == true).Select(e => new UsuarioModel
                     {
                         Id = e.Id,
                         Nombre = e.nombre

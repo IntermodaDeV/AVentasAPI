@@ -47,7 +47,8 @@ namespace AventasApi.Controllers
                         BloqueoCredito=x.BloqueoInfoCredito,
                         BloqueoAsesores=x.FlagTodosAsesores,
                         UsuarioOficina = x.FlagUsuarioOficina,
-                        AdministradorProductos=x.FlagAdministradorProductos
+                        AdministradorProductos=x.FlagAdministradorProductos,
+                        ManejaBodegaEspecifico = x.FlagBodegaEspecifico
                     }).ToListAsync();
                     return Ok(usuarios);
                 }
@@ -325,6 +326,34 @@ namespace AventasApi.Controllers
                     }
 
                     usuario.FlagAdministradorProductos = !usuario.FlagAdministradorProductos;
+                    usuario.ModifiedDate = DateTime.Now;
+                    usuario.ModifiedBy = user;
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("estado/bodegaEspecifico/{id}/{user}")]
+        public async Task<IHttpActionResult> EstadoBodegaEspecifico(int id, string user)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var usuario = await ctx.Usuarios.FindAsync(id);
+
+                    if (usuario == null)
+                    {
+                        return BadRequest("El usuario no existe.");
+                    }
+
+                    usuario.FlagBodegaEspecifico = !usuario.FlagBodegaEspecifico;
                     usuario.ModifiedDate = DateTime.Now;
                     usuario.ModifiedBy = user;
                     var result = await ctx.SaveChangesAsync();

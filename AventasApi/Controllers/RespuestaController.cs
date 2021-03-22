@@ -44,8 +44,8 @@ namespace AventasApi.Controllers
                         var result = await db.SaveChangesAsync();
 
                         respuestaId = db.Respuestas.OrderByDescending(r => r.Id).Select(r => r.Id).FirstOrDefault();
-                        _ = RegistrarRespuestasDetalle(Respuestas.RespuestasDetalle, respuestaId, Respuestas.Usuario);
-                        _ = RegistrarRespuestasAnidadaDetalle(Respuestas.RespuestasAnidadasDetalle, respuestaId, Respuestas.Usuario);
+                        _ = RegistrarRespuestasDetalle(Respuestas.RespuestasDetalle, Respuesta.Id, Respuestas.Usuario);
+                        _ = RegistrarRespuestasAnidadaDetalle(Respuestas.RespuestasAnidadasDetalle, Respuesta.Id, Respuestas.Usuario);
 
                     return Ok("Ok");
                     }
