@@ -22,7 +22,7 @@ namespace AventasApi.Controllers
                 {
                     var SitioPrincipal = db.Configuraciones.Where(s => s.CodigoConfiguracion == "SitioPrincipal").Select(s => s.Valor).FirstOrDefault();
                     var BodegaPrincipal = db.Configuraciones.Where(s => s.CodigoConfiguracion == "BodegaPrincipal").Select(s => s.Valor).FirstOrDefault();
-                    List<BodegaAlmacenesViewModel> bodegaAlmacenes = await  db.MaestroBodegaAlmacenes.Select(ma => new BodegaAlmacenesViewModel
+                    List<BodegaAlmacenesViewModel> bodegaAlmacenes = await  db.MaestroBodegaAlmacenes.Where(x=>x.Estatus==true).Select(ma => new BodegaAlmacenesViewModel
                     {
                         AlmacenId = ma.AlmacenId,
                         Almacen = ma.Almacen,

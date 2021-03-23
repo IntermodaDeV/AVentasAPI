@@ -285,8 +285,11 @@ namespace AventasApi.Controllers
 
                         return Ok(ColeccioneBE);
                     }
+
+                    var paquetesBodegaEspecifico = await ctx.PaqueteBodegaEspecifico.Select(x => x.ColeccionId).ToListAsync();
                     List<ColeccionViewModel> colecciones = await ctx.Colecciones
                         .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today
+                               && !paquetesBodegaEspecifico.Contains(vw_coleccion.IdColeccion)
                                && vw_coleccion.VentaFinal >= DateTime.Today
                                && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()
                                && vw_coleccion.LineasxColeccion.Select(x => x.IdLinea).Contains(linea))
@@ -596,13 +599,14 @@ namespace AventasApi.Controllers
                     string urlImagenes = ctx.Configuraciones.FirstOrDefault(conf => conf.CodigoConfiguracion == "UrlImages")?.Valor ?? "";
                     List<ColeccionViewModel> listaColecciones = new List<ColeccionViewModel>();
                     List<string> ListaGrupoPrecios = new List<string>();
+                    var paquetesBodegaEspecifico = await ctx.PaqueteBodegaEspecifico.Select(x => x.ColeccionId).ToListAsync();
                    
                         foreach (var pais in grupo.Paises)
                         {
                             ListaGrupoPrecios = ctx.MaestroGrupoPrecio.Where(x => grupo.ListaPrecios.Contains(x.GrupoPrecio) && x.EmpresaId == pais).Select(x=> x.GrupoPrecio).ToList();
                                 List<ColeccionViewModel> colecciones = await ctx.Colecciones
                                     .Where(vw_coleccion => vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today 
-                                           && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper()).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
+                                           && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper() && !paquetesBodegaEspecifico.Contains(vw_coleccion.IdColeccion)).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
                                                  new ColeccionViewModel
                                                  {
                                                      GrupoPrecio = ListaGrupoPrecios.FirstOrDefault(),

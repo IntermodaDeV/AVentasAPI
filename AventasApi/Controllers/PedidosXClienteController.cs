@@ -1271,7 +1271,7 @@ namespace AventasApi.Controllers
                 var lineasPedido = pedido.PedidosDetalle;
                 foreach (var linea in lineasPedido)
                 {
-                    var fisico = await ctx.FisicoDisponible.FirstOrDefaultAsync(x => x.CodigoColor == linea.CodigoColor && x.CodigoTalla == linea.CodigoTalla && x.IdProducto == linea.IdProducto);
+                    var fisico = await ctx.FisicoDisponible.FirstOrDefaultAsync(x => x.CodigoColor == linea.CodigoColor && x.CodigoTalla == linea.CodigoTalla && x.IdProducto == linea.IdProducto && x.Sitio==pedido.Sitio && x.Almacen==x.Almacen);
                     fisico.Disponible = fisico.Disponible - linea.Cantidad;
                     await ctx.SaveChangesAsync();
                 }
