@@ -65,8 +65,8 @@ namespace AventasApi.Controllers
                     var paquetesEspecificos = await ctx.PaqueteBodegaEspecifico.Include(x => x.Colecciones).Include(x => x.MaestroBodegaAlmacenes).Include(x => x.MaestroBodegaSitios).Select(x => new
                     {
                         Id=x.Id,
-                        Coleccion=x.Colecciones.CodigoColeccion,
-                        Almacen=x.Almacen,
+                        Coleccion=x.Colecciones.Nombre,
+                        Almacen=x.MaestroBodegaAlmacenes.Nombre,
                         Sitio=x.MaestroBodegaSitios.Nombre,
                         Estado=x.Estado,
                         Empresa=x.EmpresaId
