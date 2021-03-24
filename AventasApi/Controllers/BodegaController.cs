@@ -67,7 +67,9 @@ namespace AventasApi.Controllers
                         Id=x.Id,
                         Codigo=x.Colecciones.CodigoColeccion,
                         Coleccion=x.Colecciones.Nombre,
+                        CodigoAlmacen=x.MaestroBodegaAlmacenes.Almacen,
                         Almacen=x.MaestroBodegaAlmacenes.Nombre,
+                        CodigoSitio=x.MaestroBodegaSitios.Sitio,
                         Sitio=x.MaestroBodegaSitios.Nombre,
                         Estado=x.Estado,
                         Empresa=x.EmpresaId
