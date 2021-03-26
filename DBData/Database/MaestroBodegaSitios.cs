@@ -26,6 +26,8 @@ namespace DBData.Database
         public string Nombre { get; set; }
         public string EmpresaId { get; set; }
         public bool Estatus { get; set; }
+        public string ModificadoPor { get; set; }
+        public Nullable<System.DateTime> FechaModificacion { get; set; }
     
         public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

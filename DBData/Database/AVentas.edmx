@@ -652,6 +652,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
           <Property Name="Etiqueta" Type="varchar" MaxLength="100" Nullable="false" />
           <Property Name="Estatus" Type="bit" Nullable="false" />
+          <Property Name="ModificadoPor" Type="varchar" MaxLength="50" />
+          <Property Name="FechaModificacion" Type="datetime" />
         </EntityType>
         <EntityType Name="MaestroBodegaSitios">
           <Key>
@@ -662,6 +664,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Nombre" Type="varchar" MaxLength="250" />
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
           <Property Name="Estatus" Type="bit" Nullable="false" />
+          <Property Name="ModificadoPor" Type="varchar" MaxLength="50" />
+          <Property Name="FechaModificacion" Type="datetime" />
         </EntityType>
         <EntityType Name="MaestroEdad">
           <Key>
@@ -8938,6 +8942,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__MaestroBo__Empre__3FE65219" FromRole="MaestroBodegaAlmacenes" ToRole="Empresa" />
           <NavigationProperty Name="MaestroBodegaSitios" Relationship="AventasModel.FK__MaestroBo__Sitio__3EF22DE0" FromRole="MaestroBodegaAlmacenes" ToRole="MaestroBodegaSitios" />
           <NavigationProperty Name="PaqueteBodegaEspecifico" Relationship="AventasModel.FK__PaqueteBo__Almac__59A6241C" FromRole="MaestroBodegaAlmacenes" ToRole="PaqueteBodegaEspecifico" />
+          <Property Name="ModificadoPor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="MaestroBodegaSitios">
           <Key>
@@ -8951,6 +8957,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__MaestroBo__Empre__3C15C135" FromRole="MaestroBodegaSitios" ToRole="Empresa" />
           <NavigationProperty Name="MaestroBodegaAlmacenes" Relationship="AventasModel.FK__MaestroBo__Sitio__3EF22DE0" FromRole="MaestroBodegaSitios" ToRole="MaestroBodegaAlmacenes" />
           <NavigationProperty Name="PaqueteBodegaEspecifico" Relationship="AventasModel.FK__PaqueteBo__Sitio__58B1FFE3" FromRole="MaestroBodegaSitios" ToRole="PaqueteBodegaEspecifico" />
+          <Property Name="ModificadoPor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="PaqueteBodegaEspecifico">
           <Key>
@@ -10728,6 +10736,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="MaestroBodegaAlmacenes">
             <EntityTypeMapping TypeName="AventasModel.MaestroBodegaAlmacenes">
               <MappingFragment StoreEntitySet="MaestroBodegaAlmacenes">
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="ModificadoPor" ColumnName="ModificadoPor" />
                 <ScalarProperty Name="Estatus" ColumnName="Estatus" />
                 <ScalarProperty Name="Etiqueta" ColumnName="Etiqueta" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
@@ -10741,6 +10751,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="MaestroBodegaSitios">
             <EntityTypeMapping TypeName="AventasModel.MaestroBodegaSitios">
               <MappingFragment StoreEntitySet="MaestroBodegaSitios">
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="ModificadoPor" ColumnName="ModificadoPor" />
                 <ScalarProperty Name="Estatus" ColumnName="Estatus" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />

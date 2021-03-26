@@ -27,6 +27,8 @@ namespace DBData.Database
         public string EmpresaId { get; set; }
         public string Etiqueta { get; set; }
         public bool Estatus { get; set; }
+        public string ModificadoPor { get; set; }
+        public Nullable<System.DateTime> FechaModificacion { get; set; }
     
         public virtual Empresa Empresa { get; set; }
         public virtual MaestroBodegaSitios MaestroBodegaSitios { get; set; }
