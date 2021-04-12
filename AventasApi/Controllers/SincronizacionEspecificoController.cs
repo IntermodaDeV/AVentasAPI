@@ -111,7 +111,7 @@ namespace AventasApi.Controllers
             }
             catch (System.Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -164,7 +164,7 @@ namespace AventasApi.Controllers
             }
             catch (System.Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -209,7 +209,7 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
             }
         }
 
@@ -235,7 +235,7 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
             }
         }
     }

@@ -1105,7 +1105,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="RespuestaId" Type="int" Nullable="false" />
           <Property Name="PreguntaAnidadaId" Type="int" Nullable="false" />
           <Property Name="PreguntaOpcionesAnidadasId" Type="int" />
-          <Property Name="RespuestaAlfanumerica" Type="varchar" MaxLength="150" />
+          <Property Name="RespuestaAlfanumerica" Type="varchar(max)" />
           <Property Name="RespuestaNumerica" Type="int" />
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" Nullable="false" />
@@ -8869,7 +8869,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="RespuestaId" Type="Int32" Nullable="false" />
           <Property Name="PreguntaAnidadaId" Type="Int32" Nullable="false" />
           <Property Name="PreguntaOpcionesAnidadasId" Type="Int32" />
-          <Property Name="RespuestaAlfanumerica" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="RespuestaAlfanumerica" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="RespuestaNumerica" Type="Int32" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />

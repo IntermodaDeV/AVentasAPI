@@ -59,7 +59,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var ListaPreguntasAnidadas = await ctx.PreguntasAnidadas.Where(p => p.PreguntasOpcionesId == preguntaOpcionId && p.Status == true).Select(x => new
+                    var ListaPreguntasAnidadas = await ctx.PreguntasAnidadas.Where(p => p.PreguntasOpcionesId == preguntaOpcionId).Select(x => new
                     {
                         Id = x.Id,
                         preguntaOpcionId = x.PreguntasOpcionesId,
@@ -79,6 +79,29 @@ namespace AventasApi.Controllers
                         })
                     }).ToListAsync();
                     return Ok(ListaPreguntasAnidadas);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/preguntasOpciones/SinAnidada/{preguntaId}")]
+        public async Task<IHttpActionResult> ObtenerPreguntasOpSinAnidadas(int preguntaId)
+        {
+            try
+            {
+                using (var db = new AVentasEntities())
+                {
+                    var PreguntasAnidadas = db.PreguntasAnidadas.Select(po => po.PreguntasOpcionesId).ToList();
+                    var PreguntasOpciones = await db.PreguntasOpciones.Where(p => !PreguntasAnidadas.Contains(p.Id) &&  p.PreguntaId == preguntaId).Select(x => new
+                    {
+                        Id = x.Id,
+                        GrupoOpcionesDetalle = x.GrupoOpcionesDetalle.Nombre
+                    }).ToListAsync();
+                    return Ok(PreguntasOpciones);
                 }
             }
             catch (Exception e)
