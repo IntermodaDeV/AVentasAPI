@@ -446,31 +446,33 @@ namespace AventasApi.Controllers
  
                     for(int x = 0; x < listaDominio.Count(); x++)
                     {
-                        var asignacion = listaDominio[x];
-                        var listaComparacion = listaGuardadas.Where(cli=>cli.CodigoAsesor==asignacion.CodigoAsesor).ToList();
+                        var asignacionp = listaDominio[x];
+                        var listaComparacion = listaGuardadas.Where(cli=>cli.CodigoAsesor==asignacionp.CodigoAsesor).ToList();
                         //listaDominio.RemoveAt(x);
-                        var asignacionesAsesor = listaDominio.Where(cli => cli.CodigoAsesor == asignacion.CodigoAsesor);
+                        var asignacionesAsesor = listaDominio.Where(cli => cli.CodigoAsesor == asignacionp.CodigoAsesor);
                         listaComparacion.AddRange(asignacionesAsesor);
 
-                        var indice = listaGuardar.FindIndex(cli => cli.CodigoAsesor == asignacion.CodigoAsesor 
-                            && cli.CodigoCliente==asignacion.CodigoCliente
-                            && cli.HoraInicio==asignacion.HoraInicio
-                            && cli.HoraFinal==asignacion.HoraFinal
+                        var indice = listaGuardar.FindIndex(cli => cli.CodigoAsesor == asignacionp.CodigoAsesor 
+                            && cli.CodigoCliente==asignacionp.CodigoCliente
+                            && cli.HoraInicio==asignacionp.HoraInicio
+                            && cli.HoraFinal==asignacionp.HoraFinal
                         );
+
+                        listaComparacion.Remove(asignacionp);
 
                         for (int y = 0; y < listaComparacion.Count(); y++)
                         {
 
-                            if ((asignacion.HoraInicio >= listaComparacion[y].HoraInicio) && (asignacion.HoraInicio <= listaComparacion[y].HoraFinal) && asignacion.CodigoAsesor == listaComparacion[y].CodigoAsesor)
+                            if ((asignacionp.HoraInicio >= listaComparacion[y].HoraInicio) && (asignacionp.HoraInicio <= listaComparacion[y].HoraFinal) && asignacionp.CodigoAsesor == listaComparacion[y].CodigoAsesor)
                             {
-                                var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacion.CodigoCliente);
+                                var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacionp.CodigoCliente);
                                 indiceErrores.Add(indice);
                                 //return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
                             }
 
-                            if ((asignacion.HoraFinal >= listaComparacion[y].HoraInicio) && (asignacion.HoraFinal <= listaComparacion[y].HoraFinal) && asignacion.CodigoAsesor == listaComparacion[y].CodigoAsesor)
+                            if ((asignacionp.HoraFinal >= listaComparacion[y].HoraInicio) && (asignacionp.HoraFinal <= listaComparacion[y].HoraFinal) && asignacionp.CodigoAsesor == listaComparacion[y].CodigoAsesor)
                             {
-                                var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacion.CodigoCliente);
+                                var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacionp.CodigoCliente);
                                 indiceErrores.Add(indice);
                                 //return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
                             }
