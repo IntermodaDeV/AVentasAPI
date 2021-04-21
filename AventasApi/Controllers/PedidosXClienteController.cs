@@ -164,7 +164,10 @@ namespace AventasApi.Controllers
                         ClienteContadoId = Pedido.ClienteContadoId,
                         ModoVenta = Pedido.ModoVenta,
                         Flete = Pedido.Flete,
-                        RequiereEntrega = Pedido.RequiereEntrega
+                        RequiereEntrega = Pedido.RequiereEntrega,
+                        BodegaEspecifica=Pedido.BodegaEspecifica,
+                        Sitio=Pedido.Sitio,
+                        Almacen=Pedido.Almacen
                     };
 
                     foreach (var detalle in Pedido.DetallePedido)
@@ -217,6 +220,8 @@ namespace AventasApi.Controllers
                                 ReducirStock(PedidoBDAGuardar);
                             }
                         }
+
+                        return Ok(new { correlativo = numeroReferencia, mensaje = "El pedido ha sido registrado con exito." });
                     }
                     else
                     {
@@ -241,7 +246,10 @@ namespace AventasApi.Controllers
                             ModoVenta = Pedido.ModoVenta,
                             Flete = Pedido.Flete,
                             RequiereEntrega = Pedido.RequiereEntrega,
-                            ESTADO = 0
+                            ESTADO = 0,
+                            BodegaEspecifica = Pedido.BodegaEspecifica,
+                            Sitio = Pedido.Sitio,
+                            Almacen = Pedido.Almacen
                         };
 
                         //if (numeroReferencia == "")
@@ -289,8 +297,8 @@ namespace AventasApi.Controllers
 
                         AsyncSqlInsert.IngresarPedidoFlotante(PedidoFlotante, Pedido.Firma);
                     }
-                    
 
+                    return Ok(new { correlativo = numeroReferencia, mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de pedidos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento comercial para que procedan a revisar y gestionar su pedido para que sea válido." });
 
                     //s_ = PostPedidoPendiente(numeroReferencia);
                 }
@@ -317,7 +325,10 @@ namespace AventasApi.Controllers
                         ModoVenta = Pedido.ModoVenta,
                         Flete = Pedido.Flete,
                         RequiereEntrega = Pedido.RequiereEntrega,
-                        ESTADO = 0
+                        ESTADO = 0,
+                        BodegaEspecifica = Pedido.BodegaEspecifica,
+                        Sitio = Pedido.Sitio,
+                        Almacen = Pedido.Almacen
                     };
 
                     //if (numeroReferencia == "")
@@ -366,7 +377,7 @@ namespace AventasApi.Controllers
                     AsyncSqlInsert.IngresarPedidoFlotante(PedidoBDAGuardar, Pedido.Firma);
                 }
 
-                return Ok(numeroReferencia);
+                return Ok(new { correlativo= numeroReferencia,mensaje= "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de pedidos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento comercial para que procedan a revisar y gestionar su pedido para que sea válido." });
             }
             catch (Exception e)
             {
@@ -448,6 +459,7 @@ namespace AventasApi.Controllers
                     {
                         Asesor = ped.CodigoAsesor,
                         PedidoId = ped.PedidoId,
+                        BodegaEspecifica=ped.BodegaEspecifica,
                         NumeroPedido = ped.NumeroPedido,
                         Sincronizado = ped.Sincronizado,
                         NombreColeccion = context.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
@@ -550,6 +562,7 @@ namespace AventasApi.Controllers
                         NumeroPedido = ped.NumeroPedido,
                         Sincronizado = ped.Sincronizado,
                         Procesando = ped.Procesando.Value,
+                        BodegaEspecifica=ped.BodegaEspecifica,
                         ErrorAx = ped.ErrorAx,
                         NombreColeccion = context.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
                         TotalUnidades = ped.TotalUnidades,
@@ -746,9 +759,10 @@ namespace AventasApi.Controllers
                         SALES_MANAGER = pedidoDB.Asesores.Usuario,
                         SALES_ORDER_TYPE = (pedidoDB.Colecciones.TiposdeColeccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
                         USER = pedidoDB.Asesores.Usuario,
-                        INCLUDE_TAX = "0"
-
-
+                        INCLUDE_TAX = "0",
+                        ESPEC_INV = pedidoDB.BodegaEspecifica == null ? "0" : (pedidoDB.BodegaEspecifica.Value ? "1" : "0"),
+                        LOCATION = pedidoDB.Almacen,
+                        SITE = pedidoDB.Sitio
                     };
                     if (pedidoDB.ClienteContadoId != null)
                     {
@@ -960,6 +974,7 @@ namespace AventasApi.Controllers
                         PedidoId = ped.PedidoId,
                         NumeroPedido = ped.NumeroPedido,
                         Sincronizado = ped.Sincronizado,
+                        BodegaEspecifica = ped.BodegaEspecifica,
                         NombreColeccion = ctx.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
                         TotalUnidades = ped.TotalUnidades,
                         TotalXPedido = ped.TotalPedido,
@@ -1031,6 +1046,133 @@ namespace AventasApi.Controllers
                     }
 
                     return Ok(pedidosFlotantes);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/PedidosXCliente/Flotantes/{FechaInicio}/{FechaFin}/{estado}")]
+        public async Task<IHttpActionResult> GetFlotantesAsesores(DateTime FechaInicio, DateTime FechaFin, int estado)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    List<string> asesoresHabilitados = new List<string>();
+                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
+                    var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
+
+                    if (usuario.FlagTodosAsesores.Value)
+                    {
+                        asesoresHabilitados = await ctx.Asesores.Where(x =>x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+                    else
+                    {
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+
+                    if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
+                    {
+                        FechaInicio = DateTime.Today.AddDays(-30);
+                        FechaFin = DateTime.Today.AddDays(1);
+                    }
+                    else
+                    {
+                        FechaFin = FechaFin.AddDays(1);
+                    }
+
+                    List<PedidosXClienteViewModel> ListaPedidosFlotantes = new List<PedidosXClienteViewModel>();
+
+                    foreach (var asesor in asesoresHabilitados)
+                    {
+                        List<PedidosXClienteViewModel> pedidosFlotantes = ctx.PedidosxClienteFlotante.Where(x => x.ESTADO == estado && x.Fecha >= FechaInicio && x.Fecha < FechaFin && x.CodigoAsesor == asesor).OrderByDescending(x => x.PedidoId).Select(ped => new PedidosXClienteViewModel
+                        {
+                            Id = ped.Id,
+                            Asesor = ped.CodigoAsesor,
+                            PedidoId = ped.PedidoId,
+                            NumeroPedido = ped.NumeroPedido,
+                            Sincronizado = ped.Sincronizado,
+                            BodegaEspecifica = ped.BodegaEspecifica,
+                            NombreColeccion = ctx.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
+                            TotalUnidades = ped.TotalUnidades,
+                            TotalXPedido = ped.TotalPedido,
+                            SubTotalXPedido = ped.Subtotal,
+                            Impuesto = ped.TotalImpuesto,
+                            ClienteContadoId = ped.ClienteContadoId,
+                            ModoVenta = ped.ModoVenta,
+                            Flete = ped.Flete,
+                            Estado = ped.ESTADO,
+                            PedidoGenerado = ped.PedidoIdGenerado == null ? "No Disponible" : ped.PedidoIdGenerado,
+                            Cliente = new ClienteViewModel
+                            {
+                                Codigo = ped.Clientes.CodigoCliente,
+                                Nombre = ped.Clientes.Nombre,
+                                Direccion = ped.Clientes.Direccion,
+                                Moneda = ped.Clientes.IdMoneda,
+                                EmpresaId = ped.Clientes.EmpresaId
+                            },
+                            Linea = ctx.MaestroLinea.Select(ml => new LineaViewModel
+                            {
+                                IdLinea = ml.IdLinea,
+                                Linea = ml.Linea,
+                            }).FirstOrDefault(ml => ml.IdLinea == ped.IdLinea),
+                            TipoPedido = ctx.TiposdePedido.Select(tp => new TipoPedidoViewModel
+                            {
+                                IdTipoPedido = tp.IdTipoPedido,
+                                TipoPedido = tp.TipoPedido,
+                                HabilitaEstilos = tp.HabilitaEstilos ?? false,
+                                Imagen = tp.Url_Imagen,
+                                Aplica_Todos = tp.Aplica_Todos ?? false,
+                                Restrictivo = tp.Restrictivo ?? false
+                            }).FirstOrDefault(tp => tp.IdTipoPedido == ped.IdTipoPedido),
+                            AcuerdoVenta = ped.AcuerdoVenta,
+                            EmpresaId = ped.EmpresaId,
+                            FechaActual = ped.Fecha,
+                            Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == ped.CodigoAsesor).Nombre,
+                            FechaEntrega = ped.FechaEntrega,
+                            Observacion = ped.Observacion,
+                            location = new Location
+                            {
+                                mocked = ped.Mocked ?? false,
+                                accuracy = ped.Accuracy,
+                                altitude = ped.Altitude,
+                                latitude = ped.Latitude,
+                                longitude = ped.Longitude,
+                                error = ped.Error
+                            }
+                        }).ToList();
+
+                        foreach (var pedido in pedidosFlotantes)
+                        {
+                            string imagenB64 = "";
+
+                            var firma = ctx.FirmasxPedido.FirstOrDefault(fir => pedido.PedidoId == fir.PedidoId);
+                            if (firma != null)
+                            {
+                                try
+                                {
+                                    imagenB64 = "data:image/png;base64," + Convert.ToBase64String(firma.Firma);
+                                }
+                                catch (Exception e)
+                                {
+
+                                }
+
+                                pedido.Firma = imagenB64;
+
+                            }
+                        }
+
+                        ListaPedidosFlotantes.AddRange(pedidosFlotantes);
+                    }
+
+                    return Ok(ListaPedidosFlotantes);
                 }
             }
             catch (Exception e)
@@ -1114,7 +1256,10 @@ namespace AventasApi.Controllers
                         Sincronizado = false,
                         Procesando = false,
                         PedidoId = numeroReferencia,
-                        NumeroPedido = ""
+                        NumeroPedido = "",
+                        BodegaEspecifica=pedido.BodegaEspecifica,
+                        Sitio=pedido.Sitio,
+                        Almacen=pedido.Almacen
                     };
 
                     foreach (var detalle in pedido.PedidosDetalleFlotante)
@@ -1256,7 +1401,7 @@ namespace AventasApi.Controllers
                 var lineasPedido = pedido.PedidosDetalle;
                 foreach (var linea in lineasPedido)
                 {
-                    var fisico = await ctx.FisicoDisponible.FirstOrDefaultAsync(x => x.CodigoColor == linea.CodigoColor && x.CodigoTalla == linea.CodigoTalla && x.IdProducto == linea.IdProducto);
+                    var fisico = await ctx.FisicoDisponible.FirstOrDefaultAsync(x => x.CodigoColor == linea.CodigoColor && x.CodigoTalla == linea.CodigoTalla && x.IdProducto == linea.IdProducto && x.Sitio==pedido.Sitio && x.Almacen==x.Almacen);
                     fisico.Disponible = fisico.Disponible - linea.Cantidad;
                     await ctx.SaveChangesAsync();
                 }

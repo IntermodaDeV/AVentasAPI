@@ -24,7 +24,7 @@ namespace AventasApi.Models
         public string CodigoRuta { get; set; }
         public string FacturacionEntrega { get; set; }
         public string GrupoImpuesto { get; set; }
-
+        public string Telefono { get; set; }
         public string ModoEntrega { get; set; }
         //public List<string> CuentaCorriente;
         public List<ContactosxClienteViewModel> Contacto ;
@@ -81,6 +81,9 @@ namespace AventasApi.Models
         public Nullable<decimal> LimiteCredito { get; set; }
         public Nullable<decimal> CreditoDisponible { get; set; }
         public List<PResumenCredito_Result> Credito { get; set; }
+        public decimal? Longitud { get; internal set; }
+        public decimal? Latitud { get; internal set; }
+
         public ClientePedidoViewModel()
         {
             this.Credito = new List<PResumenCredito_Result>();

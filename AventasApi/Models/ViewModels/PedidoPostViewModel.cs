@@ -40,7 +40,9 @@ namespace AventasApi.Models.ViewModels
         public decimal Impuesto { get; set; }
         public bool RequiereEntrega { get; set; }
         public bool PedidoCache { get; set; }
-
+        public bool BodegaEspecifica { get; set; }
+        public string Sitio { get; set; }
+        public string Almacen { get; set; }
         public PedidoPostViewModel()
         {
             DetallePedido = new List<DetallePedidoPostViewModel>();

@@ -11,6 +11,20 @@ using DBData.Database;
 
 namespace AventasApi.Controllers
 {
+    class EncuestaResueltaDetalle
+    {
+        public string Pregunta { get; set; }
+        public string Respuesta { get; set; }
+    }
+    class EncuestaResuelta
+    {
+        public int RespuestaId { get; set; }
+        public int? EncuestaId { get; set; }
+        public string Cliente { get; set; }
+        public string Fecha { get; set; }
+        public string Asesor { get; set; }
+        public List<EncuestaResueltaDetalle> Detalle { get; set; }
+    }
     public class EncuestaController : ApiController
     {
         private readonly AuthenticationAppService _authenticationAppService;
@@ -172,6 +186,40 @@ namespace AventasApi.Controllers
                         EncuestaEmpresa.Status = true;
                         EncuestaEmpresa.ModifiedBy = usuario;
                         EncuestaEmpresa.ModifiedDate = DateTime.Now;
+
+                        var secciones = await ctx.Secciones_Encuesta.Where(x => x.EncuestaId == encuestaId && x.Status == true).Select(x => x.Id).ToListAsync();
+                        if (secciones.Count() > 0)
+                        {
+                            var usuariosEmpresa = await ctx.Usuarios.Where(x => x.EmpresaId == EmpresaId && x.status == true).Select(x => x.Id).ToListAsync();
+
+                            foreach (var seccionId in secciones)
+                            {
+                                foreach (var usuarioEmpresa in usuariosEmpresa)
+                                {
+                                    var seccionUsuario = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.UsuarioId == usuarioEmpresa);
+                                    if (seccionUsuario != null)
+                                    {
+                                        seccionUsuario.Status = true;
+                                        seccionUsuario.ModifiedBy = usuario;
+                                        seccionUsuario.ModifiedDate = DateTime.Now;
+                                    }
+                                    else
+                                    {
+                                        var Secciones_Usuarios = new Secciones_Usuarios()
+                                        {
+                                            SeccionId = seccionId,
+                                            UsuarioId = usuarioEmpresa,
+                                            Status = true,
+                                            CreatedBy = usuario,
+                                            CreatedDate = DateTime.Now
+                                        };
+                                        ctx.Secciones_Usuarios.Add(Secciones_Usuarios);
+                                    }
+
+                                    await ctx.SaveChangesAsync();
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -183,6 +231,41 @@ namespace AventasApi.Controllers
                             CreatedBy = usuario,
                             CreatedDate = DateTime.Now
                         };
+
+                        var secciones = await ctx.Secciones_Encuesta.Where(x => x.EncuestaId == encuestaId && x.Status == true).Select(x => x.Id).ToListAsync();
+                        if (secciones.Count() > 0)
+                        {
+                            var usuariosEmpresa = await ctx.Usuarios.Where(x => x.EmpresaId == EmpresaId && x.status == true).Select(x => x.Id).ToListAsync();
+
+                            foreach (var seccionId in secciones)
+                            {
+                                foreach (var usuarioEmpresa in usuariosEmpresa)
+                                {
+                                    var seccionUsuario = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.UsuarioId == usuarioEmpresa);
+                                    if (seccionUsuario != null)
+                                    {
+                                        seccionUsuario.Status = true;
+                                        seccionUsuario.ModifiedBy = usuario;
+                                        seccionUsuario.ModifiedDate = DateTime.Now;
+                                    }
+                                    else
+                                    {
+                                        var Secciones_Usuarios = new Secciones_Usuarios()
+                                        {
+                                            SeccionId = seccionId,
+                                            UsuarioId = usuarioEmpresa,
+                                            Status = true,
+                                            CreatedBy = usuario,
+                                            CreatedDate = DateTime.Now
+                                        };
+                                        ctx.Secciones_Usuarios.Add(Secciones_Usuarios);
+                                    }
+
+                                    await ctx.SaveChangesAsync();
+                                }
+                            }
+                        }
+
                         ctx.Empresa_Encuesta.Add(Empresa_Encuesta);
                     }
 
@@ -209,6 +292,27 @@ namespace AventasApi.Controllers
                     if (EmpresaEncuesta == null)
                     {
                         return BadRequest("No se encontro el registro, contacte al administrador");
+                    }
+
+                    var secciones = await ctx.Secciones_Encuesta.Where(x => x.EncuestaId == EncuestaId).Select(x => x.Id).ToListAsync();
+                    if (secciones.Count() > 0)
+                    {
+                        var usuariosEmpresa = await ctx.Usuarios.Where(x => x.EmpresaId == EmpresaId).Select(x => x.Id).ToListAsync();
+
+                        foreach (var seccionId in secciones)
+                        {
+                            foreach (var usuarioEmpresa in usuariosEmpresa)
+                            {
+                                var seccionUsuario = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.UsuarioId == usuarioEmpresa);
+                                if (seccionUsuario != null)
+                                {
+                                    seccionUsuario.Status = false;
+                                    seccionUsuario.ModifiedBy = usuario;
+                                    seccionUsuario.ModifiedDate = DateTime.Now;
+                                    await ctx.SaveChangesAsync();
+                                }
+                            }
+                        }
                     }
 
                     EmpresaEncuesta.Status = false;
@@ -291,6 +395,39 @@ namespace AventasApi.Controllers
                         SeccionesEncuesta.Status = true;
                         SeccionesEncuesta.ModifiedBy = usuario;
                         SeccionesEncuesta.ModifiedDate = DateTime.Now;
+
+                        var empresas = await ctx.Empresa_Encuesta.Where(x => x.EncuestaId == EncuestaId && x.Status == true).Select(x => x.EmpresaId).ToListAsync();
+                        if (empresas.Count() > 0)
+                        {
+                            foreach (var empresa in empresas)
+                            {
+                                var usuarios = await ctx.Usuarios.Where(x => x.EmpresaId == empresa && x.status == true).Select(x => x.Id).ToListAsync();
+                                foreach (var user in usuarios)
+                                {
+                                    var seccionUsuario = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.UsuarioId == user);
+                                    if (seccionUsuario != null)
+                                    {
+                                        seccionUsuario.Status = true;
+                                        seccionUsuario.ModifiedBy = usuario;
+                                        seccionUsuario.ModifiedDate = DateTime.Now;
+                                    }
+                                    else
+                                    {
+                                        var Secciones_Usuarios = new Secciones_Usuarios()
+                                        {
+                                            SeccionId = seccionId,
+                                            UsuarioId = user,
+                                            Status = true,
+                                            CreatedBy = usuario,
+                                            CreatedDate = DateTime.Now
+                                        };
+                                        ctx.Secciones_Usuarios.Add(Secciones_Usuarios);
+                                    }
+
+                                    await ctx.SaveChangesAsync();
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -302,7 +439,42 @@ namespace AventasApi.Controllers
                             CreatedBy = usuario,
                             CreatedDate = DateTime.Now
                         };
+
                         ctx.Secciones_Encuesta.Add(Secciones_Encuesta);
+                        await ctx.SaveChangesAsync();
+
+                        var empresas = await ctx.Empresa_Encuesta.Where(x => x.EncuestaId == EncuestaId && x.Status == true).Select(x => x.EmpresaId).ToListAsync();
+                        if (empresas.Count() > 0)
+                        {
+                            foreach (var empresa in empresas)
+                            {
+                                var usuarios = await ctx.Usuarios.Where(x => x.EmpresaId == empresa && x.status == true).Select(x => x.Id).ToListAsync();
+                                foreach (var user in usuarios)
+                                {
+                                    var seccionUsuario = await ctx.Secciones_Usuarios.FirstOrDefaultAsync(x => x.SeccionId == seccionId && x.UsuarioId == user);
+                                    if (seccionUsuario != null)
+                                    {
+                                        seccionUsuario.Status = true;
+                                        seccionUsuario.ModifiedBy = usuario;
+                                        seccionUsuario.ModifiedDate = DateTime.Now;
+                                    }
+                                    else
+                                    {
+                                        var Secciones_Usuarios = new Secciones_Usuarios()
+                                        {
+                                            SeccionId = Secciones_Encuesta.Id,
+                                            UsuarioId = user,
+                                            Status = true,
+                                            CreatedBy = usuario,
+                                            CreatedDate = DateTime.Now
+                                        };
+                                        ctx.Secciones_Usuarios.Add(Secciones_Usuarios);
+                                    }
+
+                                   
+                                }
+                            }
+                        }
                     }
 
                     var result = await ctx.SaveChangesAsync();
@@ -499,7 +671,7 @@ namespace AventasApi.Controllers
                 {
                     var encuesta = await db.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == Id && e.EncuestaId == encuestaId);
                     var UsuariosConAcceso = db.Secciones_Usuarios.Where(x => x.SeccionId == encuesta.Id && x.Status == true).Select(x => x.UsuarioId).ToList();
-                    var ListaUsuarios = await db.Usuarios.Where(e => UsuariosConAcceso.Contains(e.Id)).Select(e => new UsuarioModel
+                    var ListaUsuarios = await db.Usuarios.Where(e => UsuariosConAcceso.Contains(e.Id) && e.status == true).Select(e => new UsuarioModel
                     {
                         Id = e.Id,
                         Nombre = e.nombre                        
@@ -525,7 +697,7 @@ namespace AventasApi.Controllers
                     var encuesta = await db.Secciones_Encuesta.FirstOrDefaultAsync(e => e.SeccionId == Id && e.EncuestaId == encuestaId);
                     var UsuariosConAcceso = await db.Secciones_Usuarios.Where(x => x.SeccionId == encuesta.Id && x.Status == true).Select(x => x.UsuarioId).ToListAsync();
                     var EmpresaEncuesta = await db.Empresa_Encuesta.Where(x => x.EncuestaId == encuestaId && x.Status == true).Select(x=> x.EmpresaId).ToListAsync();
-                    var ListaUsuarios = await db.Usuarios.Where(e => !UsuariosConAcceso.Contains(e.Id) && EmpresaEncuesta.Contains(e.EmpresaId)).Select(e => new UsuarioModel
+                    var ListaUsuarios = await db.Usuarios.Where(e => !UsuariosConAcceso.Contains(e.Id) && EmpresaEncuesta.Contains(e.EmpresaId) && e.status == true).Select(e => new UsuarioModel
                     {
                         Id = e.Id,
                         Nombre = e.nombre
@@ -619,7 +791,7 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var EncuestaId = ctx.Empresa_Encuesta.Where(e => e.EmpresaId == empresa && e.Status == true).Select(e => e.EncuestaId).ToList();
-                    var ListaEncuesta = await ctx.Encuesta.Where(e => EncuestaId.Contains(e.Id) && e.FechaInicio <= DateTime.Now && e.FechaFin >= DateTime.Now).Select(x => new
+                    var ListaEncuesta = await ctx.Encuesta.Where(e => EncuestaId.Contains(e.Id) && e.FechaInicio <= DateTime.Today && e.FechaFin >= DateTime.Today).Select(x => new
                     {
                         Id = x.Id,
                         Nombre = x.Nombre,
@@ -663,17 +835,38 @@ namespace AventasApi.Controllers
                             TipoIngreso = p.TiposIngreso.Nombre,
                             GrupoOpcionesId = p.GrupoOpcionesId,
                             GrupoOpciones = p.GrupoOpciones.Nombre,
-                            PreguntasOpciones = p.PreguntasOpciones.Where(o => o.Status == true).Select(po => new
-                            {
-                                PreguntasOpcionesId = po.Id,
-                                GrupoOpcionesDetalleId = po.GrupoOpcionesDetalleId,
-                                GOpcionesDetalleNombre = po.GrupoOpcionesDetalle.Nombre
-                            }),
                             Nombre = p.Nombre,
                             Descripcion = p.Descripcion,
                             Obligatorio = p.Obligatorio,
                             RespuestaObligatorio = p.RespuestaObligatorio,
-                            Status = p.Status
+                            Status = p.Status,
+                            preguntaAnidada = false,
+                            PreguntasOpciones = p.PreguntasOpciones.Where(o => o.Status == true).Select(po => new
+                            {
+                                PreguntasOpcionesId = po.Id,
+                                GrupoOpcionesDetalleId = po.GrupoOpcionesDetalleId,
+                                GOpcionesDetalleNombre = po.GrupoOpcionesDetalle.Nombre,
+                                PreguntasAnidadas = po.PreguntasAnidadas.Where(s => s.PreguntasOpcionesId == po.Id).Select(a => new {
+                                    PreguntaId = a.Id,
+                                    PreguntasOpcionesId = a.PreguntasOpcionesId,
+                                    TipoIngresoId = a.TipoIngresoId,
+                                    TipoIngreso = a.TiposIngreso.Nombre,
+                                    GrupoOpcionesId = a.GrupoOpcionesId,
+                                    GrupoOpciones = p.GrupoOpciones.Nombre,
+                                    Nombre = a.Nombre,
+                                    Descripcion = a.Descripcion,
+                                    RespuestaObligatorio = a.RespuestaObligatorio,
+                                    Status = a.Status,
+                                    hidden = true,
+                                    PreguntasOpciones = a.PreguntasOpcionesAnidadas.Where(l => l.Status == true).Select(l => new
+                                    {
+                                        PreguntasOpcionesId = l.Id,
+                                        GrupoOpcionesDetalleId = l.GrupoOpcionesDetalleId,
+                                        GOpcionesDetalleNombre = l.GrupoOpcionesDetalle.Nombre,
+                                    }),
+                                    preguntaAnidada = true,
+                                })
+                            }),
                         }).OrderBy(p => p.PreguntaId)
                     }).ToListAsync();
                     return Ok(ListaSecciones);
@@ -688,19 +881,20 @@ namespace AventasApi.Controllers
         [HttpGet]
         [Route("~/api/encuesta/resueltas/{inicio}/{final}/{asesor}")]
         public async Task<IHttpActionResult> EncuestasResueltas(DateTime inicio,DateTime final,string asesor)
-        {
+       {
             try
             {
                 using(AVentasEntities ctx = new AVentasEntities())
                 {
-                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
 
                     List<EncuestaCompletada> encuestasResueltas = await (from e in ctx.Encuesta
                                               join r in ctx.Respuestas on e.Id equals r.EncuestaId
-                                              where r.CreatedDate >= inicio && r.CreatedDate <= final && r.CreatedBy==asesor
+                                              join x in ctx.Clientes on r.CodigoCliente equals x.CodigoCliente
+                                              where r.CreatedDate >= inicio && r.CreatedDate <= final && x.CodigoAsesor == asesor
                                               select new EncuestaCompletada()
                                               {
-                                                  EncuestaId=e.Id,
+                                                  RespuestaId = r.Id,
+                                                  EncuestaId =e.Id,
                                                   Encuesta = e.Nombre,
                                                   Cliente = r.CodigoCliente,
                                                   Usuario = r.CreatedBy,
@@ -766,25 +960,100 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/encuesta/resueltas/detalle/{cliente}/{asesor}/{encuesta}")]
-        public async Task<IHttpActionResult> EncuestaResueltaDetalle(string cliente,string asesor,int encuesta)
+        [Route("~/api/encuesta/resueltas/detalle/{respuestaId}")]
+        public async Task<IHttpActionResult> EncuestaResueltaDetalle(int respuestaId)
         {
             try
             {
                 using(AVentasEntities ctx = new AVentasEntities())
                 {
-                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-
-                    /*var respuestas = await (
-                            from e in ctx.Encuesta 
-                            join se in ctx.Secciones_Encuesta on e.Id equals se.EncuestaId
-                            join sec in ctx.Secciones on se.SeccionId equals sec.Id
-                            join secu in ctx.Secciones_Usuarios on 
-                        ).ToListAsync();*/
-
-                    return Ok();
+                    List<RespuestasViewModel> Respuestas = await ctx.Respuestas.Where(r => r.Id == respuestaId).Select(r => new RespuestasViewModel
+                    {
+                        EncuestaId = r.EncuestaId,
+                        CodigoCliente = r.CodigoCliente,
+                        UsuarioId = r.UsuarioId,
+                        RespuestasDetalle = r.RespuestaDetalle.Where(d=> d.RespuestaId == r.Id).Select(d => new RespuestasDetalleViewModel
+                        {
+                            PreguntaId = d.PreguntaId,
+                            PreguntasOpcionesId = d.PreguntaOpcionesId,
+                            RespuestaAlfanumerica = d.RespuestaAlfanumerica,
+                            RespuestaNumerica = d.RespuestaNumerica
+                        }).ToList(),
+                        RespuestasAnidadasDetalle = r.RespuestaAnidadaDetalle.Where(d => d.RespuestaId == r.Id).Select(d => new RespuestasDetalleViewModel
+                        {
+                            PreguntaId = d.PreguntaAnidadaId,
+                            PreguntasOpcionesId = d.PreguntaOpcionesAnidadasId,
+                            RespuestaAlfanumerica = d.RespuestaAlfanumerica,
+                            RespuestaNumerica = d.RespuestaNumerica
+                        }).ToList(),
+                    }).ToListAsync();
+                    return Ok(Respuestas);
                 }
-            }catch(Exception e)
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/encuesta/excel/{inicio}/{final}/{encuestaId}")]
+        public async Task<IHttpActionResult> EncuestaResuelta(DateTime inicio, DateTime final,int encuestaId)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    List<EncuestaResuelta> Respuestas = await ctx.Respuestas.Where(x => x.EncuestaId == encuestaId && x.CreatedDate>=inicio && x.CreatedDate <= final).Select(e => new EncuestaResuelta { 
+                        EncuestaId=e.EncuestaId,
+                        Cliente=e.CodigoCliente,
+                        Asesor=e.CreatedBy,
+                        RespuestaId=e.Id,
+                        Fecha=e.CreatedDate.ToString()
+                    }).ToListAsync();
+
+                    if (Respuestas.Count() == 0)
+                    {
+                        return Ok(new List<EncuestaResuelta>());
+                    }
+
+                    foreach(var respuesta in Respuestas)
+                    {
+                        List<EncuestaResueltaDetalle> encuestaResueltaDetalles = new List<EncuestaResueltaDetalle>();
+                        
+
+                        var detalles = await ctx.RespuestaDetalle.Where(x => x.RespuestaId == respuesta.RespuestaId).ToListAsync();
+
+                        foreach(var d in detalles)
+                        {
+                            EncuestaResueltaDetalle respuestaDetalle = new EncuestaResueltaDetalle();
+                            var pregunta = await ctx.Preguntas.FirstOrDefaultAsync(x => x.Id == d.PreguntaId);
+                            respuestaDetalle.Pregunta = pregunta.Nombre;
+
+                            if (d.PreguntaOpcionesId != null)
+                            {
+                                var preguntaOpciones = await ctx.PreguntasOpciones.FirstOrDefaultAsync(x => x.Id == d.PreguntaOpcionesId);
+                                var preguntaOpcionesDetalle = await ctx.GrupoOpcionesDetalle.FirstOrDefaultAsync(x => x.Id == preguntaOpciones.GrupoOpcionesDetalleId);
+                                respuestaDetalle.Respuesta = preguntaOpcionesDetalle.Nombre;
+                            }
+                            else if (d.RespuestaAlfanumerica != null)
+                            {
+                                respuestaDetalle.Respuesta = d.RespuestaAlfanumerica;
+                            }else if (d.RespuestaNumerica != null)
+                            {
+                                respuestaDetalle.Respuesta = d.RespuestaNumerica.ToString();
+                            }
+
+                            encuestaResueltaDetalles.Add(respuestaDetalle);
+                        }
+
+                        respuesta.Detalle = encuestaResueltaDetalles;
+                    }
+
+                    return Ok(Respuestas);
+                }
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }

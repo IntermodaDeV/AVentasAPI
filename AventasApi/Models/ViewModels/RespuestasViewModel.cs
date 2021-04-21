@@ -17,5 +17,6 @@ namespace AventasApi.Models.ViewModels
         public int? EncuestaId { get; set; }
         public string Usuario { get; set; }
         public List<RespuestasDetalleViewModel> RespuestasDetalle { get; set; }
+        public List<RespuestasDetalleViewModel> RespuestasAnidadasDetalle { get; set; }
     }
 }

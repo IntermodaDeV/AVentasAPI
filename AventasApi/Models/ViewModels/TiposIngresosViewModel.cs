@@ -9,6 +9,7 @@ namespace AventasApi.Models.ViewModels
     {
         public int Id { get; set; }        
         public string Nombre { get; set; }
+        public string Etiqueta { get; set; }
         public bool Status { get; set; }
         public bool RequiereGrupoOpciones { get; set; }
         public string Usuario { get; set; }

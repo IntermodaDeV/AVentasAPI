@@ -237,6 +237,9 @@
     <Compile Include="Database\LineasxColeccion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ListasPreciosPaquetes.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\LISTA_EJECUCION.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
@@ -251,6 +254,12 @@
     </Compile>
     <Compile Include="Database\LOG_EJECUCION.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\MaestroBodegaAlmacenes.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\MaestroBodegaSitios.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\MaestroEdad.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
@@ -279,6 +288,9 @@
     <Compile Include="Database\Pantallas_Funciones.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\PaqueteBodegaEspecifico.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\PARAMETROS_LE_ESPECIFICO.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
@@ -303,7 +315,13 @@
     <Compile Include="Database\Preguntas.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\PreguntasAnidadas.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\PreguntasOpciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\PreguntasOpcionesAnidadas.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\PResumenCredito_Result.cs">
@@ -331,6 +349,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\RecibosxClienteFlotante.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\RespuestaAnidadaDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\RespuestaDetalle.cs">

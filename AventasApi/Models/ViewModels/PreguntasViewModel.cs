@@ -20,7 +20,7 @@ namespace AventasApi.Models.ViewModels
         public bool RequiereOpciones { get; set; }
         public bool Obligatorio { get; set; }
         public bool RespuestaObligatorio { get; set; }
-
+        public int PreguntasOpcionesId { get; set; }
         public bool Status { get; set; }
         public string Usuario { get; set; }
         public List<int> GrupoOpcionesDetalle { get; set; }

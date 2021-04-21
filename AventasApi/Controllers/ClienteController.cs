@@ -239,11 +239,11 @@ namespace AventasApi.Controllers
                         return BadRequest("El cliente no existe.");
                     }
 
-                    cliente.Longitud = coordenada.longitude;
-                    cliente.Latitud = coordenada.latitude;
+                    cliente.Longitud = coordenada.longitud;
+                    cliente.Latitud = coordenada.latitud;
                     await ctx.SaveChangesAsync();
 
-                    return Ok(new {latitud=coordenada.latitude,longitud=coordenada.longitude });
+                    return Ok(new {latitud=coordenada.latitud,longitud=coordenada.longitud });
                 }
             }catch(Exception e)
             {
@@ -602,6 +602,125 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/cliente/agenda")]
+        public async Task<IHttpActionResult> GetClientesAgendaPrincipal([FromUri] List<string> clientes)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    List<ClienteAgendaViewModel> listaClientes = new List<ClienteAgendaViewModel>();
+                    if (clientes == null)
+                    {
+                        return Ok(listaClientes);
+                    }
+
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var FechaLimite = DateTime.Today;
+                    var FechaLimiteFuturo = FechaLimite.AddDays(15);
+                    
+
+                    foreach (var client in clientes)
+                    {
+                        List<ClienteAgendaViewModel> lista = await ctx.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoCliente == client).Select(cli => new ClienteAgendaViewModel
+                        {
+                            Asesor = cli.CodigoAsesor,
+                            EmpresaId = cli.EmpresaId,
+                            Codigo = cli.CodigoCliente,
+                            Nombre = cli.Nombre,
+                            Zona = cli.Zona,
+                            ComunidadAutonoma = cli.ComunidadAutonoma,
+                            Direccion = cli.Direccion,
+                            Moneda = cli.IdMoneda,
+                            Ruta = cli.ClientesxRuta.FirstOrDefault().Rutas.Nombre,
+                            CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
+                            Latitud = cli.Latitud,
+                            Longitud = cli.Longitud,
+                            NumeroFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite),
+                            MontoFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite).Sum(faccli => faccli.Saldo) ?? 0,
+                            NumeroFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo),
+                            MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,
+                        }).ToListAsync();
+
+                        foreach (var cliente in lista)
+                        {
+                            cliente.AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
+                            {
+                                IdTipoPedido = asa.Key.IdTipoPedido,
+                                TipoPedido = asa.Key.TipoPedido,
+                                AgrupaPorCuota = asa.Key.AgruparPorCuotas,
+                                Acuerdos = asa.GroupBy(acu => acu.AcuerdosxCliente).Select(acu => new FacturasXAcuerdosViewModel
+                                {
+                                    Acuerdo = acu.Key == null ? "" : acu.Key.IdAcuerdoxCliente,
+                                    Valor = acu.Key == null ? "0" : (acu.Key.Total ?? 0).ToString(),
+                                    Disponible = acu.Key == null ? "0" : (acu.Key.Saldo ?? 0).ToString(),
+                                    Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
+                                    {
+                                        IdFactura = facCli.IdFactura,
+                                        Factura = facCli.Factura,
+                                        NumeroFEL = facCli.NumeroFEL,
+                                        CodigoCliente = facCli.CodigoCliente,
+                                        EmpresaId = facCli.EmpresaId,
+                                        IdMoneda = facCli.IdMoneda,
+                                        Tipo = facCli.Tipo,
+                                        FechaFactura = facCli.FechaFactura,
+                                        FechaVencimiento = facCli.FechaVencimiento,
+                                        FechaMaxDescuento = facCli.FechaMaxDescuento,
+                                        TotalFactura = facCli.TotalFactura,
+                                        Saldo = facCli.Saldo,
+                                        PendienteFactura = facCli.PendienteFactura,
+                                        Descuento = facCli.Descuento,
+                                        FacturaStatus = facCli.FacturaStatus,
+                                        NumeroPagos = facCli.NumeroPagos,
+                                        Referencia = facCli.Referencia,
+                                        IdLinea = facCli.IdLinea,
+                                        LineaString = facCli.MaestroLinea.Linea,
+                                        IdTipoPedido = facCli.IdTipoPedido,
+                                        TipoPedidoString = facCli.TiposdePedido.TipoPedido,
+                                        Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.FechaMaxDescuento >= DateTime.Today ? (subFac.Saldo - subFac.Descuento) > 0 : subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
+                                        {
+                                            FechaFactura = subFac.FacturasxCliente.FechaFactura,
+                                            TipoDocumento = subFac.FacturasxCliente.Tipo,
+                                            IdSubFactura = subFac.IdSubFactura,
+                                            IdFactura = subFac.IdFactura,
+                                            Factura = subFac.Factura,
+                                            NumeroFEL = subFac.NumeroFEL,
+                                            CodigoCliente = subFac.CodigoCliente,
+                                            EmpresaId = subFac.EmpresaId,
+                                            IdMoneda = ctx.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == subFac.IdMoneda).Moneda,
+                                            IdAcuerdoxCliente = subFac.IdAcuerdoxCliente,
+                                            FechaVencimiento = subFac.FechaVencimiento,
+                                            FechaMaxDescuento = subFac.AcuerdosxCliente != null ? subFac.FechaMaxDescuento : subFac.FacturasxCliente.FechaMaxDescuento,
+                                            FechaVencimientoDescuento = subFac.FechaVencimientoDescuento,
+                                            Saldo = subFac.Saldo,
+                                            SaldoDivisa = subFac.SaldoDivisa,
+                                            Descuento = subFac.Descuento,
+                                            PendientePago = subFac.PendientePago,
+                                            Referencia = subFac.Referencia,
+                                            ReferenciaFacturas = subFac.ReferenciaFacturas,
+                                            ReferenciaAcuerdo = subFac.ReferenciaAcuerdo,
+                                            NumeroCuota = subFac.NumeroCuota,
+                                            ValorCuota = (subFac.ValorCuota > 0) ? subFac.ValorCuota : facCli.TotalFactura,
+                                            ValorVencidoCuota = subFac.ValorVencidoCuota,
+                                            ReferenciaCuotas = subFac.ReferenciaCuotas,
+                                        }).ToList()
+                                    }).ToList()
+
+                                }).ToList()
+                            }).ToList();
+                        }
+                        listaClientes.AddRange(lista);
+                    }
+                    return Ok(listaClientes);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
         [Route("~/api/cliente/pedido")]
         public async Task<IHttpActionResult> GetClientesPedido()
         {
@@ -644,6 +763,8 @@ namespace AventasApi.Controllers
                             Moneda = cli.IdMoneda,
                             LimiteCredito = cli.LimiteCredito ?? 0,
                             CreditoDisponible = cli.CreditoDisponible ?? 0,
+                            Longitud=cli.Longitud,
+                            Latitud=cli.Latitud,
                             GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
                             ModoEntrega = cli.ModoEntrega,
                             FacturacionEntrega = cli.FacturacionEntrega,
@@ -1064,6 +1185,47 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/cliente/activos/{asesor}")]
+        public async Task<IHttpActionResult> GetClientesActivos(string asesor)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    List<ClienteViewModel> clientes = await ctx.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoAsesor == asesor).Select(cli => new ClienteViewModel
+                    {
+                        EmpresaId = cli.EmpresaId,
+                        Codigo = cli.CodigoCliente,
+                        Nombre = cli.Nombre,
+                        Zona = cli.Zona,
+                        ComunidadAutonoma = cli.ComunidadAutonoma,
+                        GrupoPrecio = cli.GrupoPrecio,
+                        GrupoCliente = cli.GrupoCliente,
+                        Descuento = cli.Descuento,
+                        Direccion = cli.Direccion,
+                        Moneda = cli.IdMoneda,
+                        Ruta = cli.ClientesxRuta.FirstOrDefault().Rutas.Nombre,
+                        CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
+                        Latitud = cli.Latitud,
+                        Longitud = cli.Longitud,
+                        Telefono = cli.Telefono,
+                        LimiteCredito = cli.LimiteCredito ?? 0,
+                        IgnorarSecuenciaFactura = cli.IgnorarSeqFact,
+                        CreditoDisponible = cli.CreditoDisponible ?? 0,
+                        GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
+                        ModoEntrega = cli.ModoEntrega,
+                        FacturacionEntrega = cli.FacturacionEntrega
+                    }).ToListAsync();
+                    return Ok(clientes);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
             }
         }
 

@@ -4,6 +4,7 @@ namespace AventasApi.Models
 {
     public class EncuestaCompletada
     {
+        public int RespuestaId { get; set; }
         public int EncuestaId { get; set; }
         public string Encuesta { get; set; }
         public string Cliente { get; set; }

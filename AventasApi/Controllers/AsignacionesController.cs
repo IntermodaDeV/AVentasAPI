@@ -175,55 +175,77 @@ namespace AventasApi.Controllers
             
         }
 
+        private bool GuardarAsignaciones(List<AsignacionxAsesor> asignacionxAsesor)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    if (asignacionxAsesor.Count() > 0)
+                    {
+                        ctx.AsignacionxAsesor.AddRange(asignacionxAsesor);
+                        int guardadas = ctx.SaveChanges();
+
+                        if (guardadas > 0)
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+            }catch(Exception e)
+            {
+                return false;
+            }
+        }
+
         [HttpPost]
         public async Task<IHttpActionResult> Post([FromBody] List<AsignacionesXFechaViewModel> asignacionesNuevas)
         {
             try
             {
-                List<AsignacionxAsesor> ListAsignaciones = new List<AsignacionxAsesor>();
-                foreach (var asignacionNueva in asignacionesNuevas)
+                using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    DateTime FechaInicio = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,
-                        asignacionNueva.fecha.Value.Day);
-                    DateTime FechaFin = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,
-                        asignacionNueva.fecha.Value.Day);
-                    FechaFin = FechaFin.AddDays(1);
-                    List<AsignacionxAsesor> asignaciones = asignacionNueva.asignaciones.Select(asi => new AsignacionxAsesor
+                    List<AsignacionxAsesor> ListAsignaciones = new List<AsignacionxAsesor>();
+                    foreach (var asignacionNueva in asignacionesNuevas)
                     {
-                        Fecha = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
-                        FechaAsignacion = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
-                        CodigoCliente = asi.cliente,
-                        CodigoAsesor = asi.Asesor,
-                        HoraInicio = asi.HoraInicio,
-                        HoraFinal = asi.HoraFin,
-                        idPrioridad = asi.IdPrioridad,
-                        idTipoVisita = asi.IdTipoVisita,
-                        Observacion = asi.Observacion,
-                        BloqueoCheckin = false,
-                        BloqueoCheckout = true
-                    }).ToList();
-
-                    foreach (var asignacion in asignaciones)
-                    {
-                        var asignacionesDB = context.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == asignacion.CodigoAsesor && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).ToList();
-
-                        var ListAsignacionesDB = asignacionesDB.Where(axa => axa.HoraInicio == asignacion.HoraInicio && axa.HoraFinal == asignacion.HoraFinal).ToList();
-
-                        if (ListAsignacionesDB.Count == 0)
+                        DateTime FechaInicio = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,
+                            asignacionNueva.fecha.Value.Day);
+                        DateTime FechaFin = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month,
+                            asignacionNueva.fecha.Value.Day);
+                        FechaFin = FechaFin.AddDays(1);
+                        List<AsignacionxAsesor> asignaciones = asignacionNueva.asignaciones.Select(asi => new AsignacionxAsesor
                         {
-                            ListAsignaciones.Add(asignacion);
+                            Fecha = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
+                            FechaAsignacion = new DateTime(asignacionNueva.fecha.Value.Year, asignacionNueva.fecha.Value.Month, asignacionNueva.fecha.Value.Day),
+                            CodigoCliente = asi.cliente,
+                            CodigoAsesor = asi.Asesor,
+                            HoraInicio = asi.HoraInicio,
+                            HoraFinal = asi.HoraFin,
+                            idPrioridad = asi.IdPrioridad,
+                            idTipoVisita = asi.IdTipoVisita,
+                            Observacion = asi.Observacion,
+                            BloqueoCheckin = false,
+                            BloqueoCheckout = true
+                        }).ToList();
+
+                        foreach (var asignacion in asignaciones)
+                        {
+                            var asignacionesDB = ctx.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == asignacion.CodigoAsesor && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).ToList();
+
+                            var ListAsignacionesDB = asignacionesDB.Where(axa => axa.HoraInicio == asignacion.HoraInicio && axa.HoraFinal == asignacion.HoraFinal).ToList();
+
+                            if (ListAsignacionesDB.Count == 0)
+                            {
+                                ListAsignaciones.Add(asignacion);
+                            }
                         }
+                        GuardarAsignaciones(ListAsignaciones);
                     }
 
-                    if (ListAsignaciones.Count() > 0)
-                    {
-
-                        context.AsignacionxAsesor.AddRange(ListAsignaciones);
-                    }
-                    context.SaveChanges();
+                    return StatusCode(HttpStatusCode.NoContent);
                 }
-
-                return StatusCode(HttpStatusCode.NoContent);
             }catch(Exception e)
             {
                 return BadRequest(e.ToString());
@@ -379,6 +401,7 @@ namespace AventasApi.Controllers
                     }
 
                     List<AsignacionxAsesor> listaGuardadas = new List<AsignacionxAsesor>();
+                    List<int> indiceErrores = new List<int>();
 
                     for (int x = 0; x < listaDominio.Count(); x++)
                     {
@@ -388,12 +411,14 @@ namespace AventasApi.Controllers
 
                         if (entityFound == null)
                         {
-                            return BadRequest($"El cliente no existe o no esta asignado al asesor. En asignacion {x + 1}");
+                            //return BadRequest($"El cliente no existe o no esta asignado al asesor. En asignacion {x + 1}");
+                            indiceErrores.Add(x);
                         }
 
                         if (asignacion.Fecha < DateTime.Today)
                         {
-                            return BadRequest($"Una o más asignaciones no se pueden crear ya que pertenecen a una fecha anterior. En asignacion {x + 1}");
+                            //return BadRequest($"Una o más asignaciones no se pueden crear ya que pertenecen a una fecha anterior. En asignacion {x + 1}");
+                            indiceErrores.Add(x);
                         }
                     }
 
@@ -421,38 +446,47 @@ namespace AventasApi.Controllers
  
                     for(int x = 0; x < listaDominio.Count(); x++)
                     {
-                        var asignacion = listaDominio[x];
-                        var listaComparacion = listaGuardadas.Where(cli=>cli.CodigoAsesor==asignacion.CodigoAsesor).ToList();
-                        listaDominio.RemoveAt(x);
-                        var asignacionesAsesor = listaDominio.Where(cli => cli.CodigoAsesor == asignacion.CodigoAsesor);
+                        var asignacionp = listaDominio[x];
+                        var listaComparacion = listaGuardadas.Where(cli=>cli.CodigoAsesor==asignacionp.CodigoAsesor).ToList();
+                        //listaDominio.RemoveAt(x);
+                        var asignacionesAsesor = listaDominio.Where(cli => cli.CodigoAsesor == asignacionp.CodigoAsesor);
                         listaComparacion.AddRange(asignacionesAsesor);
 
-                        var indice = listaGuardar.FindIndex(cli => cli.CodigoAsesor == asignacion.CodigoAsesor 
-                            && cli.CodigoCliente==asignacion.CodigoCliente
-                            && cli.HoraInicio==asignacion.HoraInicio
-                            && cli.HoraFinal==asignacion.HoraFinal
+                        var indice = listaGuardar.FindIndex(cli => cli.CodigoAsesor == asignacionp.CodigoAsesor 
+                            && cli.CodigoCliente==asignacionp.CodigoCliente
+                            && cli.HoraInicio==asignacionp.HoraInicio
+                            && cli.HoraFinal==asignacionp.HoraFinal
                         );
+
+                        listaComparacion.Remove(asignacionp);
 
                         for (int y = 0; y < listaComparacion.Count(); y++)
                         {
 
-                            if ((asignacion.HoraInicio >= listaComparacion[y].HoraInicio) && (asignacion.HoraInicio <= listaComparacion[y].HoraFinal) && asignacion.CodigoAsesor == listaComparacion[y].CodigoAsesor)
+                            if ((asignacionp.HoraInicio >= listaComparacion[y].HoraInicio) && (asignacionp.HoraInicio <= listaComparacion[y].HoraFinal) && asignacionp.CodigoAsesor == listaComparacion[y].CodigoAsesor)
                             {
-                                var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacion.CodigoCliente);
-                                return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
+                                var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacionp.CodigoCliente);
+                                indiceErrores.Add(indice);
+                                //return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
                             }
 
-                            if ((asignacion.HoraFinal >= listaComparacion[y].HoraInicio) && (asignacion.HoraFinal <= listaComparacion[y].HoraFinal) && asignacion.CodigoAsesor == listaComparacion[y].CodigoAsesor)
+                            if ((asignacionp.HoraFinal >= listaComparacion[y].HoraInicio) && (asignacionp.HoraFinal <= listaComparacion[y].HoraFinal) && asignacionp.CodigoAsesor == listaComparacion[y].CodigoAsesor)
                             {
-                                var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacion.CodigoCliente);
-                                return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
+                                var cliente = ctx.Clientes.FirstOrDefault(cli => cli.CodigoCliente == asignacionp.CodigoCliente);
+                                indiceErrores.Add(indice);
+                                //return BadRequest($"[Línea {indice + 1} - Asesor {asignacion.CodigoAsesor}] Una o más asignaciones tienen conflicto de horario para el cliente {asignacion.CodigoCliente} - {cliente.Nombre}.");
                             }
                         }
                     }
 
+                    if (indiceErrores.Count() > 0)
+                    {
+                        return Ok(new { StatusCode = 400, Lista = indiceErrores,Message="Una o más asignaciones no se pueden registrar por conflictos de horario o el cliente no pertenece al asesor." });
+                    }
+
                     ctx.AsignacionxAsesor.AddRange(listaGuardar);
                     var result = await ctx.SaveChangesAsync();
-                    var response = new { Message = $"Se han registrado {result} asignaciones." };
+                    var response = new { StatusCode=200,Message = $"Se han registrado {result} asignaciones." };
                     return Ok(response);
                 }
             }

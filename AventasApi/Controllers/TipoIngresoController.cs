@@ -24,6 +24,7 @@ namespace AventasApi.Controllers
                     {
                        Id = x.Id,
                        Nombre = x.Nombre,
+                       Etiqueta=x.Etiqueta,
                        Status = x.Status,
                        RequiereGrupoOpciones = x.RequiereGrupoOpciones
                     }).ToListAsync();
@@ -50,6 +51,7 @@ namespace AventasApi.Controllers
                         Nombre = tipoingreso.Nombre,
                         Status = tipoingreso.Status,
                         RequiereGrupoOpciones = tipoingreso.RequiereGrupoOpciones,
+                        Etiqueta = tipoingreso.Etiqueta,
                         CreatedBy = tipoingreso.Usuario,
                         CreatedDate = DateTime.Now
                     };
@@ -80,6 +82,7 @@ namespace AventasApi.Controllers
                     }
 
                     TipoIngresoBD.Nombre = tipoIngreso.Nombre;
+                    TipoIngresoBD.Etiqueta = tipoIngreso.Etiqueta;
                     TipoIngresoBD.Status = tipoIngreso.Status;
                     TipoIngresoBD.RequiereGrupoOpciones = tipoIngreso.RequiereGrupoOpciones;
                     TipoIngresoBD.ModifiedBy = tipoIngreso.Usuario;
