@@ -10,6 +10,7 @@ namespace AventasApi.Models.ViewModels
         public string ProductoId { get; set; }
         public int CodigoProducto { get; set; }
         public string CodigoColeccion { get; set; }
+        public int? idColeccion { get; set; }
         public string NombreProducto { get; set; }
         public string GrupoTalla { get; set; }
         public string GrupoImpuesto { get; set; }
@@ -17,6 +18,7 @@ namespace AventasApi.Models.ViewModels
         public List<PrecioXProductoViewModel> Precio { get; set; }
         public decimal? CantidadMinima { get;  set; }
         public List<ColorSinStock> ListaColoresSinStock { get; internal set; }
+        public bool StockVisible { get; set; }
 
         public List<TallaViewModel> ListaTalla;
         public List<ColorViewModel> ListaColores;

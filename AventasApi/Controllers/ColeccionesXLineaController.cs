@@ -369,10 +369,12 @@ namespace AventasApi.Controllers
                                    ProductosXEdad = ctx.ProductosxColeccion.Where(pxc => pxc.EmpresaId == pais.ToUpper() && pxc.IdColeccion == vw_coleccion.IdColeccion && pxc.IdEdad == me.IdEdad && pxc.IdLinea == me.IdLinea && pxc.VisibleParaVentas == true).Select(pxc => new ProductoXColeccionViewModel
                                    {
                                        ProductoId = pxc.CodigoProducto,
+                                       idColeccion = pxc.IdColeccion,
                                        CodigoColeccion = vw_coleccion.CodigoColeccion,
                                        CantidadMinima = pxc.CantidadMinima == null ? 0 : pxc.CantidadMinima,
                                        CodigoProducto = pxc.IdProducto,
                                        NombreProducto = pxc.NombreProducto,
+                                       StockVisible = pxc.StockVisible,
                                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
@@ -503,6 +505,7 @@ namespace AventasApi.Controllers
                                        CantidadMinima = pxc.CantidadMinima == null ? 0 : pxc.CantidadMinima,
                                        CodigoProducto = pxc.IdProducto,
                                        NombreProducto = pxc.NombreProducto,
+                                       StockVisible = pxc.StockVisible,
                                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
@@ -812,6 +815,32 @@ namespace AventasApi.Controllers
                     ctx.FotografiasXProducto.Remove(fotografia);
                     int res = await ctx.SaveChangesAsync();
                     return Ok(res);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("productoStock/{productoId}")]
+        public async Task<IHttpActionResult> MostrarStock(int productoId)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    ProductosxColeccion productoBd = await ctx.ProductosxColeccion.FirstOrDefaultAsync(x => x.IdProducto == productoId);
+
+                    if (productoBd == null)
+                    {
+                        return BadRequest("No se encuentra el producto.");
+                    }
+
+                    productoBd.StockVisible = !productoBd.StockVisible;
+                    var res = await ctx.SaveChangesAsync();
+                    return Ok(productoBd.StockVisible);
                 }
             }
             catch (Exception e)

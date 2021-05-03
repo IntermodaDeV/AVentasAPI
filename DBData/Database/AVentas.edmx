@@ -998,6 +998,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
           <Property Name="VisibleParaVentas" Type="bit" Nullable="false" />
           <Property Name="CantidadMinima" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="StockVisible" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -4960,6 +4961,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="FotografiasXProducto" Relationship="AventasModel.FK__Fotografi__IdPro__190BB0C3" FromRole="ProductosxColeccion" ToRole="FotografiasXProducto" />
           <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Productos__IdCol__4DB4832C" FromRole="ProductosxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" FromRole="ProductosxColeccion" ToRole="PedidosDetalleFlotante" />
+          <Property Name="StockVisible" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -9571,6 +9573,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="ProductosxColeccion">
             <EntityTypeMapping TypeName="AventasModel.ProductosxColeccion">
               <MappingFragment StoreEntitySet="ProductosxColeccion">
+                <ScalarProperty Name="StockVisible" ColumnName="StockVisible" />
                 <ScalarProperty Name="CantidadMinima" ColumnName="CantidadMinima" />
                 <ScalarProperty Name="VisibleParaVentas" ColumnName="VisibleParaVentas" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
