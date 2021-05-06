@@ -667,6 +667,7 @@ namespace AventasApi.Controllers
                                                                             CodigoColeccion = vw_coleccion.CodigoColeccion,
                                                                             CodigoProducto = pxc.IdProducto,
                                                                             NombreProducto = pxc.NombreProducto,
+                                                                            StockVisible = pxc.StockVisible,
                                                                             GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
                                                                             Precio = pxc.PreciosxProducto.Where(preEsp => true || !filtarXGrupoPrecio).Select(precio => new PrecioXProductoViewModel
                                                                             {
