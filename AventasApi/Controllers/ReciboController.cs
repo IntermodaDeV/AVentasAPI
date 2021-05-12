@@ -771,7 +771,7 @@ namespace AventasApi.Controllers
                                 }
                             }
                             var fechaDesde = DateTime.Now.AddMinutes(minutosValue * -1).AddSeconds(-30);
-                            var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pago.CodigoTipoPago && rec.REFERENCIA == pago.Referencia && rec.FACTURA == subfactura.Factura);
+                            var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pagoBD.Codigo && rec.REFERENCIA == pago.Referencia && rec.FACTURA == subfactura.Factura);
                             RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago && recXCli.Referencia == pago.Referencia);
                             existeRecibo = context.RecibosxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
 
@@ -838,7 +838,7 @@ namespace AventasApi.Controllers
                                 };
                                 recibosxCliente.Add(reciboXCliente);
                             }
-                            else
+                            else if(existeRecibo > 0)
                             {
                                 codigoCliente = recibo.CLIENTE;
                                 reciboXClienteFlotante = new RecibosxClienteFlotanteViewModel
@@ -912,8 +912,8 @@ namespace AventasApi.Controllers
                             }
 
 
-                            var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == recibo.FACTURA);
-                            var fechaFactura = context.FacturasxCliente.FirstOrDefault(x=>x.Factura == recibo.FACTURA).FechaFactura;
+                            var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == subfactura.Factura);
+                            var fechaFactura = context.FacturasxCliente.FirstOrDefault(x=>x.Factura == subfactura.Factura).FechaFactura;
                             if (pagoAplicado == null)
                             {
                                 TimeSpan ts = reciboPost.Fecha - subfactura.FechaVencimiento.Value;
