@@ -628,6 +628,28 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
           <Property Name="FechaUltSincronizacion" Type="datetime" />
         </EntityType>
+        <EntityType Name="LogProforma">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProformaId" Type="int" />
+          <Property Name="Usuario" Type="varchar" MaxLength="50" />
+          <Property Name="Fecha" Type="datetime" />
+          <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
+        </EntityType>
+        <EntityType Name="LogRecibo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ReciboId" Type="int" />
+          <Property Name="Usuario" Type="varchar" MaxLength="50" />
+          <Property Name="Fecha" Type="datetime" />
+          <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
+        </EntityType>
         <EntityType Name="LogSesion">
           <Key>
             <PropertyRef Name="Id" />
@@ -1039,6 +1061,44 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="EsAbono" Type="bit" />
           <Property Name="ValorFactura" Type="decimal" Precision="15" Scale="4" />
         </EntityType>
+        <EntityType Name="RecibosProforma">
+          <Key>
+            <PropertyRef Name="ProformaId" />
+          </Key>
+          <Property Name="ProformaId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NumeroProforma" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="CodigoCliente" Type="varchar" MaxLength="250" />
+          <Property Name="Fecha" Type="datetime" />
+          <Property Name="FechaCheque" Type="datetime" />
+          <Property Name="IdTipoPago" Type="int" />
+          <Property Name="SpecPago" Type="varchar" MaxLength="100" />
+          <Property Name="Referencia" Type="varchar" MaxLength="350" />
+          <Property Name="IdBanco" Type="int" />
+          <Property Name="IdCuentaBancaria" Type="int" />
+          <Property Name="IdMoneda" Type="varchar" MaxLength="100" />
+          <Property Name="IdFactura" Type="int" />
+          <Property Name="Valor" Type="decimal" Precision="15" Scale="4" />
+          <Property Name="Descuento" Type="decimal" Precision="15" Scale="4" />
+          <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
+          <Property Name="latitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="longitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="FechaCreacion" Type="datetime" />
+          <Property Name="UsuarioCreacion" Type="varchar" MaxLength="250" />
+          <Property Name="FechaModificacion" Type="datetime" />
+          <Property Name="UsuarioModificacion" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="RecibosProformaDetalle">
+          <Key>
+            <PropertyRef Name="IdProformaDetalle" />
+          </Key>
+          <Property Name="IdProformaDetalle" Type="int" Nullable="false" />
+          <Property Name="ProformaId" Type="int" />
+          <Property Name="IdSubFactura" Type="int" />
+          <Property Name="Valor" Type="decimal" Precision="15" Scale="4" />
+          <Property Name="Descuento" Type="decimal" Precision="15" Scale="4" />
+          <Property Name="EsAbono" Type="bit" Nullable="false" />
+          <Property Name="ValorFactura" Type="decimal" Precision="15" Scale="4" />
+        </EntityType>
         <EntityType Name="RecibosxCliente">
           <Key>
             <PropertyRef Name="ReciboId" />
@@ -1065,6 +1125,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Descuento" Type="decimal" Precision="15" Scale="4" />
           <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="proformaId" Type="int" />
         </EntityType>
         <EntityType Name="RecibosxClienteFlotante">
           <Key>
@@ -2279,6 +2340,30 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__LogProfor__Profo__77368703">
+          <End Role="RecibosProforma" Type="Self.RecibosProforma" Multiplicity="0..1" />
+          <End Role="LogProforma" Type="Self.LogProforma" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RecibosProforma">
+              <PropertyRef Name="ProformaId" />
+            </Principal>
+            <Dependent Role="LogProforma">
+              <PropertyRef Name="ProformaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LogRecibo__Recib__7365F61F">
+          <End Role="RecibosxCliente" Type="Self.RecibosxCliente" Multiplicity="0..1" />
+          <End Role="LogRecibo" Type="Self.LogRecibo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RecibosxCliente">
+              <PropertyRef Name="ReciboId" />
+            </Principal>
+            <Dependent Role="LogRecibo">
+              <PropertyRef Name="ReciboId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__MaestroBo__Empre__3C15C135">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
           <End Role="MaestroBodegaSitios" Type="Self.MaestroBodegaSitios" Multiplicity="*" />
@@ -2927,6 +3012,42 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__RecibosProforma__IdFactura">
+          <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
+          <End Role="RecibosProforma" Type="Self.RecibosProforma" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FacturasxCliente">
+              <PropertyRef Name="IdFactura" />
+            </Principal>
+            <Dependent Role="RecibosProforma">
+              <PropertyRef Name="IdFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RecibosProformaDetalle__IdSubFactura">
+          <End Role="SubFacturasxCliente" Type="Self.SubFacturasxCliente" Multiplicity="0..1" />
+          <End Role="RecibosProformaDetalle" Type="Self.RecibosProformaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubFacturasxCliente">
+              <PropertyRef Name="IdSubFactura" />
+            </Principal>
+            <Dependent Role="RecibosProformaDetalle">
+              <PropertyRef Name="IdSubFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RecibosProformDetalle__ReciboProforma">
+          <End Role="RecibosProforma" Type="Self.RecibosProforma" Multiplicity="0..1" />
+          <End Role="RecibosProformaDetalle" Type="Self.RecibosProformaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RecibosProforma">
+              <PropertyRef Name="ProformaId" />
+            </Principal>
+            <Dependent Role="RecibosProformaDetalle">
+              <PropertyRef Name="ProformaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
           <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
           <End Role="RecibosxCliente" Type="Self.RecibosxCliente" Multiplicity="*" />
@@ -2936,6 +3057,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="RecibosxCliente">
               <PropertyRef Name="IdFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RecibosXCliente__ReciboProformaId">
+          <End Role="RecibosProforma" Type="Self.RecibosProforma" Multiplicity="0..1" />
+          <End Role="RecibosxCliente" Type="Self.RecibosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RecibosProforma">
+              <PropertyRef Name="ProformaId" />
+            </Principal>
+            <Dependent Role="RecibosxCliente">
+              <PropertyRef Name="proformaId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3572,6 +3705,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="LimiteCreditoxCliente" EntityType="Self.LimiteCreditoxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LineasxColeccion" EntityType="Self.LineasxColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ListasPreciosPaquetes" EntityType="Self.ListasPreciosPaquetes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LogProforma" EntityType="Self.LogProforma" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LogRecibo" EntityType="Self.LogRecibo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LogSesion" EntityType="Self.LogSesion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaestroBodegaAlmacenes" EntityType="Self.MaestroBodegaAlmacenes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaestroBodegaSitios" EntityType="Self.MaestroBodegaSitios" Schema="dbo" store:Type="Tables" />
@@ -3600,6 +3735,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="RazonNoVentaTipo" EntityType="Self.RazonNoVentaTipo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecibosDetalle" EntityType="Self.RecibosDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecibosDetalleFlotante" EntityType="Self.RecibosDetalleFlotante" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RecibosProforma" EntityType="Self.RecibosProforma" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RecibosProformaDetalle" EntityType="Self.RecibosProformaDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecibosxCliente" EntityType="Self.RecibosxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecibosxClienteFlotante" EntityType="Self.RecibosxClienteFlotante" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RespuestaAnidadaDetalle" EntityType="Self.RespuestaAnidadaDetalle" Schema="dbo" store:Type="Tables" />
@@ -3961,6 +4098,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="ListasPreciosPaquetes" EntitySet="ListasPreciosPaquetes" />
           </AssociationSet>
+          <AssociationSet Name="FK__LogProfor__Profo__77368703" Association="Self.FK__LogProfor__Profo__77368703">
+            <End Role="RecibosProforma" EntitySet="RecibosProforma" />
+            <End Role="LogProforma" EntitySet="LogProforma" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LogRecibo__Recib__7365F61F" Association="Self.FK__LogRecibo__Recib__7365F61F">
+            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
+            <End Role="LogRecibo" EntitySet="LogRecibo" />
+          </AssociationSet>
           <AssociationSet Name="FK__MaestroBo__Empre__3C15C135" Association="Self.FK__MaestroBo__Empre__3C15C135">
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="MaestroBodegaSitios" EntitySet="MaestroBodegaSitios" />
@@ -4177,8 +4322,24 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
             <End Role="RecibosDetalleFlotante" EntitySet="RecibosDetalleFlotante" />
           </AssociationSet>
+          <AssociationSet Name="FK__RecibosProforma__IdFactura" Association="Self.FK__RecibosProforma__IdFactura">
+            <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
+            <End Role="RecibosProforma" EntitySet="RecibosProforma" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RecibosProformaDetalle__IdSubFactura" Association="Self.FK__RecibosProformaDetalle__IdSubFactura">
+            <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
+            <End Role="RecibosProformaDetalle" EntitySet="RecibosProformaDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RecibosProformDetalle__ReciboProforma" Association="Self.FK__RecibosProformDetalle__ReciboProforma">
+            <End Role="RecibosProforma" EntitySet="RecibosProforma" />
+            <End Role="RecibosProformaDetalle" EntitySet="RecibosProformaDetalle" />
+          </AssociationSet>
           <AssociationSet Name="FK__RecibosxC__IdFac__00EA0E6F" Association="Self.FK__RecibosxC__IdFac__00EA0E6F">
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
+            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RecibosXCliente__ReciboProformaId" Association="Self.FK__RecibosXCliente__ReciboProformaId">
+            <End Role="RecibosProforma" EntitySet="RecibosProforma" />
             <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
           </AssociationSet>
           <AssociationSet Name="FK__RutasxAse__Codig__6497E884" Association="Self.FK__RutasxAse__Codig__6497E884">
@@ -4763,6 +4924,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="NumeroFEL" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="RecibosxClienteFlotante" Relationship="AventasModel.FK_ReciboXClienteFlotante___FacturaXCliente" FromRole="FacturasxCliente" ToRole="RecibosxClienteFlotante" />
           <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__IdFac__0F431ABE" FromRole="FacturasxCliente" ToRole="DocumentosTransitoxFactura" />
+          <NavigationProperty Name="RecibosProforma" Relationship="AventasModel.FK__RecibosProforma__IdFactura" FromRole="FacturasxCliente" ToRole="RecibosProforma" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -5051,6 +5213,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="NumeroFEL" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="RecibosDetalleFlotante" Relationship="AventasModel.FK__RecibosDetalleFlotante_SubFactura" FromRole="SubFacturasxCliente" ToRole="RecibosDetalleFlotante" />
           <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__IdSub__10373EF7" FromRole="SubFacturasxCliente" ToRole="DocumentosTransitoxFactura" />
+          <NavigationProperty Name="RecibosProformaDetalle" Relationship="AventasModel.FK__RecibosProformaDetalle__IdSubFactura" FromRole="SubFacturasxCliente" ToRole="RecibosProformaDetalle" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -6841,6 +7004,34 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="MaestroBodegaSitios" EntitySet="MaestroBodegaSitios" />
             <End Role="PaqueteBodegaEspecifico" EntitySet="PaqueteBodegaEspecifico" />
           </AssociationSet>
+          <EntitySet Name="RecibosProforma" EntityType="AventasModel.RecibosProforma" />
+          <EntitySet Name="RecibosProformaDetalle" EntityType="AventasModel.RecibosProformaDetalle" />
+          <AssociationSet Name="FK__RecibosProforma__IdFactura" Association="AventasModel.FK__RecibosProforma__IdFactura">
+            <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
+            <End Role="RecibosProforma" EntitySet="RecibosProforma" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RecibosProformDetalle__ReciboProforma" Association="AventasModel.FK__RecibosProformDetalle__ReciboProforma">
+            <End Role="RecibosProforma" EntitySet="RecibosProforma" />
+            <End Role="RecibosProformaDetalle" EntitySet="RecibosProformaDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RecibosXCliente__ReciboProformaId" Association="AventasModel.FK__RecibosXCliente__ReciboProformaId">
+            <End Role="RecibosProforma" EntitySet="RecibosProforma" />
+            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RecibosProformaDetalle__IdSubFactura" Association="AventasModel.FK__RecibosProformaDetalle__IdSubFactura">
+            <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
+            <End Role="RecibosProformaDetalle" EntitySet="RecibosProformaDetalle" />
+          </AssociationSet>
+          <EntitySet Name="LogProforma" EntityType="AventasModel.LogProforma" />
+          <EntitySet Name="LogRecibo" EntityType="AventasModel.LogRecibo" />
+          <AssociationSet Name="FK__LogProfor__Profo__77368703" Association="AventasModel.FK__LogProfor__Profo__77368703">
+            <End Role="RecibosProforma" EntitySet="RecibosProforma" />
+            <End Role="LogProforma" EntitySet="LogProforma" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LogRecibo__Recib__7365F61F" Association="AventasModel.FK__LogRecibo__Recib__7365F61F">
+            <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
+            <End Role="LogRecibo" EntitySet="LogRecibo" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -6970,6 +7161,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="SpecPago" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="proformaId" Type="Int32" />
+          <NavigationProperty Name="RecibosProforma" Relationship="AventasModel.FK__RecibosXCliente__ReciboProformaId" FromRole="RecibosxCliente" ToRole="RecibosProforma" />
+          <NavigationProperty Name="LogRecibo" Relationship="AventasModel.FK__LogRecibo__Recib__7365F61F" FromRole="RecibosxCliente" ToRole="LogRecibo" />
         </EntityType>
         <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
           <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
@@ -9104,6 +9298,146 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="RecibosProforma">
+          <Key>
+            <PropertyRef Name="ProformaId" />
+          </Key>
+          <Property Name="ProformaId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NumeroProforma" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="FechaCheque" Type="DateTime" Precision="3" />
+          <Property Name="IdTipoPago" Type="Int32" />
+          <Property Name="SpecPago" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Referencia" Type="String" MaxLength="350" FixedLength="false" Unicode="false" />
+          <Property Name="IdBanco" Type="Int32" />
+          <Property Name="IdCuentaBancaria" Type="Int32" />
+          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="IdFactura" Type="Int32" />
+          <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="latitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="longitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioCreacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioModificacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="FacturasxCliente" Relationship="AventasModel.FK__RecibosProforma__IdFactura" FromRole="RecibosProforma" ToRole="FacturasxCliente" />
+          <NavigationProperty Name="RecibosProformaDetalle" Relationship="AventasModel.FK__RecibosProformDetalle__ReciboProforma" FromRole="RecibosProforma" ToRole="RecibosProformaDetalle" />
+          <NavigationProperty Name="RecibosxCliente" Relationship="AventasModel.FK__RecibosXCliente__ReciboProformaId" FromRole="RecibosProforma" ToRole="RecibosxCliente" />
+          <NavigationProperty Name="LogProforma" Relationship="AventasModel.FK__LogProfor__Profo__77368703" FromRole="RecibosProforma" ToRole="LogProforma" />
+        </EntityType>
+        <EntityType Name="RecibosProformaDetalle">
+          <Key>
+            <PropertyRef Name="IdProformaDetalle" />
+          </Key>
+          <Property Name="IdProformaDetalle" Type="Int32" Nullable="false" />
+          <Property Name="ProformaId" Type="Int32" />
+          <Property Name="IdSubFactura" Type="Int32" />
+          <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="EsAbono" Type="Boolean" Nullable="false" />
+          <Property Name="ValorFactura" Type="Decimal" Precision="15" Scale="4" />
+          <NavigationProperty Name="RecibosProforma" Relationship="AventasModel.FK__RecibosProformDetalle__ReciboProforma" FromRole="RecibosProformaDetalle" ToRole="RecibosProforma" />
+          <NavigationProperty Name="SubFacturasxCliente" Relationship="AventasModel.FK__RecibosProformaDetalle__IdSubFactura" FromRole="RecibosProformaDetalle" ToRole="SubFacturasxCliente" />
+        </EntityType>
+        <Association Name="FK__RecibosProforma__IdFactura">
+          <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.RecibosProforma" Role="RecibosProforma" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FacturasxCliente">
+              <PropertyRef Name="IdFactura" />
+            </Principal>
+            <Dependent Role="RecibosProforma">
+              <PropertyRef Name="IdFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RecibosProformDetalle__ReciboProforma">
+          <End Type="AventasModel.RecibosProforma" Role="RecibosProforma" Multiplicity="0..1" />
+          <End Type="AventasModel.RecibosProformaDetalle" Role="RecibosProformaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RecibosProforma">
+              <PropertyRef Name="ProformaId" />
+            </Principal>
+            <Dependent Role="RecibosProformaDetalle">
+              <PropertyRef Name="ProformaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RecibosXCliente__ReciboProformaId">
+          <End Type="AventasModel.RecibosProforma" Role="RecibosProforma" Multiplicity="0..1" />
+          <End Type="AventasModel.RecibosxCliente" Role="RecibosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RecibosProforma">
+              <PropertyRef Name="ProformaId" />
+            </Principal>
+            <Dependent Role="RecibosxCliente">
+              <PropertyRef Name="proformaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RecibosProformaDetalle__IdSubFactura">
+          <End Type="AventasModel.SubFacturasxCliente" Role="SubFacturasxCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.RecibosProformaDetalle" Role="RecibosProformaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubFacturasxCliente">
+              <PropertyRef Name="IdSubFactura" />
+            </Principal>
+            <Dependent Role="RecibosProformaDetalle">
+              <PropertyRef Name="IdSubFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="LogProforma">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProformaId" Type="Int32" />
+          <Property Name="Usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
+          <NavigationProperty Name="RecibosProforma" Relationship="AventasModel.FK__LogProfor__Profo__77368703" FromRole="LogProforma" ToRole="RecibosProforma" />
+        </EntityType>
+        <EntityType Name="LogRecibo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ReciboId" Type="Int32" />
+          <Property Name="Usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
+          <NavigationProperty Name="RecibosxCliente" Relationship="AventasModel.FK__LogRecibo__Recib__7365F61F" FromRole="LogRecibo" ToRole="RecibosxCliente" />
+        </EntityType>
+        <Association Name="FK__LogProfor__Profo__77368703">
+          <End Type="AventasModel.RecibosProforma" Role="RecibosProforma" Multiplicity="0..1" />
+          <End Type="AventasModel.LogProforma" Role="LogProforma" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RecibosProforma">
+              <PropertyRef Name="ProformaId" />
+            </Principal>
+            <Dependent Role="LogProforma">
+              <PropertyRef Name="ProformaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LogRecibo__Recib__7365F61F">
+          <End Type="AventasModel.RecibosxCliente" Role="RecibosxCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.LogRecibo" Role="LogRecibo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RecibosxCliente">
+              <PropertyRef Name="ReciboId" />
+            </Principal>
+            <Dependent Role="LogRecibo">
+              <PropertyRef Name="ReciboId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -9965,6 +10299,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="RecibosxCliente">
             <EntityTypeMapping TypeName="AventasModel.RecibosxCliente">
               <MappingFragment StoreEntitySet="RecibosxCliente">
+                <ScalarProperty Name="proformaId" ColumnName="proformaId" />
                 <ScalarProperty Name="SpecPago" ColumnName="SpecPago" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />
@@ -10779,6 +11114,70 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Etiqueta" ColumnName="Etiqueta" />
                 <ScalarProperty Name="ColeccionId" ColumnName="ColeccionId" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RecibosProforma">
+            <EntityTypeMapping TypeName="AventasModel.RecibosProforma">
+              <MappingFragment StoreEntitySet="RecibosProforma">
+                <ScalarProperty Name="UsuarioModificacion" ColumnName="UsuarioModificacion" />
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="longitude" ColumnName="longitude" />
+                <ScalarProperty Name="latitude" ColumnName="latitude" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="IdFactura" ColumnName="IdFactura" />
+                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
+                <ScalarProperty Name="IdCuentaBancaria" ColumnName="IdCuentaBancaria" />
+                <ScalarProperty Name="IdBanco" ColumnName="IdBanco" />
+                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
+                <ScalarProperty Name="SpecPago" ColumnName="SpecPago" />
+                <ScalarProperty Name="IdTipoPago" ColumnName="IdTipoPago" />
+                <ScalarProperty Name="FechaCheque" ColumnName="FechaCheque" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="NumeroProforma" ColumnName="NumeroProforma" />
+                <ScalarProperty Name="ProformaId" ColumnName="ProformaId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RecibosProformaDetalle">
+            <EntityTypeMapping TypeName="AventasModel.RecibosProformaDetalle">
+              <MappingFragment StoreEntitySet="RecibosProformaDetalle">
+                <ScalarProperty Name="ValorFactura" ColumnName="ValorFactura" />
+                <ScalarProperty Name="EsAbono" ColumnName="EsAbono" />
+                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="IdSubFactura" ColumnName="IdSubFactura" />
+                <ScalarProperty Name="ProformaId" ColumnName="ProformaId" />
+                <ScalarProperty Name="IdProformaDetalle" ColumnName="IdProformaDetalle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LogProforma">
+            <EntityTypeMapping TypeName="AventasModel.LogProforma">
+              <MappingFragment StoreEntitySet="LogProforma">
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="Usuario" ColumnName="Usuario" />
+                <ScalarProperty Name="ProformaId" ColumnName="ProformaId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LogRecibo">
+            <EntityTypeMapping TypeName="AventasModel.LogRecibo">
+              <MappingFragment StoreEntitySet="LogRecibo">
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="Usuario" ColumnName="Usuario" />
+                <ScalarProperty Name="ReciboId" ColumnName="ReciboId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

@@ -15,7 +15,8 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -185,6 +186,7 @@
     <Compile Include="Controllers\CorreoController.cs" />
     <Compile Include="Controllers\DocumentosPendientesController.cs" />
     <Compile Include="Controllers\EmpresaController.cs" />
+    <Compile Include="Controllers\LogsImpresionesController.cs" />
     <Compile Include="Controllers\MaestroBodegaAlmacenesController.cs" />
     <Compile Include="Controllers\RespuestaController.cs" />
     <Compile Include="Controllers\PreguntaController.cs" />
@@ -195,7 +197,6 @@
     <Compile Include="Controllers\FacturasXClienteController.cs" />
     <Compile Include="Controllers\FisicoDisponibleController.cs" />
     <Compile Include="Controllers\GeoposicionController.cs" />
-    <Compile Include="Controllers\GestorController.cs" />
     <Compile Include="Controllers\GruposImpuestosController.cs" />
     <Compile Include="Controllers\MaestroLineaController.cs" />
     <Compile Include="Controllers\MonedaController.cs" />
@@ -293,6 +294,8 @@
     <Compile Include="Models\ViewModels\EncPedTempViewModel.cs" />
     <Compile Include="Models\ViewModels\GrupoOpcionesDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\GrupoOpcionesViewModel.cs" />
+    <Compile Include="Models\ViewModels\LogProformaViewModel.cs" />
+    <Compile Include="Models\ViewModels\LogRecibosViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasOpcionesViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasAnidadasViewModel.cs" />
     <Compile Include="Models\ViewModels\RecibosxClienteFlotanteViewModel.cs" />
@@ -405,7 +408,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62630</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:62631/</IISUrl>
+          <IISUrl>http://localhost:62632/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
