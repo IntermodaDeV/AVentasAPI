@@ -173,8 +173,9 @@ namespace AventasApi.Controllers
                             }
                             ).ToList()
                         }).ToList();
+                        ListaRecibos.AddRange(Recibos);
                     }
-                        
+                   
                     return Ok(ListaRecibos);
                 }
             }
@@ -535,7 +536,7 @@ namespace AventasApi.Controllers
                                 var numRecibo = recibosxCliente[0].NumeroRecibo.Substring(2, Caracteres - 2);
                                 recibosxCliente[0].NumeroRecibo = numRecibo;
                                 AsyncSqlInsert.IngresarRecibos(recibosxCliente, false);
-
+                                ValidarCorrelativoRecibo(asesor.CodigoAsesor);
                                 if (proformaPost.LogImpresion.Count() > 0)
                                 {
                                     foreach(var logProforma in proformaPost.LogImpresion)
@@ -615,6 +616,35 @@ namespace AventasApi.Controllers
             }catch(Exception e)
             {
                 return InternalServerError(e);
+            }
+        }
+
+        private void ValidarCorrelativoRecibo(string CodigoAsesor)
+        {
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                try
+                {
+                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor);
+                    asesor.CorrelativoRecibos = (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0) + 1;
+                    context.SaveChanges();
+
+                    var correlativo = $"{asesor.InicialesNombre}-{100000 + (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0)}";
+
+                    if (context.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo == correlativo) == null)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        ValidarCorrelativoRecibo(CodigoAsesor);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
         }
     }
