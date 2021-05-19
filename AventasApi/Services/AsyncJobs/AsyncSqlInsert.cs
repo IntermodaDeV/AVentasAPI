@@ -138,6 +138,7 @@ namespace AventasApi.Services.AsyncJobs
                         SpecPago = rec.SpecPago,
                         UsuarioCreacion = rec.UsuarioCreacion,
                         FechaCreacion = rec.FechaCreacion,
+                        proformaId = rec.proformaId,
                         RecibosDetalle = rec.DetalleRecibo.Select(recDet => new RecibosDetalle
                         {
                             IdReciboDetalle = recDet.IdReciboDetalle,
@@ -202,8 +203,9 @@ namespace AventasApi.Services.AsyncJobs
                     return false;
                 }
             }
-            catch
+            catch(Exception e)
             {
+                Console.WriteLine(e);
                 return true;
             }
         }

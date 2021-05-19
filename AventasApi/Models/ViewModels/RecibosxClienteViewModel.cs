@@ -36,6 +36,7 @@ namespace AventasApi.Models.ViewModels
         public string Asesor { get; set; }
         public string UsuarioCreacion { get; set; }
         public Nullable<DateTime> FechaCreacion { get; set; }
+        public int? proformaId { get; set; }
 
         public List<RecibosDetalleViewModel> DetalleRecibo { get; set; }
         public bool Anticipo { get;  set; }

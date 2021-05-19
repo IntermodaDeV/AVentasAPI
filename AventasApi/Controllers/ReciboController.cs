@@ -154,7 +154,7 @@ namespace AventasApi.Controllers
                             Factura = recDet.SubFacturasxCliente.Factura,
                             NumeroFel = recDet.SubFacturasxCliente.NumeroFEL,
                             FechaFactura = recDet.SubFacturasxCliente.FacturasxCliente.FechaFactura,
-                            Tipo = rec.FacturasxCliente.Tipo,
+                            Tipo = recDet.SubFacturasxCliente.FacturasxCliente.Tipo,
                             ReciboId = recDet.ReciboId,
                             IdSubFactura = recDet.IdSubFactura,
                             Valor = recDet.Valor,
@@ -997,19 +997,6 @@ namespace AventasApi.Controllers
                 {
                     try
                     {
-                        var reciboHeaders = new List<ReciboApiModel>();
-                        var client = new RestClient();
-                        var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
-                        {
-                            RequestFormat = DataFormat.Json
-                        };
-                        request.AddHeader("Content-type", "application/json; charset=utf-8");
-                        request.Parameters.Clear();
-                        request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
-                        var respuesta = client.Execute(request);
-
-                        if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
-                        {
                             var Esduplicado = AsyncSqlInsert.IngresarRecibos(recibosxCliente, true);
 
                             if (Esduplicado)
@@ -1047,6 +1034,18 @@ namespace AventasApi.Controllers
                             }
                             else
                             {
+                                var reciboHeaders = new List<ReciboApiModel>();
+                                var client = new RestClient();
+                                var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
+                                {
+                                    RequestFormat = DataFormat.Json
+                                };
+                                request.AddHeader("Content-type", "application/json; charset=utf-8");
+                                request.Parameters.Clear();
+                                request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
+                                var respuesta = client.Execute(request);
+                                if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
+                                {
                                 //using (AVentasEntities context = new AVentasEntities())
                                 //{
                                 //    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
@@ -1081,16 +1080,16 @@ namespace AventasApi.Controllers
                                     }
                                 }
                             }
+                            else
+                            {
+                                return BadRequest(respuesta.Content);
+
+                            }
                             syncCuentaCorriente.SyncFacturas(asesor.EmpresaId, codigoCliente);
                             syncCuentaCorriente.SyncSubFacturas(asesor.EmpresaId, codigoCliente, asesor.CodigoAsesor);
 
                             respuestaPagoRecibo.Mensaje = "El recibo ha sido sincronizado exitosamente.";
                             return Ok(respuestaPagoRecibo);
-                        }
-                        else
-                        {
-                            return BadRequest(respuesta.Content);
-
                         }
                     }
                     catch (Exception)

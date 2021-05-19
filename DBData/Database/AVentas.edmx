@@ -1091,7 +1091,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Key>
             <PropertyRef Name="IdProformaDetalle" />
           </Key>
-          <Property Name="IdProformaDetalle" Type="int" Nullable="false" />
+          <Property Name="IdProformaDetalle" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProformaId" Type="int" />
           <Property Name="IdSubFactura" Type="int" />
           <Property Name="Valor" Type="decimal" Precision="15" Scale="4" />

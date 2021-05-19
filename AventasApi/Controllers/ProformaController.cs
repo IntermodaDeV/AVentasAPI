@@ -526,6 +526,16 @@ namespace AventasApi.Controllers
                                 respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
                                 return Ok(respuestaPagoRecibo);
                             }
+                            else
+                            {
+                                var NumRecibo = recibosxCliente[0].NumeroRecibo;
+                                var numProforma = ctx.RecibosProforma.Where(x=> x.NumeroProforma == NumRecibo).FirstOrDefault();
+                                recibosxCliente[0].proformaId = numProforma.ProformaId;
+                                var Caracteres= NumRecibo.Length;
+                                var numRecibo = recibosxCliente[0].NumeroRecibo.Substring(2, Caracteres - 2);
+                                recibosxCliente[0].NumeroRecibo = numRecibo;
+                                AsyncSqlInsert.IngresarRecibos(recibosxCliente, false);
+                            }
 
                             respuestaPagoRecibo.Mensaje = "El recibo ha sido sincronizado exitosamente.";
                             return Ok(respuestaPagoRecibo);
