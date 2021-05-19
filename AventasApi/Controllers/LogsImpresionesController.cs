@@ -1,11 +1,7 @@
-﻿using AventasApi.Models;
-using AventasApi.Models.ViewModels;
+﻿using AventasApi.Models.ViewModels;
 using DBData.Database;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -41,7 +37,7 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        [Route("~/api/logImpresionRecibo")]
+        [Route("~/api/logImpresionReciboProforma")]
         public async Task<IHttpActionResult> RegistrarLogProforma([FromBody] LogProformaViewModel logProforma)
         {
             try
