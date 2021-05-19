@@ -535,6 +535,23 @@ namespace AventasApi.Controllers
                                 var numRecibo = recibosxCliente[0].NumeroRecibo.Substring(2, Caracteres - 2);
                                 recibosxCliente[0].NumeroRecibo = numRecibo;
                                 AsyncSqlInsert.IngresarRecibos(recibosxCliente, false);
+
+                                if (proformaPost.LogImpresion.Count() > 0)
+                                {
+                                    foreach(var logProforma in proformaPost.LogImpresion)
+                                    {
+                                        var LogProformas = new LogProforma()
+                                        {
+                                            ProformaId = numProforma.ProformaId,
+                                            Usuario = logProforma.Usuario,
+                                            Fecha = DateTime.Now,
+                                            Latitude = logProforma.Latitude,
+                                            Longitude = logProforma.longitude
+                                        };
+                                        ctx.LogProforma.Add(LogProformas);
+                                        ctx.SaveChanges();
+                                    }
+                                }
                             }
 
                             respuestaPagoRecibo.Mensaje = "El recibo ha sido sincronizado exitosamente.";
