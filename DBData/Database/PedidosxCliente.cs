@@ -46,28 +46,27 @@ namespace DBData.Database
         public string IdLinea { get; set; }
         public string idMoneda { get; set; }
         public Nullable<int> IdEstado { get; set; }
+        public bool Sincronizado { get; set; }
         public Nullable<int> ClienteContadoId { get; set; }
         public string ModoVenta { get; set; }
         public Nullable<decimal> Flete { get; set; }
         public bool RequiereEntrega { get; set; }
-        public bool Sincronizado { get; set; }
         public Nullable<bool> Procesando { get; set; }
         public string ErrorAx { get; set; }
         public Nullable<bool> BodegaEspecifica { get; set; }
         public string Sitio { get; set; }
         public string Almacen { get; set; }
     
-        public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }
+        public virtual Colecciones Colecciones { get; set; }
         public virtual Empresa Empresa { get; set; }
         public virtual EstadosPedido EstadosPedido { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FirmasxPedido> FirmasxPedido { get; set; }
         public virtual MaestroLinea MaestroLinea { get; set; }
         public virtual MaestroMoneda MaestroMoneda { get; set; }
-        public virtual TiposdePedido TiposdePedido { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosDetalle> PedidosDetalle { get; set; }
-        public virtual Colecciones Colecciones { get; set; }
+        public virtual TiposdePedido TiposdePedido { get; set; }
     }
 }

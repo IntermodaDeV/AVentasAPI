@@ -17,8 +17,8 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TipoVisitaCliente()
         {
-            this.AsignacionxAsesor = new HashSet<AsignacionxAsesor>();
             this.AsignacionxAsesorDetalle = new HashSet<AsignacionxAsesorDetalle>();
+            this.AsignacionxAsesor = new HashSet<AsignacionxAsesor>();
         }
     
         public int idTipoVisita { get; set; }
@@ -28,8 +28,8 @@ namespace DBData.Database
         public Nullable<int> TiempoEstimado { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AsignacionxAsesor> AsignacionxAsesor { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AsignacionxAsesorDetalle> AsignacionxAsesorDetalle { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AsignacionxAsesor> AsignacionxAsesor { get; set; }
     }
 }

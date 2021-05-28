@@ -18,17 +18,17 @@ namespace DBData.Database
         public Clientes()
         {
             this.AcuerdosxCliente = new HashSet<AcuerdosxCliente>();
-            this.AsignacionxAsesor = new HashSet<AsignacionxAsesor>();
-            this.BitacoraGeoposicion = new HashSet<BitacoraGeoposicion>();
-            this.BitacoraVisitasCliente = new HashSet<BitacoraVisitasCliente>();
             this.ClientesxRuta = new HashSet<ClientesxRuta>();
             this.FacturasxCliente = new HashSet<FacturasxCliente>();
             this.LimiteCreditoxCliente = new HashSet<LimiteCreditoxCliente>();
             this.SubFacturasxCliente = new HashSet<SubFacturasxCliente>();
-            this.PedidosxCliente = new HashSet<PedidosxCliente>();
             this.Respuestas = new HashSet<Respuestas>();
-            this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
             this.DocumentosTransitoxFactura = new HashSet<DocumentosTransitoxFactura>();
+            this.AsignacionxAsesor = new HashSet<AsignacionxAsesor>();
+            this.BitacoraGeoposicion = new HashSet<BitacoraGeoposicion>();
+            this.BitacoraVisitasCliente = new HashSet<BitacoraVisitasCliente>();
+            this.PedidosxCliente = new HashSet<PedidosxCliente>();
+            this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
         }
     
         public string CodigoCliente { get; set; }
@@ -60,12 +60,6 @@ namespace DBData.Database
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AcuerdosxCliente> AcuerdosxCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AsignacionxAsesor> AsignacionxAsesor { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BitacoraGeoposicion> BitacoraGeoposicion { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BitacoraVisitasCliente> BitacoraVisitasCliente { get; set; }
         public virtual MaestroGrupoPrecio MaestroGrupoPrecio { get; set; }
         public virtual MaestroMoneda MaestroMoneda { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -78,12 +72,18 @@ namespace DBData.Database
         public virtual ICollection<SubFacturasxCliente> SubFacturasxCliente { get; set; }
         public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Respuestas> Respuestas { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DocumentosTransitoxFactura> DocumentosTransitoxFactura { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AsignacionxAsesor> AsignacionxAsesor { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BitacoraGeoposicion> BitacoraGeoposicion { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BitacoraVisitasCliente> BitacoraVisitasCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
     }
 }

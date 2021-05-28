@@ -27,7 +27,7 @@ namespace DBData.Database
         public Nullable<System.DateTime> Fecha { get; set; }
         public string CodigoAsesor { get; set; }
     
-        public virtual PedidosxClienteFlotante PedidosxClienteFlotante { get; set; }
         public virtual ProductosxColeccion ProductosxColeccion { get; set; }
+        public virtual PedidosxClienteFlotante PedidosxClienteFlotante { get; set; }
     }
 }

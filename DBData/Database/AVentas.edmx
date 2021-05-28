@@ -78,7 +78,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
         </EntityType>
         <EntityType Name="Asesores">
           <Key>
-            <PropertyRef Name="CodigoAsesor" />
+            <PropertyRef Name="AsesorId" />
           </Key>
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Nombre" Type="varchar(max)" />
@@ -90,6 +90,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="InicialesNombre" Type="varchar" MaxLength="50" />
           <Property Name="Diario" Type="varchar" MaxLength="20" />
           <Property Name="Activo" Type="bit" />
+          <Property Name="AsesorId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
         <EntityType Name="AsignacionxAsesor">
           <Key>
@@ -1620,18 +1621,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Asignacio__Codig__61BB7BD9">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="0..1" />
-          <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="AsignacionxAsesor">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Asignacio__idAsi__5540965B">
           <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="0..1" />
           <End Role="AsignacionxAsesorDetalle" Type="Self.AsignacionxAsesorDetalle" Multiplicity="*" />
@@ -1728,18 +1717,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__BitacoraG__Codig__5B638405">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="0..1" />
-          <End Role="BitacoraGeoposicion" Type="Self.BitacoraGeoposicion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="BitacoraGeoposicion">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__BitacoraG__Codig__6E765879">
           <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
           <End Role="BitacoraGeoposicion" Type="Self.BitacoraGeoposicion" Multiplicity="*" />
@@ -1773,18 +1750,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="BitacoraVisitasCliente">
               <PropertyRef Name="CodigoCliente" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__BitacoraV__Codig__10766AC2">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="0..1" />
-          <End Role="BitacoraVisitasCliente" Type="Self.BitacoraVisitasCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="BitacoraVisitasCliente">
-              <PropertyRef Name="CodigoAsesor" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2556,30 +2521,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__PedidosxC__Codig__6B44E613">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="0..1" />
-          <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__Codig__6B44E6131">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="0..1" />
-          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="PedidosxClienteFlotante">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__PedidosxC__Empre__6C390A4C">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
           <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="*" />
@@ -3084,18 +3025,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RutasxAse__Codig__658C0CBD">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="1" />
-          <End Role="RutasxAsesor" Type="Self.RutasxAsesor" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="RutasxAsesor">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Secciones__SeccionEncuestId">
           <End Role="Secciones_Encuesta" Type="Self.Secciones_Encuesta" Multiplicity="1" />
           <End Role="Secciones_Usuarios" Type="Self.Secciones_Usuarios" Multiplicity="*" />
@@ -3237,18 +3166,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="TiposdePagoDetalle">
               <PropertyRef Name="IdTipoPago" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Usuarios___Codig__382534C0">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="1" />
-          <End Role="Usuarios_Asesores" Type="Self.Usuarios_Asesores" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="Usuarios_Asesores">
-              <PropertyRef Name="CodigoAsesor" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3858,10 +3775,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Clientes" EntitySet="Clientes" />
             <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
           </AssociationSet>
-          <AssociationSet Name="FK__Asignacio__Codig__61BB7BD9" Association="Self.FK__Asignacio__Codig__61BB7BD9">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
-          </AssociationSet>
           <AssociationSet Name="FK__Asignacio__idAsi__5540965B" Association="Self.FK__Asignacio__idAsi__5540965B">
             <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
             <End Role="AsignacionxAsesorDetalle" EntitySet="AsignacionxAsesorDetalle" />
@@ -3894,10 +3807,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="Bancos" EntitySet="Bancos" />
           </AssociationSet>
-          <AssociationSet Name="FK__BitacoraG__Codig__5B638405" Association="Self.FK__BitacoraG__Codig__5B638405">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="BitacoraGeoposicion" EntitySet="BitacoraGeoposicion" />
-          </AssociationSet>
           <AssociationSet Name="FK__BitacoraG__Codig__6E765879" Association="Self.FK__BitacoraG__Codig__6E765879">
             <End Role="Clientes" EntitySet="Clientes" />
             <End Role="BitacoraGeoposicion" EntitySet="BitacoraGeoposicion" />
@@ -3908,10 +3817,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </AssociationSet>
           <AssociationSet Name="FK__BitacoraV__Codig__0F824689" Association="Self.FK__BitacoraV__Codig__0F824689">
             <End Role="Clientes" EntitySet="Clientes" />
-            <End Role="BitacoraVisitasCliente" EntitySet="BitacoraVisitasCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__BitacoraV__Codig__10766AC2" Association="Self.FK__BitacoraV__Codig__10766AC2">
-            <End Role="Asesores" EntitySet="Asesores" />
             <End Role="BitacoraVisitasCliente" EntitySet="BitacoraVisitasCliente" />
           </AssociationSet>
           <AssociationSet Name="FK__BitacoraV__IdRaz__0D99FE17" Association="Self.FK__BitacoraV__IdRaz__0D99FE17">
@@ -4170,14 +4075,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Clientes" EntitySet="Clientes" />
             <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
           </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__Codig__6B44E613" Association="Self.FK__PedidosxC__Codig__6B44E613">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__Codig__6B44E6131" Association="Self.FK__PedidosxC__Codig__6B44E6131">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
-          </AssociationSet>
           <AssociationSet Name="FK__PedidosxC__Empre__6C390A4C" Association="Self.FK__PedidosxC__Empre__6C390A4C">
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
@@ -4346,10 +4243,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Rutas" EntitySet="Rutas" />
             <End Role="RutasxAsesor" EntitySet="RutasxAsesor" />
           </AssociationSet>
-          <AssociationSet Name="FK__RutasxAse__Codig__658C0CBD" Association="Self.FK__RutasxAse__Codig__658C0CBD">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="RutasxAsesor" EntitySet="RutasxAsesor" />
-          </AssociationSet>
           <AssociationSet Name="FK__Secciones__SeccionEncuestId" Association="Self.FK__Secciones__SeccionEncuestId">
             <End Role="Secciones_Encuesta" EntitySet="Secciones_Encuesta" />
             <End Role="Secciones_Usuarios" EntitySet="Secciones_Usuarios" />
@@ -4397,10 +4290,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK__TiposdePa__IdTip__2D67AF2B" Association="Self.FK__TiposdePa__IdTip__2D67AF2B">
             <End Role="TiposdePago" EntitySet="TiposdePago" />
             <End Role="TiposdePagoDetalle" EntitySet="TiposdePagoDetalle" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Usuarios___Codig__382534C0" Association="Self.FK__Usuarios___Codig__382534C0">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="Usuarios_Asesores" EntitySet="Usuarios_Asesores" />
           </AssociationSet>
           <AssociationSet Name="FK__Usuarios___Empre__2BBF5DDB" Association="Self.FK__Usuarios___Empre__2BBF5DDB">
             <End Role="Empresa" EntitySet="Empresa" />
@@ -4566,60 +4455,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Saldo" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="AcuerdosxCliente" Relationship="Self.FK__Acuerdosx__Saldo__2EC5E7B8" FromRole="AcuerdosxClienteDetalle" ToRole="AcuerdosxCliente" />
         </EntityType>
-        <EntityType Name="Asesores">
-          <Key>
-            <PropertyRef Name="CodigoAsesor" />
-          </Key>
-          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Nombre" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="EmpresaId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Revision" Type="Boolean" />
-          <Property Name="CorrelativoPedidos" Type="Int32" />
-          <Property Name="CorrelativoRecibos" Type="Int32" />
-          <Property Name="InicialesNombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Diario" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="AsignacionxAsesor" Relationship="Self.FK__Asignacio__Codig__61BB7BD9" FromRole="Asesores" ToRole="AsignacionxAsesor" />
-          <NavigationProperty Name="BitacoraGeoposicion" Relationship="Self.FK__BitacoraG__Codig__5B638405" FromRole="Asesores" ToRole="BitacoraGeoposicion" />
-          <NavigationProperty Name="BitacoraVisitasCliente" Relationship="Self.FK__BitacoraV__Codig__10766AC2" FromRole="Asesores" ToRole="BitacoraVisitasCliente" />
-          <NavigationProperty Name="RutasxAsesor" Relationship="Self.FK__RutasxAse__Codig__658C0CBD" FromRole="Asesores" ToRole="RutasxAsesor" />
-          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Codig__6B44E613" FromRole="Asesores" ToRole="PedidosxCliente" />
-          <NavigationProperty Name="Usuarios_Asesores" Relationship="AventasModel.FK__Usuarios___Codig__382534C0" FromRole="Asesores" ToRole="Usuarios_Asesores" />
-          <Property Name="Activo" Type="Boolean" />
-          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Codig__6B44E6131" FromRole="Asesores" ToRole="PedidosxClienteFlotante" />
-        </EntityType>
-        <EntityType Name="AsignacionxAsesor">
-          <Key>
-            <PropertyRef Name="IdAsignacionxAsesor" />
-          </Key>
-          <Property Name="IdAsignacionxAsesor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Fecha" Type="DateTime" Precision="3" />
-          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Usuario" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="FechaAsignacion" Type="DateTime" Precision="3" />
-          <Property Name="Orden" Type="Int32" />
-          <Property Name="HoraInicio" Type="DateTime" Precision="3" />
-          <Property Name="HoraFinal" Type="DateTime" Precision="3" />
-          <Property Name="idPrioridad" Type="Int32" />
-          <Property Name="idTipoVisita" Type="Int32" />
-          <Property Name="Observacion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Asesores" Relationship="Self.FK__Asignacio__Codig__61BB7BD9" FromRole="AsignacionxAsesor" ToRole="Asesores" />
-          <NavigationProperty Name="Clientes" Relationship="Self.FK__Asignacio__Codig__60C757A0" FromRole="AsignacionxAsesor" ToRole="Clientes" />
-          <NavigationProperty Name="AsignacionxAsesorDetalle" Relationship="Self.FK__Asignacio__idAsi__5540965B" FromRole="AsignacionxAsesor" ToRole="AsignacionxAsesorDetalle" />
-          <NavigationProperty Name="PrioridadAsignacion" Relationship="Self.FK__Asignacio__idPri__24134F1B" FromRole="AsignacionxAsesor" ToRole="PrioridadAsignacion" />
-          <NavigationProperty Name="TipoVisitaCliente" Relationship="Self.FK__Asignacio__idTip__26EFBBC6" FromRole="AsignacionxAsesor" ToRole="TipoVisitaCliente" />
-          <NavigationProperty Name="BitacoraGeoposicion" Relationship="Self.FK__BitacoraG__IdAsi__4C214075" FromRole="AsignacionxAsesor" ToRole="BitacoraGeoposicion" />
-          <Property Name="latitudeCheckIn" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="longitudeCheckIn" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="fechaCheckIn" Type="DateTime" Precision="3" />
-          <Property Name="latitudeCheckOut" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="longitudeCheckOut" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="fechaCheckOut" Type="DateTime" Precision="3" />
-          <Property Name="BloqueoCheckin" Type="Boolean" Nullable="false" />
-          <Property Name="BloqueoCheckout" Type="Boolean" Nullable="false" />
-          <Property Name="Cancelada" Type="Boolean" Nullable="false" />
-        </EntityType>
         <EntityType Name="AsignacionxAsesorDetalle">
           <Key>
             <PropertyRef Name="idAsignacionDetalle" />
@@ -4630,8 +4465,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="HoraInicio" Type="DateTime" Precision="3" />
           <Property Name="HoraFin" Type="DateTime" Precision="3" />
           <Property Name="idTipoVisita" Type="Int32" />
-          <NavigationProperty Name="AsignacionxAsesor" Relationship="Self.FK__Asignacio__idAsi__5540965B" FromRole="AsignacionxAsesorDetalle" ToRole="AsignacionxAsesor" />
           <NavigationProperty Name="TipoVisitaCliente" Relationship="Self.FK__Asignacio__idTip__5634BA94" FromRole="AsignacionxAsesorDetalle" ToRole="TipoVisitaCliente" />
+          <NavigationProperty Name="AsignacionxAsesor" Relationship="AventasModel.FK__Asignacio__idAsi__5540965B" FromRole="AsignacionxAsesorDetalle" ToRole="AsignacionxAsesor" />
         </EntityType>
         <EntityType Name="AtributosxColeccion">
           <Key>
@@ -4668,41 +4503,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Empresa" Relationship="Self.FK__Bancos__EmpresaI__168449D3" FromRole="Bancos" ToRole="Empresa" />
           <NavigationProperty Name="CuentasBancarias" Relationship="Self.FK__CuentasBa__IdBan__1A54DAB7" FromRole="Bancos" ToRole="CuentasBancarias" />
         </EntityType>
-        <EntityType Name="BitacoraGeoposicion">
-          <Key>
-            <PropertyRef Name="IdBitacoraGeo" />
-          </Key>
-          <Property Name="IdBitacoraGeo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IdAsignacionxAsesor" Type="Int32" />
-          <Property Name="Mocked" Type="Boolean" />
-          <Property Name="Accuracy" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Altitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Fecha" Type="DateTime" Precision="3" />
-          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Asesores" Relationship="Self.FK__BitacoraG__Codig__5B638405" FromRole="BitacoraGeoposicion" ToRole="Asesores" />
-          <NavigationProperty Name="AsignacionxAsesor" Relationship="Self.FK__BitacoraG__IdAsi__4C214075" FromRole="BitacoraGeoposicion" ToRole="AsignacionxAsesor" />
-          <NavigationProperty Name="Clientes" Relationship="Self.FK__BitacoraG__Codig__6E765879" FromRole="BitacoraGeoposicion" ToRole="Clientes" />
-        </EntityType>
-        <EntityType Name="BitacoraVisitasCliente">
-          <Key>
-            <PropertyRef Name="IdBitacoraVisitaCliente" />
-          </Key>
-          <Property Name="IdBitacoraVisitaCliente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Fecha" Type="DateTime" Precision="3" />
-          <Property Name="IdRazonNoVentaTipo" Type="Int32" />
-          <Property Name="IdRazonNoVentaCausa" Type="Int32" />
-          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IdAsignacionxAsesor" Type="Int32" />
-          <Property Name="Observacion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Asesores" Relationship="Self.FK__BitacoraV__Codig__10766AC2" FromRole="BitacoraVisitasCliente" ToRole="Asesores" />
-          <NavigationProperty Name="Clientes" Relationship="Self.FK__BitacoraV__Codig__0F824689" FromRole="BitacoraVisitasCliente" ToRole="Clientes" />
-          <NavigationProperty Name="RazonNoVentaTipo" Relationship="Self.FK__BitacoraV__IdRaz__0D99FE17" FromRole="BitacoraVisitasCliente" ToRole="RazonNoVentaTipo" />
-          <NavigationProperty Name="RazonNoVentaCausa" Relationship="Self.FK__BitacoraV__IdRaz__0E8E2250" FromRole="BitacoraVisitasCliente" ToRole="RazonNoVentaCausa" />
-        </EntityType>
         <EntityType Name="Clientes">
           <Key>
             <PropertyRef Name="CodigoCliente" />
@@ -4726,9 +4526,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="LimiteCredito" Type="Decimal" Precision="15" Scale="4" />
           <Property Name="CreditoDisponible" Type="Decimal" Precision="15" Scale="4" />
           <NavigationProperty Name="AcuerdosxCliente" Relationship="Self.FK__Acuerdosx__Total__290D0E62" FromRole="Clientes" ToRole="AcuerdosxCliente" />
-          <NavigationProperty Name="AsignacionxAsesor" Relationship="Self.FK__Asignacio__Codig__60C757A0" FromRole="Clientes" ToRole="AsignacionxAsesor" />
-          <NavigationProperty Name="BitacoraGeoposicion" Relationship="Self.FK__BitacoraG__Codig__6E765879" FromRole="Clientes" ToRole="BitacoraGeoposicion" />
-          <NavigationProperty Name="BitacoraVisitasCliente" Relationship="Self.FK__BitacoraV__Codig__0F824689" FromRole="Clientes" ToRole="BitacoraVisitasCliente" />
           <NavigationProperty Name="MaestroGrupoPrecio" Relationship="Self.FK__Clientes__GrupoP__3A5795F5" FromRole="Clientes" ToRole="MaestroGrupoPrecio" />
           <NavigationProperty Name="MaestroMoneda" Relationship="Self.FK__Clientes__IdMone__5649C92D" FromRole="Clientes" ToRole="MaestroMoneda" />
           <NavigationProperty Name="ClientesxRuta" Relationship="Self.FK__Clientesx__Codig__5C02A283" FromRole="Clientes" ToRole="ClientesxRuta" />
@@ -4738,7 +4535,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Empresa" Relationship="Self.FK_Clientes_Empresa" FromRole="Clientes" ToRole="Empresa" />
           <Property Name="Telefono" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="GrupoImpuesto" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Codig__0F183235" FromRole="Clientes" ToRole="PedidosxCliente" />
           <Property Name="ModoEntrega" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Habilitado" Type="Boolean" Nullable="false" />
@@ -4746,8 +4542,12 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="VersionRegistroBINT" Type="Int64" annotation:StoreGeneratedPattern="Computed" />
           <NavigationProperty Name="Respuestas" Relationship="AventasModel.FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE" FromRole="Clientes" ToRole="Respuestas" />
           <Property Name="IgnorarSeqFact" Type="Boolean" />
-          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Codig__0F1832351" FromRole="Clientes" ToRole="PedidosxClienteFlotante" />
           <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__Codig__0D5AD24C" FromRole="Clientes" ToRole="DocumentosTransitoxFactura" />
+          <NavigationProperty Name="AsignacionxAsesor" Relationship="AventasModel.FK__Asignacio__Codig__60C757A0" FromRole="Clientes" ToRole="AsignacionxAsesor" />
+          <NavigationProperty Name="BitacoraGeoposicion" Relationship="AventasModel.FK__BitacoraG__Codig__6E765879" FromRole="Clientes" ToRole="BitacoraGeoposicion" />
+          <NavigationProperty Name="BitacoraVisitasCliente" Relationship="AventasModel.FK__BitacoraV__Codig__0F824689" FromRole="Clientes" ToRole="BitacoraVisitasCliente" />
+          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Codig__0F183235" FromRole="Clientes" ToRole="PedidosxCliente" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Codig__0F1832351" FromRole="Clientes" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -4859,19 +4659,19 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="TiposdePagoDetalle" Relationship="Self.FK__TiposdePa__Empre__2C738AF2" FromRole="Empresa" ToRole="TiposdePagoDetalle" />
           <NavigationProperty Name="GrupoImpuestoArticulo" Relationship="AventasModel.GrupoImpuestoArticulo_Empresa" FromRole="Empresa" ToRole="GrupoImpuestoArticulo" />
           <NavigationProperty Name="GrupoImpuestoCliente" Relationship="AventasModel.GrupoImpuestoCliente_Empresa" FromRole="Empresa" ToRole="GrupoImpuestoCliente" />
-          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C" FromRole="Empresa" ToRole="PedidosxCliente" />
           <Property Name="DocumentoFiscal" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__Productos__IdEmpresa__Empresa" FromRole="Empresa" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="Usuarios_Empresas" Relationship="AventasModel.FK__Usuarios___Empre__2BBF5DDB" FromRole="Empresa" ToRole="Usuarios_Empresas" />
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK__Usuarios__Empres__28E2F130" FromRole="Empresa" ToRole="Usuarios" />
           <NavigationProperty Name="Empresa_Encuesta" Relationship="AventasModel.FK__EmpresaEn__Empre__7405149D" FromRole="Empresa" ToRole="Empresa_Encuesta" />
           <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Coleccion__FotoP__405A880E" FromRole="Empresa" ToRole="Colecciones" />
-          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C1" FromRole="Empresa" ToRole="PedidosxClienteFlotante" />
           <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__Empre__0E4EF685" FromRole="Empresa" ToRole="DocumentosTransitoxFactura" />
           <NavigationProperty Name="ListasPreciosPaquetes" Relationship="AventasModel.FK__ListasPre__Empre__67152DD3" FromRole="Empresa" ToRole="ListasPreciosPaquetes" />
           <NavigationProperty Name="MaestroBodegaSitios" Relationship="AventasModel.FK__MaestroBo__Empre__3C15C135" FromRole="Empresa" ToRole="MaestroBodegaSitios" />
           <NavigationProperty Name="MaestroBodegaAlmacenes" Relationship="AventasModel.FK__MaestroBo__Empre__3FE65219" FromRole="Empresa" ToRole="MaestroBodegaAlmacenes" />
           <NavigationProperty Name="PaqueteBodegaEspecifico" Relationship="AventasModel.FK__PaqueteBo__Empre__459F2B6F" FromRole="Empresa" ToRole="PaqueteBodegaEspecifico" />
+          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C" FromRole="Empresa" ToRole="PedidosxCliente" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C1" FromRole="Empresa" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="Errores">
           <Key>
@@ -5065,11 +4865,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="FacturasxCliente" Relationship="Self.FK__Facturasx__IdMon__733B0D96" FromRole="MaestroMoneda" ToRole="FacturasxCliente" />
           <NavigationProperty Name="MonedasxEmpresa" Relationship="Self.FK__MonedasxE__IdMon__3C89F72A" FromRole="MaestroMoneda" ToRole="MonedasxEmpresa" />
           <NavigationProperty Name="SubFacturasxCliente" Relationship="Self.FK__SubFactur__IdMon__79E80B25" FromRole="MaestroMoneda" ToRole="SubFacturasxCliente" />
-          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D" FromRole="MaestroMoneda" ToRole="PedidosxCliente" />
           <NavigationProperty Name="PreciosxProducto" Relationship="AventasModel.FK__PreciosxP__IdMon__55209ACA" FromRole="MaestroMoneda" ToRole="PreciosxProducto" />
           <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdMon__36870511" FromRole="MaestroMoneda" ToRole="PrecioEspecifico" />
-          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D1" FromRole="MaestroMoneda" ToRole="PedidosxClienteFlotante" />
           <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__IdMon__0C66AE13" FromRole="MaestroMoneda" ToRole="DocumentosTransitoxFactura" />
+          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D" FromRole="MaestroMoneda" ToRole="PedidosxCliente" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D1" FromRole="MaestroMoneda" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="MonedasxEmpresa">
           <Key>
@@ -5090,7 +4890,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Estatus" Type="Boolean" />
           <Property Name="ColorBorde" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="ColorRelleno" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="AsignacionxAsesor" Relationship="Self.FK__Asignacio__idPri__24134F1B" FromRole="PrioridadAsignacion" ToRole="AsignacionxAsesor" />
+          <NavigationProperty Name="AsignacionxAsesor" Relationship="AventasModel.FK__Asignacio__idPri__24134F1B" FromRole="PrioridadAsignacion" ToRole="AsignacionxAsesor" />
         </EntityType>
         <EntityType Name="ProductosxColeccion">
           <Key>
@@ -5132,8 +4932,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="IdRazonNoVentaCausa" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="IdRazonNoVentaTipo" Type="Int32" />
           <Property Name="Causa" Type="String" MaxLength="2500" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="BitacoraVisitasCliente" Relationship="Self.FK__BitacoraV__IdRaz__0E8E2250" FromRole="RazonNoVentaCausa" ToRole="BitacoraVisitasCliente" />
           <NavigationProperty Name="RazonNoVentaTipo" Relationship="Self.FK__RazonNoVe__IdRaz__0ABD916C" FromRole="RazonNoVentaCausa" ToRole="RazonNoVentaTipo" />
+          <NavigationProperty Name="BitacoraVisitasCliente" Relationship="AventasModel.FK__BitacoraV__IdRaz__0E8E2250" FromRole="RazonNoVentaCausa" ToRole="BitacoraVisitasCliente" />
         </EntityType>
         <EntityType Name="RazonNoVentaTipo">
           <Key>
@@ -5141,8 +4941,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </Key>
           <Property Name="IdRazonNoVentaTipo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Tipo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="BitacoraVisitasCliente" Relationship="Self.FK__BitacoraV__IdRaz__0D99FE17" FromRole="RazonNoVentaTipo" ToRole="BitacoraVisitasCliente" />
           <NavigationProperty Name="RazonNoVentaCausa" Relationship="Self.FK__RazonNoVe__IdRaz__0ABD916C" FromRole="RazonNoVentaTipo" ToRole="RazonNoVentaCausa" />
+          <NavigationProperty Name="BitacoraVisitasCliente" Relationship="AventasModel.FK__BitacoraV__IdRaz__0D99FE17" FromRole="RazonNoVentaTipo" ToRole="BitacoraVisitasCliente" />
         </EntityType>
         <EntityType Name="RecibosDetalle">
           <Key>
@@ -5167,17 +4967,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Nombre" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Revision" Type="Boolean" />
           <NavigationProperty Name="ClientesxRuta" Relationship="Self.FK__Clientesx__Codig__5B0E7E4A" FromRole="Rutas" ToRole="ClientesxRuta" />
-          <NavigationProperty Name="RutasxAsesor" Relationship="Self.FK__RutasxAse__Codig__6497E884" FromRole="Rutas" ToRole="RutasxAsesor" />
-        </EntityType>
-        <EntityType Name="RutasxAsesor">
-          <Key>
-            <PropertyRef Name="IdRutasxAsesor" />
-          </Key>
-          <Property Name="IdRutasxAsesor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CodigoRuta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Asesores" Relationship="Self.FK__RutasxAse__Codig__658C0CBD" FromRole="RutasxAsesor" ToRole="Asesores" />
-          <NavigationProperty Name="Rutas" Relationship="Self.FK__RutasxAse__Codig__6497E884" FromRole="RutasxAsesor" ToRole="Rutas" />
+          <NavigationProperty Name="RutasxAsesor" Relationship="AventasModel.FK__RutasxAse__Codig__6497E884" FromRole="Rutas" ToRole="RutasxAsesor" />
         </EntityType>
         <EntityType Name="SubFacturasxCliente">
           <Key>
@@ -5306,8 +5096,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Descripcion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="Estatus" Type="Boolean" />
           <Property Name="TiempoEstimado" Type="Int32" />
-          <NavigationProperty Name="AsignacionxAsesor" Relationship="Self.FK__Asignacio__idTip__26EFBBC6" FromRole="TipoVisitaCliente" ToRole="AsignacionxAsesor" />
           <NavigationProperty Name="AsignacionxAsesorDetalle" Relationship="Self.FK__Asignacio__idTip__5634BA94" FromRole="TipoVisitaCliente" ToRole="AsignacionxAsesorDetalle" />
+          <NavigationProperty Name="AsignacionxAsesor" Relationship="AventasModel.FK__Asignacio__idTip__26EFBBC6" FromRole="TipoVisitaCliente" ToRole="AsignacionxAsesor" />
         </EntityType>
         <EntityType Name="Acciones">
           <Key>
@@ -5480,114 +5270,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Asignacio__Codig__61BB7BD9">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="0..1" />
-          <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="AsignacionxAsesor">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__BitacoraG__Codig__5B638405">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="0..1" />
-          <End Role="BitacoraGeoposicion" Type="Self.BitacoraGeoposicion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="BitacoraGeoposicion">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__BitacoraV__Codig__10766AC2">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="0..1" />
-          <End Role="BitacoraVisitasCliente" Type="Self.BitacoraVisitasCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="BitacoraVisitasCliente">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__RutasxAse__Codig__658C0CBD">
-          <End Role="Asesores" Type="Self.Asesores" Multiplicity="1" />
-          <End Role="RutasxAsesor" Type="Self.RutasxAsesor" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="RutasxAsesor">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Asignacio__Codig__60C757A0">
-          <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
-          <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Clientes">
-              <PropertyRef Name="CodigoCliente" />
-            </Principal>
-            <Dependent Role="AsignacionxAsesor">
-              <PropertyRef Name="CodigoCliente" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Asignacio__idAsi__5540965B">
-          <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="0..1" />
-          <End Role="AsignacionxAsesorDetalle" Type="Self.AsignacionxAsesorDetalle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AsignacionxAsesor">
-              <PropertyRef Name="IdAsignacionxAsesor" />
-            </Principal>
-            <Dependent Role="AsignacionxAsesorDetalle">
-              <PropertyRef Name="idAsignacionxAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Asignacio__idPri__24134F1B">
-          <End Role="PrioridadAsignacion" Type="Self.PrioridadAsignacion" Multiplicity="0..1" />
-          <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PrioridadAsignacion">
-              <PropertyRef Name="idPrioridad" />
-            </Principal>
-            <Dependent Role="AsignacionxAsesor">
-              <PropertyRef Name="idPrioridad" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Asignacio__idTip__26EFBBC6">
-          <End Role="TipoVisitaCliente" Type="Self.TipoVisitaCliente" Multiplicity="0..1" />
-          <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TipoVisitaCliente">
-              <PropertyRef Name="idTipoVisita" />
-            </Principal>
-            <Dependent Role="AsignacionxAsesor">
-              <PropertyRef Name="idTipoVisita" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__BitacoraG__IdAsi__4C214075">
-          <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="0..1" />
-          <End Role="BitacoraGeoposicion" Type="Self.BitacoraGeoposicion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="AsignacionxAsesor">
-              <PropertyRef Name="IdAsignacionxAsesor" />
-            </Principal>
-            <Dependent Role="BitacoraGeoposicion">
-              <PropertyRef Name="IdAsignacionxAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Asignacio__idTip__5634BA94">
           <End Role="TipoVisitaCliente" Type="Self.TipoVisitaCliente" Multiplicity="0..1" />
           <End Role="AsignacionxAsesorDetalle" Type="Self.AsignacionxAsesorDetalle" Multiplicity="*" />
@@ -5645,54 +5327,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="CuentasBancarias">
               <PropertyRef Name="IdBanco" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__BitacoraG__Codig__6E765879">
-          <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
-          <End Role="BitacoraGeoposicion" Type="Self.BitacoraGeoposicion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Clientes">
-              <PropertyRef Name="CodigoCliente" />
-            </Principal>
-            <Dependent Role="BitacoraGeoposicion">
-              <PropertyRef Name="CodigoCliente" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__BitacoraV__Codig__0F824689">
-          <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
-          <End Role="BitacoraVisitasCliente" Type="Self.BitacoraVisitasCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Clientes">
-              <PropertyRef Name="CodigoCliente" />
-            </Principal>
-            <Dependent Role="BitacoraVisitasCliente">
-              <PropertyRef Name="CodigoCliente" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__BitacoraV__IdRaz__0D99FE17">
-          <End Role="RazonNoVentaTipo" Type="Self.RazonNoVentaTipo" Multiplicity="0..1" />
-          <End Role="BitacoraVisitasCliente" Type="Self.BitacoraVisitasCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="RazonNoVentaTipo">
-              <PropertyRef Name="IdRazonNoVentaTipo" />
-            </Principal>
-            <Dependent Role="BitacoraVisitasCliente">
-              <PropertyRef Name="IdRazonNoVentaTipo" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__BitacoraV__IdRaz__0E8E2250">
-          <End Role="RazonNoVentaCausa" Type="Self.RazonNoVentaCausa" Multiplicity="0..1" />
-          <End Role="BitacoraVisitasCliente" Type="Self.BitacoraVisitasCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="RazonNoVentaCausa">
-              <PropertyRef Name="IdRazonNoVentaCausa" />
-            </Principal>
-            <Dependent Role="BitacoraVisitasCliente">
-              <PropertyRef Name="IdRazonNoVentaCausa" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -6140,18 +5774,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__RutasxAse__Codig__6497E884">
-          <End Role="Rutas" Type="Self.Rutas" Multiplicity="1" />
-          <End Role="RutasxAsesor" Type="Self.RutasxAsesor" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Rutas">
-              <PropertyRef Name="CodigoRuta" />
-            </Principal>
-            <Dependent Role="RutasxAsesor">
-              <PropertyRef Name="CodigoRuta" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__TallasxPr__IdTal__2803DB90">
           <End Role="TallasXGrupo" Type="Self.TallasXGrupo" Multiplicity="0..1" />
           <End Role="TallasxProducto" Type="Self.TallasxProducto" Multiplicity="*" />
@@ -6179,14 +5801,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <EntityContainer Name="AVentasEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AcuerdosxCliente" EntityType="Self.AcuerdosxCliente" />
           <EntitySet Name="AcuerdosxClienteDetalle" EntityType="Self.AcuerdosxClienteDetalle" />
-          <EntitySet Name="Asesores" EntityType="Self.Asesores" />
-          <EntitySet Name="AsignacionxAsesor" EntityType="Self.AsignacionxAsesor" />
           <EntitySet Name="AsignacionxAsesorDetalle" EntityType="Self.AsignacionxAsesorDetalle" />
           <EntitySet Name="AtributosxColeccion" EntityType="Self.AtributosxColeccion" />
           <EntitySet Name="AtributosxProducto" EntityType="Self.AtributosxProducto" />
           <EntitySet Name="Bancos" EntityType="Self.Bancos" />
-          <EntitySet Name="BitacoraGeoposicion" EntityType="Self.BitacoraGeoposicion" />
-          <EntitySet Name="BitacoraVisitasCliente" EntityType="Self.BitacoraVisitasCliente" />
           <EntitySet Name="Clientes" EntityType="Self.Clientes" />
           <EntitySet Name="ClientesxRuta" EntityType="Self.ClientesxRuta" />
           <EntitySet Name="Colores" EntityType="Self.Colores" />
@@ -6217,7 +5835,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="RazonNoVentaTipo" EntityType="Self.RazonNoVentaTipo" />
           <EntitySet Name="RecibosDetalle" EntityType="Self.RecibosDetalle" />
           <EntitySet Name="Rutas" EntityType="Self.Rutas" />
-          <EntitySet Name="RutasxAsesor" EntityType="Self.RutasxAsesor" />
           <EntitySet Name="SubFacturasxCliente" EntityType="Self.SubFacturasxCliente" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
           <EntitySet Name="TallasXGrupo" EntityType="Self.TallasXGrupo" />
@@ -6265,42 +5882,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="AcuerdosxCliente" EntitySet="AcuerdosxCliente" />
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
           </AssociationSet>
-          <AssociationSet Name="FK__Asignacio__Codig__61BB7BD9" Association="Self.FK__Asignacio__Codig__61BB7BD9">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
-          </AssociationSet>
-          <AssociationSet Name="FK__BitacoraG__Codig__5B638405" Association="Self.FK__BitacoraG__Codig__5B638405">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="BitacoraGeoposicion" EntitySet="BitacoraGeoposicion" />
-          </AssociationSet>
-          <AssociationSet Name="FK__BitacoraV__Codig__10766AC2" Association="Self.FK__BitacoraV__Codig__10766AC2">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="BitacoraVisitasCliente" EntitySet="BitacoraVisitasCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__RutasxAse__Codig__658C0CBD" Association="Self.FK__RutasxAse__Codig__658C0CBD">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="RutasxAsesor" EntitySet="RutasxAsesor" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Asignacio__Codig__60C757A0" Association="Self.FK__Asignacio__Codig__60C757A0">
-            <End Role="Clientes" EntitySet="Clientes" />
-            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Asignacio__idAsi__5540965B" Association="Self.FK__Asignacio__idAsi__5540965B">
-            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
-            <End Role="AsignacionxAsesorDetalle" EntitySet="AsignacionxAsesorDetalle" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Asignacio__idPri__24134F1B" Association="Self.FK__Asignacio__idPri__24134F1B">
-            <End Role="PrioridadAsignacion" EntitySet="PrioridadAsignacion" />
-            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Asignacio__idTip__26EFBBC6" Association="Self.FK__Asignacio__idTip__26EFBBC6">
-            <End Role="TipoVisitaCliente" EntitySet="TipoVisitaCliente" />
-            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
-          </AssociationSet>
-          <AssociationSet Name="FK__BitacoraG__IdAsi__4C214075" Association="Self.FK__BitacoraG__IdAsi__4C214075">
-            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
-            <End Role="BitacoraGeoposicion" EntitySet="BitacoraGeoposicion" />
-          </AssociationSet>
           <AssociationSet Name="FK__Asignacio__idTip__5634BA94" Association="Self.FK__Asignacio__idTip__5634BA94">
             <End Role="TipoVisitaCliente" EntitySet="TipoVisitaCliente" />
             <End Role="AsignacionxAsesorDetalle" EntitySet="AsignacionxAsesorDetalle" />
@@ -6320,22 +5901,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK__CuentasBa__IdBan__1A54DAB7" Association="Self.FK__CuentasBa__IdBan__1A54DAB7">
             <End Role="Bancos" EntitySet="Bancos" />
             <End Role="CuentasBancarias" EntitySet="CuentasBancarias" />
-          </AssociationSet>
-          <AssociationSet Name="FK__BitacoraG__Codig__6E765879" Association="Self.FK__BitacoraG__Codig__6E765879">
-            <End Role="Clientes" EntitySet="Clientes" />
-            <End Role="BitacoraGeoposicion" EntitySet="BitacoraGeoposicion" />
-          </AssociationSet>
-          <AssociationSet Name="FK__BitacoraV__Codig__0F824689" Association="Self.FK__BitacoraV__Codig__0F824689">
-            <End Role="Clientes" EntitySet="Clientes" />
-            <End Role="BitacoraVisitasCliente" EntitySet="BitacoraVisitasCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__BitacoraV__IdRaz__0D99FE17" Association="Self.FK__BitacoraV__IdRaz__0D99FE17">
-            <End Role="RazonNoVentaTipo" EntitySet="RazonNoVentaTipo" />
-            <End Role="BitacoraVisitasCliente" EntitySet="BitacoraVisitasCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__BitacoraV__IdRaz__0E8E2250" Association="Self.FK__BitacoraV__IdRaz__0E8E2250">
-            <End Role="RazonNoVentaCausa" EntitySet="RazonNoVentaCausa" />
-            <End Role="BitacoraVisitasCliente" EntitySet="BitacoraVisitasCliente" />
           </AssociationSet>
           <AssociationSet Name="FK__Clientes__GrupoP__3A5795F5" Association="Self.FK__Clientes__GrupoP__3A5795F5">
             <End Role="MaestroGrupoPrecio" EntitySet="MaestroGrupoPrecio" />
@@ -6485,10 +6050,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
             <End Role="RecibosDetalle" EntitySet="RecibosDetalle" />
           </AssociationSet>
-          <AssociationSet Name="FK__RutasxAse__Codig__6497E884" Association="Self.FK__RutasxAse__Codig__6497E884">
-            <End Role="Rutas" EntitySet="Rutas" />
-            <End Role="RutasxAsesor" EntitySet="RutasxAsesor" />
-          </AssociationSet>
           <AssociationSet Name="FK__TallasxPr__IdTal__2803DB90" Association="Self.FK__TallasxPr__IdTal__2803DB90">
             <End Role="TallasXGrupo" EntitySet="TallasXGrupo" />
             <End Role="TallasxProducto" EntitySet="TallasxProducto" />
@@ -6559,39 +6120,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="GrupoImpuestoCliente" EntitySet="GrupoImpuestoCliente" />
           </AssociationSet>
-          <EntitySet Name="PedidosxCliente" EntityType="AventasModel.PedidosxCliente" />
-          <AssociationSet Name="FK__PedidosxC__Codig__6B44E613" Association="AventasModel.FK__PedidosxC__Codig__6B44E613">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__Codig__0F183235" Association="AventasModel.FK__PedidosxC__Codig__0F183235">
-            <End Role="Clientes" EntitySet="Clientes" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__Empre__6C390A4C" Association="AventasModel.FK__PedidosxC__Empre__6C390A4C">
-            <End Role="Empresa" EntitySet="Empresa" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__IdEst__0ADD8CFD" Association="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD">
-            <End Role="EstadosPedido" EntitySet="EstadosPedido" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__FirmasxPe__Pedid__75C27486" Association="AventasModel.FK__FirmasxPe__Pedid__75C27486">
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-            <End Role="FirmasxPedido" EntitySet="FirmasxPedido" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Linea" Association="AventasModel.FK_Linea">
-            <End Role="MaestroLinea" EntitySet="MaestroLinea" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__idMon__353DDB1D" Association="AventasModel.FK__PedidosxC__idMon__353DDB1D">
-            <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__IdTip__6A50C1DA" Association="AventasModel.FK__PedidosxC__IdTip__6A50C1DA">
-            <End Role="TiposdePedido" EntitySet="TiposdePedido" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
           <EntitySet Name="ComunidadAutonoma" EntityType="AventasModel.ComunidadAutonoma" />
           <EntitySet Name="EmpresaTransporte" EntityType="AventasModel.EmpresaTransporte" />
           <EntitySet Name="TransportePrecioCaja" EntityType="AventasModel.TransportePrecioCaja" />
@@ -6636,10 +6164,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </AssociationSet>
           <EntitySet Name="ClienteContado" EntityType="AventasModel.ClienteContado" />
           <EntitySet Name="PedidosDetalle" EntityType="AventasModel.PedidosDetalle" />
-          <AssociationSet Name="FK__PedidosDe__Pedid__70099B30" Association="AventasModel.FK__PedidosDe__Pedid__70099B30">
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-            <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
-          </AssociationSet>
           <AssociationSet Name="FK_PedidosDetalle_ProductosxColeccion" Association="AventasModel.FK_PedidosDetalle_ProductosxColeccion">
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
@@ -6684,11 +6208,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="Usuarios_Empresas" EntitySet="Usuarios_Empresas" />
           </AssociationSet>
-          <EntitySet Name="Usuarios_Asesores" EntityType="AventasModel.Usuarios_Asesores" />
-          <AssociationSet Name="FK__Usuarios___Codig__382534C0" Association="AventasModel.FK__Usuarios___Codig__382534C0">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="Usuarios_Asesores" EntitySet="Usuarios_Asesores" />
-          </AssociationSet>
           <EntitySet Name="Usuarios" EntityType="AventasModel.Usuarios" />
           <AssociationSet Name="FK__Usuarios__Empres__28E2F130" Association="AventasModel.FK__Usuarios__Empres__28E2F130">
             <End Role="Empresa" EntitySet="Empresa" />
@@ -6705,10 +6224,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK__Usuarios___Usuar__2CB38214" Association="AventasModel.FK__Usuarios___Usuar__2CB38214">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Usuarios_Empresas" EntitySet="Usuarios_Empresas" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Usuarios___Usuar__37311087" Association="AventasModel.FK__Usuarios___Usuar__37311087">
-            <End Role="Usuarios" EntitySet="Usuarios" />
-            <End Role="Usuarios_Asesores" EntitySet="Usuarios_Asesores" />
           </AssociationSet>
           <FunctionImport Name="SP_VISITASPORMES" ReturnType="Collection(AventasModel.SP_VISITASPORMES_Result1)">
           <Parameter Name="User" Mode="In" Type="String" />
@@ -6818,55 +6333,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="LineasxColeccion" EntitySet="LineasxColeccion" />
           </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E85" Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E85">
-            <End Role="Colecciones" EntitySet="Colecciones" />
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-          </AssociationSet>
           <AssociationSet Name="FK__Productos__IdCol__4DB4832C" Association="AventasModel.FK__Productos__IdCol__4DB4832C">
             <End Role="Colecciones" EntitySet="Colecciones" />
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
           </AssociationSet>
           <EntitySet Name="PedidosDetalleFlotante" EntityType="AventasModel.PedidosDetalleFlotante" />
-          <EntitySet Name="PedidosxClienteFlotante" EntityType="AventasModel.PedidosxClienteFlotante" />
-          <AssociationSet Name="FK__PedidosxC__Codig__6B44E6131" Association="AventasModel.FK__PedidosxC__Codig__6B44E6131">
-            <End Role="Asesores" EntitySet="Asesores" />
-            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__Codig__0F1832351" Association="AventasModel.FK__PedidosxC__Codig__0F1832351">
-            <End Role="Clientes" EntitySet="Clientes" />
-            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E851" Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E851">
-            <End Role="Colecciones" EntitySet="Colecciones" />
-            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__Empre__6C390A4C1" Association="AventasModel.FK__PedidosxC__Empre__6C390A4C1">
-            <End Role="Empresa" EntitySet="Empresa" />
-            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__IdEst__0ADD8CFD1" Association="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD1">
-            <End Role="EstadosPedido" EntitySet="EstadosPedido" />
-            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Linea1" Association="AventasModel.FK_Linea1">
-            <End Role="MaestroLinea" EntitySet="MaestroLinea" />
-            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__idMon__353DDB1D1" Association="AventasModel.FK__PedidosxC__idMon__353DDB1D1">
-            <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
-            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosDe__Pedid__70099B3011" Association="AventasModel.FK__PedidosDe__Pedid__70099B3011">
-            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
-            <End Role="PedidosDetalleFlotante" EntitySet="PedidosDetalleFlotante" />
-          </AssociationSet>
           <AssociationSet Name="FK_PedidosDetalle_ProductosxColeccion1" Association="AventasModel.FK_PedidosDetalle_ProductosxColeccion1">
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="PedidosDetalleFlotante" EntitySet="PedidosDetalleFlotante" />
-          </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__IdTip__6A50C1DA1" Association="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1">
-            <End Role="TiposdePedido" EntitySet="TiposdePedido" />
-            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
           </AssociationSet>
           <EntitySet Name="RecibosDetalleFlotante" EntityType="AventasModel.RecibosDetalleFlotante" />
           <AssociationSet Name="FK__RecibosDetalleFlotante_SubFactura" Association="AventasModel.FK__RecibosDetalleFlotante_SubFactura">
@@ -7032,6 +6506,126 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="RecibosxCliente" EntitySet="RecibosxCliente" />
             <End Role="LogRecibo" EntitySet="LogRecibo" />
           </AssociationSet>
+          <EntitySet Name="AsignacionxAsesor" EntityType="AventasModel.AsignacionxAsesor" />
+          <EntitySet Name="BitacoraGeoposicion" EntityType="AventasModel.BitacoraGeoposicion" />
+          <EntitySet Name="BitacoraVisitasCliente" EntityType="AventasModel.BitacoraVisitasCliente" />
+          <EntitySet Name="PedidosxCliente" EntityType="AventasModel.PedidosxCliente" />
+          <EntitySet Name="PedidosxClienteFlotante" EntityType="AventasModel.PedidosxClienteFlotante" />
+          <EntitySet Name="RutasxAsesor" EntityType="AventasModel.RutasxAsesor" />
+          <EntitySet Name="Usuarios_Asesores" EntityType="AventasModel.Usuarios_Asesores" />
+          <AssociationSet Name="FK__Asignacio__Codig__60C757A0" Association="AventasModel.FK__Asignacio__Codig__60C757A0">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Asignacio__idAsi__5540965B" Association="AventasModel.FK__Asignacio__idAsi__5540965B">
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+            <End Role="AsignacionxAsesorDetalle" EntitySet="AsignacionxAsesorDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Asignacio__idPri__24134F1B" Association="AventasModel.FK__Asignacio__idPri__24134F1B">
+            <End Role="PrioridadAsignacion" EntitySet="PrioridadAsignacion" />
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Asignacio__idTip__26EFBBC6" Association="AventasModel.FK__Asignacio__idTip__26EFBBC6">
+            <End Role="TipoVisitaCliente" EntitySet="TipoVisitaCliente" />
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BitacoraG__IdAsi__4C214075" Association="AventasModel.FK__BitacoraG__IdAsi__4C214075">
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+            <End Role="BitacoraGeoposicion" EntitySet="BitacoraGeoposicion" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BitacoraG__Codig__6E765879" Association="AventasModel.FK__BitacoraG__Codig__6E765879">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="BitacoraGeoposicion" EntitySet="BitacoraGeoposicion" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BitacoraV__Codig__0F824689" Association="AventasModel.FK__BitacoraV__Codig__0F824689">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="BitacoraVisitasCliente" EntitySet="BitacoraVisitasCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BitacoraV__IdRaz__0D99FE17" Association="AventasModel.FK__BitacoraV__IdRaz__0D99FE17">
+            <End Role="RazonNoVentaTipo" EntitySet="RazonNoVentaTipo" />
+            <End Role="BitacoraVisitasCliente" EntitySet="BitacoraVisitasCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__BitacoraV__IdRaz__0E8E2250" Association="AventasModel.FK__BitacoraV__IdRaz__0E8E2250">
+            <End Role="RazonNoVentaCausa" EntitySet="RazonNoVentaCausa" />
+            <End Role="BitacoraVisitasCliente" EntitySet="BitacoraVisitasCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__Codig__0F183235" Association="AventasModel.FK__PedidosxC__Codig__0F183235">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__Codig__0F1832351" Association="AventasModel.FK__PedidosxC__Codig__0F1832351">
+            <End Role="Clientes" EntitySet="Clientes" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E85" Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E85">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdCol__6D2D2E851" Association="AventasModel.FK__PedidosxC__IdCol__6D2D2E851">
+            <End Role="Colecciones" EntitySet="Colecciones" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__Empre__6C390A4C" Association="AventasModel.FK__PedidosxC__Empre__6C390A4C">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__Empre__6C390A4C1" Association="AventasModel.FK__PedidosxC__Empre__6C390A4C1">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdEst__0ADD8CFD" Association="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD">
+            <End Role="EstadosPedido" EntitySet="EstadosPedido" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdEst__0ADD8CFD1" Association="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD1">
+            <End Role="EstadosPedido" EntitySet="EstadosPedido" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__FirmasxPe__Pedid__75C27486" Association="AventasModel.FK__FirmasxPe__Pedid__75C27486">
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+            <End Role="FirmasxPedido" EntitySet="FirmasxPedido" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Linea" Association="AventasModel.FK_Linea">
+            <End Role="MaestroLinea" EntitySet="MaestroLinea" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Linea1" Association="AventasModel.FK_Linea1">
+            <End Role="MaestroLinea" EntitySet="MaestroLinea" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__idMon__353DDB1D" Association="AventasModel.FK__PedidosxC__idMon__353DDB1D">
+            <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__idMon__353DDB1D1" Association="AventasModel.FK__PedidosxC__idMon__353DDB1D1">
+            <End Role="MaestroMoneda" EntitySet="MaestroMoneda" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosDe__Pedid__70099B30" Association="AventasModel.FK__PedidosDe__Pedid__70099B30">
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+            <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosDe__Pedid__70099B3011" Association="AventasModel.FK__PedidosDe__Pedid__70099B3011">
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+            <End Role="PedidosDetalleFlotante" EntitySet="PedidosDetalleFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdTip__6A50C1DA" Association="AventasModel.FK__PedidosxC__IdTip__6A50C1DA">
+            <End Role="TiposdePedido" EntitySet="TiposdePedido" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__IdTip__6A50C1DA1" Association="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1">
+            <End Role="TiposdePedido" EntitySet="TiposdePedido" />
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__RutasxAse__Codig__6497E884" Association="AventasModel.FK__RutasxAse__Codig__6497E884">
+            <End Role="Rutas" EntitySet="Rutas" />
+            <End Role="RutasxAsesor" EntitySet="RutasxAsesor" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Usuarios___Usuar__37311087" Association="AventasModel.FK__Usuarios___Usuar__37311087">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="Usuarios_Asesores" EntitySet="Usuarios_Asesores" />
+          </AssociationSet>
+          <EntitySet Name="Asesores" EntityType="AventasModel.Asesores" />
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -7234,152 +6828,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="GrupoImpuestoCliente">
               <PropertyRef Name="Empresa" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="PedidosxCliente">
-          <Key>
-            <PropertyRef Name="PedidoId" />
-          </Key>
-          <Property Name="PedidoId" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="NumeroPedido" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="IdTipoPedido" Type="Int32" />
-          <Property Name="IdColeccion" Type="Int32" />
-          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="AcuerdoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Fecha" Type="DateTime" Precision="3" />
-          <Property Name="FechaEntrega" Type="DateTime" Precision="3" />
-          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Observacion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="TotalUnidades" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="Subtotal" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="TotalImpuesto" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="TotalDescuento" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="TotalPedido" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="Mocked" Type="Boolean" />
-          <Property Name="Accuracy" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Altitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Error" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="idMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="IdEstado" Type="Int32" />
-          <Property Name="ClienteContadoId" Type="Int32" />
-          <Property Name="ModoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Flete" Type="Decimal" Precision="10" Scale="2" />
-          <NavigationProperty Name="Asesores" Relationship="AventasModel.FK__PedidosxC__Codig__6B44E613" FromRole="PedidosxCliente" ToRole="Asesores" />
-          <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__PedidosxC__Codig__0F183235" FromRole="PedidosxCliente" ToRole="Clientes" />
-          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C" FromRole="PedidosxCliente" ToRole="Empresa" />
-          <NavigationProperty Name="EstadosPedido" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD" FromRole="PedidosxCliente" ToRole="EstadosPedido" />
-          <NavigationProperty Name="FirmasxPedido" Relationship="AventasModel.FK__FirmasxPe__Pedid__75C27486" FromRole="PedidosxCliente" ToRole="FirmasxPedido" />
-          <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK_Linea" FromRole="PedidosxCliente" ToRole="MaestroLinea" />
-          <NavigationProperty Name="MaestroMoneda" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D" FromRole="PedidosxCliente" ToRole="MaestroMoneda" />
-          <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA" FromRole="PedidosxCliente" ToRole="TiposdePedido" />
-          <Property Name="RequiereEntrega" Type="Boolean" Nullable="false" />
-          <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosxCliente" ToRole="PedidosDetalle" />
-          <Property Name="Procesando" Type="Boolean" />
-          <Property Name="ErrorAx" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="PedidosxCliente" ToRole="Colecciones" />
-          <Property Name="BodegaEspecifica" Type="Boolean" />
-          <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <Association Name="FK__PedidosxC__Codig__6B44E613">
-          <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__Codig__0F183235">
-          <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Clientes">
-              <PropertyRef Name="CodigoCliente" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="CodigoCliente" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__Empre__6C390A4C">
-          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Empresa">
-              <PropertyRef Name="EmpresaId" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="EmpresaId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__IdEst__0ADD8CFD">
-          <End Type="AventasModel.EstadosPedido" Role="EstadosPedido" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="EstadosPedido">
-              <PropertyRef Name="IdEstado" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="IdEstado" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__FirmasxPe__Pedid__75C27486">
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="0..1" />
-          <End Type="AventasModel.FirmasxPedido" Role="FirmasxPedido" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PedidosxCliente">
-              <PropertyRef Name="PedidoId" />
-            </Principal>
-            <Dependent Role="FirmasxPedido">
-              <PropertyRef Name="PedidoId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Linea">
-          <End Type="AventasModel.MaestroLinea" Role="MaestroLinea" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="MaestroLinea">
-              <PropertyRef Name="IdLinea" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="IdLinea" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__idMon__353DDB1D">
-          <End Type="AventasModel.MaestroMoneda" Role="MaestroMoneda" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="MaestroMoneda">
-              <PropertyRef Name="IdMoneda" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="idMoneda" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__IdTip__6A50C1DA">
-          <End Type="AventasModel.TiposdePedido" Role="TiposdePedido" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TiposdePedido">
-              <PropertyRef Name="IdTipoPedido" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="IdTipoPedido" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -7595,21 +7043,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="MontoLinea" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="Fecha" Type="DateTime" Precision="3" />
           <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosDetalle" ToRole="PedidosxCliente" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion" FromRole="PedidosDetalle" ToRole="ProductosxColeccion" />
+          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosDetalle" ToRole="PedidosxCliente" />
         </EntityType>
-        <Association Name="FK__PedidosDe__Pedid__70099B30">
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosDetalle" Role="PedidosDetalle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PedidosxCliente">
-              <PropertyRef Name="PedidoId" />
-            </Principal>
-            <Dependent Role="PedidosDetalle">
-              <PropertyRef Name="PedidoId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_PedidosDetalle_ProductosxColeccion">
           <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="0..1" />
           <End Type="AventasModel.PedidosDetalle" Role="PedidosDetalle" Multiplicity="*" />
@@ -7846,33 +7282,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Usuarios_Asesores">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UsuarioId" Type="Int32" Nullable="false" />
-          <Property Name="CodigoAsesor" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Status" Type="Boolean" Nullable="false" />
-          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Asesores" Relationship="AventasModel.FK__Usuarios___Codig__382534C0" FromRole="Usuarios_Asesores" ToRole="Asesores" />
-          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK__Usuarios___Usuar__37311087" FromRole="Usuarios_Asesores" ToRole="Usuarios" />
-        </EntityType>
-        <Association Name="FK__Usuarios___Codig__382534C0">
-          <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="1" />
-          <End Type="AventasModel.Usuarios_Asesores" Role="Usuarios_Asesores" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="Usuarios_Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="Usuarios">
           <Key>
             <PropertyRef Name="Id" />
@@ -7893,7 +7302,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PantallasxUsuario" Relationship="AventasModel.FK_USUARIOP" FromRole="Usuarios" ToRole="PantallasxUsuario" />
           <NavigationProperty Name="Usuario_Rol" Relationship="AventasModel.FK_USUARIO" FromRole="Usuarios" ToRole="Usuario_Rol" />
           <NavigationProperty Name="Usuarios_Empresas" Relationship="AventasModel.FK__Usuarios___Usuar__2CB38214" FromRole="Usuarios" ToRole="Usuarios_Empresas" />
-          <NavigationProperty Name="Usuarios_Asesores" Relationship="AventasModel.FK__Usuarios___Usuar__37311087" FromRole="Usuarios" ToRole="Usuarios_Asesores" />
           <Property Name="FlagUsuarioOficina" Type="Boolean" />
           <Property Name="FlagAdministradorProductos" Type="Boolean" />
           <NavigationProperty Name="Secciones_Usuarios" Relationship="AventasModel.FK__Secciones__Usuar__7C9A5A9E" FromRole="Usuarios" ToRole="Secciones_Usuarios" />
@@ -7901,6 +7309,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="LogSesion" Relationship="AventasModel.FK_LOGSESION_USUARIO_FK_USUARIOS_ID" FromRole="Usuarios" ToRole="LogSesion" />
           <Property Name="SesionActiva" Type="Boolean" />
           <Property Name="FlagBodegaEspecifico" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Usuarios_Asesores" Relationship="AventasModel.FK__Usuarios___Usuar__37311087" FromRole="Usuarios" ToRole="Usuarios_Asesores" />
         </EntityType>
         <Association Name="FK__Usuarios__Empres__28E2F130">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -7946,18 +7355,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Usuarios_Empresas">
-              <PropertyRef Name="UsuarioId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Usuarios___Usuar__37311087">
-          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="1" />
-          <End Type="AventasModel.Usuarios_Asesores" Role="Usuarios_Asesores" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Usuarios">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Usuarios_Asesores">
               <PropertyRef Name="UsuarioId" />
             </Dependent>
           </ReferentialConstraint>
@@ -8410,11 +7807,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__Coleccion__FotoP__405A880E" FromRole="Colecciones" ToRole="Empresa" />
           <NavigationProperty Name="EdadesxColeccion" Relationship="AventasModel.FK__EdadesxCo__IdCol__6932806F" FromRole="Colecciones" ToRole="EdadesxColeccion" />
           <NavigationProperty Name="LineasxColeccion" Relationship="AventasModel.FK__LineasxCo__IdCol__71C7C670" FromRole="Colecciones" ToRole="LineasxColeccion" />
-          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="Colecciones" ToRole="PedidosxCliente" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__Productos__IdCol__4DB4832C" FromRole="Colecciones" ToRole="ProductosxColeccion" />
-          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E851" FromRole="Colecciones" ToRole="PedidosxClienteFlotante" />
           <NavigationProperty Name="ListasPreciosPaquetes" Relationship="AventasModel.FK__ListasPre__IdCol__652CE561" FromRole="Colecciones" ToRole="ListasPreciosPaquetes" />
           <NavigationProperty Name="PaqueteBodegaEspecifico" Relationship="AventasModel.FK__PaqueteBo__Colec__46934FA8" FromRole="Colecciones" ToRole="PaqueteBodegaEspecifico" />
+          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="Colecciones" ToRole="PedidosxCliente" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E851" FromRole="Colecciones" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <Association Name="FK__Atributos__IdCol__6DF7358C">
           <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
@@ -8476,18 +7873,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__PedidosxC__IdCol__6D2D2E85">
-          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="PedidosxCliente">
-              <PropertyRef Name="IdColeccion" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Productos__IdCol__4DB4832C">
           <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
           <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="*" />
@@ -8516,159 +7901,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="MontoLinea" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="Fecha" Type="DateTime" Precision="3" />
           <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B3011" FromRole="PedidosDetalleFlotante" ToRole="PedidosxClienteFlotante" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" FromRole="PedidosDetalleFlotante" ToRole="ProductosxColeccion" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B3011" FromRole="PedidosDetalleFlotante" ToRole="PedidosxClienteFlotante" />
         </EntityType>
-        <EntityType Name="PedidosxClienteFlotante">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PedidoId" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="NumeroPedido" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="IdTipoPedido" Type="Int32" />
-          <Property Name="IdColeccion" Type="Int32" />
-          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="AcuerdoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Fecha" Type="DateTime" Precision="3" />
-          <Property Name="FechaEntrega" Type="DateTime" Precision="3" />
-          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Observacion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="TotalUnidades" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="Subtotal" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="TotalImpuesto" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="TotalDescuento" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="TotalPedido" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="Mocked" Type="Boolean" />
-          <Property Name="Accuracy" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Altitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Error" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="idMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="IdEstado" Type="Int32" />
-          <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
-          <Property Name="ClienteContadoId" Type="Int32" />
-          <Property Name="ModoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Flete" Type="Decimal" Precision="10" Scale="2" />
-          <Property Name="RequiereEntrega" Type="Boolean" Nullable="false" />
-          <Property Name="Procesando" Type="Boolean" />
-          <Property Name="ErrorAx" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="ESTADO" Type="Int32" Nullable="false" />
-          <Property Name="PedidoIdGenerado" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Asesores" Relationship="AventasModel.FK__PedidosxC__Codig__6B44E6131" FromRole="PedidosxClienteFlotante" ToRole="Asesores" />
-          <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__PedidosxC__Codig__0F1832351" FromRole="PedidosxClienteFlotante" ToRole="Clientes" />
-          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E851" FromRole="PedidosxClienteFlotante" ToRole="Colecciones" />
-          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C1" FromRole="PedidosxClienteFlotante" ToRole="Empresa" />
-          <NavigationProperty Name="EstadosPedido" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD1" FromRole="PedidosxClienteFlotante" ToRole="EstadosPedido" />
-          <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK_Linea1" FromRole="PedidosxClienteFlotante" ToRole="MaestroLinea" />
-          <NavigationProperty Name="MaestroMoneda" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D1" FromRole="PedidosxClienteFlotante" ToRole="MaestroMoneda" />
-          <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B3011" FromRole="PedidosxClienteFlotante" ToRole="PedidosDetalleFlotante" />
-          <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" FromRole="PedidosxClienteFlotante" ToRole="TiposdePedido" />
-          <Property Name="EditedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="EditedDate" Type="DateTime" Precision="3" />
-          <Property Name="BodegaEspecifica" Type="Boolean" />
-          <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <Association Name="FK__PedidosxC__Codig__6B44E6131">
-          <End Type="AventasModel.Asesores" Role="Asesores" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Asesores">
-              <PropertyRef Name="CodigoAsesor" />
-            </Principal>
-            <Dependent Role="PedidosxClienteFlotante">
-              <PropertyRef Name="CodigoAsesor" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__Codig__0F1832351">
-          <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Clientes">
-              <PropertyRef Name="CodigoCliente" />
-            </Principal>
-            <Dependent Role="PedidosxClienteFlotante">
-              <PropertyRef Name="CodigoCliente" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__IdCol__6D2D2E851">
-          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Colecciones">
-              <PropertyRef Name="IdColeccion" />
-            </Principal>
-            <Dependent Role="PedidosxClienteFlotante">
-              <PropertyRef Name="IdColeccion" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__Empre__6C390A4C1">
-          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Empresa">
-              <PropertyRef Name="EmpresaId" />
-            </Principal>
-            <Dependent Role="PedidosxClienteFlotante">
-              <PropertyRef Name="EmpresaId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__IdEst__0ADD8CFD1">
-          <End Type="AventasModel.EstadosPedido" Role="EstadosPedido" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="EstadosPedido">
-              <PropertyRef Name="IdEstado" />
-            </Principal>
-            <Dependent Role="PedidosxClienteFlotante">
-              <PropertyRef Name="IdEstado" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Linea1">
-          <End Type="AventasModel.MaestroLinea" Role="MaestroLinea" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="MaestroLinea">
-              <PropertyRef Name="IdLinea" />
-            </Principal>
-            <Dependent Role="PedidosxClienteFlotante">
-              <PropertyRef Name="IdLinea" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__idMon__353DDB1D1">
-          <End Type="AventasModel.MaestroMoneda" Role="MaestroMoneda" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="MaestroMoneda">
-              <PropertyRef Name="IdMoneda" />
-            </Principal>
-            <Dependent Role="PedidosxClienteFlotante">
-              <PropertyRef Name="idMoneda" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosDe__Pedid__70099B3011">
-          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosDetalleFlotante" Role="PedidosDetalleFlotante" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PedidosxClienteFlotante">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="PedidosDetalleFlotante">
-              <PropertyRef Name="IdPedidoxClienteFlotante" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_PedidosDetalle_ProductosxColeccion1">
           <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="0..1" />
           <End Type="AventasModel.PedidosDetalleFlotante" Role="PedidosDetalleFlotante" Multiplicity="*" />
@@ -8678,18 +7913,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="PedidosDetalleFlotante">
               <PropertyRef Name="IdProducto" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__PedidosxC__IdTip__6A50C1DA1">
-          <End Type="AventasModel.TiposdePedido" Role="TiposdePedido" Multiplicity="0..1" />
-          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="TiposdePedido">
-              <PropertyRef Name="IdTipoPedido" />
-            </Principal>
-            <Dependent Role="PedidosxClienteFlotante">
-              <PropertyRef Name="IdTipoPedido" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -9438,6 +8661,547 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="AsignacionxAsesor">
+          <Key>
+            <PropertyRef Name="IdAsignacionxAsesor" />
+          </Key>
+          <Property Name="IdAsignacionxAsesor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Usuario" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FechaAsignacion" Type="DateTime" Precision="3" />
+          <Property Name="Orden" Type="Int32" />
+          <Property Name="HoraInicio" Type="DateTime" Precision="3" />
+          <Property Name="HoraFinal" Type="DateTime" Precision="3" />
+          <Property Name="idPrioridad" Type="Int32" />
+          <Property Name="idTipoVisita" Type="Int32" />
+          <Property Name="Observacion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="latitudeCheckIn" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="longitudeCheckIn" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="fechaCheckIn" Type="DateTime" Precision="3" />
+          <Property Name="latitudeCheckOut" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="longitudeCheckOut" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="fechaCheckOut" Type="DateTime" Precision="3" />
+          <Property Name="BloqueoCheckin" Type="Boolean" Nullable="false" />
+          <Property Name="BloqueoCheckout" Type="Boolean" Nullable="false" />
+          <Property Name="Cancelada" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__Asignacio__Codig__60C757A0" FromRole="AsignacionxAsesor" ToRole="Clientes" />
+          <NavigationProperty Name="AsignacionxAsesorDetalle" Relationship="AventasModel.FK__Asignacio__idAsi__5540965B" FromRole="AsignacionxAsesor" ToRole="AsignacionxAsesorDetalle" />
+          <NavigationProperty Name="PrioridadAsignacion" Relationship="AventasModel.FK__Asignacio__idPri__24134F1B" FromRole="AsignacionxAsesor" ToRole="PrioridadAsignacion" />
+          <NavigationProperty Name="TipoVisitaCliente" Relationship="AventasModel.FK__Asignacio__idTip__26EFBBC6" FromRole="AsignacionxAsesor" ToRole="TipoVisitaCliente" />
+          <NavigationProperty Name="BitacoraGeoposicion" Relationship="AventasModel.FK__BitacoraG__IdAsi__4C214075" FromRole="AsignacionxAsesor" ToRole="BitacoraGeoposicion" />
+        </EntityType>
+        <EntityType Name="BitacoraGeoposicion">
+          <Key>
+            <PropertyRef Name="IdBitacoraGeo" />
+          </Key>
+          <Property Name="IdBitacoraGeo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdAsignacionxAsesor" Type="Int32" />
+          <Property Name="Mocked" Type="Boolean" />
+          <Property Name="Accuracy" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Altitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="AsignacionxAsesor" Relationship="AventasModel.FK__BitacoraG__IdAsi__4C214075" FromRole="BitacoraGeoposicion" ToRole="AsignacionxAsesor" />
+          <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__BitacoraG__Codig__6E765879" FromRole="BitacoraGeoposicion" ToRole="Clientes" />
+        </EntityType>
+        <EntityType Name="BitacoraVisitasCliente">
+          <Key>
+            <PropertyRef Name="IdBitacoraVisitaCliente" />
+          </Key>
+          <Property Name="IdBitacoraVisitaCliente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="IdRazonNoVentaTipo" Type="Int32" />
+          <Property Name="IdRazonNoVentaCausa" Type="Int32" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IdAsignacionxAsesor" Type="Int32" />
+          <Property Name="Observacion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__BitacoraV__Codig__0F824689" FromRole="BitacoraVisitasCliente" ToRole="Clientes" />
+          <NavigationProperty Name="RazonNoVentaTipo" Relationship="AventasModel.FK__BitacoraV__IdRaz__0D99FE17" FromRole="BitacoraVisitasCliente" ToRole="RazonNoVentaTipo" />
+          <NavigationProperty Name="RazonNoVentaCausa" Relationship="AventasModel.FK__BitacoraV__IdRaz__0E8E2250" FromRole="BitacoraVisitasCliente" ToRole="RazonNoVentaCausa" />
+        </EntityType>
+        <EntityType Name="PedidosxCliente">
+          <Key>
+            <PropertyRef Name="PedidoId" />
+          </Key>
+          <Property Name="PedidoId" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="NumeroPedido" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="IdTipoPedido" Type="Int32" />
+          <Property Name="IdColeccion" Type="Int32" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="AcuerdoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="FechaEntrega" Type="DateTime" Precision="3" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Observacion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TotalUnidades" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Subtotal" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalImpuesto" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalDescuento" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalPedido" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Mocked" Type="Boolean" />
+          <Property Name="Accuracy" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Altitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Error" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="idMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="IdEstado" Type="Int32" />
+          <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
+          <Property Name="ClienteContadoId" Type="Int32" />
+          <Property Name="ModoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Flete" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="RequiereEntrega" Type="Boolean" Nullable="false" />
+          <Property Name="Procesando" Type="Boolean" />
+          <Property Name="ErrorAx" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="BodegaEspecifica" Type="Boolean" />
+          <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__PedidosxC__Codig__0F183235" FromRole="PedidosxCliente" ToRole="Clientes" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="PedidosxCliente" ToRole="Colecciones" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C" FromRole="PedidosxCliente" ToRole="Empresa" />
+          <NavigationProperty Name="EstadosPedido" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD" FromRole="PedidosxCliente" ToRole="EstadosPedido" />
+          <NavigationProperty Name="FirmasxPedido" Relationship="AventasModel.FK__FirmasxPe__Pedid__75C27486" FromRole="PedidosxCliente" ToRole="FirmasxPedido" />
+          <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK_Linea" FromRole="PedidosxCliente" ToRole="MaestroLinea" />
+          <NavigationProperty Name="MaestroMoneda" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D" FromRole="PedidosxCliente" ToRole="MaestroMoneda" />
+          <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosxCliente" ToRole="PedidosDetalle" />
+          <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA" FromRole="PedidosxCliente" ToRole="TiposdePedido" />
+        </EntityType>
+        <EntityType Name="PedidosxClienteFlotante">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PedidoId" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="NumeroPedido" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="IdTipoPedido" Type="Int32" />
+          <Property Name="IdColeccion" Type="Int32" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="AcuerdoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="FechaEntrega" Type="DateTime" Precision="3" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Observacion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TotalUnidades" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Subtotal" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalImpuesto" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalDescuento" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalPedido" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Mocked" Type="Boolean" />
+          <Property Name="Accuracy" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Altitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Error" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="IdLinea" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="idMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="IdEstado" Type="Int32" />
+          <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
+          <Property Name="ClienteContadoId" Type="Int32" />
+          <Property Name="ModoVenta" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Flete" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="RequiereEntrega" Type="Boolean" Nullable="false" />
+          <Property Name="Procesando" Type="Boolean" />
+          <Property Name="ErrorAx" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ESTADO" Type="Int32" Nullable="false" />
+          <Property Name="PedidoIdGenerado" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="EditedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EditedDate" Type="DateTime" Precision="3" />
+          <Property Name="BodegaEspecifica" Type="Boolean" />
+          <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Clientes" Relationship="AventasModel.FK__PedidosxC__Codig__0F1832351" FromRole="PedidosxClienteFlotante" ToRole="Clientes" />
+          <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E851" FromRole="PedidosxClienteFlotante" ToRole="Colecciones" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C1" FromRole="PedidosxClienteFlotante" ToRole="Empresa" />
+          <NavigationProperty Name="EstadosPedido" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD1" FromRole="PedidosxClienteFlotante" ToRole="EstadosPedido" />
+          <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK_Linea1" FromRole="PedidosxClienteFlotante" ToRole="MaestroLinea" />
+          <NavigationProperty Name="MaestroMoneda" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D1" FromRole="PedidosxClienteFlotante" ToRole="MaestroMoneda" />
+          <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B3011" FromRole="PedidosxClienteFlotante" ToRole="PedidosDetalleFlotante" />
+          <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" FromRole="PedidosxClienteFlotante" ToRole="TiposdePedido" />
+        </EntityType>
+        <EntityType Name="RutasxAsesor">
+          <Key>
+            <PropertyRef Name="IdRutasxAsesor" />
+          </Key>
+          <Property Name="IdRutasxAsesor" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodigoRuta" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoAsesor" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Rutas" Relationship="AventasModel.FK__RutasxAse__Codig__6497E884" FromRole="RutasxAsesor" ToRole="Rutas" />
+        </EntityType>
+        <EntityType Name="Usuarios_Asesores">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UsuarioId" Type="Int32" Nullable="false" />
+          <Property Name="CodigoAsesor" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK__Usuarios___Usuar__37311087" FromRole="Usuarios_Asesores" ToRole="Usuarios" />
+        </EntityType>
+        <Association Name="FK__Asignacio__Codig__60C757A0">
+          <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
+          <End Type="AventasModel.AsignacionxAsesor" Role="AsignacionxAsesor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="CodigoCliente" />
+            </Principal>
+            <Dependent Role="AsignacionxAsesor">
+              <PropertyRef Name="CodigoCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Asignacio__idAsi__5540965B">
+          <End Type="AventasModel.AsignacionxAsesor" Role="AsignacionxAsesor" Multiplicity="0..1" />
+          <End Type="AventasModel.AsignacionxAsesorDetalle" Role="AsignacionxAsesorDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AsignacionxAsesor">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Principal>
+            <Dependent Role="AsignacionxAsesorDetalle">
+              <PropertyRef Name="idAsignacionxAsesor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Asignacio__idPri__24134F1B">
+          <End Type="AventasModel.PrioridadAsignacion" Role="PrioridadAsignacion" Multiplicity="0..1" />
+          <End Type="AventasModel.AsignacionxAsesor" Role="AsignacionxAsesor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PrioridadAsignacion">
+              <PropertyRef Name="idPrioridad" />
+            </Principal>
+            <Dependent Role="AsignacionxAsesor">
+              <PropertyRef Name="idPrioridad" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Asignacio__idTip__26EFBBC6">
+          <End Type="AventasModel.TipoVisitaCliente" Role="TipoVisitaCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.AsignacionxAsesor" Role="AsignacionxAsesor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TipoVisitaCliente">
+              <PropertyRef Name="idTipoVisita" />
+            </Principal>
+            <Dependent Role="AsignacionxAsesor">
+              <PropertyRef Name="idTipoVisita" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BitacoraG__IdAsi__4C214075">
+          <End Type="AventasModel.AsignacionxAsesor" Role="AsignacionxAsesor" Multiplicity="0..1" />
+          <End Type="AventasModel.BitacoraGeoposicion" Role="BitacoraGeoposicion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AsignacionxAsesor">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Principal>
+            <Dependent Role="BitacoraGeoposicion">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BitacoraG__Codig__6E765879">
+          <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
+          <End Type="AventasModel.BitacoraGeoposicion" Role="BitacoraGeoposicion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="CodigoCliente" />
+            </Principal>
+            <Dependent Role="BitacoraGeoposicion">
+              <PropertyRef Name="CodigoCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BitacoraV__Codig__0F824689">
+          <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
+          <End Type="AventasModel.BitacoraVisitasCliente" Role="BitacoraVisitasCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="CodigoCliente" />
+            </Principal>
+            <Dependent Role="BitacoraVisitasCliente">
+              <PropertyRef Name="CodigoCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BitacoraV__IdRaz__0D99FE17">
+          <End Type="AventasModel.RazonNoVentaTipo" Role="RazonNoVentaTipo" Multiplicity="0..1" />
+          <End Type="AventasModel.BitacoraVisitasCliente" Role="BitacoraVisitasCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RazonNoVentaTipo">
+              <PropertyRef Name="IdRazonNoVentaTipo" />
+            </Principal>
+            <Dependent Role="BitacoraVisitasCliente">
+              <PropertyRef Name="IdRazonNoVentaTipo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__BitacoraV__IdRaz__0E8E2250">
+          <End Type="AventasModel.RazonNoVentaCausa" Role="RazonNoVentaCausa" Multiplicity="0..1" />
+          <End Type="AventasModel.BitacoraVisitasCliente" Role="BitacoraVisitasCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RazonNoVentaCausa">
+              <PropertyRef Name="IdRazonNoVentaCausa" />
+            </Principal>
+            <Dependent Role="BitacoraVisitasCliente">
+              <PropertyRef Name="IdRazonNoVentaCausa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__Codig__0F183235">
+          <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="CodigoCliente" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="CodigoCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__Codig__0F1832351">
+          <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Clientes">
+              <PropertyRef Name="CodigoCliente" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="CodigoCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdCol__6D2D2E85">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdCol__6D2D2E851">
+          <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Colecciones">
+              <PropertyRef Name="IdColeccion" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="IdColeccion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__Empre__6C390A4C">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__Empre__6C390A4C1">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdEst__0ADD8CFD">
+          <End Type="AventasModel.EstadosPedido" Role="EstadosPedido" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EstadosPedido">
+              <PropertyRef Name="IdEstado" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="IdEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdEst__0ADD8CFD1">
+          <End Type="AventasModel.EstadosPedido" Role="EstadosPedido" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EstadosPedido">
+              <PropertyRef Name="IdEstado" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="IdEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FirmasxPe__Pedid__75C27486">
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.FirmasxPedido" Role="FirmasxPedido" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PedidosxCliente">
+              <PropertyRef Name="PedidoId" />
+            </Principal>
+            <Dependent Role="FirmasxPedido">
+              <PropertyRef Name="PedidoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Linea">
+          <End Type="AventasModel.MaestroLinea" Role="MaestroLinea" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroLinea">
+              <PropertyRef Name="IdLinea" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="IdLinea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Linea1">
+          <End Type="AventasModel.MaestroLinea" Role="MaestroLinea" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroLinea">
+              <PropertyRef Name="IdLinea" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="IdLinea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__idMon__353DDB1D">
+          <End Type="AventasModel.MaestroMoneda" Role="MaestroMoneda" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroMoneda">
+              <PropertyRef Name="IdMoneda" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="idMoneda" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__idMon__353DDB1D1">
+          <End Type="AventasModel.MaestroMoneda" Role="MaestroMoneda" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroMoneda">
+              <PropertyRef Name="IdMoneda" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="idMoneda" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosDe__Pedid__70099B30">
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosDetalle" Role="PedidosDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PedidosxCliente">
+              <PropertyRef Name="PedidoId" />
+            </Principal>
+            <Dependent Role="PedidosDetalle">
+              <PropertyRef Name="PedidoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosDe__Pedid__70099B3011">
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosDetalleFlotante" Role="PedidosDetalleFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PedidosxClienteFlotante">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PedidosDetalleFlotante">
+              <PropertyRef Name="IdPedidoxClienteFlotante" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdTip__6A50C1DA">
+          <End Type="AventasModel.TiposdePedido" Role="TiposdePedido" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TiposdePedido">
+              <PropertyRef Name="IdTipoPedido" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="IdTipoPedido" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__IdTip__6A50C1DA1">
+          <End Type="AventasModel.TiposdePedido" Role="TiposdePedido" Multiplicity="0..1" />
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TiposdePedido">
+              <PropertyRef Name="IdTipoPedido" />
+            </Principal>
+            <Dependent Role="PedidosxClienteFlotante">
+              <PropertyRef Name="IdTipoPedido" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__RutasxAse__Codig__6497E884">
+          <End Type="AventasModel.Rutas" Role="Rutas" Multiplicity="1" />
+          <End Type="AventasModel.RutasxAsesor" Role="RutasxAsesor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rutas">
+              <PropertyRef Name="CodigoRuta" />
+            </Principal>
+            <Dependent Role="RutasxAsesor">
+              <PropertyRef Name="CodigoRuta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Usuarios___Usuar__37311087">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="1" />
+          <End Type="AventasModel.Usuarios_Asesores" Role="Usuarios_Asesores" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Usuarios_Asesores">
+              <PropertyRef Name="UsuarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Asesores">
+          <Key>
+            <PropertyRef Name="AsesorId" />
+          </Key>
+          <Property Name="CodigoAsesor" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Nombre" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Revision" Type="Boolean" />
+          <Property Name="CorrelativoPedidos" Type="Int32" />
+          <Property Name="CorrelativoRecibos" Type="Int32" />
+          <Property Name="InicialesNombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Diario" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Activo" Type="Boolean" />
+          <Property Name="AsesorId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -9473,49 +9237,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Fecha" ColumnName="Fecha" />
                 <ScalarProperty Name="Monto" ColumnName="Monto" />
                 <ScalarProperty Name="Saldo" ColumnName="Saldo" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Asesores">
-            <EntityTypeMapping TypeName="AventasModel.Asesores">
-              <MappingFragment StoreEntitySet="Asesores">
-                <ScalarProperty Name="Activo" ColumnName="Activo" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
-                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
-                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
-                <ScalarProperty Name="Usuario" ColumnName="Usuario" />
-                <ScalarProperty Name="Revision" ColumnName="Revision" />
-                <ScalarProperty Name="CorrelativoPedidos" ColumnName="CorrelativoPedidos" />
-                <ScalarProperty Name="CorrelativoRecibos" ColumnName="CorrelativoRecibos" />
-                <ScalarProperty Name="InicialesNombre" ColumnName="InicialesNombre" />
-                <ScalarProperty Name="Diario" ColumnName="Diario" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AsignacionxAsesor">
-            <EntityTypeMapping TypeName="AventasModel.AsignacionxAsesor">
-              <MappingFragment StoreEntitySet="AsignacionxAsesor">
-                <ScalarProperty Name="Cancelada" ColumnName="Cancelada" />
-                <ScalarProperty Name="BloqueoCheckout" ColumnName="BloqueoCheckout" />
-                <ScalarProperty Name="BloqueoCheckin" ColumnName="BloqueoCheckin" />
-                <ScalarProperty Name="fechaCheckOut" ColumnName="fechaCheckOut" />
-                <ScalarProperty Name="longitudeCheckOut" ColumnName="longitudeCheckOut" />
-                <ScalarProperty Name="latitudeCheckOut" ColumnName="latitudeCheckOut" />
-                <ScalarProperty Name="fechaCheckIn" ColumnName="fechaCheckIn" />
-                <ScalarProperty Name="longitudeCheckIn" ColumnName="longitudeCheckIn" />
-                <ScalarProperty Name="latitudeCheckIn" ColumnName="latitudeCheckIn" />
-                <ScalarProperty Name="IdAsignacionxAsesor" ColumnName="IdAsignacionxAsesor" />
-                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
-                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
-                <ScalarProperty Name="Usuario" ColumnName="Usuario" />
-                <ScalarProperty Name="FechaAsignacion" ColumnName="FechaAsignacion" />
-                <ScalarProperty Name="Orden" ColumnName="Orden" />
-                <ScalarProperty Name="HoraInicio" ColumnName="HoraInicio" />
-                <ScalarProperty Name="HoraFinal" ColumnName="HoraFinal" />
-                <ScalarProperty Name="idPrioridad" ColumnName="idPrioridad" />
-                <ScalarProperty Name="idTipoVisita" ColumnName="idTipoVisita" />
-                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -9561,36 +9282,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="NombreBanco" ColumnName="NombreBanco" />
                 <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="BitacoraGeoposicion">
-            <EntityTypeMapping TypeName="AventasModel.BitacoraGeoposicion">
-              <MappingFragment StoreEntitySet="BitacoraGeoposicion">
-                <ScalarProperty Name="IdBitacoraGeo" ColumnName="IdBitacoraGeo" />
-                <ScalarProperty Name="IdAsignacionxAsesor" ColumnName="IdAsignacionxAsesor" />
-                <ScalarProperty Name="Mocked" ColumnName="Mocked" />
-                <ScalarProperty Name="Accuracy" ColumnName="Accuracy" />
-                <ScalarProperty Name="Altitude" ColumnName="Altitude" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
-                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
-                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="BitacoraVisitasCliente">
-            <EntityTypeMapping TypeName="AventasModel.BitacoraVisitasCliente">
-              <MappingFragment StoreEntitySet="BitacoraVisitasCliente">
-                <ScalarProperty Name="IdBitacoraVisitaCliente" ColumnName="IdBitacoraVisitaCliente" />
-                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
-                <ScalarProperty Name="IdRazonNoVentaTipo" ColumnName="IdRazonNoVentaTipo" />
-                <ScalarProperty Name="IdRazonNoVentaCausa" ColumnName="IdRazonNoVentaCausa" />
-                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
-                <ScalarProperty Name="IdAsignacionxAsesor" ColumnName="IdAsignacionxAsesor" />
-                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -9961,15 +9652,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="Revision" ColumnName="Revision" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="RutasxAsesor">
-            <EntityTypeMapping TypeName="AventasModel.RutasxAsesor">
-              <MappingFragment StoreEntitySet="RutasxAsesor">
-                <ScalarProperty Name="IdRutasxAsesor" ColumnName="IdRutasxAsesor" />
-                <ScalarProperty Name="CodigoRuta" ColumnName="CodigoRuta" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -10349,47 +10031,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="PedidosxCliente">
-            <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
-              <MappingFragment StoreEntitySet="PedidosxCliente">
-                <ScalarProperty Name="Almacen" ColumnName="Almacen" />
-                <ScalarProperty Name="Sitio" ColumnName="Sitio" />
-                <ScalarProperty Name="BodegaEspecifica" ColumnName="BodegaEspecifica" />
-                <ScalarProperty Name="ErrorAx" ColumnName="ErrorAx" />
-                <ScalarProperty Name="Procesando" ColumnName="Procesando" />
-                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
-                <ScalarProperty Name="RequiereEntrega" ColumnName="RequiereEntrega" />
-                <ScalarProperty Name="Flete" ColumnName="Flete" />
-                <ScalarProperty Name="ModoVenta" ColumnName="ModoVenta" />
-                <ScalarProperty Name="ClienteContadoId" ColumnName="ClienteContadoId" />
-                <ScalarProperty Name="IdEstado" ColumnName="IdEstado" />
-                <ScalarProperty Name="idMoneda" ColumnName="idMoneda" />
-                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
-                <ScalarProperty Name="Error" ColumnName="Error" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Altitude" ColumnName="Altitude" />
-                <ScalarProperty Name="Accuracy" ColumnName="Accuracy" />
-                <ScalarProperty Name="Mocked" ColumnName="Mocked" />
-                <ScalarProperty Name="TotalPedido" ColumnName="TotalPedido" />
-                <ScalarProperty Name="TotalDescuento" ColumnName="TotalDescuento" />
-                <ScalarProperty Name="TotalImpuesto" ColumnName="TotalImpuesto" />
-                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
-                <ScalarProperty Name="TotalUnidades" ColumnName="TotalUnidades" />
-                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
-                <ScalarProperty Name="FechaEntrega" ColumnName="FechaEntrega" />
-                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
-                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
-                <ScalarProperty Name="AcuerdoVenta" ColumnName="AcuerdoVenta" />
-                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
-                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
-                <ScalarProperty Name="IdTipoPedido" ColumnName="IdTipoPedido" />
-                <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
-                <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="ComunidadAutonoma">
             <EntityTypeMapping TypeName="AventasModel.ComunidadAutonoma">
               <MappingFragment StoreEntitySet="ComunidadAutonoma">
@@ -10601,20 +10242,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="UsuarioId" ColumnName="UsuarioId" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Usuarios_Asesores">
-            <EntityTypeMapping TypeName="AventasModel.Usuarios_Asesores">
-              <MappingFragment StoreEntitySet="Usuarios_Asesores">
-                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
-                <ScalarProperty Name="UsuarioId" ColumnName="UsuarioId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -10863,52 +10490,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
                 <ScalarProperty Name="IdPedidoxClienteFlotante" ColumnName="IdPedidoxClienteFlotante" />
                 <ScalarProperty Name="IdPedidoDetalle" ColumnName="IdPedidoDetalle" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="PedidosxClienteFlotante">
-            <EntityTypeMapping TypeName="AventasModel.PedidosxClienteFlotante">
-              <MappingFragment StoreEntitySet="PedidosxClienteFlotante">
-                <ScalarProperty Name="Almacen" ColumnName="Almacen" />
-                <ScalarProperty Name="Sitio" ColumnName="Sitio" />
-                <ScalarProperty Name="BodegaEspecifica" ColumnName="BodegaEspecifica" />
-                <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
-                <ScalarProperty Name="EditedBy" ColumnName="EditedBy" />
-                <ScalarProperty Name="PedidoIdGenerado" ColumnName="PedidoIdGenerado" />
-                <ScalarProperty Name="ESTADO" ColumnName="ESTADO" />
-                <ScalarProperty Name="ErrorAx" ColumnName="ErrorAx" />
-                <ScalarProperty Name="Procesando" ColumnName="Procesando" />
-                <ScalarProperty Name="RequiereEntrega" ColumnName="RequiereEntrega" />
-                <ScalarProperty Name="Flete" ColumnName="Flete" />
-                <ScalarProperty Name="ModoVenta" ColumnName="ModoVenta" />
-                <ScalarProperty Name="ClienteContadoId" ColumnName="ClienteContadoId" />
-                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
-                <ScalarProperty Name="IdEstado" ColumnName="IdEstado" />
-                <ScalarProperty Name="idMoneda" ColumnName="idMoneda" />
-                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
-                <ScalarProperty Name="Error" ColumnName="Error" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="Altitude" ColumnName="Altitude" />
-                <ScalarProperty Name="Accuracy" ColumnName="Accuracy" />
-                <ScalarProperty Name="Mocked" ColumnName="Mocked" />
-                <ScalarProperty Name="TotalPedido" ColumnName="TotalPedido" />
-                <ScalarProperty Name="TotalDescuento" ColumnName="TotalDescuento" />
-                <ScalarProperty Name="TotalImpuesto" ColumnName="TotalImpuesto" />
-                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
-                <ScalarProperty Name="TotalUnidades" ColumnName="TotalUnidades" />
-                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
-                <ScalarProperty Name="FechaEntrega" ColumnName="FechaEntrega" />
-                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
-                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
-                <ScalarProperty Name="AcuerdoVenta" ColumnName="AcuerdoVenta" />
-                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
-                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
-                <ScalarProperty Name="IdTipoPedido" ColumnName="IdTipoPedido" />
-                <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
-                <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -11179,6 +10760,190 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Usuario" ColumnName="Usuario" />
                 <ScalarProperty Name="ReciboId" ColumnName="ReciboId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AsignacionxAsesor">
+            <EntityTypeMapping TypeName="AventasModel.AsignacionxAsesor">
+              <MappingFragment StoreEntitySet="AsignacionxAsesor">
+                <ScalarProperty Name="Cancelada" ColumnName="Cancelada" />
+                <ScalarProperty Name="BloqueoCheckout" ColumnName="BloqueoCheckout" />
+                <ScalarProperty Name="BloqueoCheckin" ColumnName="BloqueoCheckin" />
+                <ScalarProperty Name="fechaCheckOut" ColumnName="fechaCheckOut" />
+                <ScalarProperty Name="longitudeCheckOut" ColumnName="longitudeCheckOut" />
+                <ScalarProperty Name="latitudeCheckOut" ColumnName="latitudeCheckOut" />
+                <ScalarProperty Name="fechaCheckIn" ColumnName="fechaCheckIn" />
+                <ScalarProperty Name="longitudeCheckIn" ColumnName="longitudeCheckIn" />
+                <ScalarProperty Name="latitudeCheckIn" ColumnName="latitudeCheckIn" />
+                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
+                <ScalarProperty Name="idTipoVisita" ColumnName="idTipoVisita" />
+                <ScalarProperty Name="idPrioridad" ColumnName="idPrioridad" />
+                <ScalarProperty Name="HoraFinal" ColumnName="HoraFinal" />
+                <ScalarProperty Name="HoraInicio" ColumnName="HoraInicio" />
+                <ScalarProperty Name="Orden" ColumnName="Orden" />
+                <ScalarProperty Name="FechaAsignacion" ColumnName="FechaAsignacion" />
+                <ScalarProperty Name="Usuario" ColumnName="Usuario" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="IdAsignacionxAsesor" ColumnName="IdAsignacionxAsesor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BitacoraGeoposicion">
+            <EntityTypeMapping TypeName="AventasModel.BitacoraGeoposicion">
+              <MappingFragment StoreEntitySet="BitacoraGeoposicion">
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+                <ScalarProperty Name="Accuracy" ColumnName="Accuracy" />
+                <ScalarProperty Name="Mocked" ColumnName="Mocked" />
+                <ScalarProperty Name="IdAsignacionxAsesor" ColumnName="IdAsignacionxAsesor" />
+                <ScalarProperty Name="IdBitacoraGeo" ColumnName="IdBitacoraGeo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BitacoraVisitasCliente">
+            <EntityTypeMapping TypeName="AventasModel.BitacoraVisitasCliente">
+              <MappingFragment StoreEntitySet="BitacoraVisitasCliente">
+                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
+                <ScalarProperty Name="IdAsignacionxAsesor" ColumnName="IdAsignacionxAsesor" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="IdRazonNoVentaCausa" ColumnName="IdRazonNoVentaCausa" />
+                <ScalarProperty Name="IdRazonNoVentaTipo" ColumnName="IdRazonNoVentaTipo" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="IdBitacoraVisitaCliente" ColumnName="IdBitacoraVisitaCliente" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PedidosxCliente">
+            <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
+              <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="Almacen" ColumnName="Almacen" />
+                <ScalarProperty Name="Sitio" ColumnName="Sitio" />
+                <ScalarProperty Name="BodegaEspecifica" ColumnName="BodegaEspecifica" />
+                <ScalarProperty Name="ErrorAx" ColumnName="ErrorAx" />
+                <ScalarProperty Name="Procesando" ColumnName="Procesando" />
+                <ScalarProperty Name="RequiereEntrega" ColumnName="RequiereEntrega" />
+                <ScalarProperty Name="Flete" ColumnName="Flete" />
+                <ScalarProperty Name="ModoVenta" ColumnName="ModoVenta" />
+                <ScalarProperty Name="ClienteContadoId" ColumnName="ClienteContadoId" />
+                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
+                <ScalarProperty Name="IdEstado" ColumnName="IdEstado" />
+                <ScalarProperty Name="idMoneda" ColumnName="idMoneda" />
+                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
+                <ScalarProperty Name="Error" ColumnName="Error" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+                <ScalarProperty Name="Accuracy" ColumnName="Accuracy" />
+                <ScalarProperty Name="Mocked" ColumnName="Mocked" />
+                <ScalarProperty Name="TotalPedido" ColumnName="TotalPedido" />
+                <ScalarProperty Name="TotalDescuento" ColumnName="TotalDescuento" />
+                <ScalarProperty Name="TotalImpuesto" ColumnName="TotalImpuesto" />
+                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
+                <ScalarProperty Name="TotalUnidades" ColumnName="TotalUnidades" />
+                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="FechaEntrega" ColumnName="FechaEntrega" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="AcuerdoVenta" ColumnName="AcuerdoVenta" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
+                <ScalarProperty Name="IdTipoPedido" ColumnName="IdTipoPedido" />
+                <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
+                <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PedidosxClienteFlotante">
+            <EntityTypeMapping TypeName="AventasModel.PedidosxClienteFlotante">
+              <MappingFragment StoreEntitySet="PedidosxClienteFlotante">
+                <ScalarProperty Name="Almacen" ColumnName="Almacen" />
+                <ScalarProperty Name="Sitio" ColumnName="Sitio" />
+                <ScalarProperty Name="BodegaEspecifica" ColumnName="BodegaEspecifica" />
+                <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
+                <ScalarProperty Name="EditedBy" ColumnName="EditedBy" />
+                <ScalarProperty Name="PedidoIdGenerado" ColumnName="PedidoIdGenerado" />
+                <ScalarProperty Name="ESTADO" ColumnName="ESTADO" />
+                <ScalarProperty Name="ErrorAx" ColumnName="ErrorAx" />
+                <ScalarProperty Name="Procesando" ColumnName="Procesando" />
+                <ScalarProperty Name="RequiereEntrega" ColumnName="RequiereEntrega" />
+                <ScalarProperty Name="Flete" ColumnName="Flete" />
+                <ScalarProperty Name="ModoVenta" ColumnName="ModoVenta" />
+                <ScalarProperty Name="ClienteContadoId" ColumnName="ClienteContadoId" />
+                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
+                <ScalarProperty Name="IdEstado" ColumnName="IdEstado" />
+                <ScalarProperty Name="idMoneda" ColumnName="idMoneda" />
+                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
+                <ScalarProperty Name="Error" ColumnName="Error" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Altitude" ColumnName="Altitude" />
+                <ScalarProperty Name="Accuracy" ColumnName="Accuracy" />
+                <ScalarProperty Name="Mocked" ColumnName="Mocked" />
+                <ScalarProperty Name="TotalPedido" ColumnName="TotalPedido" />
+                <ScalarProperty Name="TotalDescuento" ColumnName="TotalDescuento" />
+                <ScalarProperty Name="TotalImpuesto" ColumnName="TotalImpuesto" />
+                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
+                <ScalarProperty Name="TotalUnidades" ColumnName="TotalUnidades" />
+                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="FechaEntrega" ColumnName="FechaEntrega" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="AcuerdoVenta" ColumnName="AcuerdoVenta" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
+                <ScalarProperty Name="IdTipoPedido" ColumnName="IdTipoPedido" />
+                <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
+                <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RutasxAsesor">
+            <EntityTypeMapping TypeName="AventasModel.RutasxAsesor">
+              <MappingFragment StoreEntitySet="RutasxAsesor">
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="CodigoRuta" ColumnName="CodigoRuta" />
+                <ScalarProperty Name="IdRutasxAsesor" ColumnName="IdRutasxAsesor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Usuarios_Asesores">
+            <EntityTypeMapping TypeName="AventasModel.Usuarios_Asesores">
+              <MappingFragment StoreEntitySet="Usuarios_Asesores">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="UsuarioId" ColumnName="UsuarioId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Asesores">
+            <EntityTypeMapping TypeName="AventasModel.Asesores">
+              <MappingFragment StoreEntitySet="Asesores">
+                <ScalarProperty Name="AsesorId" ColumnName="AsesorId" />
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="Diario" ColumnName="Diario" />
+                <ScalarProperty Name="InicialesNombre" ColumnName="InicialesNombre" />
+                <ScalarProperty Name="CorrelativoRecibos" ColumnName="CorrelativoRecibos" />
+                <ScalarProperty Name="CorrelativoPedidos" ColumnName="CorrelativoPedidos" />
+                <ScalarProperty Name="Revision" ColumnName="Revision" />
+                <ScalarProperty Name="Usuario" ColumnName="Usuario" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

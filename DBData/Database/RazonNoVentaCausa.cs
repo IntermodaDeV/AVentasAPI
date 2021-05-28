@@ -24,8 +24,8 @@ namespace DBData.Database
         public Nullable<int> IdRazonNoVentaTipo { get; set; }
         public string Causa { get; set; }
     
+        public virtual RazonNoVentaTipo RazonNoVentaTipo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BitacoraVisitasCliente> BitacoraVisitasCliente { get; set; }
-        public virtual RazonNoVentaTipo RazonNoVentaTipo { get; set; }
     }
 }

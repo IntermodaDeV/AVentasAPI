@@ -61,7 +61,6 @@ namespace DBData.Database
         public string Sitio { get; set; }
         public string Almacen { get; set; }
     
-        public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }
         public virtual Colecciones Colecciones { get; set; }
         public virtual Empresa Empresa { get; set; }

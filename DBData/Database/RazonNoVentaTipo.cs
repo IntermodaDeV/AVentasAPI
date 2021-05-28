@@ -17,16 +17,16 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public RazonNoVentaTipo()
         {
-            this.BitacoraVisitasCliente = new HashSet<BitacoraVisitasCliente>();
             this.RazonNoVentaCausa = new HashSet<RazonNoVentaCausa>();
+            this.BitacoraVisitasCliente = new HashSet<BitacoraVisitasCliente>();
         }
     
         public int IdRazonNoVentaTipo { get; set; }
         public string Tipo { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BitacoraVisitasCliente> BitacoraVisitasCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RazonNoVentaCausa> RazonNoVentaCausa { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BitacoraVisitasCliente> BitacoraVisitasCliente { get; set; }
     }
 }

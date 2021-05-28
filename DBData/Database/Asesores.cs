@@ -14,18 +14,6 @@ namespace DBData.Database
     
     public partial class Asesores
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Asesores()
-        {
-            this.AsignacionxAsesor = new HashSet<AsignacionxAsesor>();
-            this.BitacoraGeoposicion = new HashSet<BitacoraGeoposicion>();
-            this.BitacoraVisitasCliente = new HashSet<BitacoraVisitasCliente>();
-            this.RutasxAsesor = new HashSet<RutasxAsesor>();
-            this.PedidosxCliente = new HashSet<PedidosxCliente>();
-            this.Usuarios_Asesores = new HashSet<Usuarios_Asesores>();
-            this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
-        }
-    
         public string CodigoAsesor { get; set; }
         public string Nombre { get; set; }
         public string EmpresaId { get; set; }
@@ -36,20 +24,6 @@ namespace DBData.Database
         public string InicialesNombre { get; set; }
         public string Diario { get; set; }
         public Nullable<bool> Activo { get; set; }
-    
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AsignacionxAsesor> AsignacionxAsesor { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BitacoraGeoposicion> BitacoraGeoposicion { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<BitacoraVisitasCliente> BitacoraVisitasCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RutasxAsesor> RutasxAsesor { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Usuarios_Asesores> Usuarios_Asesores { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
+        public int AsesorId { get; set; }
     }
 }

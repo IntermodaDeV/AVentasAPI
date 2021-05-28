@@ -21,7 +21,7 @@ namespace DBData.Database
         public Nullable<System.DateTime> HoraFin { get; set; }
         public Nullable<int> idTipoVisita { get; set; }
     
-        public virtual AsignacionxAsesor AsignacionxAsesor { get; set; }
         public virtual TipoVisitaCliente TipoVisitaCliente { get; set; }
+        public virtual AsignacionxAsesor AsignacionxAsesor { get; set; }
     }
 }

@@ -23,7 +23,6 @@ namespace DBData.Database
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
     
-        public virtual Asesores Asesores { get; set; }
         public virtual Usuarios Usuarios { get; set; }
     }
 }
