@@ -105,6 +105,7 @@ namespace AventasApi.Controllers
                     {
                     var Recibos = context.RecibosxCliente.Where(r => r.CodigoAsesor == asesor && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
+                        NumeroCopia=context.LogRecibo.Where(x=>x.ReciboId==rec.ReciboId).Count()+1,
                         Anticipo=false,
                         NombreAsesor = context.Asesores.FirstOrDefault(x=>x.CodigoAsesor==rec.CodigoAsesor).Nombre,
                         Asesor = rec.CodigoAsesor,
@@ -153,7 +154,7 @@ namespace AventasApi.Controllers
                             Factura = recDet.SubFacturasxCliente.Factura,
                             NumeroFel = recDet.SubFacturasxCliente.NumeroFEL,
                             FechaFactura = recDet.SubFacturasxCliente.FacturasxCliente.FechaFactura,
-                            Tipo = rec.FacturasxCliente.Tipo,
+                            Tipo = recDet.SubFacturasxCliente.FacturasxCliente.Tipo,
                             ReciboId = recDet.ReciboId,
                             IdSubFactura = recDet.IdSubFactura,
                             Valor = recDet.Valor,
@@ -771,7 +772,7 @@ namespace AventasApi.Controllers
                                 }
                             }
                             var fechaDesde = DateTime.Now.AddMinutes(minutosValue * -1).AddSeconds(-30);
-                            var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pago.CodigoTipoPago && rec.REFERENCIA == pago.Referencia && rec.FACTURA == subfactura.Factura);
+                            var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pagoBD.Codigo && rec.REFERENCIA == pago.Referencia && rec.FACTURA == subfactura.Factura);
                             RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago && recXCli.Referencia == pago.Referencia);
                             existeRecibo = context.RecibosxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
 
@@ -838,7 +839,7 @@ namespace AventasApi.Controllers
                                 };
                                 recibosxCliente.Add(reciboXCliente);
                             }
-                            else
+                            else if(existeRecibo > 0)
                             {
                                 codigoCliente = recibo.CLIENTE;
                                 reciboXClienteFlotante = new RecibosxClienteFlotanteViewModel
@@ -912,8 +913,8 @@ namespace AventasApi.Controllers
                             }
 
 
-                            var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == recibo.FACTURA);
-                            var fechaFactura = context.FacturasxCliente.FirstOrDefault(x=>x.Factura == recibo.FACTURA).FechaFactura;
+                            var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == subfactura.Factura);
+                            var fechaFactura = context.FacturasxCliente.FirstOrDefault(x=>x.Factura == subfactura.Factura).FechaFactura;
                             if (pagoAplicado == null)
                             {
                                 TimeSpan ts = reciboPost.Fecha - subfactura.FechaVencimiento.Value;
@@ -996,19 +997,6 @@ namespace AventasApi.Controllers
                 {
                     try
                     {
-                        var reciboHeaders = new List<ReciboApiModel>();
-                        var client = new RestClient();
-                        var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
-                        {
-                            RequestFormat = DataFormat.Json
-                        };
-                        request.AddHeader("Content-type", "application/json; charset=utf-8");
-                        request.Parameters.Clear();
-                        request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
-                        var respuesta = client.Execute(request);
-
-                        if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
-                        {
                             var Esduplicado = AsyncSqlInsert.IngresarRecibos(recibosxCliente, true);
 
                             if (Esduplicado)
@@ -1046,6 +1034,18 @@ namespace AventasApi.Controllers
                             }
                             else
                             {
+                                var reciboHeaders = new List<ReciboApiModel>();
+                                var client = new RestClient();
+                                var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
+                                {
+                                    RequestFormat = DataFormat.Json
+                                };
+                                request.AddHeader("Content-type", "application/json; charset=utf-8");
+                                request.Parameters.Clear();
+                                request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
+                                var respuesta = client.Execute(request);
+                                if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
+                                {
                                 //using (AVentasEntities context = new AVentasEntities())
                                 //{
                                 //    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
@@ -1080,16 +1080,16 @@ namespace AventasApi.Controllers
                                     }
                                 }
                             }
+                            else
+                            {
+                                return BadRequest(respuesta.Content);
+
+                            }
                             syncCuentaCorriente.SyncFacturas(asesor.EmpresaId, codigoCliente);
                             syncCuentaCorriente.SyncSubFacturas(asesor.EmpresaId, codigoCliente, asesor.CodigoAsesor);
 
                             respuestaPagoRecibo.Mensaje = "El recibo ha sido sincronizado exitosamente.";
                             return Ok(respuestaPagoRecibo);
-                        }
-                        else
-                        {
-                            return BadRequest(respuesta.Content);
-
                         }
                     }
                     catch (Exception)

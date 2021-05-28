@@ -303,6 +303,38 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
+        [Route("~/api/asignaciones/eliminar/{id}")]
+        public async Task<IHttpActionResult> EliminarAsignacion(int id)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var asignacion = await ctx.AsignacionxAsesor.FindAsync(id);
+
+                    if (asignacion == null)
+                    {
+                        return BadRequest("No se pudo eliminar la asignación,porque no existe.");
+                    }
+
+                    if(asignacion.BloqueoCheckin)
+                    {
+                        return BadRequest("No se puede eliminar asignación, ya se ha registrado el checkin.");
+                    }
+
+                    ctx.AsignacionxAsesor.Remove(asignacion);
+                    int resultado = await ctx.SaveChangesAsync();
+
+                    return Ok(resultado);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
         [Route("~/api/asignaciones/checkout")]
         public async Task<IHttpActionResult> PostCheckout([FromBody] CheckInViewModel model)
         {

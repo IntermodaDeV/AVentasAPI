@@ -45,10 +45,10 @@ namespace AventasApi.Utils
                             newEntity.Saldo = Decimal.TryParse(factura.REMAIN_AMOUNT_CUR, out sFactura) ? sFactura : 0;
                             newEntity.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;
 
-                            if (newEntity.PendienteFactura > 0)
+                            /*if (newEntity.PendienteFactura > 0)
                             {
                                 newEntity.Saldo = newEntity.Saldo - newEntity.PendienteFactura - (entityFound.FechaMaxDescuento < DateTime.Today ? 0 : entityFound.Descuento);
-                            }
+                            }*/
                             
                             newEntity.FacturaStatus = factura.STATUS;
                             newEntity.NumeroPagos = int.TryParse(factura.N_PAYMENTS, out nPagos) ? nPagos : 0;

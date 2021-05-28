@@ -249,6 +249,12 @@
     <Compile Include="Database\LISTA_EJECUCION_MANUAL.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\LogProforma.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\LogRecibo.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\LogSesion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -343,6 +349,12 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\RecibosDetalleFlotante.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\RecibosProforma.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\RecibosProformaDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\RecibosxCliente.cs">

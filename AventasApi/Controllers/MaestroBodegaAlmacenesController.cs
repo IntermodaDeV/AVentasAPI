@@ -53,29 +53,6 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/GrupoOpcioness")]
-        public async Task<IHttpActionResult> ObtenerGrupoOpciones()
-        {
-            try
-            {
-                using (var ctx = new AVentasEntities())
-                {
-                    var GrupoOpciones = await ctx.GrupoOpciones.Select(x => new
-                    {
-                        Id = x.Id,
-                        Nombre = x.Nombre,
-                        Status = x.Status
-                    }).ToListAsync();
-                    return Ok(GrupoOpciones);
-                }
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.ToString());
-            }
-        }
-
-        [HttpGet]
         [Route("~/api/almacenes")]
         public async Task<IHttpActionResult> ObtenerAlmacenes()
         {

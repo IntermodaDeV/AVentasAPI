@@ -12,44 +12,44 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class RecibosxCliente
+    public partial class RecibosProforma
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public RecibosxCliente()
+        public RecibosProforma()
         {
-            this.RecibosDetalle = new HashSet<RecibosDetalle>();
-            this.LogRecibo = new HashSet<LogRecibo>();
+            this.RecibosProformaDetalle = new HashSet<RecibosProformaDetalle>();
+            this.RecibosxCliente = new HashSet<RecibosxCliente>();
+            this.LogProforma = new HashSet<LogProforma>();
         }
     
-        public int ReciboId { get; set; }
-        public string NumeroRecibo { get; set; }
+        public int ProformaId { get; set; }
+        public string NumeroProforma { get; set; }
         public string CodigoCliente { get; set; }
         public Nullable<System.DateTime> Fecha { get; set; }
-        public Nullable<int> IdTipoPago { get; set; }
-        public string Referencia { get; set; }
         public Nullable<System.DateTime> FechaCheque { get; set; }
+        public Nullable<int> IdTipoPago { get; set; }
+        public string SpecPago { get; set; }
+        public string Referencia { get; set; }
         public Nullable<int> IdBanco { get; set; }
         public Nullable<int> IdCuentaBancaria { get; set; }
-        public Nullable<decimal> Valor { get; set; }
         public string IdMoneda { get; set; }
-        public Nullable<bool> Sincronizado { get; set; }
+        public Nullable<int> IdFactura { get; set; }
+        public Nullable<decimal> Valor { get; set; }
+        public Nullable<decimal> Descuento { get; set; }
         public string CodigoAsesor { get; set; }
+        public Nullable<decimal> latitude { get; set; }
+        public Nullable<decimal> longitude { get; set; }
         public Nullable<System.DateTime> FechaCreacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public Nullable<System.DateTime> FechaModificacion { get; set; }
         public string UsuarioModificacion { get; set; }
-        public Nullable<int> IdFactura { get; set; }
-        public Nullable<decimal> Descuento { get; set; }
-        public Nullable<decimal> Latitude { get; set; }
-        public Nullable<decimal> Longitude { get; set; }
-        public string SpecPago { get; set; }
-        public Nullable<int> proformaId { get; set; }
     
         public virtual FacturasxCliente FacturasxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<RecibosDetalle> RecibosDetalle { get; set; }
-        public virtual RecibosProforma RecibosProforma { get; set; }
+        public virtual ICollection<RecibosProformaDetalle> RecibosProformaDetalle { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LogRecibo> LogRecibo { get; set; }
+        public virtual ICollection<RecibosxCliente> RecibosxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LogProforma> LogProforma { get; set; }
     }
 }

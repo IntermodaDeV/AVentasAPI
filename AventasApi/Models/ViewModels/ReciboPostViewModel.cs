@@ -19,10 +19,12 @@ namespace AventasApi.Models.ViewModels
         public string EsContado { get; set; }
         public string NumeroRecibo { get; set; }
         public Location location = new Location();
+        public List<LogRecibosViewModel> LogImpresion { get; set; }
 
         public ReciboPostViewModel()
         {
             Pagos = new List<PagosReciboPostViewModel>();
+            LogImpresion = new List<LogRecibosViewModel>();
             SubFacturas = new List<int>();
         }
     }

@@ -280,6 +280,16 @@
         <AssociationConnector Association="AventasModel.FK__MaestroBo__Sitio__3EF22DE0" />
         <AssociationConnector Association="AventasModel.FK__PaqueteBo__Almac__59A6241C" />
         <AssociationConnector Association="AventasModel.FK__PaqueteBo__Sitio__58B1FFE3" />
+        <EntityTypeShape EntityType="AventasModel.RecibosProforma" Width="1.5" PointX="15.5" PointY="67" />
+        <EntityTypeShape EntityType="AventasModel.RecibosProformaDetalle" Width="1.5" PointX="18.75" PointY="57.75" />
+        <AssociationConnector Association="AventasModel.FK__RecibosProforma__IdFactura" />
+        <AssociationConnector Association="AventasModel.FK__RecibosProformDetalle__ReciboProforma" />
+        <AssociationConnector Association="AventasModel.FK__RecibosXCliente__ReciboProformaId" />
+        <AssociationConnector Association="AventasModel.FK__RecibosProformaDetalle__IdSubFactura" />
+        <EntityTypeShape EntityType="AventasModel.LogProforma" Width="1.5" PointX="17.75" PointY="68.75" />
+        <EntityTypeShape EntityType="AventasModel.LogRecibo" Width="1.5" PointX="17.75" PointY="61.875" />
+        <AssociationConnector Association="AventasModel.FK__LogProfor__Profo__77368703" />
+        <AssociationConnector Association="AventasModel.FK__LogRecibo__Recib__7365F61F" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

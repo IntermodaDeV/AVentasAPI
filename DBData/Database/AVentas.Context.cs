@@ -20,7 +20,6 @@ namespace DBData.Database
         public AVentasEntities()
             : base("name=AVentasEntities")
         {
-            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 180;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -134,6 +133,10 @@ namespace DBData.Database
         public virtual DbSet<MaestroBodegaAlmacenes> MaestroBodegaAlmacenes { get; set; }
         public virtual DbSet<MaestroBodegaSitios> MaestroBodegaSitios { get; set; }
         public virtual DbSet<PaqueteBodegaEspecifico> PaqueteBodegaEspecifico { get; set; }
+        public virtual DbSet<RecibosProforma> RecibosProforma { get; set; }
+        public virtual DbSet<RecibosProformaDetalle> RecibosProformaDetalle { get; set; }
+        public virtual DbSet<LogProforma> LogProforma { get; set; }
+        public virtual DbSet<LogRecibo> LogRecibo { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

@@ -138,6 +138,7 @@ namespace AventasApi.Services.AsyncJobs
                         SpecPago = rec.SpecPago,
                         UsuarioCreacion = rec.UsuarioCreacion,
                         FechaCreacion = rec.FechaCreacion,
+                        proformaId = rec.proformaId,
                         RecibosDetalle = rec.DetalleRecibo.Select(recDet => new RecibosDetalle
                         {
                             IdReciboDetalle = recDet.IdReciboDetalle,
@@ -158,6 +159,53 @@ namespace AventasApi.Services.AsyncJobs
             }
             catch
             {
+                return true;
+            }
+        }
+
+        public static bool IngresarRecibosProforma(List<RecibosxClienteViewModel> recibos)
+        {
+            try
+            {
+
+                var reciboAAgregar = recibos.Select(rec => new RecibosProforma
+                {
+                    NumeroProforma = rec.NumeroRecibo,
+                    CodigoCliente = rec.CodigoCliente,
+                    Fecha = rec.Fecha,
+                    IdTipoPago = rec.IdTipoPago,
+                    Referencia = rec.Referencia,
+                    FechaCheque = rec.FechaPago,
+                    IdBanco = rec.IdBanco,
+                    Valor = rec.Valor,
+                    IdMoneda = rec.IdMoneda,
+                    CodigoAsesor = rec.CodigoAsesor,
+                    IdFactura = rec.IdFactura,
+                    Descuento = rec.Descuento,
+                    SpecPago = rec.SpecPago,
+                    UsuarioCreacion = rec.UsuarioCreacion,
+                    FechaCreacion = rec.FechaCreacion,
+                    RecibosProformaDetalle = rec.DetalleRecibo.Select(recDet => new RecibosProformaDetalle
+                    {
+                        IdProformaDetalle = recDet.IdReciboDetalle,
+                        ProformaId = recDet.ReciboId,
+                        IdSubFactura = recDet.IdSubFactura,
+                        Valor = recDet.Valor,
+                        Descuento = recDet.Descuento,
+                        EsAbono = recDet.EsAbono.Value,
+                    }).ToList()
+                }).ToList();
+
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    context.RecibosProforma.AddRange(reciboAAgregar);
+                    context.SaveChanges();
+                    return false;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
                 return true;
             }
         }
