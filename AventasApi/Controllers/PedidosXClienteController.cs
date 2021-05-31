@@ -386,15 +386,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/PedidosXCliente/correlativo/{aumentar}")]
-        public async Task <IHttpActionResult> GetCorrelativo(int aumentar)
+        [Route("~/api/PedidosXCliente/correlativo/{empresa}")]
+        public async Task <IHttpActionResult> GetCorrelativo(string empresa)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId==empresa);
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
@@ -443,7 +443,7 @@ namespace AventasApi.Controllers
                     }
 
                     List<PedidosXClienteViewModel> ListaPedidos = new List<PedidosXClienteViewModel>();
-                    foreach (var asesor in asesoresHabilitados)
+                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                     if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
                     {

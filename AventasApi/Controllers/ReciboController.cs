@@ -43,15 +43,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/recibos/correlativo")]
-        public async Task<IHttpActionResult> GetCorrelativo()
+        [Route("~/api/recibos/correlativo/{empresa}")]
+        public async Task<IHttpActionResult> GetCorrelativo(string empresa)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId==empresa);
                     int numeroCorelativo = asesor.CorrelativoRecibos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
@@ -101,7 +101,7 @@ namespace AventasApi.Controllers
                     }
 
                     List<RecibosxClienteViewModel> ListaRecibos = new List<RecibosxClienteViewModel>();
-                    foreach (var asesor in asesoresHabilitados)
+                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                     var Recibos = context.RecibosxCliente.Where(r => r.CodigoAsesor == asesor && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
@@ -1085,8 +1085,9 @@ namespace AventasApi.Controllers
                                 return BadRequest(respuesta.Content);
 
                             }
-                            syncCuentaCorriente.SyncFacturas(asesor.EmpresaId, codigoCliente);
-                            syncCuentaCorriente.SyncSubFacturas(asesor.EmpresaId, codigoCliente, asesor.CodigoAsesor);
+                            string empresa = codigoCliente.Substring(0, 4);
+                            syncCuentaCorriente.SyncFacturas(empresa, codigoCliente);
+                            syncCuentaCorriente.SyncSubFacturas(empresa, codigoCliente, asesor.CodigoAsesor);
 
                             respuestaPagoRecibo.Mensaje = "El recibo ha sido sincronizado exitosamente.";
                             return Ok(respuestaPagoRecibo);
