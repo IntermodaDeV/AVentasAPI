@@ -514,7 +514,7 @@ namespace AventasApi.Controllers
             {
                 RespuestaRecibo respuestaPagoRecibo = new RespuestaRecibo();
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount && ase.EmpresaId==anticipoPost.EmpresaUsuario);
                 if (anticipoPost.Pagos != null)
                 {
                     var existeAnticipo = 0;

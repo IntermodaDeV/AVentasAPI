@@ -56,7 +56,7 @@ namespace AventasApi.Controllers
                         asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
                     }
 
-                    foreach (var asesor in asesoresHabilitados)
+                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                         var asignaciones = context.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == asesor && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).Select(axa => new
                             {
