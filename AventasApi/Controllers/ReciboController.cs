@@ -1056,7 +1056,7 @@ namespace AventasApi.Controllers
                                 //        context.SaveChanges();
                                 //    }
                                 //}
-                                ValidarCorrelativoRecibo(asesor.CodigoAsesor);
+                                ValidarCorrelativoRecibo(asesor.CodigoAsesor,reciboPost.EmpresaUsuario);
 
                                 foreach (var iter in recibos)
                                 {
@@ -1155,7 +1155,7 @@ namespace AventasApi.Controllers
                         //        ctx.SaveChanges();
                         //    }
                         //}
-                        ValidarCorrelativoRecibo(asesor.CodigoAsesor);
+                        ValidarCorrelativoRecibo(asesor.CodigoAsesor,reciboPost.EmpresaUsuario);
 
 
                         foreach (var iter in recibos)
@@ -1191,13 +1191,13 @@ namespace AventasApi.Controllers
             }
         }
 
-        private void ValidarCorrelativoRecibo(string CodigoAsesor)
+        private void ValidarCorrelativoRecibo(string CodigoAsesor,string empresa)
         {
             using (AVentasEntities context = new AVentasEntities())
             {
                 try
                 {
-                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor);
+                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor && x.EmpresaId==empresa);
                     asesor.CorrelativoRecibos = (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0) + 1;
                     context.SaveChanges();
 
@@ -1209,7 +1209,7 @@ namespace AventasApi.Controllers
                     }
                     else
                     {
-                        ValidarCorrelativoRecibo(CodigoAsesor);
+                        ValidarCorrelativoRecibo(CodigoAsesor,empresa);
                     }
 
                 }
@@ -1604,7 +1604,7 @@ namespace AventasApi.Controllers
                         return BadRequest("El recibo no existe.");
                     }
 
-                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == recibo.CodigoAsesor);
+                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == recibo.CodigoAsesor && ase.CorrelativoRecibos!=null);
                     int numeroCorelativo = asesor.CorrelativoRecibos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";

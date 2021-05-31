@@ -1136,7 +1136,7 @@ namespace AventasApi.Controllers
 
                     List<ClienteSincronizacionViewModel> listaClientes = new List<ClienteSincronizacionViewModel>();
 
-                    foreach (var asesor in asesoresHabilitados)
+                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                         List<ClienteSincronizacionViewModel> clientes = await ctx.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoAsesor == asesor).Select(cli => new ClienteSincronizacionViewModel
                         {

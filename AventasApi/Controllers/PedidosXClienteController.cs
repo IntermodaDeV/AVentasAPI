@@ -205,7 +205,7 @@ namespace AventasApi.Controllers
 
                     PResumenCredito_Result resultado;
                     
-                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
+                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma,Pedido.EmpresaUsuario);
                     if (guardadoExito)
                     {
                         using (AVentasEntities context = new AVentasEntities())
@@ -1226,7 +1226,7 @@ namespace AventasApi.Controllers
                         return BadRequest("El pedido no existe.");
                     }
 
-                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == pedido.CodigoAsesor);
+                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == pedido.CodigoAsesor && x.CorrelativoPedidos!=null);
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
                     string numeroReferencia = $"{asesor.InicialesNombre}-1{numeroCorelativo.ToString("D5")}";
 

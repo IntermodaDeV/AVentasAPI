@@ -11,7 +11,7 @@ namespace AventasApi.Models.ViewModels
         public string CodigoCliente { get; set; }
         public string CodigoColeccion { get; set; }
         public string AcuerdoVenta { get; set; }
-        public string EmpresaId { get; set; }
+        public string EmpresaUsuario { get; set; }
         public string Usuario { get; set; }
         public System.DateTime? FechaActual { get; set; }
         public System.DateTime? FechaEntrega { get; set; }
