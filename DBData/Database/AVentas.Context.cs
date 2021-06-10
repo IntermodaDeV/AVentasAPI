@@ -20,7 +20,7 @@ namespace DBData.Database
         public AVentasEntities()
             : base("name=AVentasEntities")
         {
-            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 180;
+            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 360;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

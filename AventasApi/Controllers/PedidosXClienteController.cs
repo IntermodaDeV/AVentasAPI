@@ -1089,7 +1089,7 @@ namespace AventasApi.Controllers
 
                     List<PedidosXClienteViewModel> ListaPedidosFlotantes = new List<PedidosXClienteViewModel>();
 
-                    foreach (var asesor in asesoresHabilitados)
+                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                         List<PedidosXClienteViewModel> pedidosFlotantes = ctx.PedidosxClienteFlotante.Where(x => x.ESTADO == estado && x.Fecha >= FechaInicio && x.Fecha < FechaFin && x.CodigoAsesor == asesor).OrderByDescending(x => x.PedidoId).Select(ped => new PedidosXClienteViewModel
                         {

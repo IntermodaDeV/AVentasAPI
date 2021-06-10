@@ -465,7 +465,8 @@ namespace AventasApi.Controllers
                     }
 
                     List<ReciboApiModel> ReciboSincronizar = new List<ReciboApiModel>();
-                    var asesor = ctx.Asesores.Where(a => a.CodigoAsesor == Recibo.CodigoAsesor).FirstOrDefault();
+                    string empresa = Recibo.CodigoCliente.Substring(0, 4);
+                    var asesor = ctx.Asesores.Where(a => a.CodigoAsesor == Recibo.CodigoAsesor && a.EmpresaId == empresa).FirstOrDefault();
                     var TipoPago = ctx.TiposdePago.Where(a => a.IdTipoPago == Recibo.IdTipoPago).FirstOrDefault();
                     var Banco = ctx.Bancos.Where(a => a.IdBanco == Recibo.IdBanco).FirstOrDefault();
 
@@ -1464,7 +1465,7 @@ namespace AventasApi.Controllers
 
                     List<RecibosxClienteViewModel> RecibosFlotantes = new List<RecibosxClienteViewModel>();
 
-                    foreach(var asesor in asesoresHabilitados)
+                    foreach(var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                         List<RecibosxClienteViewModel> Recibos = ctx.RecibosxClienteFlotante.Where(r => r.Estado == estado && r.Fecha >= FechaInicio && r.Fecha < FechaFin && r.CodigoAsesor == asesor).Select(rec => new RecibosxClienteViewModel
                         {
