@@ -23,11 +23,11 @@ namespace DBData.Database
             this.FacturasxCliente = new HashSet<FacturasxCliente>();
             this.MonedasxEmpresa = new HashSet<MonedasxEmpresa>();
             this.SubFacturasxCliente = new HashSet<SubFacturasxCliente>();
-            this.PedidosxCliente = new HashSet<PedidosxCliente>();
             this.PreciosxProducto = new HashSet<PreciosxProducto>();
             this.PrecioEspecifico = new HashSet<PrecioEspecifico>();
-            this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
             this.DocumentosTransitoxFactura = new HashSet<DocumentosTransitoxFactura>();
+            this.PedidosxCliente = new HashSet<PedidosxCliente>();
+            this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
         }
     
         public string IdMoneda { get; set; }
@@ -47,14 +47,14 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SubFacturasxCliente> SubFacturasxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PreciosxProducto> PreciosxProducto { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PrecioEspecifico> PrecioEspecifico { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DocumentosTransitoxFactura> DocumentosTransitoxFactura { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
     }
 }

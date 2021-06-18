@@ -18,7 +18,6 @@ namespace DBData.Database
         public string CodigoRuta { get; set; }
         public string CodigoAsesor { get; set; }
     
-        public virtual Asesores Asesores { get; set; }
         public virtual Rutas Rutas { get; set; }
     }
 }

@@ -43,15 +43,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/recibos/correlativo")]
-        public async Task<IHttpActionResult> GetCorrelativo()
+        [Route("~/api/recibos/correlativo/{empresa}")]
+        public async Task<IHttpActionResult> GetCorrelativo(string empresa)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId==empresa);
                     int numeroCorelativo = asesor.CorrelativoRecibos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
@@ -101,7 +101,7 @@ namespace AventasApi.Controllers
                     }
 
                     List<RecibosxClienteViewModel> ListaRecibos = new List<RecibosxClienteViewModel>();
-                    foreach (var asesor in asesoresHabilitados)
+                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                     var Recibos = context.RecibosxCliente.Where(r => r.CodigoAsesor == asesor && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
@@ -404,7 +404,8 @@ namespace AventasApi.Controllers
 
                     List<ReciboApiModel> ReciboSincronizar = new List<ReciboApiModel>();
                     var ReciboDetalle = ctx.RecibosDetalle.Where(s => s.RecibosxCliente.NumeroRecibo == recibo).ToList();
-                    var asesor = ctx.Asesores.Where(a => a.CodigoAsesor == Recibo.CodigoAsesor).FirstOrDefault();
+                    string empresa = Recibo.CodigoCliente.Substring(0, 4);
+                    var asesor = ctx.Asesores.Where(a => a.CodigoAsesor == Recibo.CodigoAsesor && a.EmpresaId==empresa).FirstOrDefault();
                     var TipoPago = ctx.TiposdePago.Where(a => a.IdTipoPago == Recibo.IdTipoPago).FirstOrDefault();
                     var Banco = ctx.Bancos.Where(a => a.IdBanco == Recibo.IdBanco).FirstOrDefault();
 
@@ -464,7 +465,8 @@ namespace AventasApi.Controllers
                     }
 
                     List<ReciboApiModel> ReciboSincronizar = new List<ReciboApiModel>();
-                    var asesor = ctx.Asesores.Where(a => a.CodigoAsesor == Recibo.CodigoAsesor).FirstOrDefault();
+                    string empresa = Recibo.CodigoCliente.Substring(0, 4);
+                    var asesor = ctx.Asesores.Where(a => a.CodigoAsesor == Recibo.CodigoAsesor && a.EmpresaId == empresa).FirstOrDefault();
                     var TipoPago = ctx.TiposdePago.Where(a => a.IdTipoPago == Recibo.IdTipoPago).FirstOrDefault();
                     var Banco = ctx.Bancos.Where(a => a.IdBanco == Recibo.IdBanco).FirstOrDefault();
 
@@ -514,7 +516,7 @@ namespace AventasApi.Controllers
             {
                 RespuestaRecibo respuestaPagoRecibo = new RespuestaRecibo();
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount && ase.EmpresaId==anticipoPost.EmpresaUsuario);
                 if (anticipoPost.Pagos != null)
                 {
                     var existeAnticipo = 0;
@@ -1056,7 +1058,7 @@ namespace AventasApi.Controllers
                                 //        context.SaveChanges();
                                 //    }
                                 //}
-                                ValidarCorrelativoRecibo(asesor.CodigoAsesor);
+                                ValidarCorrelativoRecibo(asesor.CodigoAsesor,reciboPost.EmpresaUsuario);
 
                                 foreach (var iter in recibos)
                                 {
@@ -1085,8 +1087,9 @@ namespace AventasApi.Controllers
                                 return BadRequest(respuesta.Content);
 
                             }
-                            syncCuentaCorriente.SyncFacturas(asesor.EmpresaId, codigoCliente);
-                            syncCuentaCorriente.SyncSubFacturas(asesor.EmpresaId, codigoCliente, asesor.CodigoAsesor);
+                            string empresa = codigoCliente.Substring(0, 4);
+                            syncCuentaCorriente.SyncFacturas(empresa, codigoCliente);
+                            syncCuentaCorriente.SyncSubFacturas(empresa, codigoCliente, asesor.CodigoAsesor);
 
                             respuestaPagoRecibo.Mensaje = "El recibo ha sido sincronizado exitosamente.";
                             return Ok(respuestaPagoRecibo);
@@ -1154,7 +1157,7 @@ namespace AventasApi.Controllers
                         //        ctx.SaveChanges();
                         //    }
                         //}
-                        ValidarCorrelativoRecibo(asesor.CodigoAsesor);
+                        ValidarCorrelativoRecibo(asesor.CodigoAsesor,reciboPost.EmpresaUsuario);
 
 
                         foreach (var iter in recibos)
@@ -1190,13 +1193,13 @@ namespace AventasApi.Controllers
             }
         }
 
-        private void ValidarCorrelativoRecibo(string CodigoAsesor)
+        private void ValidarCorrelativoRecibo(string CodigoAsesor,string empresa)
         {
             using (AVentasEntities context = new AVentasEntities())
             {
                 try
                 {
-                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor);
+                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor && x.EmpresaId==empresa);
                     asesor.CorrelativoRecibos = (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0) + 1;
                     context.SaveChanges();
 
@@ -1208,7 +1211,7 @@ namespace AventasApi.Controllers
                     }
                     else
                     {
-                        ValidarCorrelativoRecibo(CodigoAsesor);
+                        ValidarCorrelativoRecibo(CodigoAsesor,empresa);
                     }
 
                 }
@@ -1462,7 +1465,7 @@ namespace AventasApi.Controllers
 
                     List<RecibosxClienteViewModel> RecibosFlotantes = new List<RecibosxClienteViewModel>();
 
-                    foreach(var asesor in asesoresHabilitados)
+                    foreach(var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                         List<RecibosxClienteViewModel> Recibos = ctx.RecibosxClienteFlotante.Where(r => r.Estado == estado && r.Fecha >= FechaInicio && r.Fecha < FechaFin && r.CodigoAsesor == asesor).Select(rec => new RecibosxClienteViewModel
                         {
@@ -1603,7 +1606,7 @@ namespace AventasApi.Controllers
                         return BadRequest("El recibo no existe.");
                     }
 
-                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == recibo.CodigoAsesor);
+                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == recibo.CodigoAsesor && ase.CorrelativoRecibos!=null);
                     int numeroCorelativo = asesor.CorrelativoRecibos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";

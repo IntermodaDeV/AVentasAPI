@@ -536,7 +536,7 @@ namespace AventasApi.Controllers
                                 var numRecibo = recibosxCliente[0].NumeroRecibo.Substring(2, Caracteres - 2);
                                 recibosxCliente[0].NumeroRecibo = numRecibo;
                                 AsyncSqlInsert.IngresarRecibos(recibosxCliente, false);
-                                ValidarCorrelativoRecibo(asesor.CodigoAsesor);
+                                ValidarCorrelativoRecibo(asesor.CodigoAsesor,proformaPost.EmpresaUsuario);
                                 if (proformaPost.LogImpresion.Count() > 0)
                                 {
                                     foreach(var logProforma in proformaPost.LogImpresion)
@@ -619,13 +619,13 @@ namespace AventasApi.Controllers
             }
         }
 
-        private void ValidarCorrelativoRecibo(string CodigoAsesor)
+        private void ValidarCorrelativoRecibo(string CodigoAsesor,string empresa)
         {
             using (AVentasEntities context = new AVentasEntities())
             {
                 try
                 {
-                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor);
+                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor && x.EmpresaId==empresa);
                     asesor.CorrelativoRecibos = (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0) + 1;
                     context.SaveChanges();
 
@@ -637,7 +637,7 @@ namespace AventasApi.Controllers
                     }
                     else
                     {
-                        ValidarCorrelativoRecibo(CodigoAsesor);
+                        ValidarCorrelativoRecibo(CodigoAsesor,empresa);
                     }
 
                 }

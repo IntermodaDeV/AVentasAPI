@@ -95,7 +95,7 @@ namespace AventasApi.Controllers.Authentication
                         { 
                             Usuario = a.CodigoAsesor
 
-                        }).ToList(),
+                        }).Distinct().ToList(),
                     }).ToList();
 
                     return Ok(PermisosUsuario);

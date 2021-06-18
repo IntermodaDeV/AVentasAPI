@@ -19,7 +19,7 @@ namespace AventasApi.Services.AsyncJobs
         {
             factory = new TaskFactory();
         }
-        public static bool IngresarPedido(PedidosxCliente pedido, string firma)
+        public static bool IngresarPedido(PedidosxCliente pedido, string firma,string empresa)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace AventasApi.Services.AsyncJobs
                     int rowAffected = context.SaveChanges();
                     if (rowAffected > 0)
                     {
-                        ValidarCorrelativoPedido(pedido.CodigoAsesor);
+                        ValidarCorrelativoPedido(pedido.CodigoAsesor,empresa);
                     }
                     else
                     {
@@ -59,13 +59,13 @@ namespace AventasApi.Services.AsyncJobs
             }
         }
 
-        private static void ValidarCorrelativoPedido(string CodigoAsesor)
+        private static void ValidarCorrelativoPedido(string CodigoAsesor,string empresa)
         {
             using(AVentasEntities context = new AVentasEntities())
             {
                 try
                 {
-                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor);
+                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor && x.EmpresaId == empresa);
                     asesor.CorrelativoPedidos = (asesor.CorrelativoPedidos != null ? asesor.CorrelativoPedidos : 0) + 1;
                     context.SaveChanges();
 
@@ -77,7 +77,7 @@ namespace AventasApi.Services.AsyncJobs
                     }
                     else
                     {
-                        ValidarCorrelativoPedido(CodigoAsesor);
+                        ValidarCorrelativoPedido(CodigoAsesor,empresa);
                     }
 
                 }

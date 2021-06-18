@@ -23,7 +23,6 @@ namespace DBData.Database
         public Nullable<int> IdAsignacionxAsesor { get; set; }
         public string Observacion { get; set; }
     
-        public virtual Asesores Asesores { get; set; }
         public virtual Clientes Clientes { get; set; }
         public virtual RazonNoVentaTipo RazonNoVentaTipo { get; set; }
         public virtual RazonNoVentaCausa RazonNoVentaCausa { get; set; }

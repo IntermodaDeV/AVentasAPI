@@ -20,11 +20,11 @@ namespace DBData.Database
             this.AtributosxColeccion = new HashSet<AtributosxColeccion>();
             this.EdadesxColeccion = new HashSet<EdadesxColeccion>();
             this.LineasxColeccion = new HashSet<LineasxColeccion>();
-            this.PedidosxCliente = new HashSet<PedidosxCliente>();
             this.ProductosxColeccion = new HashSet<ProductosxColeccion>();
-            this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
             this.ListasPreciosPaquetes = new HashSet<ListasPreciosPaquetes>();
             this.PaqueteBodegaEspecifico = new HashSet<PaqueteBodegaEspecifico>();
+            this.PedidosxCliente = new HashSet<PedidosxCliente>();
+            this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
         }
     
         public int IdColeccion { get; set; }
@@ -53,14 +53,14 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LineasxColeccion> LineasxColeccion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductosxColeccion> ProductosxColeccion { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ListasPreciosPaquetes> ListasPreciosPaquetes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaqueteBodegaEspecifico> PaqueteBodegaEspecifico { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
     }
 }

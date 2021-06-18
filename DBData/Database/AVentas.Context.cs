@@ -20,6 +20,7 @@ namespace DBData.Database
         public AVentasEntities()
             : base("name=AVentasEntities")
         {
+            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 360;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -29,14 +30,10 @@ namespace DBData.Database
     
         public virtual DbSet<AcuerdosxCliente> AcuerdosxCliente { get; set; }
         public virtual DbSet<AcuerdosxClienteDetalle> AcuerdosxClienteDetalle { get; set; }
-        public virtual DbSet<Asesores> Asesores { get; set; }
-        public virtual DbSet<AsignacionxAsesor> AsignacionxAsesor { get; set; }
         public virtual DbSet<AsignacionxAsesorDetalle> AsignacionxAsesorDetalle { get; set; }
         public virtual DbSet<AtributosxColeccion> AtributosxColeccion { get; set; }
         public virtual DbSet<AtributosxProducto> AtributosxProducto { get; set; }
         public virtual DbSet<Bancos> Bancos { get; set; }
-        public virtual DbSet<BitacoraGeoposicion> BitacoraGeoposicion { get; set; }
-        public virtual DbSet<BitacoraVisitasCliente> BitacoraVisitasCliente { get; set; }
         public virtual DbSet<Clientes> Clientes { get; set; }
         public virtual DbSet<ClientesxRuta> ClientesxRuta { get; set; }
         public virtual DbSet<Colores> Colores { get; set; }
@@ -67,7 +64,6 @@ namespace DBData.Database
         public virtual DbSet<RazonNoVentaTipo> RazonNoVentaTipo { get; set; }
         public virtual DbSet<RecibosDetalle> RecibosDetalle { get; set; }
         public virtual DbSet<Rutas> Rutas { get; set; }
-        public virtual DbSet<RutasxAsesor> RutasxAsesor { get; set; }
         public virtual DbSet<SubFacturasxCliente> SubFacturasxCliente { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<TallasXGrupo> TallasXGrupo { get; set; }
@@ -87,7 +83,6 @@ namespace DBData.Database
         public virtual DbSet<RecibosxCliente> RecibosxCliente { get; set; }
         public virtual DbSet<GrupoImpuestoArticulo> GrupoImpuestoArticulo { get; set; }
         public virtual DbSet<GrupoImpuestoCliente> GrupoImpuestoCliente { get; set; }
-        public virtual DbSet<PedidosxCliente> PedidosxCliente { get; set; }
         public virtual DbSet<ComunidadAutonoma> ComunidadAutonoma { get; set; }
         public virtual DbSet<EmpresaTransporte> EmpresaTransporte { get; set; }
         public virtual DbSet<TransportePrecioCaja> TransportePrecioCaja { get; set; }
@@ -104,7 +99,6 @@ namespace DBData.Database
         public virtual DbSet<PantallasxUsuario> PantallasxUsuario { get; set; }
         public virtual DbSet<Usuario_Rol> Usuario_Rol { get; set; }
         public virtual DbSet<Usuarios_Empresas> Usuarios_Empresas { get; set; }
-        public virtual DbSet<Usuarios_Asesores> Usuarios_Asesores { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
         public virtual DbSet<TiposIngreso> TiposIngreso { get; set; }
         public virtual DbSet<GrupoOpcionesDetalle> GrupoOpcionesDetalle { get; set; }
@@ -120,7 +114,6 @@ namespace DBData.Database
         public virtual DbSet<FotografiasXProducto> FotografiasXProducto { get; set; }
         public virtual DbSet<Colecciones> Colecciones { get; set; }
         public virtual DbSet<PedidosDetalleFlotante> PedidosDetalleFlotante { get; set; }
-        public virtual DbSet<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
         public virtual DbSet<RecibosDetalleFlotante> RecibosDetalleFlotante { get; set; }
         public virtual DbSet<Secciones> Secciones { get; set; }
         public virtual DbSet<Secciones_Encuesta> Secciones_Encuesta { get; set; }
@@ -137,6 +130,14 @@ namespace DBData.Database
         public virtual DbSet<RecibosProformaDetalle> RecibosProformaDetalle { get; set; }
         public virtual DbSet<LogProforma> LogProforma { get; set; }
         public virtual DbSet<LogRecibo> LogRecibo { get; set; }
+        public virtual DbSet<AsignacionxAsesor> AsignacionxAsesor { get; set; }
+        public virtual DbSet<BitacoraGeoposicion> BitacoraGeoposicion { get; set; }
+        public virtual DbSet<BitacoraVisitasCliente> BitacoraVisitasCliente { get; set; }
+        public virtual DbSet<PedidosxCliente> PedidosxCliente { get; set; }
+        public virtual DbSet<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
+        public virtual DbSet<RutasxAsesor> RutasxAsesor { get; set; }
+        public virtual DbSet<Usuarios_Asesores> Usuarios_Asesores { get; set; }
+        public virtual DbSet<Asesores> Asesores { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

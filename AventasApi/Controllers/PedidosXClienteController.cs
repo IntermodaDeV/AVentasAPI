@@ -205,7 +205,7 @@ namespace AventasApi.Controllers
 
                     PResumenCredito_Result resultado;
                     
-                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma);
+                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma,Pedido.EmpresaUsuario);
                     if (guardadoExito)
                     {
                         using (AVentasEntities context = new AVentasEntities())
@@ -386,15 +386,15 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/PedidosXCliente/correlativo/{aumentar}")]
-        public async Task <IHttpActionResult> GetCorrelativo(int aumentar)
+        [Route("~/api/PedidosXCliente/correlativo/{empresa}")]
+        public async Task <IHttpActionResult> GetCorrelativo(string empresa)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId==empresa);
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
@@ -443,7 +443,7 @@ namespace AventasApi.Controllers
                     }
 
                     List<PedidosXClienteViewModel> ListaPedidos = new List<PedidosXClienteViewModel>();
-                    foreach (var asesor in asesoresHabilitados)
+                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                     if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
                     {
@@ -756,9 +756,9 @@ namespace AventasApi.Controllers
                         PACKAGE_TYPE = pedidoDB.Colecciones.TiposdeColeccion.ColeccionTipo,
                         PedidoJsonItems = new List<PedidoJsonItems>(),
                         REFERENCE = pedidoDB.PedidoId,
-                        SALES_MANAGER = pedidoDB.Asesores.Usuario,
+                        SALES_MANAGER = pedidoDB.CodigoAsesor,
                         SALES_ORDER_TYPE = (pedidoDB.Colecciones.TiposdeColeccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
-                        USER = pedidoDB.Asesores.Usuario,
+                        USER = pedidoDB.CodigoAsesor,
                         INCLUDE_TAX = "0",
                         ESPEC_INV = pedidoDB.BodegaEspecifica == null ? "0" : (pedidoDB.BodegaEspecifica.Value ? "1" : "0"),
                         LOCATION = pedidoDB.Almacen,
@@ -1089,7 +1089,7 @@ namespace AventasApi.Controllers
 
                     List<PedidosXClienteViewModel> ListaPedidosFlotantes = new List<PedidosXClienteViewModel>();
 
-                    foreach (var asesor in asesoresHabilitados)
+                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                         List<PedidosXClienteViewModel> pedidosFlotantes = ctx.PedidosxClienteFlotante.Where(x => x.ESTADO == estado && x.Fecha >= FechaInicio && x.Fecha < FechaFin && x.CodigoAsesor == asesor).OrderByDescending(x => x.PedidoId).Select(ped => new PedidosXClienteViewModel
                         {
@@ -1226,7 +1226,7 @@ namespace AventasApi.Controllers
                         return BadRequest("El pedido no existe.");
                     }
 
-                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == pedido.CodigoAsesor);
+                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == pedido.CodigoAsesor && x.CorrelativoPedidos!=null);
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
                     string numeroReferencia = $"{asesor.InicialesNombre}-1{numeroCorelativo.ToString("D5")}";
 
