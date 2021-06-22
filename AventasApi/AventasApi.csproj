@@ -15,7 +15,8 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -350,6 +351,7 @@
     <Compile Include="Singleton\GestorManager.cs" />
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
     <Compile Include="Utils\logicValidation.cs" />
+    <Compile Include="Utils\SyncAcuerdosVentas.cs" />
     <Compile Include="Utils\SyncCuentaCorriente.cs" />
   </ItemGroup>
   <ItemGroup>
