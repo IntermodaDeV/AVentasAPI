@@ -33,5 +33,34 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("modificar/{usuario}/{id}")]
+        public async Task<IHttpActionResult> ModificarUbicacion(string usuario, int id)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var ubicaciones = await ctx.UbicacionesXAlmacen.FindAsync(id);
+
+                    if (ubicaciones == null)
+                    {
+                        return BadRequest("El sitio no existe");
+                    }
+
+                    ubicaciones.Estatus = !ubicaciones.Estatus;
+                    ubicaciones.ModificadoPor = usuario;
+                    ubicaciones.FechaModificacion = DateTime.Now;
+                    await ctx.SaveChangesAsync();
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }
