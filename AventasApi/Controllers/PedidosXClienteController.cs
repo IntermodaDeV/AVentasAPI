@@ -18,7 +18,7 @@ using ExternalApiData.ApiModels;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.IO;
-
+using AventasApi.Utils;
 namespace AventasApi.Controllers
 {
     //[Auth]
@@ -31,11 +31,11 @@ namespace AventasApi.Controllers
         private MongoClient Client;
         private IMongoDatabase Database;
         private readonly AuthenticationAppService _authenticationAppService;
-
+        private SyncAcuerdosVentas syncAcuerdosVentas;
         public PedidosXClienteController()
         {
             _authenticationAppService = new AuthenticationAppService();
-
+            syncAcuerdosVentas = new SyncAcuerdosVentas();
             Client = new MongoClient(MongoDBConnectionString);
             Database = Client.GetDatabase(MongoDBName);
 
@@ -822,6 +822,7 @@ namespace AventasApi.Controllers
                                 pedidoDB.NumeroPedido = pedidoAX;
                                 pedidoDB.Sincronizado = true;
                                 respuesta = $"Pedido {Pedido.REFERENCE} sincronizado exitosamente con AX.";
+                                syncAcuerdosVentas.SyncAcuerdoVenta(Pedido.COMPANY, Pedido.CUSTOMER_ACCOUNT, Pedido.USER);
                             }
                         }
                         else
@@ -893,6 +894,7 @@ namespace AventasApi.Controllers
                                 pedidoDB.Sincronizado = true;
                                 respuesta = $"Pedido {pedido.REFERENCE} sincronizado exitosamente con AX.";
                             }
+                            syncAcuerdosVentas.SyncAcuerdoVenta(pedido.COMPANY, pedido.CUSTOMER_ACCOUNT, pedido.USER);
                         }
                         else
                         {
