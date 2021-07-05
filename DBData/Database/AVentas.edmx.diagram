@@ -283,6 +283,8 @@
         <AssociationConnector Association="AventasModel.FK__RutasxAse__Codig__6497E884" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__37311087" />
         <EntityTypeShape EntityType="AventasModel.Asesores" Width="1.5" PointX="0.75" PointY="19.75" />
+        <EntityTypeShape EntityType="AventasModel.UbicacionesXAlmacen" Width="1.5" PointX="15.5" PointY="73.75" />
+        <AssociationConnector Association="AventasModel.FK__Ubicacion__Almac__14C6E9EA" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

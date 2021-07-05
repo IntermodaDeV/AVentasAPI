@@ -15,8 +15,7 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -217,6 +216,7 @@
     <Compile Include="Controllers\TiposColeccionController.cs" />
     <Compile Include="Controllers\TipoVisitaClienteController.cs" />
     <Compile Include="Controllers\TransporteController.cs" />
+    <Compile Include="Controllers\UbicacionController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Filters\Auth.cs" />
     <Compile Include="Global.asax.cs">

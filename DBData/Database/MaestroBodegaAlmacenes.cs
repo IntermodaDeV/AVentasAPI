@@ -18,6 +18,7 @@ namespace DBData.Database
         public MaestroBodegaAlmacenes()
         {
             this.PaqueteBodegaEspecifico = new HashSet<PaqueteBodegaEspecifico>();
+            this.UbicacionesXAlmacen = new HashSet<UbicacionesXAlmacen>();
         }
     
         public int AlmacenId { get; set; }
@@ -34,5 +35,7 @@ namespace DBData.Database
         public virtual MaestroBodegaSitios MaestroBodegaSitios { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaqueteBodegaEspecifico> PaqueteBodegaEspecifico { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UbicacionesXAlmacen> UbicacionesXAlmacen { get; set; }
     }
 }

@@ -1402,6 +1402,17 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="COMPANY" Type="varchar" MaxLength="50" />
           <Property Name="UNITVALUEBOXES" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
+        <EntityType Name="UbicacionesXAlmacen">
+          <Key>
+            <PropertyRef Name="UbicacionId" />
+          </Key>
+          <Property Name="UbicacionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodigoUbicacion" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="AlmacenId" Type="int" />
+          <Property Name="Estatus" Type="bit" Nullable="false" />
+          <Property Name="ModificadoPor" Type="varchar" MaxLength="50" />
+          <Property Name="FechaModificacion" Type="datetime" />
+        </EntityType>
         <EntityType Name="Usuario_Rol">
           <Key>
             <PropertyRef Name="Id" />
@@ -3169,6 +3180,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Ubicacion__Almac__14C6E9EA">
+          <End Role="MaestroBodegaAlmacenes" Type="Self.MaestroBodegaAlmacenes" Multiplicity="0..1" />
+          <End Role="UbicacionesXAlmacen" Type="Self.UbicacionesXAlmacen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroBodegaAlmacenes">
+              <PropertyRef Name="AlmacenId" />
+            </Principal>
+            <Dependent Role="UbicacionesXAlmacen">
+              <PropertyRef Name="AlmacenId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Usuarios___Empre__2BBF5DDB">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="1" />
           <End Role="Usuarios_Empresas" Type="Self.Usuarios_Empresas" Multiplicity="*" />
@@ -3676,6 +3699,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="TiposIngreso" EntityType="Self.TiposIngreso" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TipoVisitaCliente" EntityType="Self.TipoVisitaCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TransportePrecioCaja" EntityType="Self.TransportePrecioCaja" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UbicacionesXAlmacen" EntityType="Self.UbicacionesXAlmacen" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuario_Rol" EntityType="Self.Usuario_Rol" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios_Asesores" EntityType="Self.Usuarios_Asesores" Schema="dbo" store:Type="Tables" />
@@ -4290,6 +4314,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK__TiposdePa__IdTip__2D67AF2B" Association="Self.FK__TiposdePa__IdTip__2D67AF2B">
             <End Role="TiposdePago" EntitySet="TiposdePago" />
             <End Role="TiposdePagoDetalle" EntitySet="TiposdePagoDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Ubicacion__Almac__14C6E9EA" Association="Self.FK__Ubicacion__Almac__14C6E9EA">
+            <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
+            <End Role="UbicacionesXAlmacen" EntitySet="UbicacionesXAlmacen" />
           </AssociationSet>
           <AssociationSet Name="FK__Usuarios___Empre__2BBF5DDB" Association="Self.FK__Usuarios___Empre__2BBF5DDB">
             <End Role="Empresa" EntitySet="Empresa" />
@@ -6626,6 +6654,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Usuarios_Asesores" EntitySet="Usuarios_Asesores" />
           </AssociationSet>
           <EntitySet Name="Asesores" EntityType="AventasModel.Asesores" />
+          <EntitySet Name="UbicacionesXAlmacen" EntityType="AventasModel.UbicacionesXAlmacen" />
+          <AssociationSet Name="FK__Ubicacion__Almac__14C6E9EA" Association="AventasModel.FK__Ubicacion__Almac__14C6E9EA">
+            <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
+            <End Role="UbicacionesXAlmacen" EntitySet="UbicacionesXAlmacen" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -8363,6 +8396,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PaqueteBodegaEspecifico" Relationship="AventasModel.FK__PaqueteBo__Almac__59A6241C" FromRole="MaestroBodegaAlmacenes" ToRole="PaqueteBodegaEspecifico" />
           <Property Name="ModificadoPor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="UbicacionesXAlmacen" Relationship="AventasModel.FK__Ubicacion__Almac__14C6E9EA" FromRole="MaestroBodegaAlmacenes" ToRole="UbicacionesXAlmacen" />
         </EntityType>
         <EntityType Name="MaestroBodegaSitios">
           <Key>
@@ -9202,6 +9236,30 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Activo" Type="Boolean" />
           <Property Name="AsesorId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
         </EntityType>
+        <EntityType Name="UbicacionesXAlmacen">
+          <Key>
+            <PropertyRef Name="UbicacionId" />
+          </Key>
+          <Property Name="UbicacionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodigoUbicacion" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="AlmacenId" Type="Int32" />
+          <Property Name="Estatus" Type="Boolean" Nullable="false" />
+          <Property Name="ModificadoPor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="MaestroBodegaAlmacenes" Relationship="AventasModel.FK__Ubicacion__Almac__14C6E9EA" FromRole="UbicacionesXAlmacen" ToRole="MaestroBodegaAlmacenes" />
+        </EntityType>
+        <Association Name="FK__Ubicacion__Almac__14C6E9EA">
+          <End Type="AventasModel.MaestroBodegaAlmacenes" Role="MaestroBodegaAlmacenes" Multiplicity="0..1" />
+          <End Type="AventasModel.UbicacionesXAlmacen" Role="UbicacionesXAlmacen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroBodegaAlmacenes">
+              <PropertyRef Name="AlmacenId" />
+            </Principal>
+            <Dependent Role="UbicacionesXAlmacen">
+              <PropertyRef Name="AlmacenId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -10944,6 +11002,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UbicacionesXAlmacen">
+            <EntityTypeMapping TypeName="AventasModel.UbicacionesXAlmacen">
+              <MappingFragment StoreEntitySet="UbicacionesXAlmacen">
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="ModificadoPor" ColumnName="ModificadoPor" />
+                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
+                <ScalarProperty Name="AlmacenId" ColumnName="AlmacenId" />
+                <ScalarProperty Name="CodigoUbicacion" ColumnName="CodigoUbicacion" />
+                <ScalarProperty Name="UbicacionId" ColumnName="UbicacionId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
