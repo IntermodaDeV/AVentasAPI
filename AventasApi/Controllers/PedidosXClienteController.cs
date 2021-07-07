@@ -767,7 +767,8 @@ namespace AventasApi.Controllers
                         INCLUDE_TAX = "0",
                         ESPEC_INV = pedidoDB.BodegaEspecifica == null ? "0" : (pedidoDB.BodegaEspecifica.Value ? "1" : "0"),
                         LOCATION = pedidoDB.Almacen,
-                        SITE = pedidoDB.Sitio
+                        SITE = pedidoDB.Sitio,
+                        WMSLOCATION = pedidoDB.Ubicacion==null?"":pedidoDB.Ubicacion
                     };
                     if (pedidoDB.ClienteContadoId != null)
                     {
