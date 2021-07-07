@@ -121,6 +121,7 @@ namespace AventasApi.Controllers
                 AcuerdosxCliente acuerdoVenta;
                 TiposdePedido tipoPedido;
                 Clientes cliente;
+                UbicacionesXAlmacen ubicacion;
                 ClienteContado clienteContado;
                 CONFIGURACIONE SyncTelContado;
                 CONFIGURACIONE SyncTelCredito;
@@ -139,9 +140,10 @@ namespace AventasApi.Controllers
                     tipoPedido = acuerdoVenta?.TiposdePedido;
                     cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
                     coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
+                    ubicacion = context.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == Pedido.Almacen && x.Estatus == true);
                 }
                 DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
-
+                
                 if (found == null)
                 {
                     PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
@@ -168,7 +170,7 @@ namespace AventasApi.Controllers
                         BodegaEspecifica=Pedido.BodegaEspecifica,
                         Sitio=Pedido.Sitio,
                         Almacen=Pedido.Almacen,
-                        Ubicacion=Pedido.Ubicacion
+                        Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : ""
                     };
 
                     foreach (var detalle in Pedido.DetallePedido)
@@ -251,7 +253,7 @@ namespace AventasApi.Controllers
                             BodegaEspecifica = Pedido.BodegaEspecifica,
                             Sitio = Pedido.Sitio,
                             Almacen = Pedido.Almacen,
-                            Ubicacion=Pedido.Ubicacion
+                            Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : ""
                         };
 
                         //if (numeroReferencia == "")
@@ -331,7 +333,7 @@ namespace AventasApi.Controllers
                         BodegaEspecifica = Pedido.BodegaEspecifica,
                         Sitio = Pedido.Sitio,
                         Almacen = Pedido.Almacen,
-                        Ubicacion=Pedido.Ubicacion
+                        Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : ""
                     };
 
                     //if (numeroReferencia == "")
