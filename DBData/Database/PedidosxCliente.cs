@@ -56,6 +56,7 @@ namespace DBData.Database
         public Nullable<bool> BodegaEspecifica { get; set; }
         public string Sitio { get; set; }
         public string Almacen { get; set; }
+        public string Ubicacion { get; set; }
     
         public virtual Clientes Clientes { get; set; }
         public virtual Colecciones Colecciones { get; set; }

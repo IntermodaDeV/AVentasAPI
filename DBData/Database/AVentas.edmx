@@ -862,6 +862,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="BodegaEspecifica" Type="bit" />
           <Property Name="Sitio" Type="varchar" MaxLength="50" />
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
+          <Property Name="Ubicacion" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -907,6 +908,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="BodegaEspecifica" Type="bit" />
           <Property Name="Sitio" Type="varchar" MaxLength="50" />
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
+          <Property Name="Ubicacion" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -8807,6 +8809,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="MaestroMoneda" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D" FromRole="PedidosxCliente" ToRole="MaestroMoneda" />
           <NavigationProperty Name="PedidosDetalle" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosxCliente" ToRole="PedidosDetalle" />
           <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA" FromRole="PedidosxCliente" ToRole="TiposdePedido" />
+          <Property Name="Ubicacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -8860,6 +8863,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="MaestroMoneda" Relationship="AventasModel.FK__PedidosxC__idMon__353DDB1D1" FromRole="PedidosxClienteFlotante" ToRole="MaestroMoneda" />
           <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B3011" FromRole="PedidosxClienteFlotante" ToRole="PedidosDetalleFlotante" />
           <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" FromRole="PedidosxClienteFlotante" ToRole="TiposdePedido" />
+          <Property Name="Ubicacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="RutasxAsesor">
           <Key>
@@ -10881,6 +10885,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="Ubicacion" ColumnName="Ubicacion" />
                 <ScalarProperty Name="Almacen" ColumnName="Almacen" />
                 <ScalarProperty Name="Sitio" ColumnName="Sitio" />
                 <ScalarProperty Name="BodegaEspecifica" ColumnName="BodegaEspecifica" />
@@ -10922,6 +10927,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosxClienteFlotante">
             <EntityTypeMapping TypeName="AventasModel.PedidosxClienteFlotante">
               <MappingFragment StoreEntitySet="PedidosxClienteFlotante">
+                <ScalarProperty Name="Ubicacion" ColumnName="Ubicacion" />
                 <ScalarProperty Name="Almacen" ColumnName="Almacen" />
                 <ScalarProperty Name="Sitio" ColumnName="Sitio" />
                 <ScalarProperty Name="BodegaEspecifica" ColumnName="BodegaEspecifica" />

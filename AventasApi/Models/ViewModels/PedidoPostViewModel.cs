@@ -43,6 +43,7 @@ namespace AventasApi.Models.ViewModels
         public bool BodegaEspecifica { get; set; }
         public string Sitio { get; set; }
         public string Almacen { get; set; }
+        public string Ubicacion { get; set; }
         public PedidoPostViewModel()
         {
             DetallePedido = new List<DetallePedidoPostViewModel>();

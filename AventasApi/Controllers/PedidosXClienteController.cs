@@ -167,7 +167,8 @@ namespace AventasApi.Controllers
                         RequiereEntrega = Pedido.RequiereEntrega,
                         BodegaEspecifica=Pedido.BodegaEspecifica,
                         Sitio=Pedido.Sitio,
-                        Almacen=Pedido.Almacen
+                        Almacen=Pedido.Almacen,
+                        Ubicacion=Pedido.Ubicacion
                     };
 
                     foreach (var detalle in Pedido.DetallePedido)
@@ -249,7 +250,8 @@ namespace AventasApi.Controllers
                             ESTADO = 0,
                             BodegaEspecifica = Pedido.BodegaEspecifica,
                             Sitio = Pedido.Sitio,
-                            Almacen = Pedido.Almacen
+                            Almacen = Pedido.Almacen,
+                            Ubicacion=Pedido.Ubicacion
                         };
 
                         //if (numeroReferencia == "")
@@ -328,7 +330,8 @@ namespace AventasApi.Controllers
                         ESTADO = 0,
                         BodegaEspecifica = Pedido.BodegaEspecifica,
                         Sitio = Pedido.Sitio,
-                        Almacen = Pedido.Almacen
+                        Almacen = Pedido.Almacen,
+                        Ubicacion=Pedido.Ubicacion
                     };
 
                     //if (numeroReferencia == "")
