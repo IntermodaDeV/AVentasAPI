@@ -25,6 +25,7 @@ namespace DBData.Database
             this.ProductosxColeccion = new HashSet<ProductosxColeccion>();
             this.PedidosxCliente = new HashSet<PedidosxCliente>();
             this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
+            this.DescuentoDetalle = new HashSet<DescuentoDetalle>();
         }
     
         public string IdLinea { get; set; }
@@ -49,5 +50,7 @@ namespace DBData.Database
         public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DescuentoDetalle> DescuentoDetalle { get; set; }
     }
 }

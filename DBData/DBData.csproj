@@ -156,6 +156,12 @@
     <Compile Include="Database\CuentasBancarias.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Descuento.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\DescuentoDetalle.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\DistribucionxTalla.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

@@ -285,6 +285,11 @@
         <EntityTypeShape EntityType="AventasModel.Asesores" Width="1.5" PointX="0.75" PointY="19.75" />
         <EntityTypeShape EntityType="AventasModel.UbicacionesXAlmacen" Width="1.5" PointX="15.5" PointY="73.75" />
         <AssociationConnector Association="AventasModel.FK__Ubicacion__Almac__14C6E9EA" />
+        <EntityTypeShape EntityType="AventasModel.Descuento" Width="1.5" PointX="3" PointY="57.875" />
+        <EntityTypeShape EntityType="AventasModel.DescuentoDetalle" Width="1.5" PointX="13.25" PointY="29.75" />
+        <AssociationConnector Association="AventasModel.FK_tbDescuento_tbEmpresa_EmpresaId" />
+        <AssociationConnector Association="AventasModel.FK_tbDescuentoDetalle_tbDescuento_idDescuento" />
+        <AssociationConnector Association="AventasModel.FK_tbDescuentoDetalle_tbLinea_idLinea" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

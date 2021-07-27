@@ -314,6 +314,26 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="IdMoneda" Type="varchar" MaxLength="100" />
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
         </EntityType>
+        <EntityType Name="Descuento">
+          <Key>
+            <PropertyRef Name="IdDescuento" />
+          </Key>
+          <Property Name="IdDescuento" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Codigo" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="100" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="DescuentoDetalle">
+          <Key>
+            <PropertyRef Name="IdDescuentoDetalle" />
+          </Key>
+          <Property Name="IdDescuentoDetalle" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdDescuento" Type="int" Nullable="false" />
+          <Property Name="IdLinea" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="CodigoDescuento" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="DiasDescuento" Type="int" />
+          <Property Name="Porcentaje" Type="decimal" Precision="10" Scale="2" />
+        </EntityType>
         <EntityType Name="DistribucionxTalla">
           <Key>
             <PropertyRef Name="IdDistribucion" />
@@ -3494,6 +3514,42 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tbDescuento_tbEmpresa_EmpresaId">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
+          <End Role="Descuento" Type="Self.Descuento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="Descuento">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbDescuentoDetalle_tbDescuento_idDescuento">
+          <End Role="Descuento" Type="Self.Descuento" Multiplicity="1" />
+          <End Role="DescuentoDetalle" Type="Self.DescuentoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Descuento">
+              <PropertyRef Name="IdDescuento" />
+            </Principal>
+            <Dependent Role="DescuentoDetalle">
+              <PropertyRef Name="IdDescuento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbDescuentoDetalle_tbLinea_idLinea">
+          <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="1" />
+          <End Role="DescuentoDetalle" Type="Self.DescuentoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroLinea">
+              <PropertyRef Name="IdLinea" />
+            </Principal>
+            <Dependent Role="DescuentoDetalle">
+              <PropertyRef Name="IdLinea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_USUARIO">
           <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
           <End Role="Usuario_Rol" Type="Self.Usuario_Rol" Multiplicity="*" />
@@ -3621,6 +3677,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="ComunidadAutonoma" EntityType="Self.ComunidadAutonoma" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Configuraciones" EntityType="Self.Configuraciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CuentasBancarias" EntityType="Self.CuentasBancarias" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Descuento" EntityType="Self.Descuento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DescuentoDetalle" EntityType="Self.DescuentoDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DistribucionxTalla" EntityType="Self.DistribucionxTalla" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DocumentosTransitoxFactura" EntityType="Self.DocumentosTransitoxFactura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EdadesxColeccion" EntityType="Self.EdadesxColeccion" Schema="dbo" store:Type="Tables" />
@@ -4421,6 +4479,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
           </AssociationSet>
+          <AssociationSet Name="FK_tbDescuento_tbEmpresa_EmpresaId" Association="Self.FK_tbDescuento_tbEmpresa_EmpresaId">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="Descuento" EntitySet="Descuento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbDescuentoDetalle_tbDescuento_idDescuento" Association="Self.FK_tbDescuentoDetalle_tbDescuento_idDescuento">
+            <End Role="Descuento" EntitySet="Descuento" />
+            <End Role="DescuentoDetalle" EntitySet="DescuentoDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbDescuentoDetalle_tbLinea_idLinea" Association="Self.FK_tbDescuentoDetalle_tbLinea_idLinea">
+            <End Role="MaestroLinea" EntitySet="MaestroLinea" />
+            <End Role="DescuentoDetalle" EntitySet="DescuentoDetalle" />
+          </AssociationSet>
           <AssociationSet Name="FK_USUARIO" Association="Self.FK_USUARIO">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Usuario_Rol" EntitySet="Usuario_Rol" />
@@ -4702,6 +4772,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PaqueteBodegaEspecifico" Relationship="AventasModel.FK__PaqueteBo__Empre__459F2B6F" FromRole="Empresa" ToRole="PaqueteBodegaEspecifico" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C" FromRole="Empresa" ToRole="PedidosxCliente" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C1" FromRole="Empresa" ToRole="PedidosxClienteFlotante" />
+          <NavigationProperty Name="Descuento" Relationship="AventasModel.FK_tbDescuento_tbEmpresa_EmpresaId" FromRole="Empresa" ToRole="Descuento" />
         </EntityType>
         <EntityType Name="Errores">
           <Key>
@@ -4881,6 +4952,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__Productos__IdLin__4EA8A765" FromRole="MaestroLinea" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK_Linea" FromRole="MaestroLinea" ToRole="PedidosxCliente" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK_Linea1" FromRole="MaestroLinea" ToRole="PedidosxClienteFlotante" />
+          <NavigationProperty Name="DescuentoDetalle" Relationship="AventasModel.FK_tbDescuentoDetalle_tbLinea_idLinea" FromRole="MaestroLinea" ToRole="DescuentoDetalle" />
         </EntityType>
         <EntityType Name="MaestroMoneda">
           <Key>
@@ -6660,6 +6732,20 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK__Ubicacion__Almac__14C6E9EA" Association="AventasModel.FK__Ubicacion__Almac__14C6E9EA">
             <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
             <End Role="UbicacionesXAlmacen" EntitySet="UbicacionesXAlmacen" />
+          </AssociationSet>
+          <EntitySet Name="Descuento" EntityType="AventasModel.Descuento" />
+          <EntitySet Name="DescuentoDetalle" EntityType="AventasModel.DescuentoDetalle" />
+          <AssociationSet Name="FK_tbDescuento_tbEmpresa_EmpresaId" Association="AventasModel.FK_tbDescuento_tbEmpresa_EmpresaId">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="Descuento" EntitySet="Descuento" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbDescuentoDetalle_tbDescuento_idDescuento" Association="AventasModel.FK_tbDescuentoDetalle_tbDescuento_idDescuento">
+            <End Role="Descuento" EntitySet="Descuento" />
+            <End Role="DescuentoDetalle" EntitySet="DescuentoDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbDescuentoDetalle_tbLinea_idLinea" Association="AventasModel.FK_tbDescuentoDetalle_tbLinea_idLinea">
+            <End Role="MaestroLinea" EntitySet="MaestroLinea" />
+            <End Role="DescuentoDetalle" EntitySet="DescuentoDetalle" />
           </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -9264,6 +9350,66 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Descuento">
+          <Key>
+            <PropertyRef Name="IdDescuento" />
+          </Key>
+          <Property Name="IdDescuento" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Codigo" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK_tbDescuento_tbEmpresa_EmpresaId" FromRole="Descuento" ToRole="Empresa" />
+          <NavigationProperty Name="DescuentoDetalle" Relationship="AventasModel.FK_tbDescuentoDetalle_tbDescuento_idDescuento" FromRole="Descuento" ToRole="DescuentoDetalle" />
+        </EntityType>
+        <EntityType Name="DescuentoDetalle">
+          <Key>
+            <PropertyRef Name="IdDescuentoDetalle" />
+          </Key>
+          <Property Name="IdDescuentoDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdDescuento" Type="Int32" Nullable="false" />
+          <Property Name="IdLinea" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoDescuento" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="DiasDescuento" Type="Int32" />
+          <Property Name="Porcentaje" Type="Decimal" Precision="10" Scale="2" />
+          <NavigationProperty Name="Descuento" Relationship="AventasModel.FK_tbDescuentoDetalle_tbDescuento_idDescuento" FromRole="DescuentoDetalle" ToRole="Descuento" />
+          <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK_tbDescuentoDetalle_tbLinea_idLinea" FromRole="DescuentoDetalle" ToRole="MaestroLinea" />
+        </EntityType>
+        <Association Name="FK_tbDescuento_tbEmpresa_EmpresaId">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.Descuento" Role="Descuento" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="Descuento">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbDescuentoDetalle_tbDescuento_idDescuento">
+          <End Type="AventasModel.Descuento" Role="Descuento" Multiplicity="1" />
+          <End Type="AventasModel.DescuentoDetalle" Role="DescuentoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Descuento">
+              <PropertyRef Name="IdDescuento" />
+            </Principal>
+            <Dependent Role="DescuentoDetalle">
+              <PropertyRef Name="IdDescuento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbDescuentoDetalle_tbLinea_idLinea">
+          <End Type="AventasModel.MaestroLinea" Role="MaestroLinea" Multiplicity="1" />
+          <End Type="AventasModel.DescuentoDetalle" Role="DescuentoDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroLinea">
+              <PropertyRef Name="IdLinea" />
+            </Principal>
+            <Dependent Role="DescuentoDetalle">
+              <PropertyRef Name="IdLinea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11020,6 +11166,28 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="AlmacenId" ColumnName="AlmacenId" />
                 <ScalarProperty Name="CodigoUbicacion" ColumnName="CodigoUbicacion" />
                 <ScalarProperty Name="UbicacionId" ColumnName="UbicacionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Descuento">
+            <EntityTypeMapping TypeName="AventasModel.Descuento">
+              <MappingFragment StoreEntitySet="Descuento">
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Codigo" ColumnName="Codigo" />
+                <ScalarProperty Name="IdDescuento" ColumnName="IdDescuento" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DescuentoDetalle">
+            <EntityTypeMapping TypeName="AventasModel.DescuentoDetalle">
+              <MappingFragment StoreEntitySet="DescuentoDetalle">
+                <ScalarProperty Name="Porcentaje" ColumnName="Porcentaje" />
+                <ScalarProperty Name="DiasDescuento" ColumnName="DiasDescuento" />
+                <ScalarProperty Name="CodigoDescuento" ColumnName="CodigoDescuento" />
+                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
+                <ScalarProperty Name="IdDescuento" ColumnName="IdDescuento" />
+                <ScalarProperty Name="IdDescuentoDetalle" ColumnName="IdDescuentoDetalle" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

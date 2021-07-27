@@ -1237,7 +1237,7 @@ namespace AventasApi.Controllers
                     var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == pedido.CodigoAsesor && x.CorrelativoPedidos!=null);
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
                     string numeroReferencia = $"{asesor.InicialesNombre}-1{numeroCorelativo.ToString("D5")}";
-
+                    var ubicacion = ctx.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == pedido.Almacen && x.Estatus == true);
                     PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
                     {
                         IdTipoPedido = pedido.IdTipoPedido,
@@ -1267,7 +1267,8 @@ namespace AventasApi.Controllers
                         NumeroPedido = "",
                         BodegaEspecifica=pedido.BodegaEspecifica,
                         Sitio=pedido.Sitio,
-                        Almacen=pedido.Almacen
+                        Almacen=pedido.Almacen,
+                        Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : ""
                     };
 
                     foreach (var detalle in pedido.PedidosDetalleFlotante)

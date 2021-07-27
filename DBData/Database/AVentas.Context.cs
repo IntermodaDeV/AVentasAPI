@@ -139,6 +139,8 @@ namespace DBData.Database
         public virtual DbSet<Usuarios_Asesores> Usuarios_Asesores { get; set; }
         public virtual DbSet<Asesores> Asesores { get; set; }
         public virtual DbSet<UbicacionesXAlmacen> UbicacionesXAlmacen { get; set; }
+        public virtual DbSet<Descuento> Descuento { get; set; }
+        public virtual DbSet<DescuentoDetalle> DescuentoDetalle { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
