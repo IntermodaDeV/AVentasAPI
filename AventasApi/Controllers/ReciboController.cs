@@ -751,7 +751,7 @@ namespace AventasApi.Controllers
                         if ((valor > 0) && (valorCuota > 0))
                         {
                             bool aplicaDescuento = false;
-                            aplicaDescuento = ((subfactura.FechaMaxDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
+                            aplicaDescuento = (pagoDetalleBD.CodigoDetalle != "CH_PSF" && (subfactura.FechaMaxDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
                                 (subfactura.FechaVencimientoDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaVencimientoDescuento.Value.Date)
                                 //reciboPost.FechaPago.Date <= subfactura.FacturasxCliente.FechaMaxDescuento
                                 );
@@ -898,8 +898,8 @@ namespace AventasApi.Controllers
                             else
                             {
                                 detalleReciboXCliente.Valor = Decimal.Parse((valorCuota).ToString());
-
-                                recibo.APLICADO = detalleReciboXCliente.Valor.ToString();
+                                var aplicado = detalleReciboXCliente.Valor.Value + Descuento;
+                                recibo.APLICADO = aplicado.ToString();
                                 valor -= valorCuota;
                                 montoAplicado = valorCuota;
                                 if (aplicaDescuento)
