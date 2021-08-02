@@ -544,13 +544,13 @@ namespace AventasApi.Controllers
                             CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
                             Latitud = cli.Latitud,
                             Longitud = cli.Longitud,
-                            NumeroFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite),
+                            /*NumeroFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite),
                             MontoFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite).Sum(faccli => faccli.Saldo) ?? 0,
                             NumeroFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo),
-                            MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,
+                            MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,*/
                         }).ToListAsync();
 
-                        foreach (var cliente in clientes)
+                        /*foreach (var cliente in clientes)
                         {
                             cliente.AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                             {
@@ -616,7 +616,7 @@ namespace AventasApi.Controllers
 
                                 }).ToList()
                             }).ToList();
-                        }
+                        }*/
                         listaClientes.AddRange(clientes);
                     }
                     return Ok(listaClientes);
@@ -662,13 +662,13 @@ namespace AventasApi.Controllers
                             CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
                             Latitud = cli.Latitud,
                             Longitud = cli.Longitud,
-                            NumeroFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite),
+                            /*NumeroFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite),
                             MontoFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite).Sum(faccli => faccli.Saldo) ?? 0,
                             NumeroFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo),
-                            MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,
+                            MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,*/
                         }).ToListAsync();
 
-                        foreach (var cliente in lista)
+                        /*foreach (var cliente in lista)
                         {
                             cliente.AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                             {
@@ -734,7 +734,7 @@ namespace AventasApi.Controllers
 
                                 }).ToList()
                             }).ToList();
-                        }
+                        }*/
                         listaClientes.AddRange(lista);
                     }
                     return Ok(listaClientes);
