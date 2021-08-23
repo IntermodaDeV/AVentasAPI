@@ -791,6 +791,7 @@ namespace AventasApi.Controllers
                             CreditoDisponible = cli.CreditoDisponible ?? 0,
                             Longitud=cli.Longitud,
                             Latitud=cli.Latitud,
+                            IncluyeImpuesto = cli.IncluyeImpuesto.Value,
                             GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
                             ModoEntrega = cli.ModoEntrega,
                             FacturacionEntrega = cli.FacturacionEntrega,

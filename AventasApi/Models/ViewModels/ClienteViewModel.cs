@@ -85,6 +85,7 @@ namespace AventasApi.Models
         public List<PResumenCredito_Result> Credito { get; set; }
         public decimal? Longitud { get; internal set; }
         public decimal? Latitud { get; internal set; }
+        public bool IncluyeImpuesto { get; internal set; }
 
         public ClientePedidoViewModel()
         {

@@ -230,6 +230,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="VersionRegistro" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
           <Property Name="VersionRegistroBINT" Type="bigint" StoreGeneratedPattern="Computed" />
           <Property Name="IgnorarSeqFact" Type="bit" />
+          <Property Name="IncluyeImpuesto" Type="bit" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -4648,6 +4649,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="BitacoraVisitasCliente" Relationship="AventasModel.FK__BitacoraV__Codig__0F824689" FromRole="Clientes" ToRole="BitacoraVisitasCliente" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Codig__0F183235" FromRole="Clientes" ToRole="PedidosxCliente" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Codig__0F1832351" FromRole="Clientes" ToRole="PedidosxClienteFlotante" />
+          <Property Name="IncluyeImpuesto" Type="Boolean" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -9496,6 +9498,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Clientes">
             <EntityTypeMapping TypeName="AventasModel.Clientes">
               <MappingFragment StoreEntitySet="Clientes">
+                <ScalarProperty Name="IncluyeImpuesto" ColumnName="IncluyeImpuesto" />
                 <ScalarProperty Name="IgnorarSeqFact" ColumnName="IgnorarSeqFact" />
                 <ScalarProperty Name="VersionRegistroBINT" ColumnName="VersionRegistroBINT" />
                 <ScalarProperty Name="VersionRegistro" ColumnName="VersionRegistro" />

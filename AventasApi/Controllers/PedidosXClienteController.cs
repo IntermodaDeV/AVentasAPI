@@ -182,7 +182,6 @@ namespace AventasApi.Controllers
                             PedidoBDAGuardar.TotalUnidades += cantidad;
                             decimal precioUnitario = 0;
                             decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                            PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
 
                             PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
                             {
@@ -199,8 +198,9 @@ namespace AventasApi.Controllers
 
                     }
 
+                    PedidoBDAGuardar.Subtotal = cliente.IncluyeImpuesto.Value ? Pedido.subtotal - decimal.Parse(Pedido.Impuesto.ToString()) : Pedido.subtotal;
                     PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
-                    PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                    PedidoBDAGuardar.TotalPedido = cliente.IncluyeImpuesto.Value ? (Pedido.subtotal + Pedido.Flete) : (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
                     PedidoBDAGuardar.PedidoId = numeroReferencia;
                     PedidoBDAGuardar.NumeroPedido = "";
                     PedidoBDAGuardar.Sincronizado = false;
@@ -273,7 +273,6 @@ namespace AventasApi.Controllers
                                 PedidoFlotante.TotalUnidades += cantidad;
                                 decimal precioUnitario = 0;
                                 decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                                PedidoFlotante.Subtotal += (precioUnitario * cantidad);
 
                                 PedidoFlotante.PedidosDetalleFlotante.Add(new PedidosDetalleFlotante
                                 {
@@ -291,8 +290,9 @@ namespace AventasApi.Controllers
 
                         }
 
+                        PedidoFlotante.Subtotal = cliente.IncluyeImpuesto.Value ? Pedido.subtotal - decimal.Parse(Pedido.Impuesto.ToString()) : Pedido.subtotal;
                         PedidoFlotante.TotalImpuesto = Pedido.Impuesto;
-                        PedidoFlotante.TotalPedido = (PedidoFlotante.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                        PedidoFlotante.TotalPedido = cliente.IncluyeImpuesto.Value ? (Pedido.subtotal + Pedido.Flete) : (PedidoFlotante.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
                         PedidoFlotante.PedidoId = numeroReferencia;
                         PedidoFlotante.NumeroPedido = "";
                         PedidoFlotante.Sincronizado = false;
@@ -353,7 +353,6 @@ namespace AventasApi.Controllers
                             PedidoBDAGuardar.TotalUnidades += cantidad;
                             decimal precioUnitario = 0;
                             decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                            PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
 
                             PedidoBDAGuardar.PedidosDetalleFlotante.Add(new PedidosDetalleFlotante
                             {
@@ -371,8 +370,9 @@ namespace AventasApi.Controllers
 
                     }
 
+                    PedidoBDAGuardar.Subtotal = cliente.IncluyeImpuesto.Value ? Pedido.subtotal - decimal.Parse(Pedido.Impuesto.ToString()) : Pedido.subtotal;
                     PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
-                    PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                    PedidoBDAGuardar.TotalPedido = cliente.IncluyeImpuesto.Value ? (Pedido.subtotal + Pedido.Flete) : (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
                     PedidoBDAGuardar.PedidoId = numeroReferencia;
                     PedidoBDAGuardar.NumeroPedido = "";
                     PedidoBDAGuardar.Sincronizado = false;
@@ -764,7 +764,7 @@ namespace AventasApi.Controllers
                         SALES_MANAGER = pedidoDB.CodigoAsesor,
                         SALES_ORDER_TYPE = (pedidoDB.Colecciones.TiposdeColeccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
                         USER = pedidoDB.CodigoAsesor,
-                        INCLUDE_TAX = "0",
+                        INCLUDE_TAX = pedidoDB.Clientes.IncluyeImpuesto.Value ? "1" : "0",
                         ESPEC_INV = pedidoDB.BodegaEspecifica == null ? "0" : (pedidoDB.BodegaEspecifica.Value ? "1" : "0"),
                         LOCATION = pedidoDB.Almacen,
                         SITE = pedidoDB.Sitio,
