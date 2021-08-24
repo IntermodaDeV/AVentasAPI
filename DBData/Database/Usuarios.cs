@@ -24,6 +24,11 @@ namespace DBData.Database
             this.Respuestas = new HashSet<Respuestas>();
             this.LogSesion = new HashSet<LogSesion>();
             this.Usuarios_Asesores = new HashSet<Usuarios_Asesores>();
+            this.MotivosDevolucion = new HashSet<MotivosDevolucion>();
+            this.MotivosDevolucionDetalle = new HashSet<MotivosDevolucionDetalle>();
+            this.MotivosDevConAprobacion = new HashSet<MotivosDevConAprobacion>();
+            this.MotivosDevConAprobacion1 = new HashSet<MotivosDevConAprobacion>();
+            this.MotivosDevConAprobacion2 = new HashSet<MotivosDevConAprobacion>();
         }
     
         public int Id { get; set; }
@@ -58,5 +63,15 @@ namespace DBData.Database
         public virtual ICollection<LogSesion> LogSesion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Usuarios_Asesores> Usuarios_Asesores { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevolucion> MotivosDevolucion { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevolucionDetalle> MotivosDevolucionDetalle { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevConAprobacion> MotivosDevConAprobacion { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevConAprobacion> MotivosDevConAprobacion1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevConAprobacion> MotivosDevConAprobacion2 { get; set; }
     }
 }

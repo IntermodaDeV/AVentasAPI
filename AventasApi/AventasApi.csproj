@@ -188,6 +188,7 @@
     <Compile Include="Controllers\EmpresaController.cs" />
     <Compile Include="Controllers\LogsImpresionesController.cs" />
     <Compile Include="Controllers\MaestroBodegaAlmacenesController.cs" />
+    <Compile Include="Controllers\MotivosDevolucionController.cs" />
     <Compile Include="Controllers\ProformaController.cs" />
     <Compile Include="Controllers\RespuestaController.cs" />
     <Compile Include="Controllers\PreguntaController.cs" />
@@ -300,6 +301,7 @@
     <Compile Include="Models\ViewModels\GrupoOpcionesViewModel.cs" />
     <Compile Include="Models\ViewModels\LogProformaViewModel.cs" />
     <Compile Include="Models\ViewModels\LogRecibosViewModel.cs" />
+    <Compile Include="Models\ViewModels\MotivosDevolucionViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasOpcionesViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasAnidadasViewModel.cs" />
     <Compile Include="Models\ViewModels\RecibosxClienteFlotanteViewModel.cs" />

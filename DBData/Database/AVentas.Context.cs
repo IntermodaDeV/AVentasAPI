@@ -20,7 +20,6 @@ namespace DBData.Database
         public AVentasEntities()
             : base("name=AVentasEntities")
         {
-            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 720;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -141,6 +140,9 @@ namespace DBData.Database
         public virtual DbSet<UbicacionesXAlmacen> UbicacionesXAlmacen { get; set; }
         public virtual DbSet<Descuento> Descuento { get; set; }
         public virtual DbSet<DescuentoDetalle> DescuentoDetalle { get; set; }
+        public virtual DbSet<MotivosDevolucion> MotivosDevolucion { get; set; }
+        public virtual DbSet<MotivosDevolucionDetalle> MotivosDevolucionDetalle { get; set; }
+        public virtual DbSet<MotivosDevConAprobacion> MotivosDevConAprobacion { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

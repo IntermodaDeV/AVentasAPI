@@ -753,6 +753,45 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
           <Property Name="IdMoneda" Type="varchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="MotivosDevConAprobacion">
+          <Key>
+            <PropertyRef Name="IdMotivoDevConAprobacion" />
+          </Key>
+          <Property Name="IdMotivoDevConAprobacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdMotivoDevolucion" Type="int" Nullable="false" />
+          <Property Name="IdUsuario" Type="int" Nullable="false" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
+          <Property Name="UsuarioCrea" Type="int" Nullable="false" />
+          <Property Name="FechaCrea" Type="datetime" Nullable="false" />
+          <Property Name="UsuarioModifica" Type="int" />
+          <Property Name="FechaModifica" Type="datetime" />
+        </EntityType>
+        <EntityType Name="MotivosDevolucion">
+          <Key>
+            <PropertyRef Name="IdMotivoDevolucion" />
+          </Key>
+          <Property Name="IdMotivoDevolucion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodigoMotivoDevolucion" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="100" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+          <Property Name="aprobacionObligatoria" Type="bit" Nullable="false" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
+          <Property Name="FechaModifica" Type="datetime" />
+          <Property Name="UsuarioModifica" Type="int" />
+        </EntityType>
+        <EntityType Name="MotivosDevolucionDetalle">
+          <Key>
+            <PropertyRef Name="idMotivoDevDetalle" />
+          </Key>
+          <Property Name="idMotivoDevDetalle" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodigoMotivoDevDetalle" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="idMotivoDevolucion" Type="int" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="250" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
+          <Property Name="FechaModifica" Type="datetime" />
+          <Property Name="UsuarioModifica" Type="int" />
+        </EntityType>
         <EntityType Name="Pantallas">
           <Key>
             <PropertyRef Name="IdPantalla" />
@@ -3359,6 +3398,114 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCION_EMPRESAID">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
+          <End Role="MotivosDevolucion" Type="Self.MotivosDevolucion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="MotivosDevolucion">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCION_USUARIO">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="MotivosDevolucion" Type="Self.MotivosDevolucion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MotivosDevolucion">
+              <PropertyRef Name="UsuarioModifica" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION">
+          <End Role="MotivosDevolucion" Type="Self.MotivosDevolucion" Multiplicity="1" />
+          <End Role="MotivosDevConAprobacion" Type="Self.MotivosDevConAprobacion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MotivosDevolucion">
+              <PropertyRef Name="IdMotivoDevolucion" />
+            </Principal>
+            <Dependent Role="MotivosDevConAprobacion">
+              <PropertyRef Name="IdMotivoDevolucion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="MotivosDevConAprobacion" Type="Self.MotivosDevConAprobacion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MotivosDevConAprobacion">
+              <PropertyRef Name="UsuarioModifica" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="MotivosDevConAprobacion" Type="Self.MotivosDevConAprobacion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MotivosDevConAprobacion">
+              <PropertyRef Name="UsuarioCrea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="MotivosDevConAprobacion" Type="Self.MotivosDevConAprobacion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MotivosDevConAprobacion">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONDETALLE_DEVOLUCION">
+          <End Role="MotivosDevolucion" Type="Self.MotivosDevolucion" Multiplicity="1" />
+          <End Role="MotivosDevolucionDetalle" Type="Self.MotivosDevolucionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MotivosDevolucion">
+              <PropertyRef Name="IdMotivoDevolucion" />
+            </Principal>
+            <Dependent Role="MotivosDevolucionDetalle">
+              <PropertyRef Name="idMotivoDevolucion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONDETALLE_EMPRESA">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="1" />
+          <End Role="MotivosDevolucionDetalle" Type="Self.MotivosDevolucionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="MotivosDevolucionDetalle">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="MotivosDevolucionDetalle" Type="Self.MotivosDevolucionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MotivosDevolucionDetalle">
+              <PropertyRef Name="UsuarioModifica" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PedidosDetalle_ProductosxColeccion">
           <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
           <End Role="PedidosDetalle" Type="Self.PedidosDetalle" Multiplicity="*" />
@@ -3716,6 +3863,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="MaestroLinea" EntityType="Self.MaestroLinea" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaestroMoneda" EntityType="Self.MaestroMoneda" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MonedasxEmpresa" EntityType="Self.MonedasxEmpresa" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MotivosDevConAprobacion" EntityType="Self.MotivosDevConAprobacion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MotivosDevolucion" EntityType="Self.MotivosDevolucion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MotivosDevolucionDetalle" EntityType="Self.MotivosDevolucionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pantallas" EntityType="Self.Pantallas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pantallas_Funciones" EntityType="Self.Pantallas_Funciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PantallasxUsuario" EntityType="Self.PantallasxUsuario" Schema="dbo" store:Type="Tables" />
@@ -4428,6 +4578,42 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="LogSesion" EntitySet="LogSesion" />
           </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCION_EMPRESAID" Association="Self.FK_MOTIVOSDEVOLUCION_EMPRESAID">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="MotivosDevolucion" EntitySet="MotivosDevolucion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCION_USUARIO" Association="Self.FK_MOTIVOSDEVOLUCION_USUARIO">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="MotivosDevolucion" EntitySet="MotivosDevolucion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION" Association="Self.FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION">
+            <End Role="MotivosDevolucion" EntitySet="MotivosDevolucion" />
+            <End Role="MotivosDevConAprobacion" EntitySet="MotivosDevConAprobacion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO" Association="Self.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="MotivosDevConAprobacion" EntitySet="MotivosDevConAprobacion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA" Association="Self.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="MotivosDevConAprobacion" EntitySet="MotivosDevConAprobacion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS" Association="Self.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="MotivosDevConAprobacion" EntitySet="MotivosDevConAprobacion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONDETALLE_DEVOLUCION" Association="Self.FK_MOTIVOSDEVOLUCIONDETALLE_DEVOLUCION">
+            <End Role="MotivosDevolucion" EntitySet="MotivosDevolucion" />
+            <End Role="MotivosDevolucionDetalle" EntitySet="MotivosDevolucionDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONDETALLE_EMPRESA" Association="Self.FK_MOTIVOSDEVOLUCIONDETALLE_EMPRESA">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="MotivosDevolucionDetalle" EntitySet="MotivosDevolucionDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO" Association="Self.FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="MotivosDevolucionDetalle" EntitySet="MotivosDevolucionDetalle" />
+          </AssociationSet>
           <AssociationSet Name="FK_PedidosDetalle_ProductosxColeccion" Association="Self.FK_PedidosDetalle_ProductosxColeccion">
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="PedidosDetalle" EntitySet="PedidosDetalle" />
@@ -4775,6 +4961,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C" FromRole="Empresa" ToRole="PedidosxCliente" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Empre__6C390A4C1" FromRole="Empresa" ToRole="PedidosxClienteFlotante" />
           <NavigationProperty Name="Descuento" Relationship="AventasModel.FK_tbDescuento_tbEmpresa_EmpresaId" FromRole="Empresa" ToRole="Descuento" />
+          <NavigationProperty Name="MotivosDevolucion" Relationship="AventasModel.FK_MOTIVOSDEVOLUCION_EMPRESAID" FromRole="Empresa" ToRole="MotivosDevolucion" />
+          <NavigationProperty Name="MotivosDevolucionDetalle" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_EMPRESA" FromRole="Empresa" ToRole="MotivosDevolucionDetalle" />
         </EntityType>
         <EntityType Name="Errores">
           <Key>
@@ -6749,6 +6937,45 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="DescuentoDetalle" EntitySet="DescuentoDetalle" />
           </AssociationSet>
+          <EntitySet Name="MotivosDevolucion" EntityType="AventasModel.MotivosDevolucion" />
+          <EntitySet Name="MotivosDevolucionDetalle" EntityType="AventasModel.MotivosDevolucionDetalle" />
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCION_EMPRESAID" Association="AventasModel.FK_MOTIVOSDEVOLUCION_EMPRESAID">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="MotivosDevolucion" EntitySet="MotivosDevolucion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONDETALLE_EMPRESA" Association="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_EMPRESA">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="MotivosDevolucionDetalle" EntitySet="MotivosDevolucionDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCION_USUARIO" Association="AventasModel.FK_MOTIVOSDEVOLUCION_USUARIO">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="MotivosDevolucion" EntitySet="MotivosDevolucion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONDETALLE_DEVOLUCION" Association="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_DEVOLUCION">
+            <End Role="MotivosDevolucion" EntitySet="MotivosDevolucion" />
+            <End Role="MotivosDevolucionDetalle" EntitySet="MotivosDevolucionDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO" Association="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="MotivosDevolucionDetalle" EntitySet="MotivosDevolucionDetalle" />
+          </AssociationSet>
+          <EntitySet Name="MotivosDevConAprobacion" EntityType="AventasModel.MotivosDevConAprobacion" />
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION" Association="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION">
+            <End Role="MotivosDevolucion" EntitySet="MotivosDevolucion" />
+            <End Role="MotivosDevConAprobacion" EntitySet="MotivosDevConAprobacion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO" Association="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="MotivosDevConAprobacion" EntitySet="MotivosDevConAprobacion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA" Association="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="MotivosDevConAprobacion" EntitySet="MotivosDevConAprobacion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS" Association="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="MotivosDevConAprobacion" EntitySet="MotivosDevConAprobacion" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -7433,6 +7660,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="SesionActiva" Type="Boolean" />
           <Property Name="FlagBodegaEspecifico" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Usuarios_Asesores" Relationship="AventasModel.FK__Usuarios___Usuar__37311087" FromRole="Usuarios" ToRole="Usuarios_Asesores" />
+          <NavigationProperty Name="MotivosDevolucion" Relationship="AventasModel.FK_MOTIVOSDEVOLUCION_USUARIO" FromRole="Usuarios" ToRole="MotivosDevolucion" />
+          <NavigationProperty Name="MotivosDevolucionDetalle" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO" FromRole="Usuarios" ToRole="MotivosDevolucionDetalle" />
+          <NavigationProperty Name="MotivosDevConAprobacion" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO" FromRole="Usuarios" ToRole="MotivosDevConAprobacion" />
+          <NavigationProperty Name="MotivosDevConAprobacion1" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA" FromRole="Usuarios" ToRole="MotivosDevConAprobacion" />
+          <NavigationProperty Name="MotivosDevConAprobacion2" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS" FromRole="Usuarios" ToRole="MotivosDevConAprobacion" />
         </EntityType>
         <Association Name="FK__Usuarios__Empres__28E2F130">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -9412,6 +9644,164 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="MotivosDevolucion">
+          <Key>
+            <PropertyRef Name="IdMotivoDevolucion" />
+          </Key>
+          <Property Name="IdMotivoDevolucion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodigoMotivoDevolucion" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="aprobacionObligatoria" Type="Boolean" Nullable="false" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <Property Name="FechaModifica" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioModifica" Type="Int32" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK_MOTIVOSDEVOLUCION_EMPRESAID" FromRole="MotivosDevolucion" ToRole="Empresa" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_MOTIVOSDEVOLUCION_USUARIO" FromRole="MotivosDevolucion" ToRole="Usuarios" />
+          <NavigationProperty Name="MotivosDevolucionDetalle" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_DEVOLUCION" FromRole="MotivosDevolucion" ToRole="MotivosDevolucionDetalle" />
+          <NavigationProperty Name="MotivosDevConAprobacion" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION" FromRole="MotivosDevolucion" ToRole="MotivosDevConAprobacion" />
+        </EntityType>
+        <EntityType Name="MotivosDevolucionDetalle">
+          <Key>
+            <PropertyRef Name="idMotivoDevDetalle" />
+          </Key>
+          <Property Name="idMotivoDevDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodigoMotivoDevDetalle" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="idMotivoDevolucion" Type="Int32" Nullable="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <Property Name="FechaModifica" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioModifica" Type="Int32" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_EMPRESA" FromRole="MotivosDevolucionDetalle" ToRole="Empresa" />
+          <NavigationProperty Name="MotivosDevolucion" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_DEVOLUCION" FromRole="MotivosDevolucionDetalle" ToRole="MotivosDevolucion" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO" FromRole="MotivosDevolucionDetalle" ToRole="Usuarios" />
+        </EntityType>
+        <Association Name="FK_MOTIVOSDEVOLUCION_EMPRESAID">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="0..1" />
+          <End Type="AventasModel.MotivosDevolucion" Role="MotivosDevolucion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="MotivosDevolucion">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONDETALLE_EMPRESA">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
+          <End Type="AventasModel.MotivosDevolucionDetalle" Role="MotivosDevolucionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="MotivosDevolucionDetalle">
+              <PropertyRef Name="EmpresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCION_USUARIO">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="AventasModel.MotivosDevolucion" Role="MotivosDevolucion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MotivosDevolucion">
+              <PropertyRef Name="UsuarioModifica" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONDETALLE_DEVOLUCION">
+          <End Type="AventasModel.MotivosDevolucion" Role="MotivosDevolucion" Multiplicity="1" />
+          <End Type="AventasModel.MotivosDevolucionDetalle" Role="MotivosDevolucionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MotivosDevolucion">
+              <PropertyRef Name="IdMotivoDevolucion" />
+            </Principal>
+            <Dependent Role="MotivosDevolucionDetalle">
+              <PropertyRef Name="idMotivoDevolucion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="AventasModel.MotivosDevolucionDetalle" Role="MotivosDevolucionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MotivosDevolucionDetalle">
+              <PropertyRef Name="UsuarioModifica" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="MotivosDevConAprobacion">
+          <Key>
+            <PropertyRef Name="IdMotivoDevConAprobacion" />
+          </Key>
+          <Property Name="IdMotivoDevConAprobacion" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdMotivoDevolucion" Type="Int32" Nullable="false" />
+          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <Property Name="UsuarioCrea" Type="Int32" Nullable="false" />
+          <Property Name="FechaCrea" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UsuarioModifica" Type="Int32" />
+          <Property Name="FechaModifica" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="MotivosDevolucion" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION" FromRole="MotivosDevConAprobacion" ToRole="MotivosDevolucion" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO" FromRole="MotivosDevConAprobacion" ToRole="Usuarios" />
+          <NavigationProperty Name="Usuarios1" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA" FromRole="MotivosDevConAprobacion" ToRole="Usuarios" />
+          <NavigationProperty Name="Usuarios2" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS" FromRole="MotivosDevConAprobacion" ToRole="Usuarios" />
+        </EntityType>
+        <Association Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION">
+          <End Type="AventasModel.MotivosDevolucion" Role="MotivosDevolucion" Multiplicity="1" />
+          <End Type="AventasModel.MotivosDevConAprobacion" Role="MotivosDevConAprobacion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MotivosDevolucion">
+              <PropertyRef Name="IdMotivoDevolucion" />
+            </Principal>
+            <Dependent Role="MotivosDevConAprobacion">
+              <PropertyRef Name="IdMotivoDevolucion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="AventasModel.MotivosDevConAprobacion" Role="MotivosDevConAprobacion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MotivosDevConAprobacion">
+              <PropertyRef Name="UsuarioModifica" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="1" />
+          <End Type="AventasModel.MotivosDevConAprobacion" Role="MotivosDevConAprobacion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MotivosDevConAprobacion">
+              <PropertyRef Name="UsuarioCrea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="1" />
+          <End Type="AventasModel.MotivosDevConAprobacion" Role="MotivosDevConAprobacion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MotivosDevConAprobacion">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11191,6 +11581,48 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
                 <ScalarProperty Name="IdDescuento" ColumnName="IdDescuento" />
                 <ScalarProperty Name="IdDescuentoDetalle" ColumnName="IdDescuentoDetalle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MotivosDevolucion">
+            <EntityTypeMapping TypeName="AventasModel.MotivosDevolucion">
+              <MappingFragment StoreEntitySet="MotivosDevolucion">
+                <ScalarProperty Name="UsuarioModifica" ColumnName="UsuarioModifica" />
+                <ScalarProperty Name="FechaModifica" ColumnName="FechaModifica" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="aprobacionObligatoria" ColumnName="aprobacionObligatoria" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="CodigoMotivoDevolucion" ColumnName="CodigoMotivoDevolucion" />
+                <ScalarProperty Name="IdMotivoDevolucion" ColumnName="IdMotivoDevolucion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MotivosDevolucionDetalle">
+            <EntityTypeMapping TypeName="AventasModel.MotivosDevolucionDetalle">
+              <MappingFragment StoreEntitySet="MotivosDevolucionDetalle">
+                <ScalarProperty Name="UsuarioModifica" ColumnName="UsuarioModifica" />
+                <ScalarProperty Name="FechaModifica" ColumnName="FechaModifica" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="idMotivoDevolucion" ColumnName="idMotivoDevolucion" />
+                <ScalarProperty Name="CodigoMotivoDevDetalle" ColumnName="CodigoMotivoDevDetalle" />
+                <ScalarProperty Name="idMotivoDevDetalle" ColumnName="idMotivoDevDetalle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MotivosDevConAprobacion">
+            <EntityTypeMapping TypeName="AventasModel.MotivosDevConAprobacion">
+              <MappingFragment StoreEntitySet="MotivosDevConAprobacion">
+                <ScalarProperty Name="FechaModifica" ColumnName="FechaModifica" />
+                <ScalarProperty Name="UsuarioModifica" ColumnName="UsuarioModifica" />
+                <ScalarProperty Name="FechaCrea" ColumnName="FechaCrea" />
+                <ScalarProperty Name="UsuarioCrea" ColumnName="UsuarioCrea" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+                <ScalarProperty Name="IdMotivoDevolucion" ColumnName="IdMotivoDevolucion" />
+                <ScalarProperty Name="IdMotivoDevConAprobacion" ColumnName="IdMotivoDevConAprobacion" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

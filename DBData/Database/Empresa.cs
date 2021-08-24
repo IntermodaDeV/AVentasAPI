@@ -41,6 +41,8 @@ namespace DBData.Database
             this.PedidosxCliente = new HashSet<PedidosxCliente>();
             this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
             this.Descuento = new HashSet<Descuento>();
+            this.MotivosDevolucion = new HashSet<MotivosDevolucion>();
+            this.MotivosDevolucionDetalle = new HashSet<MotivosDevolucionDetalle>();
         }
     
         public string EmpresaId { get; set; }
@@ -101,5 +103,9 @@ namespace DBData.Database
         public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Descuento> Descuento { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevolucion> MotivosDevolucion { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevolucionDetalle> MotivosDevolucionDetalle { get; set; }
     }
 }
