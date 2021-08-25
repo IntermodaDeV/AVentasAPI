@@ -478,6 +478,71 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/producto/{pais}/{producto}/{color}")]
+        public async Task<IHttpActionResult> GetProducto(string pais, string producto, string color)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var prod = ctx.ProductosxColeccion.Where(pxc => pxc.EmpresaId == pais.ToUpper() && pxc.CodigoProducto == producto).Select(pxc => new ProductoXColeccionViewModel
+                    {
+                        ProductoId = pxc.CodigoProducto,
+                        idColeccion = pxc.IdColeccion,
+                        CantidadMinima = pxc.CantidadMinima == null ? 0 : pxc.CantidadMinima,
+                        CodigoProducto = pxc.IdProducto,
+                        NombreProducto = pxc.NombreProducto,
+                        StockVisible = pxc.StockVisible,
+                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
+                        Precio = pxc.PreciosxProducto.Select(precio => new PrecioXProductoViewModel
+                        {
+                            GrupoPrecio = precio.GrupoPrecio,
+                            IdMoneda = precio.IdMoneda,
+                            Precio = precio.Hasta == new DateTime(1900, 1, 1) ? precio.Precio : 0
+                        }).ToList(),
+                        GrupoTalla = pxc.CodigoGrupoTalla,
+                        Linea = new LineaViewModel
+                        {
+                            IdLinea = pxc.MaestroLinea.IdLinea,
+                            Linea = pxc.MaestroLinea.Linea,
+                        },
+                        ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo != null).Select(txp => txp.TallasXGrupo)
+                                             .Select(txp => new TallaViewModel
+                                             {
+                                                 Talla = txp.CodigoTalla.ToUpper(),
+                                                 GrupoTallaId = txp.CodigoGrupoTalla,
+                                                 Orden = txp.Orden ?? 0,
+                                                 Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                                 {
+                                                     IdDistribucion = dis.IdDistribucion,
+                                                     IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                     NombreDistribucion = dis.NombreDistribucion,
+                                                     NombreTalla = dis.NombreTalla,
+                                                     Cantidad = dis.Cantidad,
+                                                     Orden = dis.Orden,
+                                                 }).OrderBy(or => or.Orden).ToList(),
+
+                                             }).OrderBy(txp => txp.Orden).ToList(),
+                        ListaColores = pxc.ColoresxProducto.Where(x=>x.CodigoColor==color).Select(cpp => new ColorViewModel
+                        {
+                            CodigoColor = cpp.Colores.CodigoColor,
+                            NombreColor = cpp.Colores.Color,
+                            Color = cpp.Colores.Rgb,
+                        }).ToList(),
+                    }).ToList();
+
+
+                    return Ok(prod.First());
+
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
         [Route("~/api/colecciones/productos/{coleccion}/{grupoprecio}/{pais}/{sitio}/{almacen}")]
         public async Task<IHttpActionResult> GetProductosPorColeccionBodega(string coleccion, string grupoprecio, string pais,string sitio,string almacen)
         {
