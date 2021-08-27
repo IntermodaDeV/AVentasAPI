@@ -453,6 +453,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="NumeroFEL" Type="varchar" MaxLength="250" />
           <Property Name="CodigoCliente" Type="varchar" MaxLength="250" />
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+          <Property Name="NumeroPedido" Type="varchar" MaxLength="100" />
           <Property Name="IdMoneda" Type="varchar" MaxLength="100" />
           <Property Name="Tipo" Type="varchar" MaxLength="250" />
           <Property Name="FechaFactura" Type="datetime" />
@@ -3771,6 +3772,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="PResumenCredito" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="PRODUCTOSDEFACTURA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="numFactura" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
@@ -5016,6 +5020,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="RecibosxClienteFlotante" Relationship="AventasModel.FK_ReciboXClienteFlotante___FacturaXCliente" FromRole="FacturasxCliente" ToRole="RecibosxClienteFlotante" />
           <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__IdFac__0F431ABE" FromRole="FacturasxCliente" ToRole="DocumentosTransitoxFactura" />
           <NavigationProperty Name="RecibosProforma" Relationship="AventasModel.FK__RecibosProforma__IdFactura" FromRole="FacturasxCliente" ToRole="RecibosProforma" />
+          <Property Name="NumeroPedido" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -6976,6 +6981,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="MotivosDevConAprobacion" EntitySet="MotivosDevConAprobacion" />
           </AssociationSet>
+          <FunctionImport Name="PRODUCTOSDEFACTURA" ReturnType="Collection(AventasModel.PRODUCTOSDEFACTURA_Result)">
+            <Parameter Name="numFactura" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -9802,6 +9810,16 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="PRODUCTOSDEFACTURA_Result">
+          <Property Type="String" Name="Factura" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="IdProducto" Nullable="false" />
+          <Property Type="String" Name="CodigoProducto" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="CodigoGrupoTalla" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="CodigoTalla" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="CodigoColor" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="Cantidad" Nullable="true" Precision="18" Scale="2" />
+          <Property Type="Decimal" Name="PrecioUnitario" Nullable="true" Precision="18" Scale="2" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -10033,6 +10051,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="FacturasxCliente">
             <EntityTypeMapping TypeName="AventasModel.FacturasxCliente">
               <MappingFragment StoreEntitySet="FacturasxCliente">
+                <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
                 <ScalarProperty Name="NumeroFEL" ColumnName="NumeroFEL" />
                 <ScalarProperty Name="IdFactura" ColumnName="IdFactura" />
                 <ScalarProperty Name="Factura" ColumnName="Factura" />
@@ -11626,6 +11645,20 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="PRODUCTOSDEFACTURA" FunctionName="AventasModel.Store.PRODUCTOSDEFACTURA">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.PRODUCTOSDEFACTURA_Result">
+                <ScalarProperty Name="Factura" ColumnName="Factura" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="CodigoProducto" ColumnName="CodigoProducto" />
+                <ScalarProperty Name="CodigoGrupoTalla" ColumnName="CodigoGrupoTalla" />
+                <ScalarProperty Name="CodigoTalla" ColumnName="CodigoTalla" />
+                <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="PrecioUnitario" ColumnName="PrecioUnitario" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

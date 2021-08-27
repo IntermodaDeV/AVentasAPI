@@ -20,6 +20,7 @@ namespace DBData.Database
         public AVentasEntities()
             : base("name=AVentasEntities")
         {
+            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 720;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -294,6 +295,15 @@ namespace DBData.Database
                 new ObjectParameter("User", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_VISITASPORMES_Result1>("SP_VISITASPORMES", userParameter);
+        }
+    
+        public virtual ObjectResult<PRODUCTOSDEFACTURA_Result> PRODUCTOSDEFACTURA(string numFactura)
+        {
+            var numFacturaParameter = numFactura != null ?
+                new ObjectParameter("numFactura", numFactura) :
+                new ObjectParameter("numFactura", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PRODUCTOSDEFACTURA_Result>("PRODUCTOSDEFACTURA", numFacturaParameter);
         }
     }
 }
