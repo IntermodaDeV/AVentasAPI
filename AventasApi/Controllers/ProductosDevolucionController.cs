@@ -1,5 +1,7 @@
 ﻿using AventasApi.Models.ViewModels;
 using DBData.Database;
+using ExternalApiData.Enviroments;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +10,12 @@ using System.Web.Http;
 
 namespace AventasApi.Controllers
 {
+    public class ProductoBarra
+    {
+        public string productoId { get; set; }
+        public string colorId { get; set; }
+        public string tallaId { get; set; }
+    }
     [RoutePrefix("api/productodevolucion")]
     public class ProductosDevolucionController : ApiController
     {
@@ -71,7 +79,32 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("codigobarra/{codigo}")]
+        public IHttpActionResult GetProductoBarra(string codigo)
+        {
+            try
+            {
+                var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}productos/imhn/{codigo}/codigobarra");
+                client.Timeout = 480 * (1000);
+                var request = new RestRequest(Method.GET);
+                request.AddHeader("Accept", "application/json");
+                var response = client.Execute<List<ProductoBarra>>(request);
+
+                if (response.Data.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                return Ok(response.Data[0]);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.ToString());
             }
         }
     }
