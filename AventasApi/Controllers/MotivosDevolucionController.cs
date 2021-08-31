@@ -20,7 +20,39 @@ namespace AventasApi.Controllers
         {
             _authenticationAppService = new AuthenticationAppService();
         }
-            [HttpGet]
+
+        [HttpGet]
+        [Route("~/api/devolucion/motivos")]
+        public async Task<IHttpActionResult> GetMotivosDevolucion()
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var motivos = await ctx.MotivosDevolucion
+                        .Where(x => x.Estado == true)
+                        .Select(m => new
+                        {
+                            id = m.IdMotivoDevolucion,
+                            codigo = m.CodigoMotivoDevolucion,
+                            descripcion = m.Descripcion,
+                            detalle = m.MotivosDevolucionDetalle.Select(d => new
+                            {
+                                id = d.idMotivoDevDetalle,
+                                codigo = d.CodigoMotivoDevDetalle,
+                                descripcion = d.Descripcion
+                            }).ToList()
+                        }).ToListAsync();
+
+                    return Ok(motivos);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
         [Route("~/api/motivosDevolucion")]
         public async Task<IHttpActionResult> ObtenerMotivosDevolucion()
         {
