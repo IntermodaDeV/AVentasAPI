@@ -36,6 +36,7 @@ namespace AventasApi.Controllers
                             id = m.IdMotivoDevolucion,
                             codigo = m.CodigoMotivoDevolucion,
                             descripcion = m.Descripcion,
+                            empresa=m.EmpresaId.ToUpper(),
                             detalle = m.MotivosDevolucionDetalle.Select(d => new
                             {
                                 id = d.idMotivoDevDetalle,

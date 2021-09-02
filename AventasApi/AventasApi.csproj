@@ -183,6 +183,7 @@
     <Compile Include="Controllers\ConfiguracionesController.cs" />
     <Compile Include="Controllers\CoordenadasXClienteController.cs" />
     <Compile Include="Controllers\CorreoController.cs" />
+    <Compile Include="Controllers\DevolucionController.cs" />
     <Compile Include="Controllers\DocumentosPendientesController.cs" />
     <Compile Include="Controllers\EmpresaController.cs" />
     <Compile Include="Controllers\LogsImpresionesController.cs" />
@@ -293,6 +294,8 @@
     <Compile Include="Models\ViewModels\DetallePedidoPostViewModel.cs" />
     <Compile Include="Models\ViewModels\DetalleXPedidoViewModel.cs" />
     <Compile Include="Models\ViewModels\DetPedTempViewModel.cs" />
+    <Compile Include="Models\ViewModels\DevolucionDetallePostModel.cs" />
+    <Compile Include="Models\ViewModels\DevolucionPostModel.cs" />
     <Compile Include="Models\ViewModels\DistribucionXTallaViewModel.cs" />
     <Compile Include="Models\ViewModels\EdadesViewModel.cs" />
     <Compile Include="Models\ViewModels\EmpresaViewModel.cs" />
