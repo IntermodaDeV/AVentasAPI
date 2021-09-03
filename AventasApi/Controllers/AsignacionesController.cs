@@ -175,6 +175,24 @@ namespace AventasApi.Controllers
             
         }
 
+        [HttpGet]
+        [Route("~/api/asignaciones/reporte/{cliente}")]
+        public IHttpActionResult GetReporteAsignaciones(string cliente)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var reporte = ctx.VisitasCliente(cliente).ToList();
+                    return Ok(reporte);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
         private bool GuardarAsignaciones(List<AsignacionxAsesor> asignacionxAsesor)
         {
             try

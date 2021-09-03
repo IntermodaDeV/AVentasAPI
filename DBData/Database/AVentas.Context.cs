@@ -305,5 +305,14 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PRODUCTOSDEFACTURA_Result>("PRODUCTOSDEFACTURA", numFacturaParameter);
         }
+    
+        public virtual ObjectResult<VisitasCliente_Result> VisitasCliente(string codigoCliente)
+        {
+            var codigoClienteParameter = codigoCliente != null ?
+                new ObjectParameter("CodigoCliente", codigoCliente) :
+                new ObjectParameter("CodigoCliente", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<VisitasCliente_Result>("VisitasCliente", codigoClienteParameter);
+        }
     }
 }

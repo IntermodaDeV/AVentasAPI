@@ -3808,6 +3808,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <Function Name="SP_VISITASPORMES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="User" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="VisitasCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CodigoCliente" Type="varchar" Mode="In" />
+        </Function>
         <EntityContainer Name="AventasModelStoreContainer">
           <EntitySet Name="AcuerdosxCliente" EntityType="Self.AcuerdosxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AcuerdosxClienteDetalle" EntityType="Self.AcuerdosxClienteDetalle" Schema="dbo" store:Type="Tables" />
@@ -6982,7 +6985,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="MotivosDevConAprobacion" EntitySet="MotivosDevConAprobacion" />
           </AssociationSet>
           <FunctionImport Name="PRODUCTOSDEFACTURA" ReturnType="Collection(AventasModel.PRODUCTOSDEFACTURA_Result)">
-            <Parameter Name="numFactura" Mode="In" Type="String" />
+          <Parameter Name="numFactura" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="VisitasCliente" ReturnType="Collection(AventasModel.VisitasCliente_Result)">
+            <Parameter Name="CodigoCliente" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -9820,6 +9826,15 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="Decimal" Name="Cantidad" Nullable="true" Precision="18" Scale="2" />
           <Property Type="Decimal" Name="PrecioUnitario" Nullable="true" Precision="18" Scale="2" />
         </ComplexType>
+        <ComplexType Name="VisitasCliente_Result">
+          <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
+          <Property Type="DateTime" Name="FechaAsignacion" Nullable="true" Precision="23" />
+          <Property Type="Time" Name="Hora_Inicio" Nullable="true" />
+          <Property Type="Time" Name="Hora_Final" Nullable="true" />
+          <Property Type="Decimal" Name="Ventas" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="Decimal" Name="Cobros" Nullable="true" Precision="38" Scale="4" />
+          <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11656,6 +11671,19 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
                 <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
                 <ScalarProperty Name="PrecioUnitario" ColumnName="PrecioUnitario" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="VisitasCliente" FunctionName="AventasModel.Store.VisitasCliente">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.VisitasCliente_Result">
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="FechaAsignacion" ColumnName="FechaAsignacion" />
+                <ScalarProperty Name="Hora_Inicio" ColumnName="Hora_Inicio" />
+                <ScalarProperty Name="Hora_Final" ColumnName="Hora_Final" />
+                <ScalarProperty Name="Ventas" ColumnName="Ventas" />
+                <ScalarProperty Name="Cobros" ColumnName="Cobros" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
