@@ -14,6 +14,12 @@ namespace DBData.Database
     
     public partial class MotivosDevolucionDetalle
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public MotivosDevolucionDetalle()
+        {
+            this.Devolucion = new HashSet<Devolucion>();
+        }
+    
         public int idMotivoDevDetalle { get; set; }
         public string CodigoMotivoDevDetalle { get; set; }
         public int idMotivoDevolucion { get; set; }
@@ -26,5 +32,7 @@ namespace DBData.Database
         public virtual Empresa Empresa { get; set; }
         public virtual MotivosDevolucion MotivosDevolucion { get; set; }
         public virtual Usuarios Usuarios { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Devolucion> Devolucion { get; set; }
     }
 }

@@ -9,10 +9,13 @@ namespace AventasApi.Models.ViewModels
             DetalleDevolucion = new List<DevolucionDetallePostModel>();
         }
         public string CodigoCliente { get; set; }
-        public string Nombre { get; set; }
+        public string Correlativo { get; set; }
         public string Moneda { get; set; }
-        public string MotivoDevolucion { get; set; }
-        public string MotivoDevolucionDetalle { get; set; }
+        public int MotivoDevolucionDetalle { get; set; }
+        public string FacturaOriginal { get; set; }
+        public string PedidoOriginal { get; set; }
+        public string Linea { get; set; }
+        public string Empresa { get; set; }
 
         public List<DevolucionDetallePostModel> DetalleDevolucion;
     }

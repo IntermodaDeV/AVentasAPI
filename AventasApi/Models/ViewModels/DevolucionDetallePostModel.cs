@@ -7,7 +7,7 @@
         public string CodigoColor { get; set; }
         public int Cantidad { get; set; }
         public string Unidad { get; set; }
-        public double PrecioUnitario { get; set; }
-        public string Talla { get; set; }
+        public decimal PrecioUnitario { get; set; }
+        public string CodigoTalla { get; set; }
     }
 }

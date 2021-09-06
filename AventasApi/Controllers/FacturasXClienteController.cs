@@ -99,7 +99,7 @@ namespace AventasApi.Controllers
                 {
                     var facturas = await ctx.FacturasxCliente
                         .Where(x => x.CodigoCliente == cliente)
-                        .Select(x => new { factura = x.Factura, pedido = x.NumeroPedido })
+                        .Select(x => new { factura = x.Factura, pedido = x.NumeroPedido,linea=x.IdLinea })
                         .ToListAsync();
 
                     return Ok(facturas);
