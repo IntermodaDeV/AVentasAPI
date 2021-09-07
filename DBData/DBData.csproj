@@ -477,6 +477,12 @@
     <Compile Include="Database\Usuario_Rol.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\VisitasClienteGlobal_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\VisitasClientePorAsesor_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\VisitasCliente_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

@@ -316,5 +316,35 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<VisitasCliente_Result>("VisitasCliente", codigoClienteParameter);
         }
+    
+        public virtual ObjectResult<VisitasClienteGlobal_Result> VisitasClienteGlobal(Nullable<System.DateTime> fechaInicio, Nullable<System.DateTime> fechaFinal)
+        {
+            var fechaInicioParameter = fechaInicio.HasValue ?
+                new ObjectParameter("FechaInicio", fechaInicio) :
+                new ObjectParameter("FechaInicio", typeof(System.DateTime));
+    
+            var fechaFinalParameter = fechaFinal.HasValue ?
+                new ObjectParameter("FechaFinal", fechaFinal) :
+                new ObjectParameter("FechaFinal", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<VisitasClienteGlobal_Result>("VisitasClienteGlobal", fechaInicioParameter, fechaFinalParameter);
+        }
+    
+        public virtual ObjectResult<VisitasClientePorAsesor_Result> VisitasClientePorAsesor(string codigoAsesor, Nullable<System.DateTime> fechaInicio, Nullable<System.DateTime> fechaFinal)
+        {
+            var codigoAsesorParameter = codigoAsesor != null ?
+                new ObjectParameter("CodigoAsesor", codigoAsesor) :
+                new ObjectParameter("CodigoAsesor", typeof(string));
+    
+            var fechaInicioParameter = fechaInicio.HasValue ?
+                new ObjectParameter("FechaInicio", fechaInicio) :
+                new ObjectParameter("FechaInicio", typeof(System.DateTime));
+    
+            var fechaFinalParameter = fechaFinal.HasValue ?
+                new ObjectParameter("FechaFinal", fechaFinal) :
+                new ObjectParameter("FechaFinal", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<VisitasClientePorAsesor_Result>("VisitasClientePorAsesor", codigoAsesorParameter, fechaInicioParameter, fechaFinalParameter);
+        }
     }
 }

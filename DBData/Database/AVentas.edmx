@@ -3917,6 +3917,15 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <Function Name="VisitasCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CodigoCliente" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="VisitasClienteGlobal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="FechaInicio" Type="datetime" Mode="In" />
+          <Parameter Name="FechaFinal" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="VisitasClientePorAsesor" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CodigoAsesor" Type="varchar" Mode="In" />
+          <Parameter Name="FechaInicio" Type="datetime" Mode="In" />
+          <Parameter Name="FechaFinal" Type="datetime" Mode="In" />
+        </Function>
         <EntityContainer Name="AventasModelStoreContainer">
           <EntitySet Name="AcuerdosxCliente" EntityType="Self.AcuerdosxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AcuerdosxClienteDetalle" EntityType="Self.AcuerdosxClienteDetalle" Schema="dbo" store:Type="Tables" />
@@ -7152,6 +7161,15 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="DevolucionDetalle" EntitySet="DevolucionDetalle" />
           </AssociationSet>
+          <FunctionImport Name="VisitasClienteGlobal" ReturnType="Collection(AventasModel.VisitasClienteGlobal_Result)">
+            <Parameter Name="FechaInicio" Mode="In" Type="DateTime" />
+            <Parameter Name="FechaFinal" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="VisitasClientePorAsesor" ReturnType="Collection(AventasModel.VisitasClientePorAsesor_Result)">
+            <Parameter Name="CodigoAsesor" Mode="In" Type="String" />
+            <Parameter Name="FechaInicio" Mode="In" Type="DateTime" />
+            <Parameter Name="FechaFinal" Mode="In" Type="DateTime" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -10111,6 +10129,24 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="VisitasClienteGlobal_Result">
+          <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
+          <Property Type="DateTime" Name="FechaAsignacion" Nullable="true" Precision="23" />
+          <Property Type="Time" Name="Hora_Inicio" Nullable="true" />
+          <Property Type="Time" Name="Hora_Final" Nullable="true" />
+          <Property Type="Decimal" Name="Ventas" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="Decimal" Name="Cobros" Nullable="true" Precision="38" Scale="4" />
+          <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
+        </ComplexType>
+        <ComplexType Name="VisitasClientePorAsesor_Result">
+          <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
+          <Property Type="DateTime" Name="FechaAsignacion" Nullable="true" Precision="23" />
+          <Property Type="Time" Name="Hora_Inicio" Nullable="true" />
+          <Property Type="Time" Name="Hora_Final" Nullable="true" />
+          <Property Type="Decimal" Name="Ventas" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="Decimal" Name="Cobros" Nullable="true" Precision="38" Scale="4" />
+          <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11999,6 +12035,32 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="VisitasClienteGlobal" FunctionName="AventasModel.Store.VisitasClienteGlobal">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.VisitasClienteGlobal_Result">
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="FechaAsignacion" ColumnName="FechaAsignacion" />
+                <ScalarProperty Name="Hora_Inicio" ColumnName="Hora_Inicio" />
+                <ScalarProperty Name="Hora_Final" ColumnName="Hora_Final" />
+                <ScalarProperty Name="Ventas" ColumnName="Ventas" />
+                <ScalarProperty Name="Cobros" ColumnName="Cobros" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="VisitasClientePorAsesor" FunctionName="AventasModel.Store.VisitasClientePorAsesor">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.VisitasClientePorAsesor_Result">
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="FechaAsignacion" ColumnName="FechaAsignacion" />
+                <ScalarProperty Name="Hora_Inicio" ColumnName="Hora_Inicio" />
+                <ScalarProperty Name="Hora_Final" ColumnName="Hora_Final" />
+                <ScalarProperty Name="Ventas" ColumnName="Ventas" />
+                <ScalarProperty Name="Cobros" ColumnName="Cobros" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
