@@ -37,6 +37,24 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("factura/{factura}/{producto}")]
+        public IHttpActionResult GetProductoFactura(string factura,string producto)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var productos = ctx.PRODUCTOSDEFACTURA(factura).Where(x=>x.CodigoProducto == producto).ToList();
+                    return Ok(productos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
         [Route("producto/{id}")]
         public async Task<IHttpActionResult> GetProducto(int id, [FromUri] List<string> colores, [FromUri] List<string> tallas)
         {

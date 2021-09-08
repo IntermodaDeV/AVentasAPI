@@ -3,6 +3,7 @@ using AventasApi.Services.AsyncJobs;
 using AventasApi.Services.Authentication;
 using DBData.Database;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -42,6 +43,7 @@ namespace AventasApi.Controllers
             }
         }
         [HttpPost]
+        [Route("completa")]
         public async Task<IHttpActionResult> PostDevolucion([FromBody]DevolucionPostModel devolucion)
         {
             try
@@ -82,6 +84,63 @@ namespace AventasApi.Controllers
                     return Ok(devolucion.Correlativo);
                 }
             }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("parcial")]
+        public async Task<IHttpActionResult> PostDevolucionParcial([FromBody] List<DevolucionPostModel> devoluciones)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
+                    Clientes cliente = await ctx.Clientes.FindAsync(devoluciones[0].CodigoCliente);
+
+                    foreach(DevolucionPostModel devolucion in devoluciones)
+                    {
+                        var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == usuario.EmpresaId);
+                        int numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
+                        string inicialesAsesor = asesor.InicialesNombre;
+                        string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+
+                        Devolucion devolucionDB = new Devolucion()
+                        {
+                            NumDevolucion = numeroReferencia,
+                            CodigoCliente = devolucion.CodigoCliente,
+                            IdLinea = devolucion.Linea,
+                            IdMotivoDevDetalle = devolucion.MotivoDevolucionDetalle,
+                            EmpresaId = devolucion.Empresa,
+                            PedidoOrigen = devolucion.PedidoOriginal,
+                            FacturaOrigen = devolucion.FacturaOriginal,
+                            CodigoAsesor = cliente.CodigoAsesor,
+                            UsuarioCrea = user.Id,
+                            FechaCrea = DateTime.Now
+                        };
+
+                        foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
+                        {
+                            devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
+                            {
+                                NumDevolucion = numeroReferencia,
+                                IdProducto = detalle.IdProducto,
+                                CodigoColor = detalle.CodigoColor,
+                                CodigoTalla = detalle.CodigoTalla,
+                                Cantidad = detalle.Cantidad,
+                                PrecioUnitario = detalle.PrecioUnitario
+                            });
+                        }
+                        bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
+                    }
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }
