@@ -352,10 +352,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Estado" Type="varchar" MaxLength="150" />
           <Property Name="Procesando" Type="bit" Nullable="false" />
           <Property Name="ErrorAx" Type="varchar(max)" />
-          <Property Name="UsuarioCrea" Type="int" />
-          <Property Name="FechaCrea" Type="datetime" />
           <Property Name="PedidoOrigen" Type="varchar" MaxLength="100" />
           <Property Name="FacturaOrigen" Type="varchar" MaxLength="100" />
+          <Property Name="Sincronizado" Type="bit" Nullable="false" />
+          <Property Name="UsuarioCrea" Type="int" />
+          <Property Name="FechaCrea" Type="datetime" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -10042,6 +10043,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK_tbDevolucion_Linea_IdLinea" FromRole="Devolucion" ToRole="MaestroLinea" />
           <NavigationProperty Name="MotivosDevolucionDetalle" Relationship="AventasModel.FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle" FromRole="Devolucion" ToRole="MotivosDevolucionDetalle" />
           <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" FromRole="Devolucion" ToRole="DevolucionDetalle" />
+          <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -12003,6 +12005,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Devolucion">
             <EntityTypeMapping TypeName="AventasModel.Devolucion">
               <MappingFragment StoreEntitySet="Devolucion">
+                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
                 <ScalarProperty Name="FacturaOrigen" ColumnName="FacturaOrigen" />
                 <ScalarProperty Name="PedidoOrigen" ColumnName="PedidoOrigen" />
                 <ScalarProperty Name="FechaCrea" ColumnName="FechaCrea" />

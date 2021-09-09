@@ -36,6 +36,7 @@ namespace DBData.Database
         public Nullable<System.DateTime> FechaCrea { get; set; }
         public string PedidoOrigen { get; set; }
         public string FacturaOrigen { get; set; }
+        public bool Sincronizado { get; set; }
     
         public virtual Clientes Clientes { get; set; }
         public virtual Empresa Empresa { get; set; }

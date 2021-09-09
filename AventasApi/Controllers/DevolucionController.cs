@@ -65,7 +65,8 @@ namespace AventasApi.Controllers
                         FacturaOrigen = devolucion.FacturaOriginal,
                         CodigoAsesor = cliente.CodigoAsesor,
                         UsuarioCrea = user.Id,
-                        FechaCrea = DateTime.Now
+                        FechaCrea = DateTime.Now,
+                        Sincronizado =false
                     };
 
                     foreach(DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -119,7 +120,8 @@ namespace AventasApi.Controllers
                             FacturaOrigen = devolucion.FacturaOriginal,
                             CodigoAsesor = cliente.CodigoAsesor,
                             UsuarioCrea = user.Id,
-                            FechaCrea = DateTime.Now
+                            FechaCrea = DateTime.Now,
+                            Sincronizado = false
                         };
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
