@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Linq;
 
 namespace AventasApi.Controllers
 {
@@ -18,6 +19,35 @@ namespace AventasApi.Controllers
         public DevolucionController()
         {
             _authenticationAppService = new AuthenticationAppService();
+        }
+
+
+        [HttpGet]
+        [Route("listado")]
+        public IHttpActionResult ObtenerlistadoDevoluciones()
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+                {
+                    var listaCitas = db.Devolucion.Select(x => new DevolucionesViewModel
+                    {
+                        NumDevolucion = x.NumDevolucion,
+                        NumeroRMA = x.NumeroRMA,
+                        PedidoDevolucion = x.PedidoDevolucion,
+                        CodigoCliente = x.CodigoCliente,
+                        NombreCliente = x.Clientes.Nombre,
+                        motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        Estado = x.Estado
+                    }).ToList();
+                    return Ok(listaCitas);
+                }
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
 
         [HttpGet]
