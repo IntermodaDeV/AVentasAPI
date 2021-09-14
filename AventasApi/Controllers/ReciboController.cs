@@ -517,9 +517,11 @@ namespace AventasApi.Controllers
                 RespuestaRecibo respuestaPagoRecibo = new RespuestaRecibo();
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                 var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount && ase.EmpresaId==anticipoPost.EmpresaUsuario);
+                var correlativo = anticipoPost.ReciboProforma ? anticipoPost.NumeroRecibo.Substring(2, anticipoPost.NumeroRecibo.Length - 2) : anticipoPost.NumeroRecibo;
                 if (anticipoPost.Pagos != null)
                 {
                     var existeAnticipo = 0;
+                    var existeProforma = 0;
                     List<ReciboApiModel> recibos = new List<ReciboApiModel>();
                     foreach (var pag in anticipoPost.Pagos)
                     {
@@ -549,66 +551,129 @@ namespace AventasApi.Controllers
                                                                             && x.IdTipoPago == TipoPago
                                                                             && x.SpecPago == pago.TipoPagoDetalle
                                                                             && x.Valor == valorPago).Count();
+                        if (anticipoPost.ReciboProforma)
+                        {
+                            existeProforma = context.RecibosProforma.Where(x => x.CodigoCliente == anticipoPost.CodigoCliente
+                                                                           && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
+                                                                           && x.IdTipoPago == TipoPago
+                                                                           && x.SpecPago == pago.TipoPagoDetalle
+                                                                           && x.Valor == valorPago).Count();
 
-                        if (existeAnticipo == 0) 
-                        {
-                            existeAnticipo = context.AnticiposxCliente.Where(x => x.NumeroRecibo == anticipoPost.NumeroRecibo).Count();
-                        }
-                        if(existeAnticipo == 0)
-                        {
-                            var anticipo = new AnticiposxCliente
+                            if (existeProforma == 0)
                             {
-                                CodigoCliente = anticipoPost.CodigoCliente,
-                                Fecha = DateTime.Now,
-                                IdTipoPago = int.Parse(pago.CodigoTipoPago),
-                                Referencia = pago.Referencia,
-                                FechaCheque = anticipoPost.FechaPago,
-                                IdBanco = codigobanco,
-                                Sincronizado = false,
-                                Valor = valorPago,
-                                IdMoneda = pago.IdMoneda,
-                                CodigoAsesor = user.UserAccount,
-                                Tipo = anticipoPost.Tipo,
-                                NumeroRecibo = anticipoPost.NumeroRecibo,
-                                NumPedido = anticipoPost.NumPedido,
-                                Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
-                                Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
-                                SpecPago = pago.TipoPagoDetalle,
-                                EsContado = anticipoPost.EsContado == "1" ? true : false,
-                                UsuarioCreacion = user.UserAccount,
-                                FechaCreacion = DateTime.Now,
-                                Descuento = 0
-                            };
-                            context.AnticiposxCliente.Add(anticipo);
+                                existeProforma = context.RecibosProforma.Where(x => x.NumeroProforma == anticipoPost.NumeroRecibo).Count();
+                            }
+
+                            if (existeProforma == 0)
+                            {
+                                var proforma = new RecibosProforma
+                                {
+                                    NumeroProforma=anticipoPost.NumeroRecibo,
+                                    CodigoCliente = anticipoPost.CodigoCliente,
+                                    Fecha = DateTime.Now,
+                                    IdTipoPago = int.Parse(pago.CodigoTipoPago),
+                                    Referencia = pago.Referencia,
+                                    FechaCheque = anticipoPost.FechaPago,
+                                    IdBanco = codigobanco,
+                                    Valor = valorPago,
+                                    IdMoneda = pago.IdMoneda,
+                                    CodigoAsesor = user.UserAccount,
+                                    SpecPago = pago.TipoPagoDetalle,
+                                    UsuarioCreacion = user.UserAccount,
+                                    FechaCreacion = DateTime.Now,
+                                    Descuento = 0
+                                };
+                                context.RecibosProforma.Add(proforma);
+
+                                var anticipo = new AnticiposxCliente
+                                {
+                                    CodigoCliente = anticipoPost.CodigoCliente,
+                                    Fecha = DateTime.Now,
+                                    IdTipoPago = int.Parse(pago.CodigoTipoPago),
+                                    Referencia = pago.Referencia,
+                                    FechaCheque = anticipoPost.FechaPago,
+                                    IdBanco = codigobanco,
+                                    Sincronizado = false,
+                                    Valor = valorPago,
+                                    IdMoneda = pago.IdMoneda,
+                                    CodigoAsesor = user.UserAccount,
+                                    Tipo = anticipoPost.Tipo,
+                                    NumeroRecibo = correlativo,
+                                    NumPedido = anticipoPost.NumPedido,
+                                    Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
+                                    Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
+                                    SpecPago = pago.TipoPagoDetalle,
+                                    EsContado = anticipoPost.EsContado == "1" ? true : false,
+                                    UsuarioCreacion = user.UserAccount,
+                                    FechaCreacion = DateTime.Now,
+                                    Descuento = 0
+                                };
+                                context.AnticiposxCliente.Add(anticipo);
+                            }
                         }
                         else
                         {
-                           var reciboXClienteFlotante = new RecibosxClienteFlotante
+
+                            if (existeAnticipo == 0)
                             {
-                                NumeroRecibo = anticipoPost.NumeroRecibo,
-                                CodigoCliente = anticipoPost.CodigoCliente,
-                                Fecha = DateTime.Now,
-                                IdTipoPago = int.Parse(pago.CodigoTipoPago),
-                                Referencia = pago.Referencia,
-                                FechaCheque = anticipoPost.FechaPago,
-                                IdBanco = codigobanco,
-                                Valor = valorPago,
-                                IdMoneda = pago.IdMoneda,
-                                Sincronizado = false,
-                                CodigoAsesor = asesor.CodigoAsesor,
-                                IdFactura = null,
-                                Descuento = 0,
-                                Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
-                                Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
-                                SpecPago = pago.TipoPagoDetalle,
-                                EsContado = anticipoPost.EsContado == "1" ? true : false,
-                                NumPedido = anticipoPost.NumPedido,
-                                Tipo = anticipoPost.Tipo,
-                                UsuarioCreacion = user.UserAccount,
-                                FechaCreacion = DateTime.Now,
-                                Estado = 0  ///0: Pendiente, 1: Sincronizado, 2:Cancelado
-                            };
-                            context.RecibosxClienteFlotante.Add(reciboXClienteFlotante);
+                                existeAnticipo = context.AnticiposxCliente.Where(x => x.NumeroRecibo == anticipoPost.NumeroRecibo).Count();
+                            }
+                            if (existeAnticipo == 0)
+                            {
+                                var anticipo = new AnticiposxCliente
+                                {
+                                    CodigoCliente = anticipoPost.CodigoCliente,
+                                    Fecha = DateTime.Now,
+                                    IdTipoPago = int.Parse(pago.CodigoTipoPago),
+                                    Referencia = pago.Referencia,
+                                    FechaCheque = anticipoPost.FechaPago,
+                                    IdBanco = codigobanco,
+                                    Sincronizado = false,
+                                    Valor = valorPago,
+                                    IdMoneda = pago.IdMoneda,
+                                    CodigoAsesor = user.UserAccount,
+                                    Tipo = anticipoPost.Tipo,
+                                    NumeroRecibo = correlativo,
+                                    NumPedido = anticipoPost.NumPedido,
+                                    Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
+                                    Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
+                                    SpecPago = pago.TipoPagoDetalle,
+                                    EsContado = anticipoPost.EsContado == "1" ? true : false,
+                                    UsuarioCreacion = user.UserAccount,
+                                    FechaCreacion = DateTime.Now,
+                                    Descuento = 0
+                                };
+                                context.AnticiposxCliente.Add(anticipo);
+                            }
+                            else
+                            {
+                                var reciboXClienteFlotante = new RecibosxClienteFlotante
+                                {
+                                    NumeroRecibo = correlativo,
+                                    CodigoCliente = anticipoPost.CodigoCliente,
+                                    Fecha = DateTime.Now,
+                                    IdTipoPago = int.Parse(pago.CodigoTipoPago),
+                                    Referencia = pago.Referencia,
+                                    FechaCheque = anticipoPost.FechaPago,
+                                    IdBanco = codigobanco,
+                                    Valor = valorPago,
+                                    IdMoneda = pago.IdMoneda,
+                                    Sincronizado = false,
+                                    CodigoAsesor = asesor.CodigoAsesor,
+                                    IdFactura = null,
+                                    Descuento = 0,
+                                    Latitude = (anticipoPost.location != null) ? anticipoPost.location.latitude : null,
+                                    Longitude = (anticipoPost.location != null) ? anticipoPost.location.longitude : null,
+                                    SpecPago = pago.TipoPagoDetalle,
+                                    EsContado = anticipoPost.EsContado == "1" ? true : false,
+                                    NumPedido = anticipoPost.NumPedido,
+                                    Tipo = anticipoPost.Tipo,
+                                    UsuarioCreacion = user.UserAccount,
+                                    FechaCreacion = DateTime.Now,
+                                    Estado = 0  ///0: Pendiente, 1: Sincronizado, 2:Cancelado
+                                };
+                                context.RecibosxClienteFlotante.Add(reciboXClienteFlotante);
+                            }
                         }
                        
                         var pagoBD = context.TiposdePago.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
@@ -650,7 +715,7 @@ namespace AventasApi.Controllers
                             ASESOR = asesor.Usuario,
                             ASESOR_NOMBRE = asesor.Nombre,
                             ASESOR_DIARIO = asesor.CodigoAsesor,
-                            RECIBO = anticipoPost.NumeroRecibo,
+                            RECIBO = correlativo,
                             CLIENTE = anticipoPost.CodigoCliente,
                             MONEDA = pago.IdMoneda,
                             FECHA = DateTime.Now.ToString("dd/MM/yyyy"),
