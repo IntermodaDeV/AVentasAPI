@@ -30,7 +30,8 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities db = new AVentasEntities())
                 {
-                    var listaCitas = db.Devolucion.Select(x => new DevolucionesViewModel
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var listaCitas = db.Devolucion.Where(x=>x.CodigoAsesor== user.UserAccount).Select(x => new DevolucionesViewModel
                     {
                         NumDevolucion = x.NumDevolucion,
                         NumeroRMA = x.NumeroRMA,
@@ -62,7 +63,7 @@ namespace AventasApi.Controllers
                     var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
                     int numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
-                    string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                    string numeroReferencia = $"{inicialesAsesor}DEV-1{numeroCorelativo.ToString("D5")}";
 
                     return Ok(numeroReferencia);
                 }
@@ -137,7 +138,7 @@ namespace AventasApi.Controllers
                         var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == usuario.EmpresaId);
                         int numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
                         string inicialesAsesor = asesor.InicialesNombre;
-                        string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                        string numeroReferencia = $"{inicialesAsesor}DEV-1{numeroCorelativo.ToString("D5")}";
 
                         Devolucion devolucionDB = new Devolucion()
                         {
