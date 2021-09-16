@@ -146,6 +146,7 @@ namespace DBData.Database
         public virtual DbSet<MotivosDevConAprobacion> MotivosDevConAprobacion { get; set; }
         public virtual DbSet<Devolucion> Devolucion { get; set; }
         public virtual DbSet<DevolucionDetalle> DevolucionDetalle { get; set; }
+        public virtual DbSet<AprobacionDevoluciones> AprobacionDevoluciones { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

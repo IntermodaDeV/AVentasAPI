@@ -69,6 +69,7 @@ namespace AventasApi.Controllers
                     }
 
                     listaDevoluciones.Aprobado = true;
+                    listaDevoluciones.FechaModifica = DateTime.Now;
                     var result = db.SaveChanges();
                     return Ok(result);
                 }
