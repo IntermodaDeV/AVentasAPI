@@ -915,6 +915,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="MontoLinea" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Fecha" Type="datetime" />
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
+          <Property Name="CantidadDevolucion" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="PedidosDetalleFlotante">
           <Key>
@@ -7690,6 +7691,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion" FromRole="PedidosDetalle" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosDetalle" ToRole="PedidosxCliente" />
+          <Property Name="CantidadDevolucion" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <Association Name="FK_PedidosDetalle_ProductosxColeccion">
           <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="0..1" />
@@ -11254,6 +11256,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosDetalle">
             <EntityTypeMapping TypeName="AventasModel.PedidosDetalle">
               <MappingFragment StoreEntitySet="PedidosDetalle">
+                <ScalarProperty Name="CantidadDevolucion" ColumnName="CantidadDevolucion" />
                 <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
                 <ScalarProperty Name="Fecha" ColumnName="Fecha" />
                 <ScalarProperty Name="MontoLinea" ColumnName="MontoLinea" />

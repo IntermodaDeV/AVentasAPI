@@ -189,6 +189,7 @@ namespace AventasApi.Controllers
                             var result = await ctx.SaveChangesAsync();
                         }
                     }
+                    ReducirPendienteDevolucion(devolucionDB);
                     return Ok(devolucion.Correlativo);
                 }
             }catch(Exception e)
@@ -244,6 +245,7 @@ namespace AventasApi.Controllers
                             });
                         }
                         bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
+                        ReducirPendienteDevolucion(devolucionDB);
                     }
 
                     return Ok();
@@ -252,6 +254,26 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.ToString());
+            }
+        }
+
+        private async void ReducirPendienteDevolucion(Devolucion pedido)
+        {
+            using (var ctx = new AVentasEntities())
+            {
+                var lineasPedido = pedido.DevolucionDetalle;
+                var PedidoOriginal = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.NumeroPedido == pedido.PedidoOrigen);
+
+                if (PedidoOriginal != null)
+                {
+                    foreach (var linea in lineasPedido)
+                    {
+                        var talla = linea.CodigoTalla.Trim().ToUpper();
+                        var fisico = await ctx.PedidosDetalle.FirstOrDefaultAsync(x => x.PedidoId==PedidoOriginal.PedidoId && x.CodigoColor==linea.CodigoColor && x.CodigoTalla.ToUpper() == talla && x.IdProducto==linea.IdProducto);
+                        fisico.CantidadDevolucion = fisico.CantidadDevolucion - linea.Cantidad;
+                        await ctx.SaveChangesAsync();
+                    }
+                }
             }
         }
     }
