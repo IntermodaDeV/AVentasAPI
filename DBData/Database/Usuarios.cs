@@ -29,6 +29,10 @@ namespace DBData.Database
             this.MotivosDevConAprobacion = new HashSet<MotivosDevConAprobacion>();
             this.MotivosDevConAprobacion1 = new HashSet<MotivosDevConAprobacion>();
             this.MotivosDevConAprobacion2 = new HashSet<MotivosDevConAprobacion>();
+            this.AprobacionDevoluciones = new HashSet<AprobacionDevoluciones>();
+            this.AprobacionDevoluciones1 = new HashSet<AprobacionDevoluciones>();
+            this.AprobacionDevoluciones2 = new HashSet<AprobacionDevoluciones>();
+            this.Devolucion = new HashSet<Devolucion>();
         }
     
         public int Id { get; set; }
@@ -73,5 +77,13 @@ namespace DBData.Database
         public virtual ICollection<MotivosDevConAprobacion> MotivosDevConAprobacion1 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MotivosDevConAprobacion> MotivosDevConAprobacion2 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AprobacionDevoluciones> AprobacionDevoluciones { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AprobacionDevoluciones> AprobacionDevoluciones1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AprobacionDevoluciones> AprobacionDevoluciones2 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Devolucion> Devolucion { get; set; }
     }
 }

@@ -76,6 +76,20 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
         </EntityType>
+        <EntityType Name="AprobacionDevoluciones">
+          <Key>
+            <PropertyRef Name="IdDevAprobacion" />
+          </Key>
+          <Property Name="IdDevAprobacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NumDevolucion" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IdUsuario" Type="int" Nullable="false" />
+          <Property Name="Aprobado" Type="bit" Nullable="false" />
+          <Property Name="Estado" Type="bit" Nullable="false" />
+          <Property Name="UsuarioCrea" Type="int" Nullable="false" />
+          <Property Name="FechaCrea" Type="datetime" Nullable="false" />
+          <Property Name="UsuarioModifica" Type="int" />
+          <Property Name="FechaModifica" Type="datetime" />
+        </EntityType>
         <EntityType Name="Asesores">
           <Key>
             <PropertyRef Name="AsesorId" />
@@ -2210,18 +2224,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__FirmasxPe__Pedid__75C27486">
-          <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="0..1" />
-          <End Role="FirmasxPedido" Type="Self.FirmasxPedido" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="PedidosxCliente">
-              <PropertyRef Name="PedidoId" />
-            </Principal>
-            <Dependent Role="FirmasxPedido">
-              <PropertyRef Name="PedidoId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__FisicoDis__Codig__7B7B4DDC">
           <End Role="Colores" Type="Self.Colores" Multiplicity="0..1" />
           <End Role="FisicoDisponible" Type="Self.FisicoDisponible" Multiplicity="*" />
@@ -3338,6 +3340,54 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AprobacionDevolucion_Devolucion_NumeroDevolucion">
+          <End Role="Devolucion" Type="Self.Devolucion" Multiplicity="1" />
+          <End Role="AprobacionDevoluciones" Type="Self.AprobacionDevoluciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Devolucion">
+              <PropertyRef Name="NumDevolucion" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones">
+              <PropertyRef Name="NumDevolucion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AprobacionDevolucion_usuario">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="AprobacionDevoluciones" Type="Self.AprobacionDevoluciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AprobacionDevolucion_Usuario_IdUsuario">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="AprobacionDevoluciones" Type="Self.AprobacionDevoluciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones">
+              <PropertyRef Name="UsuarioCrea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AprobacionDevolucion_Usuario_UsuarioModifica">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="AprobacionDevoluciones" Type="Self.AprobacionDevoluciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones">
+              <PropertyRef Name="UsuarioModifica" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE">
           <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
           <End Role="Respuestas" Type="Self.Respuestas" Multiplicity="*" />
@@ -3782,6 +3832,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tbDevolucion_Usuario_IdUsuario">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="Devolucion" Type="Self.Devolucion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Devolucion">
+              <PropertyRef Name="UsuarioCrea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tbDevolucionDetalle_Devolucion_idDevolucion">
           <End Role="Devolucion" Type="Self.Devolucion" Multiplicity="0..1" />
           <End Role="DevolucionDetalle" Type="Self.DevolucionDetalle" Multiplicity="*" />
@@ -3931,6 +3993,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="AcuerdosxCliente" EntityType="Self.AcuerdosxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AcuerdosxClienteDetalle" EntityType="Self.AcuerdosxClienteDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AnticiposxCliente" EntityType="Self.AnticiposxCliente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AprobacionDevoluciones" EntityType="Self.AprobacionDevoluciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Asesores" EntityType="Self.Asesores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AsignacionxAsesor" EntityType="Self.AsignacionxAsesor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AsignacionxAsesorDetalle" EntityType="Self.AsignacionxAsesorDetalle" Schema="dbo" store:Type="Tables" />
@@ -4294,10 +4357,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK__Facturasx__IdTip__75235608" Association="Self.FK__Facturasx__IdTip__75235608">
             <End Role="TiposdePedido" EntitySet="TiposdePedido" />
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
-          </AssociationSet>
-          <AssociationSet Name="FK__FirmasxPe__Pedid__75C27486" Association="Self.FK__FirmasxPe__Pedid__75C27486">
-            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
-            <End Role="FirmasxPedido" EntitySet="FirmasxPedido" />
           </AssociationSet>
           <AssociationSet Name="FK__FisicoDis__Codig__7B7B4DDC" Association="Self.FK__FisicoDis__Codig__7B7B4DDC">
             <End Role="Colores" EntitySet="Colores" />
@@ -4671,6 +4730,22 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="Usuarios" EntitySet="Usuarios" />
           </AssociationSet>
+          <AssociationSet Name="FK_AprobacionDevolucion_Devolucion_NumeroDevolucion" Association="Self.FK_AprobacionDevolucion_Devolucion_NumeroDevolucion">
+            <End Role="Devolucion" EntitySet="Devolucion" />
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AprobacionDevolucion_usuario" Association="Self.FK_AprobacionDevolucion_usuario">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AprobacionDevolucion_Usuario_IdUsuario" Association="Self.FK_AprobacionDevolucion_Usuario_IdUsuario">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AprobacionDevolucion_Usuario_UsuarioModifica" Association="Self.FK_AprobacionDevolucion_Usuario_UsuarioModifica">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
           <AssociationSet Name="FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE" Association="Self.FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE">
             <End Role="Clientes" EntitySet="Clientes" />
             <End Role="Respuestas" EntitySet="Respuestas" />
@@ -4817,6 +4892,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </AssociationSet>
           <AssociationSet Name="FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle" Association="Self.FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle">
             <End Role="MotivosDevolucionDetalle" EntitySet="MotivosDevolucionDetalle" />
+            <End Role="Devolucion" EntitySet="Devolucion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbDevolucion_Usuario_IdUsuario" Association="Self.FK_tbDevolucion_Usuario_IdUsuario">
+            <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Devolucion" EntitySet="Devolucion" />
           </AssociationSet>
           <AssociationSet Name="FK_tbDevolucionDetalle_Devolucion_idDevolucion" Association="Self.FK_tbDevolucionDetalle_Devolucion_idDevolucion">
@@ -7171,6 +7250,27 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <Parameter Name="FechaInicio" Mode="In" Type="DateTime" />
             <Parameter Name="FechaFinal" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <EntitySet Name="AprobacionDevoluciones" EntityType="AventasModel.AprobacionDevoluciones" />
+          <AssociationSet Name="FK_AprobacionDevolucion_Devolucion_NumeroDevolucion" Association="AventasModel.FK_AprobacionDevolucion_Devolucion_NumeroDevolucion">
+            <End Role="Devolucion" EntitySet="Devolucion" />
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AprobacionDevolucion_usuario" Association="AventasModel.FK_AprobacionDevolucion_usuario">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AprobacionDevolucion_Usuario_IdUsuario" Association="AventasModel.FK_AprobacionDevolucion_Usuario_IdUsuario">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AprobacionDevolucion_Usuario_UsuarioModifica" Association="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbDevolucion_Usuario_IdUsuario" Association="AventasModel.FK_tbDevolucion_Usuario_IdUsuario">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="Devolucion" EntitySet="Devolucion" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -7860,6 +7960,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="MotivosDevConAprobacion" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO" FromRole="Usuarios" ToRole="MotivosDevConAprobacion" />
           <NavigationProperty Name="MotivosDevConAprobacion1" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA" FromRole="Usuarios" ToRole="MotivosDevConAprobacion" />
           <NavigationProperty Name="MotivosDevConAprobacion2" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS" FromRole="Usuarios" ToRole="MotivosDevConAprobacion" />
+          <NavigationProperty Name="AprobacionDevoluciones" Relationship="AventasModel.FK_AprobacionDevolucion_usuario" FromRole="Usuarios" ToRole="AprobacionDevoluciones" />
+          <NavigationProperty Name="AprobacionDevoluciones1" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_IdUsuario" FromRole="Usuarios" ToRole="AprobacionDevoluciones" />
+          <NavigationProperty Name="AprobacionDevoluciones2" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica" FromRole="Usuarios" ToRole="AprobacionDevoluciones" />
+          <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" FromRole="Usuarios" ToRole="Devolucion" />
         </EntityType>
         <Association Name="FK__Usuarios__Empres__28E2F130">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -10044,6 +10148,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="MotivosDevolucionDetalle" Relationship="AventasModel.FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle" FromRole="Devolucion" ToRole="MotivosDevolucionDetalle" />
           <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" FromRole="Devolucion" ToRole="DevolucionDetalle" />
           <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="AprobacionDevoluciones" Relationship="AventasModel.FK_AprobacionDevolucion_Devolucion_NumeroDevolucion" FromRole="Devolucion" ToRole="AprobacionDevoluciones" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" FromRole="Devolucion" ToRole="Usuarios" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -10149,6 +10255,84 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="Decimal" Name="Cobros" Nullable="true" Precision="38" Scale="4" />
           <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
         </ComplexType>
+        <EntityType Name="AprobacionDevoluciones">
+          <Key>
+            <PropertyRef Name="IdDevAprobacion" />
+          </Key>
+          <Property Name="IdDevAprobacion" Type="Int32" Nullable="false" />
+          <Property Name="NumDevolucion" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
+          <Property Name="Aprobado" Type="Boolean" Nullable="false" />
+          <Property Name="Estado" Type="Boolean" Nullable="false" />
+          <Property Name="UsuarioCrea" Type="Int32" Nullable="false" />
+          <Property Name="FechaCrea" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UsuarioModifica" Type="Int32" />
+          <Property Name="FechaModifica" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_AprobacionDevolucion_Devolucion_NumeroDevolucion" FromRole="AprobacionDevoluciones" ToRole="Devolucion" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_AprobacionDevolucion_usuario" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
+          <NavigationProperty Name="Usuarios1" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_IdUsuario" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
+          <NavigationProperty Name="Usuarios2" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
+        </EntityType>
+        <Association Name="FK_AprobacionDevolucion_Devolucion_NumeroDevolucion">
+          <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="1" />
+          <End Type="AventasModel.AprobacionDevoluciones" Role="AprobacionDevoluciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Devolucion">
+              <PropertyRef Name="NumDevolucion" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones">
+              <PropertyRef Name="NumDevolucion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AprobacionDevolucion_usuario">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="1" />
+          <End Type="AventasModel.AprobacionDevoluciones" Role="AprobacionDevoluciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AprobacionDevolucion_Usuario_IdUsuario">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="1" />
+          <End Type="AventasModel.AprobacionDevoluciones" Role="AprobacionDevoluciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones">
+              <PropertyRef Name="UsuarioCrea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AprobacionDevolucion_Usuario_UsuarioModifica">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="AventasModel.AprobacionDevoluciones" Role="AprobacionDevoluciones" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones">
+              <PropertyRef Name="UsuarioModifica" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbDevolucion_Usuario_IdUsuario">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Devolucion">
+              <PropertyRef Name="UsuarioCrea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12064,6 +12248,21 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="AprobacionDevoluciones">
+            <EntityTypeMapping TypeName="AventasModel.AprobacionDevoluciones">
+              <MappingFragment StoreEntitySet="AprobacionDevoluciones">
+                <ScalarProperty Name="FechaModifica" ColumnName="FechaModifica" />
+                <ScalarProperty Name="UsuarioModifica" ColumnName="UsuarioModifica" />
+                <ScalarProperty Name="FechaCrea" ColumnName="FechaCrea" />
+                <ScalarProperty Name="UsuarioCrea" ColumnName="UsuarioCrea" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Aprobado" ColumnName="Aprobado" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+                <ScalarProperty Name="NumDevolucion" ColumnName="NumDevolucion" />
+                <ScalarProperty Name="IdDevAprobacion" ColumnName="IdDevAprobacion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

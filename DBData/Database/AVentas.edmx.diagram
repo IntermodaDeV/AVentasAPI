@@ -310,6 +310,12 @@
         <AssociationConnector Association="AventasModel.FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" />
+        <EntityTypeShape EntityType="AventasModel.AprobacionDevoluciones" Width="1.5" PointX="34" PointY="34.875" />
+        <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_Devolucion_NumeroDevolucion" />
+        <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_usuario" />
+        <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_Usuario_IdUsuario" />
+        <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

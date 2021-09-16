@@ -12,6 +12,7 @@ namespace AventasApi.Models.ViewModels
         public string Correlativo { get; set; }
         public string Moneda { get; set; }
         public int MotivoDevolucionDetalle { get; set; }
+        public int MotivoDevolucion { get; set; }
         public string FacturaOriginal { get; set; }
         public string PedidoOriginal { get; set; }
         public string Linea { get; set; }

@@ -66,6 +66,9 @@
     <Compile Include="Database\AnticiposxCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\AprobacionDevoluciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Asesores.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

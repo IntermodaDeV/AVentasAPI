@@ -18,6 +18,7 @@ namespace DBData.Database
         public Devolucion()
         {
             this.DevolucionDetalle = new HashSet<DevolucionDetalle>();
+            this.AprobacionDevoluciones = new HashSet<AprobacionDevoluciones>();
         }
     
         public string NumDevolucion { get; set; }
@@ -44,5 +45,8 @@ namespace DBData.Database
         public virtual MotivosDevolucionDetalle MotivosDevolucionDetalle { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DevolucionDetalle> DevolucionDetalle { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AprobacionDevoluciones> AprobacionDevoluciones { get; set; }
+        public virtual Usuarios Usuarios { get; set; }
     }
 }
