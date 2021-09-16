@@ -84,11 +84,11 @@ namespace AventasApi.Controllers
                                                  GrupoTallaId = txp.CodigoGrupoTalla,
                                                  Orden = txp.Orden ?? 0,
                                              }).OrderBy(txp => txp.Orden).ToList(),
-                        ListaColores = pxc.ColoresxProducto.Where(x => colores.Contains(x.CodigoColor)).Select(cpp => new ColorViewModel
+                        ListaColores = ctx.Colores.Where(x => colores.Contains(x.CodigoColor)).Select(cpp => new ColorViewModel
                         {
-                            CodigoColor = cpp.Colores.CodigoColor,
-                            NombreColor = cpp.Colores.Color,
-                            Color = cpp.Colores.Rgb,
+                            CodigoColor = cpp.CodigoColor,
+                            NombreColor = cpp.Color,
+                            Color = cpp.Rgb,
                         }).ToList(),
                     }).ToList();
 
