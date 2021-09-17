@@ -137,22 +137,22 @@ namespace AventasApi.Controllers
                          });
                     }
 
-                    /*if (EnLinea(devolucionApi.COMPANY, devolucionApi.SALES_MANAGER))
-                    {*/
+                    if (EnLinea(devolucionApi.COMPANY, devolucionApi.SALES_MANAGER))
+                    {
                         string respuesta = string.Empty;
                         bool error = false;
 
                         devolucionDB.Procesando = true;
                         await ctx.SaveChangesAsync();
 
-                        var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}devoluciones/registrar");
-                        client.Timeout = 480 * (1000);
-                        var request = new RestRequest(Method.POST);
-                        request.AddHeader("Accept", "application/json");
-                        request.AddJsonBody(devolucionApi);
-                        var response = client.Execute<List<string>>(request);
+                    var restClient = new RestClient(Enviroment.CRMWebServiceURLApi);
+                    var request = new RestRequest($"devoluciones/registrar", Method.POST);
+                    request.Timeout = 480 * (2000);
+                    request.AddHeader("Accept", "application/json");
+                    request.AddJsonBody(devolucionApi);
+                    var response = restClient.Execute<List<string>>(request);
 
-                        if (response.IsSuccessful)
+                    if (response.IsSuccessful)
                         {
                             var content = JsonConvert.DeserializeObject<string>(response.Content); ;
 
@@ -161,7 +161,7 @@ namespace AventasApi.Controllers
                                 content = content.Remove(0, 8);
                                 var probando = content.Split(',');
                                 devolucionDB.NumeroRMA = probando[0];
-                                devolucionDB.PedidoDevolucion = probando[2];
+                                devolucionDB.PedidoDevolucion = probando[1];
                                 devolucionDB.Estado = "Creado";
                                 devolucionDB.Sincronizado = true;
                                 devolucionDB.Procesando = false;
@@ -190,13 +190,15 @@ namespace AventasApi.Controllers
                         }
                         return Ok(respuesta);
                     }
-                    /*else
+                    else
                     {
                         devolucionDB.Procesando = false;
                         await ctx.SaveChangesAsync();
                         return BadRequest("Servidor de AX no disponible");
-                    }*/
+                    }
                 
+                 }
+
             }
             catch (Exception e)
             {
@@ -310,7 +312,7 @@ namespace AventasApi.Controllers
                         UsuarioCrea = user.Id,
                         FechaCrea = DateTime.Now,
                         Sincronizado = false,
-                        Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : ""
+                        Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado"
                     };
 
                     foreach(DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
