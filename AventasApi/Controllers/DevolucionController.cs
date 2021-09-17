@@ -8,6 +8,11 @@ using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Linq;
+using ExternalApiData.ApiModels;
+using RestSharp;
+using ExternalApiData.Enviroments;
+using ExternalApiData.Models.ApiModels;
+using Newtonsoft.Json;
 
 namespace AventasApi.Controllers
 {
@@ -20,7 +25,16 @@ namespace AventasApi.Controllers
         {
             _authenticationAppService = new AuthenticationAppService();
         }
+        private bool EnLinea(string empresa, string asesor)
+        {
+            var client = new RestClient(Enviroment.CRMWebServiceURLApi);
+            client.Authenticator = new RestSharp.Authenticators.NtlmAuthenticator();
+            var request = new RestRequest($"asesor/{empresa}/{asesor}", Method.GET);
+            client.Timeout = 6000;
+            IRestResponse<List<AsesorApiModel>> respuesta = client.Execute<List<AsesorApiModel>>(request);
 
+            return respuesta.IsSuccessful;
+        }
         [HttpGet]
         [Route("listadoDevPendienteAprobar")]
         public IHttpActionResult ObtenerDevolucionesPendientesAprobar()
@@ -81,7 +95,117 @@ namespace AventasApi.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
+        [Route("sincronizar/{devolucion}")]
+        public async Task<IHttpActionResult> PostDevolucionPendiente(string devolucion)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var devolucionDB = await ctx.Devolucion.FirstOrDefaultAsync(x => x.NumDevolucion == devolucion && x.Procesando == false);
+
+                    if (devolucionDB == null)
+                    {
+                        return BadRequest($"El pedido {devolucion} se encuentra ya en proceso de sincronizacion.");
+                    }
+
+                    var devolucionApi = new DevolucionApiModel
+                    {
+                        COMPANY = devolucionDB.Empresa.EmpresaId,
+                        CUSTOMER_ACCOUNT = devolucionDB.Clientes.CodigoCliente,
+                        SALES_MANAGER = devolucionDB.CodigoAsesor,
+                        USER = devolucionDB.CodigoAsesor,
+                        OBSERVATIONS = (devolucionDB.Observacion == null) ? "" : devolucionDB.Observacion,
+                        REASON_CODE = devolucionDB.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        REFERENCE = devolucionDB.NumDevolucion,
+                        SALES_NAME = devolucionDB.Clientes.Nombre,
+                    };
+
+                    foreach (var detalle in ctx.DevolucionDetalle.Where(det => det.Devolucion.NumDevolucion == devolucion))
+                    {
+                        devolucionApi.DevolucionDetalleJson.Add(
+                         new DevolucionDetalleJson
+                         {
+                             COLOR = detalle.CodigoColor.Trim(),
+                             ITEM_CODE = detalle.ProductosxColeccion.CodigoProducto,
+                             QUANTITY = Convert.ToString(detalle.Cantidad),
+                             SIZE = detalle.CodigoTalla.Trim(),
+                             REFERENCE = detalle.NumDevolucion,
+                             SALES_NUMBER = devolucionDB.PedidoOrigen,
+                             UNIT = "Und"
+                         });
+                    }
+
+                    /*if (EnLinea(devolucionApi.COMPANY, devolucionApi.SALES_MANAGER))
+                    {*/
+                        string respuesta = string.Empty;
+                        bool error = false;
+
+                        devolucionDB.Procesando = true;
+                        await ctx.SaveChangesAsync();
+
+                        var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}devoluciones/registrar");
+                        client.Timeout = 480 * (1000);
+                        var request = new RestRequest(Method.POST);
+                        request.AddHeader("Accept", "application/json");
+                        request.AddJsonBody(devolucionApi);
+                        var response = client.Execute<List<string>>(request);
+
+                        if (response.IsSuccessful)
+                        {
+                            var content = JsonConvert.DeserializeObject<string>(response.Content); ;
+
+                            if (content.StartsWith("Success"))
+                            {
+                                content = content.Remove(0, 8);
+                                var probando = content.Split(',');
+                                devolucionDB.NumeroRMA = probando[0];
+                                devolucionDB.PedidoDevolucion = probando[2];
+                                devolucionDB.Estado = "Creado";
+                                devolucionDB.Sincronizado = true;
+                                devolucionDB.Procesando = false;
+                                respuesta = $"Devolucion {devolucionApi.REFERENCE} sincronizado exitosamente con AX.";
+                            }
+                        }
+                        else
+                        {
+                            if (response.Data != null)
+                            {
+                                var excepcion = response.Data.FirstOrDefault();
+                                var resp = JsonConvert.DeserializeObject<ApiException>(excepcion);
+                                respuesta = $"Devolucion {devolucionApi.REFERENCE} Error: {resp.Message}";
+                                devolucionDB.Sincronizado = false;
+                                devolucionDB.ErrorAx = resp.Message;
+                                error = true;
+                            }
+                        }
+
+                        devolucionDB.Procesando = false;
+                        await ctx.SaveChangesAsync();
+
+                        if (error)
+                        {
+                            return BadRequest(respuesta);
+                        }
+                        return Ok(respuesta);
+                    }
+                    /*else
+                    {
+                        devolucionDB.Procesando = false;
+                        await ctx.SaveChangesAsync();
+                        return BadRequest("Servidor de AX no disponible");
+                    }*/
+                
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
+        }
+
+            [HttpGet]
         [Route("listado")]
         public IHttpActionResult ObtenerlistadoDevoluciones()
         {
@@ -91,6 +215,35 @@ namespace AventasApi.Controllers
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var listaCitas = db.Devolucion.Where(x=>x.CodigoAsesor== user.UserAccount).Select(x => new DevolucionesViewModel
+                    {
+                        NumDevolucion = x.NumDevolucion,
+                        NumeroRMA = x.NumeroRMA,
+                        PedidoDevolucion = x.PedidoDevolucion,
+                        CodigoCliente = x.CodigoCliente,
+                        NombreCliente = x.Clientes.Nombre,
+                        motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        Estado = x.Estado
+                    }).ToList();
+                    return Ok(listaCitas);
+                }
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("listado/pendiente")]
+        public IHttpActionResult ObtenerlistadoDevolucionesPendientes()
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var listaCitas = db.Devolucion.Where(x => x.CodigoAsesor == user.UserAccount && x.Sincronizado==false).Select(x => new DevolucionesViewModel
                     {
                         NumDevolucion = x.NumDevolucion,
                         NumeroRMA = x.NumeroRMA,
