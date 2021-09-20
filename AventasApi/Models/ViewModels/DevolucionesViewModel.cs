@@ -28,7 +28,12 @@ namespace AventasApi.Models.ViewModels
         public string CodigoAsesor { get; set; }
 
         public string Estado { get; set; }
+        public string Usuario { get; set; }
 
         public int cantidad { get; set; }
+
+        public DateTime FechaCreacion { get; set; }
+
+        public ClienteViewModel Cliente { get; set; }
     }
 }

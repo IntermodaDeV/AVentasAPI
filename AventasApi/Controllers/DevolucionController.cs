@@ -13,6 +13,7 @@ using RestSharp;
 using ExternalApiData.Enviroments;
 using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
+using AventasApi.Models;
 
 namespace AventasApi.Controllers
 {
@@ -207,30 +208,147 @@ namespace AventasApi.Controllers
             }
         }
 
-            [HttpGet]
+        [HttpGet]
         [Route("listado")]
-        public IHttpActionResult ObtenerlistadoDevoluciones()
+        public async Task<IHttpActionResult> ObtenerlistadoDevoluciones()
         {
             try
             {
                 using (AVentasEntities db = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var listaCitas = db.Devolucion.Where(x=>x.CodigoAsesor== user.UserAccount).Select(x => new DevolucionesViewModel
+                    List<string> asesoresHabilitados = new List<string>();
+                    var usuario = await db.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
+                    var empresas = await db.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
+
+                    if (usuario.FlagTodosAsesores.Value)
                     {
-                        NumDevolucion = x.NumDevolucion,
-                        NumeroRMA = x.NumeroRMA,
-                        PedidoDevolucion = x.PedidoDevolucion,
-                        CodigoCliente = x.CodigoCliente,
-                        NombreCliente = x.Clientes.Nombre,
-                        motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
-                        Estado = x.Estado
-                    }).ToList();
-                    return Ok(listaCitas);
+                        asesoresHabilitados = await db.Asesores.Where(x => x.CodigoAsesor == user.UserAccount && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+                    else
+                    {
+                        var asesores = await db.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await db.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
+                    }
+
+
+                    List<DevolucionesViewModel> ListaDevoluciones = new List<DevolucionesViewModel>();
+                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
+                    {
+                        var devolucion = db.Devolucion.Where(x => x.CodigoAsesor == user.UserAccount).Select(x => new DevolucionesViewModel
+                        {
+                            NumDevolucion = x.NumDevolucion,
+                            NumeroRMA = x.NumeroRMA,
+                            PedidoDevolucion = x.PedidoDevolucion,
+                            CodigoCliente = x.CodigoCliente,
+                            NombreCliente = x.Clientes.Nombre,
+                            motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                            Estado = x.Estado,
+                            FechaCreacion=x.FechaCrea.Value,
+                            Usuario = db.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
+                            Cliente = new ClienteViewModel
+                            {
+                                Codigo = x.Clientes.CodigoCliente,
+                                Nombre = x.Clientes.Nombre,
+                                Direccion = x.Clientes.Direccion,
+                                Moneda = x.Clientes.IdMoneda,
+                                EmpresaId = x.Clientes.EmpresaId
+                            }
+                        }).ToList();
+
+                        ListaDevoluciones.AddRange(devolucion);
+                    }
+
+                        
+                    return Ok(ListaDevoluciones);
                 }
 
             }
             catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("detalle/{correlativo}")]
+        public IHttpActionResult ObtenerDetalleDevolucion(string correlativo)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    List<PedidosXClienteViewModel> devoluciones = ctx.Devolucion.Where(x => x.NumDevolucion == correlativo).Select(dev => new PedidosXClienteViewModel
+                    {
+                        gruposXDetPed = dev.DevolucionDetalle.GroupBy(gruposXDetPed => gruposXDetPed.ProductosxColeccion.CodigoGrupoTalla)
+                        .Select(gruposXDetPed => new GruposTallaXDetPed
+                        {
+                            GrupoTalla = gruposXDetPed.Key,
+                            ListaTalla = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoTalla).Select(pedDet => pedDet.Key).SelectMany(pedDet => ctx.TallasXGrupo.Where(txp => txp.CodigoTalla.ToUpper().Trim() == pedDet.ToUpper().Trim() && txp.CodigoGrupoTalla.ToUpper().Trim() == gruposXDetPed.Key.ToUpper().Trim())).Select(txp => new TallaViewModel
+                            {
+                                GrupoTallaId = txp.CodigoGrupoTalla.ToUpper(),
+                                Talla = txp.CodigoTalla.ToUpper(),
+                                Orden = txp.Orden ?? 0,
+                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                {
+                                    IdDistribucion = dis.IdDistribucion,
+                                    IdTallaxGrupo = dis.IdTallaxGrupo,
+                                    NombreDistribucion = dis.NombreDistribucion.ToUpper(),
+                                    NombreTalla = dis.NombreTalla.ToUpper(),
+                                    Cantidad = dis.Cantidad,
+                                    Orden = dis.Orden
+                                }).ToList()
+                            }).OrderBy(txp => txp.Orden).ToList(),
+                            prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.IdProducto)
+                            .Select(pedDet => new ProductosXDetPed
+                            {
+                                IdProducto = pedDet.Key,
+                                CodigoProducto = pedDet.FirstOrDefault().ProductosxColeccion.CodigoProducto,
+                                NombreProducto = pedDet.FirstOrDefault().ProductosxColeccion.NombreProducto,
+                                Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
+                                CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
+                                TotalXProducto = 0,
+                                coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod => colXprod.Sum(det => det.Cantidad) > 0).Select(colXprod =>
+                                         new ColoresXProdXDetPed
+                                         {
+                                             CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
+                                             TotalXColor = 0,
+                                             PrecioXColor = colXprod.FirstOrDefault().PrecioUnitario,
+                                             IdColor = colXprod.Key,
+                                             NombreColor = ctx.Colores.FirstOrDefault(color => color.CodigoColor == colXprod.Key).Color,
+                                             DetallesXPedido = colXprod.Select(detPed => new DetalleXPedidoViewModel
+                                             {
+                                                 IdRegistro = detPed.IdDevolucionDetalle,
+                                                 PedidoId = detPed.NumDevolucion,
+                                                 Cantidad = detPed.Cantidad,
+                                                 MontoLinea = 0,
+                                                 PrecioUnitario = detPed.PrecioUnitario,
+                                                 Talla = detPed.CodigoTalla.ToUpper(),
+                                                 TallaObject = ctx.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == detPed.ProductosxColeccion.CodigoGrupoTalla && txp.CodigoTalla == detPed.CodigoTalla).Select(txp => new TallaViewModel
+                                                 {
+                                                     GrupoTallaId = txp.CodigoGrupoTalla,
+                                                     Talla = txp.CodigoTalla.ToUpper(),
+                                                     Orden = txp.Orden ?? 0,
+                                                     Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                                     {
+                                                         IdDistribucion = dis.IdDistribucion,
+                                                         IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                         NombreDistribucion = dis.NombreDistribucion.ToUpper(),
+                                                         NombreTalla = dis.NombreTalla.ToUpper(),
+                                                         Cantidad = dis.Cantidad,
+                                                         Orden = dis.Orden
+                                                     }).ToList()
+                                                 }).FirstOrDefault()
+                                             }).ToList()
+
+                                         }).ToList()
+                            }).ToList()
+                        }).ToList()
+                    }).ToList();
+
+                    return Ok(devoluciones[0].gruposXDetPed);
+                }
+            }catch(Exception e)
             {
                 return BadRequest(e.ToString());
             }
@@ -322,7 +440,7 @@ namespace AventasApi.Controllers
                             NumDevolucion=devolucion.Correlativo,
                             IdProducto=detalle.IdProducto,
                             CodigoColor=detalle.CodigoColor,
-                            CodigoTalla=detalle.CodigoTalla,
+                            CodigoTalla=detalle.CodigoTalla.Trim(),
                             Cantidad=detalle.Cantidad,
                             PrecioUnitario=detalle.PrecioUnitario
                         });
@@ -394,7 +512,7 @@ namespace AventasApi.Controllers
                                 NumDevolucion = numeroReferencia,
                                 IdProducto = detalle.IdProducto,
                                 CodigoColor = detalle.CodigoColor,
-                                CodigoTalla = detalle.CodigoTalla,
+                                CodigoTalla = detalle.CodigoTalla.Trim(),
                                 Cantidad = detalle.Cantidad,
                                 PrecioUnitario = detalle.PrecioUnitario
                             });
