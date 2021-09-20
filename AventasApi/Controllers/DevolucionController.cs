@@ -76,14 +76,16 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities db = new AVentasEntities())
                 {
-                    var listaDevoluciones = db.AprobacionDevoluciones.FirstOrDefault(x => x.IdDevAprobacion == idDevAprobacion); 
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var listaDevoluciones = db.AprobacionDevoluciones.FirstOrDefault(x => x.IdDevAprobacion == idDevAprobacion);
 
-                    if(listaDevoluciones == null)
+                    if (listaDevoluciones == null)
                     {
                         return BadRequest("No existe el registro");
                     }
 
                     listaDevoluciones.Aprobado = true;
+                    listaDevoluciones.UsuarioModifica = user.Id;
                     listaDevoluciones.FechaModifica = DateTime.Now;
                     var result = db.SaveChanges();
                     return Ok(result);
@@ -104,12 +106,33 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
+                    var DevolucionesPedientes = ctx.AprobacionDevoluciones.Where(x => x.Aprobado == false && x.NumDevolucion == devolucion).Select(x => x.Usuarios.nombre).Distinct().ToList();
+
+                    if (DevolucionesPedientes.Count() > 0)
+                    {
+                        string nombres = string.Empty;
+
+                        foreach (string nombre in DevolucionesPedientes)
+                        {
+                            if (string.IsNullOrEmpty(nombres))
+                            {
+                                nombres = nombre;
+                            }
+                            else
+                            {
+                                nombres = $"{nombres}, {nombre}";
+                            }
+                        }
+
+                        return BadRequest($"El pedido {devolucion} se encuentra pendiente a la aprobacion de: {nombres}.");
+                    }
                     var devolucionDB = await ctx.Devolucion.FirstOrDefaultAsync(x => x.NumDevolucion == devolucion && x.Procesando == false);
 
                     if (devolucionDB == null)
                     {
                         return BadRequest($"El pedido {devolucion} se encuentra ya en proceso de sincronizacion.");
                     }
+
 
                     var devolucionApi = new DevolucionApiModel
                     {
@@ -471,6 +494,7 @@ namespace AventasApi.Controllers
             }
         }
 
+
         [HttpPost]
         [Route("parcial")]
         public async Task<IHttpActionResult> PostDevolucionParcial([FromBody] List<DevolucionPostModel> devoluciones)
@@ -486,6 +510,7 @@ namespace AventasApi.Controllers
                     foreach(DevolucionPostModel devolucion in devoluciones)
                     {
                         var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == usuario.EmpresaId);
+                        var PendienteAprobacion = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToListAsync();
                         int numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
                         string inicialesAsesor = asesor.InicialesNombre;
                         string numeroReferencia = $"{inicialesAsesor}DEV-1{numeroCorelativo.ToString("D5")}";
@@ -502,7 +527,8 @@ namespace AventasApi.Controllers
                             CodigoAsesor = cliente.CodigoAsesor,
                             UsuarioCrea = user.Id,
                             FechaCrea = DateTime.Now,
-                            Sincronizado = false
+                            Sincronizado = false,
+                            Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado"
                         };
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -518,6 +544,22 @@ namespace AventasApi.Controllers
                             });
                         }
                         bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
+                        if (PendienteAprobacion.Count > 0)
+                        {
+                            foreach (var x in PendienteAprobacion)
+                            {
+                                AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
+                                {
+                                    IdUsuario = x.IdUsuario,
+                                    NumDevolucion = numeroReferencia,
+                                    Estado = true,
+                                    UsuarioCrea = user.Id,
+                                    FechaCrea = DateTime.Now
+                                };
+                                ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
+                                var result = await ctx.SaveChangesAsync();
+                            }
+                        }
                         ReducirPendienteDevolucion(devolucionDB);
                     }
 
