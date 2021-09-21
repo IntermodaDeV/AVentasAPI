@@ -266,6 +266,7 @@ namespace AventasApi.Controllers
                             CodigoCliente = x.CodigoCliente,
                             NombreCliente = x.Clientes.Nombre,
                             motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                            TotalUnidades=x.TotalUnidades,
                             Estado = x.Estado,
                             FechaCreacion=x.FechaCrea.Value,
                             Usuario = db.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
@@ -330,12 +331,12 @@ namespace AventasApi.Controllers
                                 NombreProducto = pedDet.FirstOrDefault().ProductosxColeccion.NombreProducto,
                                 Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
                                 CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
-                                TotalXProducto = 0,
+                                TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
                                 coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod => colXprod.Sum(det => det.Cantidad) > 0).Select(colXprod =>
                                          new ColoresXProdXDetPed
                                          {
                                              CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
-                                             TotalXColor = 0,
+                                             TotalXColor = colXprod.Sum(cant => cant.MontoLinea),
                                              PrecioXColor = colXprod.FirstOrDefault().PrecioUnitario,
                                              IdColor = colXprod.Key,
                                              NombreColor = ctx.Colores.FirstOrDefault(color => color.CodigoColor == colXprod.Key).Color,
@@ -453,11 +454,14 @@ namespace AventasApi.Controllers
                         UsuarioCrea = user.Id,
                         FechaCrea = DateTime.Now,
                         Sincronizado = false,
-                        Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado"
+                        Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
+                        TotalUnidades=0
                     };
 
                     foreach(DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
                     {
+                        devolucionDB.TotalUnidades += detalle.Cantidad;
+
                         devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
                         {
                             NumDevolucion=devolucion.Correlativo,
@@ -465,7 +469,8 @@ namespace AventasApi.Controllers
                             CodigoColor=detalle.CodigoColor,
                             CodigoTalla=detalle.CodigoTalla.Trim(),
                             Cantidad=detalle.Cantidad,
-                            PrecioUnitario=detalle.PrecioUnitario
+                            PrecioUnitario=detalle.PrecioUnitario,
+                            MontoLinea=detalle.Cantidad*detalle.PrecioUnitario
                         });
                     }
                     bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
@@ -528,11 +533,14 @@ namespace AventasApi.Controllers
                             UsuarioCrea = user.Id,
                             FechaCrea = DateTime.Now,
                             Sincronizado = false,
-                            Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado"
+                            Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
+                            TotalUnidades = 0
                         };
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
                         {
+                            devolucionDB.TotalUnidades += detalle.Cantidad;
+
                             devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
                             {
                                 NumDevolucion = numeroReferencia,
@@ -540,7 +548,8 @@ namespace AventasApi.Controllers
                                 CodigoColor = detalle.CodigoColor,
                                 CodigoTalla = detalle.CodigoTalla.Trim(),
                                 Cantidad = detalle.Cantidad,
-                                PrecioUnitario = detalle.PrecioUnitario
+                                PrecioUnitario = detalle.PrecioUnitario,
+                                MontoLinea = detalle.Cantidad * detalle.PrecioUnitario
                             });
                         }
                         bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);

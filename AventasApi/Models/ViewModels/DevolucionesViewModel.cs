@@ -35,5 +35,6 @@ namespace AventasApi.Models.ViewModels
         public DateTime FechaCreacion { get; set; }
 
         public ClienteViewModel Cliente { get; set; }
+        public int? TotalUnidades { get; internal set; }
     }
 }

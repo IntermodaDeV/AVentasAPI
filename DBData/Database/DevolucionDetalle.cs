@@ -21,6 +21,7 @@ namespace DBData.Database
         public string CodigoTalla { get; set; }
         public int Cantidad { get; set; }
         public Nullable<decimal> PrecioUnitario { get; set; }
+        public Nullable<decimal> MontoLinea { get; set; }
     
         public virtual Devolucion Devolucion { get; set; }
         public virtual ProductosxColeccion ProductosxColeccion { get; set; }

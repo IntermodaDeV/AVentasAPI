@@ -371,6 +371,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Sincronizado" Type="bit" Nullable="false" />
           <Property Name="UsuarioCrea" Type="int" />
           <Property Name="FechaCrea" Type="datetime" />
+          <Property Name="TotalUnidades" Type="int" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -383,6 +384,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="CodigoTalla" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Cantidad" Type="int" Nullable="false" />
           <Property Name="PrecioUnitario" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="MontoLinea" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="DistribucionxTalla">
           <Key>
@@ -10152,6 +10154,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AprobacionDevoluciones" Relationship="AventasModel.FK_AprobacionDevolucion_Devolucion_NumeroDevolucion" FromRole="Devolucion" ToRole="AprobacionDevoluciones" />
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" FromRole="Devolucion" ToRole="Usuarios" />
+          <Property Name="TotalUnidades" Type="Int32" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -10166,6 +10169,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="PrecioUnitario" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" FromRole="DevolucionDetalle" ToRole="Devolucion" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="DevolucionDetalle" ToRole="ProductosxColeccion" />
+          <Property Name="MontoLinea" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <Association Name="FK_tbDevolucion_Clientes_CodigoCliente">
           <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
@@ -12192,6 +12196,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Devolucion">
             <EntityTypeMapping TypeName="AventasModel.Devolucion">
               <MappingFragment StoreEntitySet="Devolucion">
+                <ScalarProperty Name="TotalUnidades" ColumnName="TotalUnidades" />
                 <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
                 <ScalarProperty Name="FacturaOrigen" ColumnName="FacturaOrigen" />
                 <ScalarProperty Name="PedidoOrigen" ColumnName="PedidoOrigen" />
@@ -12215,6 +12220,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="DevolucionDetalle">
             <EntityTypeMapping TypeName="AventasModel.DevolucionDetalle">
               <MappingFragment StoreEntitySet="DevolucionDetalle">
+                <ScalarProperty Name="MontoLinea" ColumnName="MontoLinea" />
                 <ScalarProperty Name="PrecioUnitario" ColumnName="PrecioUnitario" />
                 <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
                 <ScalarProperty Name="CodigoTalla" ColumnName="CodigoTalla" />
