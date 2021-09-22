@@ -17,6 +17,7 @@ namespace AventasApi.Models.ViewModels
         public string PedidoOriginal { get; set; }
         public string Linea { get; set; }
         public string Empresa { get; set; }
+        public decimal SubTotal { get;  set; }
 
         public List<DevolucionDetallePostModel> DetalleDevolucion;
     }

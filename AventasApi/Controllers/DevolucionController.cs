@@ -232,59 +232,39 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("listado")]
-        public async Task<IHttpActionResult> ObtenerlistadoDevoluciones()
+        [Route("listado/{asesor}")]
+        public async Task<IHttpActionResult> ObtenerlistadoDevoluciones(string asesor)
         {
             try
             {
-                using (AVentasEntities db = new AVentasEntities())
+                using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    List<string> asesoresHabilitados = new List<string>();
-                    var usuario = await db.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
-                    var empresas = await db.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
 
-                    if (usuario.FlagTodosAsesores.Value)
+                    List<DevolucionesViewModel> devoluciones = await ctx.Devolucion.Where(x => x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
                     {
-                        asesoresHabilitados = await db.Asesores.Where(x => x.CodigoAsesor == user.UserAccount && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
-                    }
-                    else
-                    {
-                        var asesores = await db.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
-                        asesoresHabilitados = await db.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
-                    }
-
-
-                    List<DevolucionesViewModel> ListaDevoluciones = new List<DevolucionesViewModel>();
-                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
-                    {
-                        var devolucion = db.Devolucion.Where(x => x.CodigoAsesor == user.UserAccount).Select(x => new DevolucionesViewModel
+                        NumDevolucion = x.NumDevolucion,
+                        NumeroRMA = x.NumeroRMA,
+                        PedidoDevolucion = x.PedidoDevolucion,
+                        CodigoCliente = x.CodigoCliente,
+                        NombreCliente = x.Clientes.Nombre,
+                        motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        TotalUnidades = x.TotalUnidades,
+                        Estado = x.Estado,
+                        FechaCreacion = x.FechaCrea.Value,
+                        SubTotal = x.Subtotal,
+                        Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
+                        Cliente = new ClienteViewModel
                         {
-                            NumDevolucion = x.NumDevolucion,
-                            NumeroRMA = x.NumeroRMA,
-                            PedidoDevolucion = x.PedidoDevolucion,
-                            CodigoCliente = x.CodigoCliente,
-                            NombreCliente = x.Clientes.Nombre,
-                            motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
-                            TotalUnidades=x.TotalUnidades,
-                            Estado = x.Estado,
-                            FechaCreacion=x.FechaCrea.Value,
-                            Usuario = db.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
-                            Cliente = new ClienteViewModel
-                            {
-                                Codigo = x.Clientes.CodigoCliente,
-                                Nombre = x.Clientes.Nombre,
-                                Direccion = x.Clientes.Direccion,
-                                Moneda = x.Clientes.IdMoneda,
-                                EmpresaId = x.Clientes.EmpresaId
-                            }
-                        }).ToList();
+                            Codigo = x.Clientes.CodigoCliente,
+                            Nombre = x.Clientes.Nombre,
+                            Direccion = x.Clientes.Direccion,
+                            Moneda = x.Clientes.IdMoneda,
+                            EmpresaId = x.Clientes.EmpresaId
+                        }
+                    }).ToListAsync();
 
-                        ListaDevoluciones.AddRange(devolucion);
-                    }
-
-                        
-                    return Ok(ListaDevoluciones);
+                    return Ok(devoluciones);
                 }
 
             }
@@ -455,7 +435,8 @@ namespace AventasApi.Controllers
                         FechaCrea = DateTime.Now,
                         Sincronizado = false,
                         Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
-                        TotalUnidades=0
+                        Subtotal = devolucion.SubTotal,
+                        TotalUnidades =0
                     };
 
                     foreach(DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -534,6 +515,7 @@ namespace AventasApi.Controllers
                             FechaCrea = DateTime.Now,
                             Sincronizado = false,
                             Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
+                            Subtotal = devolucion.SubTotal,
                             TotalUnidades = 0
                         };
 

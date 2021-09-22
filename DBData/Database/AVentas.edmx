@@ -372,6 +372,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="UsuarioCrea" Type="int" />
           <Property Name="FechaCrea" Type="datetime" />
           <Property Name="TotalUnidades" Type="int" />
+          <Property Name="Subtotal" Type="decimal" Precision="10" Scale="2" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -10155,6 +10156,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="AprobacionDevoluciones" Relationship="AventasModel.FK_AprobacionDevolucion_Devolucion_NumeroDevolucion" FromRole="Devolucion" ToRole="AprobacionDevoluciones" />
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" FromRole="Devolucion" ToRole="Usuarios" />
           <Property Name="TotalUnidades" Type="Int32" />
+          <Property Name="Subtotal" Type="Decimal" Precision="10" Scale="2" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -12196,6 +12198,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Devolucion">
             <EntityTypeMapping TypeName="AventasModel.Devolucion">
               <MappingFragment StoreEntitySet="Devolucion">
+                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
                 <ScalarProperty Name="TotalUnidades" ColumnName="TotalUnidades" />
                 <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
                 <ScalarProperty Name="FacturaOrigen" ColumnName="FacturaOrigen" />
