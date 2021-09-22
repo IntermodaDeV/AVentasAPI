@@ -293,7 +293,7 @@ namespace AventasApi.Controllers
                                 GrupoTallaId = txp.CodigoGrupoTalla.ToUpper(),
                                 Talla = txp.CodigoTalla.ToUpper(),
                                 Orden = txp.Orden ?? 0,
-                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                /*Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
                                 {
                                     IdDistribucion = dis.IdDistribucion,
                                     IdTallaxGrupo = dis.IdTallaxGrupo,
@@ -301,7 +301,7 @@ namespace AventasApi.Controllers
                                     NombreTalla = dis.NombreTalla.ToUpper(),
                                     Cantidad = dis.Cantidad,
                                     Orden = dis.Orden
-                                }).ToList()
+                                }).ToList()*/
                             }).OrderBy(txp => txp.Orden).ToList(),
                             prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.IdProducto)
                             .Select(pedDet => new ProductosXDetPed
@@ -333,7 +333,7 @@ namespace AventasApi.Controllers
                                                      GrupoTallaId = txp.CodigoGrupoTalla,
                                                      Talla = txp.CodigoTalla.ToUpper(),
                                                      Orden = txp.Orden ?? 0,
-                                                     Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                                     /*Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
                                                      {
                                                          IdDistribucion = dis.IdDistribucion,
                                                          IdTallaxGrupo = dis.IdTallaxGrupo,
@@ -341,7 +341,7 @@ namespace AventasApi.Controllers
                                                          NombreTalla = dis.NombreTalla.ToUpper(),
                                                          Cantidad = dis.Cantidad,
                                                          Orden = dis.Orden
-                                                     }).ToList()
+                                                     }).ToList()*/
                                                  }).FirstOrDefault()
                                              }).ToList()
 
@@ -448,7 +448,7 @@ namespace AventasApi.Controllers
                             NumDevolucion=devolucion.Correlativo,
                             IdProducto=detalle.IdProducto,
                             CodigoColor=detalle.CodigoColor,
-                            CodigoTalla=detalle.CodigoTalla.Trim(),
+                            CodigoTalla=detalle.CodigoTalla,
                             Cantidad=detalle.Cantidad,
                             PrecioUnitario=detalle.PrecioUnitario,
                             MontoLinea=detalle.Cantidad*detalle.PrecioUnitario
@@ -528,7 +528,7 @@ namespace AventasApi.Controllers
                                 NumDevolucion = numeroReferencia,
                                 IdProducto = detalle.IdProducto,
                                 CodigoColor = detalle.CodigoColor,
-                                CodigoTalla = detalle.CodigoTalla.Trim(),
+                                CodigoTalla = detalle.CodigoTalla,
                                 Cantidad = detalle.Cantidad,
                                 PrecioUnitario = detalle.PrecioUnitario,
                                 MontoLinea = detalle.Cantidad * detalle.PrecioUnitario
