@@ -492,6 +492,7 @@ namespace AventasApi.Controllers
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
                     Clientes cliente = await ctx.Clientes.FindAsync(devoluciones[0].CodigoCliente);
+                    List<Object> nuevasDevoluciones = new List<Object>();
 
                     foreach(DevolucionPostModel devolucion in devoluciones)
                     {
@@ -552,9 +553,11 @@ namespace AventasApi.Controllers
                             }
                         }
                         ReducirPendienteDevolucion(devolucionDB);
+
+                        nuevasDevoluciones.Add(new {referencia= numeroReferencia,factura= devolucion.FacturaOriginal });
                     }
 
-                    return Ok();
+                    return Ok(nuevasDevoluciones);
                 }
             }
             catch (Exception e)

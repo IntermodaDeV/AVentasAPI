@@ -523,11 +523,11 @@ namespace AventasApi.Controllers
                                                  }).OrderBy(or => or.Orden).ToList(),
 
                                              }).OrderBy(txp => txp.Orden).ToList(),
-                        ListaColores = pxc.ColoresxProducto.Where(x=>x.CodigoColor==color).Select(cpp => new ColorViewModel
+                        ListaColores = ctx.Colores.Where(x=>x.CodigoColor==color).Select(cpp => new ColorViewModel
                         {
-                            CodigoColor = cpp.Colores.CodigoColor,
-                            NombreColor = cpp.Colores.Color,
-                            Color = cpp.Colores.Rgb,
+                            CodigoColor = cpp.CodigoColor,
+                            NombreColor = cpp.Color,
+                            Color = cpp.Rgb,
                         }).ToList(),
                     }).ToList();
 
