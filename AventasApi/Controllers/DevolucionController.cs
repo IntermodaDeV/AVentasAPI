@@ -36,6 +36,46 @@ namespace AventasApi.Controllers
 
             return respuesta.IsSuccessful;
         }
+
+        [HttpGet]
+        [Route("{correlativo}")]
+        public async Task<IHttpActionResult> ObtenerDevolucion(string correlativo)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    List<DevolucionesViewModel> devolucion = await ctx.Devolucion.Where(x=>x.NumDevolucion==correlativo).Select(x=> new DevolucionesViewModel
+                    {
+                        NumDevolucion = x.NumDevolucion,
+                        NumeroRMA = x.NumeroRMA,
+                        PedidoDevolucion = x.PedidoDevolucion,
+                        CodigoCliente = x.CodigoCliente,
+                        NombreCliente = x.Clientes.Nombre,
+                        motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        TotalUnidades = x.TotalUnidades,
+                        Estado = x.Estado,
+                        FechaCreacion = x.FechaCrea.Value,
+                        SubTotal = x.Subtotal,
+                        Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
+                        Cliente = new ClienteViewModel
+                        {
+                            Codigo = x.Clientes.CodigoCliente,
+                            Nombre = x.Clientes.Nombre,
+                            Direccion = x.Clientes.Direccion,
+                            Moneda = x.Clientes.IdMoneda,
+                            EmpresaId = x.Clientes.EmpresaId
+                        }
+                    }).ToListAsync();
+
+                    return Ok(devolucion.First());
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
         [HttpGet]
         [Route("listadoDevPendienteAprobar")]
         public IHttpActionResult ObtenerDevolucionesPendientesAprobar()
@@ -409,6 +449,7 @@ namespace AventasApi.Controllers
                 return BadRequest(e.Message);
             }
         }
+
         [HttpPost]
         [Route("completa")]
         public async Task<IHttpActionResult> PostDevolucion([FromBody]DevolucionPostModel devolucion)
