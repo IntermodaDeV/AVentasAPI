@@ -22,7 +22,7 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/devolucion/motivos")]
+        [Route("~/api/motivos/devolucion")]
         public async Task<IHttpActionResult> GetMotivosDevolucion()
         {
             try
