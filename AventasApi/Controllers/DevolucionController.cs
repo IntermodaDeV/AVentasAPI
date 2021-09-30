@@ -224,8 +224,8 @@ namespace AventasApi.Controllers
                             {
                                 content = content.Remove(0, 8);
                                 var probando = content.Split(',');
-                                devolucionDB.NumeroRMA = probando[0];
-                                devolucionDB.PedidoDevolucion = probando[1];
+                                devolucionDB.NumeroRMA = probando[0].Trim();
+                                devolucionDB.PedidoDevolucion = probando[1].Trim();
                                 devolucionDB.Estado = "Creado";
                                 devolucionDB.Sincronizado = true;
                                 devolucionDB.Procesando = false;
@@ -618,12 +618,31 @@ namespace AventasApi.Controllers
                 {
                     foreach (var linea in lineasPedido)
                     {
-                        var talla = linea.CodigoTalla.Trim().ToUpper();
+                        var talla = linea.CodigoTalla.ToUpper();
                         var fisico = await ctx.PedidosDetalle.FirstOrDefaultAsync(x => x.PedidoId==PedidoOriginal.PedidoId && x.CodigoColor==linea.CodigoColor && x.CodigoTalla.ToUpper() == talla && x.IdProducto==linea.IdProducto);
                         fisico.CantidadDevolucion = fisico.CantidadDevolucion - linea.Cantidad;
                         await ctx.SaveChangesAsync();
                     }
                 }
+            }
+        }
+
+
+        [HttpGet]
+        [Route("obtencionFacturas/{codigoProducto}/{cliente}")]
+        public async Task<IHttpActionResult> ObtenerFacturasPorProducto(string codigoProducto, string cliente)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var Facturas = ctx.SP_ObtencionFacturas(codigoProducto, cliente).ToList();
+                    return Ok(Facturas);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
             }
         }
     }

@@ -20,7 +20,6 @@ namespace DBData.Database
         public AVentasEntities()
             : base("name=AVentasEntities")
         {
-            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 720;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -346,6 +345,19 @@ namespace DBData.Database
                 new ObjectParameter("FechaFinal", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<VisitasClientePorAsesor_Result>("VisitasClientePorAsesor", codigoAsesorParameter, fechaInicioParameter, fechaFinalParameter);
+        }
+    
+        public virtual ObjectResult<SP_ObtencionFacturas_Result> SP_ObtencionFacturas(string codigoProducto, string cliente)
+        {
+            var codigoProductoParameter = codigoProducto != null ?
+                new ObjectParameter("codigoProducto", codigoProducto) :
+                new ObjectParameter("codigoProducto", typeof(string));
+    
+            var clienteParameter = cliente != null ?
+                new ObjectParameter("cliente", cliente) :
+                new ObjectParameter("cliente", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtencionFacturas_Result>("SP_ObtencionFacturas", codigoProductoParameter, clienteParameter);
         }
     }
 }
