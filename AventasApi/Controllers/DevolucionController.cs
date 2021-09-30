@@ -645,5 +645,30 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpGet]
+        [Route("reporte/{devolucion}")]
+        public async Task<IHttpActionResult> GetReporteDevolucion(string devolucion)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var detalleDevolucion = await ctx.DevolucionDetalle.Where(x => x.NumDevolucion == devolucion).Select(x => new
+                    {
+                        Producto = x.ProductosxColeccion.CodigoProducto,
+                        Color = x.CodigoColor,
+                        Talla = x.CodigoTalla,
+                        Cantidad = x.Cantidad,
+                    }).ToListAsync();
+
+                    return Ok(detalleDevolucion);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }
