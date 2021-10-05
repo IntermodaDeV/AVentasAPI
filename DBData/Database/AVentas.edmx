@@ -1562,6 +1562,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="FlagAdministradorProductos" Type="bit" />
           <Property Name="SesionActiva" Type="bit" />
           <Property Name="FlagBodegaEspecifico" Type="bit" Nullable="false" />
+          <Property Name="CorreoDevolucion" Type="bit" />
+          <Property Name="Correo" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Usuarios_Asesores">
           <Key>
@@ -7977,6 +7979,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="AprobacionDevoluciones1" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_IdUsuario" FromRole="Usuarios" ToRole="AprobacionDevoluciones" />
           <NavigationProperty Name="AprobacionDevoluciones2" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica" FromRole="Usuarios" ToRole="AprobacionDevoluciones" />
           <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" FromRole="Usuarios" ToRole="Devolucion" />
+          <Property Name="CorreoDevolucion" Type="Boolean" />
+          <Property Name="Correo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK__Usuarios__Empres__28E2F130">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -11403,6 +11407,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Usuarios">
             <EntityTypeMapping TypeName="AventasModel.Usuarios">
               <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="Correo" ColumnName="Correo" />
+                <ScalarProperty Name="CorreoDevolucion" ColumnName="CorreoDevolucion" />
                 <ScalarProperty Name="FlagBodegaEspecifico" ColumnName="FlagBodegaEspecifico" />
                 <ScalarProperty Name="SesionActiva" ColumnName="SesionActiva" />
                 <ScalarProperty Name="FlagAdministradorProductos" ColumnName="FlagAdministradorProductos" />

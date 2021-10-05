@@ -51,6 +51,8 @@ namespace DBData.Database
         public Nullable<bool> FlagAdministradorProductos { get; set; }
         public Nullable<bool> SesionActiva { get; set; }
         public bool FlagBodegaEspecifico { get; set; }
+        public Nullable<bool> CorreoDevolucion { get; set; }
+        public string Correo { get; set; }
     
         public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

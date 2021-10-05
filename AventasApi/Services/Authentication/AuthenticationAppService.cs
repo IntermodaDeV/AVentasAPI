@@ -71,7 +71,7 @@ namespace AventasApi.Services.Authentication
 
                     var user = new Usuario { IdUsuario = userBD.usuario, Pin = null };
 
-                    /*if (EnLinea(userBD.EmpresaId, userBD.usuario))
+                    if (EnLinea(userBD.EmpresaId, userBD.usuario))
                     {
                         //Validar con usuario de Intermoda
                         var client = new RestClient(Enviroment.AuthenticationApi);
@@ -120,7 +120,7 @@ namespace AventasApi.Services.Authentication
                         {
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
                         }
-                    }*/
+                    }
                     
                    
 
