@@ -512,7 +512,12 @@ namespace AventasApi.Controllers
                             var result = await ctx.SaveChangesAsync();
                         }
                     }
-                    ReducirPendienteDevolucion(devolucionDB);
+
+                    if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
+                    {
+                        ReducirPendienteDevolucion(devolucionDB);
+                    }
+
                     return Ok(devolucion.Correlativo);
                 }
             }catch(Exception e)
@@ -593,7 +598,11 @@ namespace AventasApi.Controllers
                                 var result = await ctx.SaveChangesAsync();
                             }
                         }
-                        ReducirPendienteDevolucion(devolucionDB);
+
+                        if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
+                        {
+                            ReducirPendienteDevolucion(devolucionDB);
+                        }                        
 
                         nuevasDevoluciones.Add(new {referencia= numeroReferencia,factura= devolucion.FacturaOriginal });
                     }
