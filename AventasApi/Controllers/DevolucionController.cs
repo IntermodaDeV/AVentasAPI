@@ -14,6 +14,7 @@ using ExternalApiData.Enviroments;
 using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
 using AventasApi.Models;
+using AventasApi.Utils;
 
 namespace AventasApi.Controllers
 {
@@ -462,6 +463,9 @@ namespace AventasApi.Controllers
                     Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
                     Clientes cliente = await ctx.Clientes.FindAsync(devolucion.CodigoCliente);
                     var PendienteAprobacion = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToListAsync();
+                    var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null).Select(x => x.Correo).ToListAsync();
+                    var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devolucion.MotivoDevolucionDetalle);
+
                     Devolucion devolucionDB = new Devolucion()
                     {
                         NumDevolucion = devolucion.Correlativo,
@@ -518,6 +522,8 @@ namespace AventasApi.Controllers
                         ReducirPendienteDevolucion(devolucionDB);
                     }
 
+                    _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo ${devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion} ",correos);
+
                     return Ok(devolucion.Correlativo);
                 }
             }catch(Exception e)
@@ -539,8 +545,10 @@ namespace AventasApi.Controllers
                     Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
                     Clientes cliente = await ctx.Clientes.FindAsync(devoluciones[0].CodigoCliente);
                     List<Object> nuevasDevoluciones = new List<Object>();
+                    var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null).Select(x => x.Correo).ToListAsync();
+                    var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devoluciones[0].MotivoDevolucionDetalle);
 
-                    foreach(DevolucionPostModel devolucion in devoluciones)
+                    foreach (DevolucionPostModel devolucion in devoluciones)
                     {
                         var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == usuario.EmpresaId);
                         var PendienteAprobacion = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToListAsync();
@@ -605,6 +613,7 @@ namespace AventasApi.Controllers
                         }                        
 
                         nuevasDevoluciones.Add(new {referencia= numeroReferencia,factura= devolucion.FacturaOriginal });
+                        _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo ${numeroReferencia} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion}", correos);
                     }
 
                     return Ok(nuevasDevoluciones);
