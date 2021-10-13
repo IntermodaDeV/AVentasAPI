@@ -98,7 +98,7 @@ namespace AventasApi.Controllers
                 using(AVentasEntities ctx = new AVentasEntities())
                 {
                     var facturas = await ctx.FacturasxCliente
-                        .Where(x => x.CodigoCliente == cliente && x.Tipo.Contains("Factura"))
+                        .Where(x => x.CodigoCliente == cliente && x.Tipo.Contains("Factura") && x.NumeroPedido!=null)
                         .Select(x => new { factura = x.Factura, pedido = x.NumeroPedido,linea=x.IdLinea })
                         .ToListAsync();
 

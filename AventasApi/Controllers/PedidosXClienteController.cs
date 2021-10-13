@@ -192,7 +192,8 @@ namespace AventasApi.Controllers
                                 MontoLinea = (precioUnitario * cantidad),
                                 Fecha = DateTime.Now,
                                 CodigoAsesor = asesor.CodigoAsesor,
-                                PrecioUnitario = precioUnitario
+                                PrecioUnitario = precioUnitario,
+                                CantidadDevolucion = 0
                             });
                         }
 
