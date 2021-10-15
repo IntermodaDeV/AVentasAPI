@@ -30,6 +30,10 @@ namespace AventasApi.Models.ViewModels
         public string Estado { get; set; }
         public string Usuario { get; set; }
 
+        public string ErrorAx { get; set; }
+
+        public string Linea { get; set; }
+
         public int cantidad { get; set; }
 
         public DateTime FechaCreacion { get; set; }

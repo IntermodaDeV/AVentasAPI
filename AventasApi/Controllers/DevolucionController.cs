@@ -408,7 +408,7 @@ namespace AventasApi.Controllers
                 using (AVentasEntities db = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var listaCitas = db.Devolucion.Where(x => x.CodigoAsesor == user.UserAccount && x.Sincronizado==false).Select(x => new DevolucionesViewModel
+                    var listaCitas = db.Devolucion.Where(x => x.CodigoAsesor == user.UserAccount && x.Sincronizado == false).Select(x => new DevolucionesViewModel
                     {
                         NumDevolucion = x.NumDevolucion,
                         NumeroRMA = x.NumeroRMA,
@@ -416,7 +416,9 @@ namespace AventasApi.Controllers
                         CodigoCliente = x.CodigoCliente,
                         NombreCliente = x.Clientes.Nombre,
                         motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
-                        Estado = x.Estado
+                        Estado = x.Estado,
+                        ErrorAx = x.ErrorAx,
+                        Linea = x.IdLinea
                     }).ToList();
                     return Ok(listaCitas);
                 }
