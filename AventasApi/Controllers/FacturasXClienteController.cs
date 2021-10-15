@@ -99,7 +99,8 @@ namespace AventasApi.Controllers
                 {
                     var facturas = await ctx.FacturasxCliente
                         .Where(x => x.CodigoCliente == cliente && x.Tipo.Contains("Factura") && x.NumeroPedido!=null)
-                        .Select(x => new { factura = x.Factura, pedido = x.NumeroPedido,linea=x.IdLinea })
+                        .OrderByDescending(x => x.FechaFactura)
+                        .Select(x => new { factura = x.Factura, pedido = x.NumeroPedido,linea=x.IdLinea })                       
                         .ToListAsync();
 
                     return Ok(facturas);

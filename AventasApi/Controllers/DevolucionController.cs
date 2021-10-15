@@ -522,7 +522,10 @@ namespace AventasApi.Controllers
                         ReducirPendienteDevolucion(devolucionDB);
                     }
 
-                    _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo ${devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion} ",correos);
+                    if (guardadoExito)
+                    {
+                        _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion} ", correos);
+                    } 
 
                     return Ok(devolucion.Correlativo);
                 }
@@ -613,7 +616,12 @@ namespace AventasApi.Controllers
                         }                        
 
                         nuevasDevoluciones.Add(new {referencia= numeroReferencia,factura= devolucion.FacturaOriginal });
-                        _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo ${numeroReferencia} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion}", correos);
+
+                        if (guardadoExito)
+                        {
+                            _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {numeroReferencia} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion}", correos);
+                        }
+                        
                     }
 
                     return Ok(nuevasDevoluciones);
