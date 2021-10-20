@@ -539,6 +539,14 @@ namespace AventasApi.Controllers
                     List<Object> nuevasDevoluciones = new List<Object>();
                     var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null).Select(x => x.Correo).ToListAsync();
                     var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devoluciones[0].MotivoDevolucionDetalle);
+                    List<MotivosDevConAprobacion> AprobadoresSinFactura = new List<MotivosDevConAprobacion>();
+                    var empresa = devoluciones[0].Empresa;
+                    var motivoSinFactura = await ctx.MotivosDevolucion.FirstOrDefaultAsync(x => x.CodigoMotivoDevolucion == "SIN-FACTURA" && x.EmpresaId == empresa);
+
+                    if (motivoSinFactura != null)
+                    {
+                        AprobadoresSinFactura = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == motivoSinFactura.IdMotivoDevolucion).ToListAsync();
+                    }
 
                     foreach (DevolucionPostModel devolucion in devoluciones)
                     {
@@ -588,6 +596,22 @@ namespace AventasApi.Controllers
                             if (PendienteAprobacion.Count > 0)
                             {
                                 foreach (var x in PendienteAprobacion)
+                                {
+                                    AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
+                                    {
+                                        IdUsuario = x.IdUsuario,
+                                        NumDevolucion = numeroReferencia,
+                                        Estado = true,
+                                        UsuarioCrea = user.Id,
+                                        FechaCrea = DateTime.Now
+                                    };
+                                    ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
+                                    var result = await ctx.SaveChangesAsync();
+                                }
+                            }
+                            if (string.IsNullOrEmpty(devolucion.FacturaOriginal) || string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
+                            {
+                                foreach (var x in AprobadoresSinFactura)
                                 {
                                     AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
                                     {
