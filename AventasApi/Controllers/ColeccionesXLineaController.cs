@@ -478,8 +478,8 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/producto/{pais}/{producto}/{color}")]
-        public async Task<IHttpActionResult> GetProducto(string pais, string producto, string color)
+        [Route("~/api/producto/{pais}/{grupoPrecio}/{producto}/{color}")]
+        public async Task<IHttpActionResult> GetProducto(string pais,string grupoPrecio ,string producto, string color)
         {
             try
             {
@@ -494,7 +494,7 @@ namespace AventasApi.Controllers
                         NombreProducto = pxc.NombreProducto,
                         StockVisible = pxc.StockVisible,
                         GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
-                        Precio = pxc.PreciosxProducto.Select(precio => new PrecioXProductoViewModel
+                        Precio = pxc.PreciosxProducto.Where(preEsp =>preEsp.GrupoPrecio == grupoPrecio).Select(precio => new PrecioXProductoViewModel
                         {
                             GrupoPrecio = precio.GrupoPrecio,
                             IdMoneda = precio.IdMoneda,
@@ -529,6 +529,23 @@ namespace AventasApi.Controllers
                             NombreColor = cpp.Color,
                             Color = cpp.Rgb,
                         }).ToList(),
+                        fisicaDisponible = pxc.FisicoDisponible
+                                              .Select(f => new FisicoDisponibleViewModel
+                                              {
+                                                  CodigoColor = f.CodigoColor,
+                                                  IdTalla = f.CodigoTalla.ToUpper(),
+                                                  Cantidad = f.Disponible < 0 ? 0 : f.Disponible,
+                                                  MinStock = f.MinStock,
+                                                  PreciosEspecificos = f.PrecioEspecifico.Where(preEsp => preEsp.GrupoPrecio == grupoPrecio).Select(preEsp => new PrecioEspecificoViewModel
+                                                  {
+                                                      IdPrecioEspecifico = preEsp.IdPrecioEspecifico,
+                                                      IdMoneda = preEsp.IdMoneda,
+                                                      IdProducto = preEsp.IdProducto,
+                                                      GrupoPrecio = preEsp.GrupoPrecio,
+                                                      IdFisicoDisponible = preEsp.IdFisicoDisponible,
+                                                      Precio = preEsp.Hasta == new DateTime(1900, 1, 1) ? preEsp.Precio : pxc.PreciosxProducto.FirstOrDefault(pre => pre.GrupoPrecio == grupoPrecio && pre.IdProducto == preEsp.IdProducto).Precio,
+                                                  }).ToList(),
+                                              }).ToList()
                     }).ToList();
 
 
