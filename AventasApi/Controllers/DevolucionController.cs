@@ -545,7 +545,7 @@ namespace AventasApi.Controllers
 
                     if (motivoSinFactura != null)
                     {
-                        AprobadoresSinFactura = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == motivoSinFactura.IdMotivoDevolucion).ToListAsync();
+                        AprobadoresSinFactura = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == motivoSinFactura.IdMotivoDevolucion && x.Estado == true).ToListAsync();
                     }
 
                     foreach (DevolucionPostModel devolucion in devoluciones)
@@ -593,9 +593,9 @@ namespace AventasApi.Controllers
 
                         if (guardadoExito)
                         {
-                            if (PendienteAprobacion.Count > 0)
+                            if (string.IsNullOrEmpty(devolucion.FacturaOriginal) || string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
                             {
-                                foreach (var x in PendienteAprobacion)
+                                foreach (var x in AprobadoresSinFactura)
                                 {
                                     AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
                                     {
@@ -609,9 +609,9 @@ namespace AventasApi.Controllers
                                     var result = await ctx.SaveChangesAsync();
                                 }
                             }
-                            if (string.IsNullOrEmpty(devolucion.FacturaOriginal) || string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
+                            else
                             {
-                                foreach (var x in AprobadoresSinFactura)
+                                foreach (var x in PendienteAprobacion)
                                 {
                                     AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
                                     {
