@@ -897,7 +897,7 @@ namespace AventasApi.Controllers
                             if (response.Content.Substring(1, 7).ToUpper() == "SUCCESS")
                             {
                                 var pedidoAX = response.Content.Substring(9, 11);
-                                pedidoDB.NumeroPedido = pedidoAX;
+                                pedidoDB.NumeroPedido = pedidoAX.Trim();
                                 pedidoDB.Sincronizado = true;
                                 respuesta = $"Pedido {pedido.REFERENCE} sincronizado exitosamente con AX.";
                             }

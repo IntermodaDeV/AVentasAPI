@@ -652,7 +652,7 @@ namespace AventasApi.Controllers
             using (var ctx = new AVentasEntities())
             {
                 var lineasPedido = pedido.DevolucionDetalle;
-                var PedidoOriginal = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.NumeroPedido == pedido.PedidoOrigen);
+                var PedidoOriginal = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.NumeroPedido == pedido.PedidoOrigen && x.EmpresaId == pedido.EmpresaId);
 
                 if (PedidoOriginal != null)
                 {
