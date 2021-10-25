@@ -15,5 +15,7 @@ namespace DBData.Database
     {
         public string Factura { get; set; }
         public string NumeroPedido { get; set; }
+        public string Linea { get; set; }
+        public int Abierta { get; set; }
     }
 }

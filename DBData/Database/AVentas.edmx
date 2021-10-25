@@ -10356,6 +10356,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <ComplexType Name="SP_ObtencionFacturas_Result">
           <Property Type="String" Name="Factura" Nullable="true" MaxLength="250" />
           <Property Type="String" Name="NumeroPedido" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Linea" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="Abierta" Nullable="false" />
         </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
@@ -12298,6 +12300,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               <ComplexTypeMapping TypeName="AventasModel.SP_ObtencionFacturas_Result">
                 <ScalarProperty Name="Factura" ColumnName="Factura" />
                 <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
+                <ScalarProperty Name="Linea" ColumnName="Linea" />
+                <ScalarProperty Name="Abierta" ColumnName="Abierta" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
