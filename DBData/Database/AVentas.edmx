@@ -10129,6 +10129,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="String" Name="CodigoColor" Nullable="true" MaxLength="50" />
           <Property Type="Decimal" Name="Cantidad" Nullable="true" Precision="18" Scale="2" />
           <Property Type="Decimal" Name="PrecioUnitario" Nullable="true" Precision="18" Scale="2" />
+          <Property Type="Decimal" Name="PrecioGeneral" Nullable="true" Precision="18" Scale="2" />
         </ComplexType>
         <ComplexType Name="VisitasCliente_Result">
           <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
@@ -12199,6 +12200,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
                 <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
                 <ScalarProperty Name="PrecioUnitario" ColumnName="PrecioUnitario" />
+                <ScalarProperty Name="PrecioGeneral" ColumnName="PrecioGeneral" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

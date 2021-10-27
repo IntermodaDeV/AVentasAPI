@@ -21,5 +21,6 @@ namespace DBData.Database
         public string CodigoColor { get; set; }
         public Nullable<decimal> Cantidad { get; set; }
         public Nullable<decimal> PrecioUnitario { get; set; }
+        public Nullable<decimal> PrecioGeneral { get; set; }
     }
 }
