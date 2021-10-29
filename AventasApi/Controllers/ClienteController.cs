@@ -81,19 +81,6 @@ namespace AventasApi.Controllers
                             GrupoPrecio = cli.GrupoPrecio,
                             GrupoCliente = cli.GrupoCliente,
                             Descuento = cli.Descuento,
-                            MaestroDescuento = context.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper()).Select(x=> new DescuentoViewModel 
-                            { 
-                                Codigo = x.Codigo,
-                                Descripcion = x.Descripcion,
-                                Empresa= x.EmpresaId,
-                                DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
-                                {
-                                    Linea = d.IdLinea,
-                                    CodigoDescuento = d.CodigoDescuento,
-                                    DiasDescuento = d.DiasDescuento,
-                                    Porcentaje = d.Porcentaje
-                                }).ToList(),
-                            }).ToList(),
                             Direccion = cli.Direccion,
                             Moneda = cli.IdMoneda,
                             Ruta = cli.ClientesxRuta.FirstOrDefault().Rutas.Nombre,

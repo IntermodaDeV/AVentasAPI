@@ -816,24 +816,23 @@ namespace AventasApi.Controllers
                         if ((valor > 0) && (valorCuota > 0))
                         {
                             bool aplicaDescuento = false;
-                            aplicaDescuento = (pagoDetalleBD.CodigoDetalle != "CH_PSF" && (subfactura.FechaMaxDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
+                            aplicaDescuento = /*(pagoDetalleBD.CodigoDetalle != "CH_PSF" &&*/ (subfactura.FechaMaxDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
                                 (subfactura.FechaVencimientoDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaVencimientoDescuento.Value.Date)
                                 //reciboPost.FechaPago.Date <= subfactura.FacturasxCliente.FechaMaxDescuento
-                                );
+                                /*)*/;
                             if (aplicaDescuento)
                             {
-                                if((subfactura.Descuento ?? 0) == 0)
-                                {
-                                    var cliente = context.Clientes.Where(x => x.CodigoCliente == subfactura.CodigoCliente && x.EmpresaId == subfactura.EmpresaId).FirstOrDefault();
-                                    var descuento = context.Descuento.Where(x => x.Codigo == cliente.Descuento && x.EmpresaId == cliente.EmpresaId).FirstOrDefault();
-                                    var descuentoDetalle = context.DescuentoDetalle.Where(x => x.IdDescuento == descuento.IdDescuento && x.IdLinea == subfactura.FacturasxCliente.IdLinea).FirstOrDefault();
-                                    Descuento = descuentoDetalle != null ? subfactura.FacturasxCliente.TotalFactura.Value * (descuentoDetalle.Porcentaje.Value/100) : 0m;                                  
-                                    valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - Descuento);
-                                }
-                                else
-                                {
-                                    valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
-                                }
+                                /*if((subfactura.Descuento ?? 0) == 0)
+                                 {
+                                     var cliente = context.Clientes.Where(x => x.CodigoCliente == subfactura.CodigoCliente && x.EmpresaId == subfactura.EmpresaId).FirstOrDefault();
+                                     var descuento = context.Descuento.Where(x => x.Codigo == cliente.Descuento && x.EmpresaId == cliente.EmpresaId).FirstOrDefault();
+                                     var descuentoDetalle = context.DescuentoDetalle.Where(x => x.IdDescuento == descuento.IdDescuento && x.IdLinea == subfactura.FacturasxCliente.IdLinea).FirstOrDefault();
+                                     Descuento = descuentoDetalle != null ? subfactura.FacturasxCliente.TotalFactura.Value * (descuentoDetalle.Porcentaje.Value/100) : 0m;                                  
+                                     valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - Descuento);
+                                 }
+                               {*/
+                                valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
+                                //}
                             }
                             var pagoValor = Decimal.Parse((valor).ToString());
                             var minutosConf = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotanteRecibo");
@@ -963,14 +962,14 @@ namespace AventasApi.Controllers
                             else
                             {
                                 detalleReciboXCliente.Valor = Decimal.Parse((valorCuota).ToString());
-                                var aplicado = detalleReciboXCliente.Valor.Value + Descuento;
+                                var aplicado = detalleReciboXCliente.Valor.Value /*+ Descuento*/;
                                 recibo.APLICADO = aplicado.ToString();
                                 valor -= valorCuota;
                                 montoAplicado = valorCuota;
                                 if (aplicaDescuento)
                                 {
-                                    detalleReciboXCliente.Descuento = Descuento;
-                                    recibo.DESCUENTO = (decimal.Parse(recibo.DESCUENTO) + Descuento).ToString();
+                                    detalleReciboXCliente.Descuento = subfactura.Descuento;
+                                    recibo.DESCUENTO = (decimal.Parse(recibo.DESCUENTO) + subfactura.Descuento).ToString();
                                 }
                                 subfactura.Saldo = 0;
                                 detalleReciboXCliente.EsAbono = false;
