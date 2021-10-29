@@ -185,6 +185,7 @@ namespace AventasApi.Controllers
                         REASON_CODE = devolucionDB.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
                         REFERENCE = devolucionDB.NumDevolucion,
                         SALES_NAME = devolucionDB.Clientes.Nombre,
+                        LINE = string.IsNullOrEmpty(devolucionDB.IdLinea)?"TPT": devolucionDB.IdLinea
                     };
 
                     foreach (var detalle in ctx.DevolucionDetalle.Where(det => det.Devolucion.NumDevolucion == devolucion))

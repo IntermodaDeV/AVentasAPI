@@ -16,6 +16,7 @@ namespace ExternalApiData.ApiModels
         public string REASON_CODE { get; set; }
         public string REFERENCE { get; set; }
         public string SALES_NAME { get; set; }
+        public string LINE { get; set; }
         public List<DevolucionDetalleJson> DevolucionDetalleJson { get; set; }
     }
 }
