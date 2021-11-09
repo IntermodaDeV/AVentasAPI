@@ -158,7 +158,7 @@ namespace AventasApi.Controllers
                             ReciboId = recDet.ReciboId,
                             IdSubFactura = recDet.IdSubFactura,
                             Valor = recDet.Valor,
-                            ValorFactura = recDet.SubFacturasxCliente.FacturasxCliente.TotalFactura,
+                            ValorFactura = recDet.ValorFactura ?? recDet.SubFacturasxCliente.FacturasxCliente.TotalFactura,
                             ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
                             Descuento = recDet.Descuento,
                             EsAbono = recDet.EsAbono,
@@ -810,8 +810,8 @@ namespace AventasApi.Controllers
                     {
                         double montoAplicado = 0;
                         double valorCuota = Decimal.ToDouble(subfactura.Saldo ?? 0);
-                        double valorCuotaOriginal = Decimal.ToDouble(subfactura.Saldo ?? 0);
                         var Factura = context.FacturasxCliente.Where(fa => fa.Factura == subfactura.Factura).FirstOrDefault();
+                        double valorCuotaOriginal = string.IsNullOrEmpty(subfactura.IdAcuerdoxCliente) ? Decimal.ToDouble(subfactura.Saldo.Value) : Decimal.ToDouble(Factura.Saldo.Value);
                         Factura.PendienteFactura = Decimal.Parse((valor).ToString());
                         if ((valor > 0) && (valorCuota > 0))
                         {
@@ -974,6 +974,7 @@ namespace AventasApi.Controllers
                                 subfactura.Saldo = 0;
                                 detalleReciboXCliente.EsAbono = false;
                             }
+                            detalleReciboXCliente.ValorFactura = Factura.Saldo;
                             context.SaveChanges();
 
                             if(existeRecibo == 0)
@@ -990,7 +991,7 @@ namespace AventasApi.Controllers
                             }
 
 
-                            var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == subfactura.Factura);
+                            var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == subfactura.Factura && string.IsNullOrEmpty(subfactura.IdAcuerdoxCliente));
                             var fechaFactura = context.FacturasxCliente.FirstOrDefault(x=>x.Factura == subfactura.Factura).FechaFactura;
                             if (pagoAplicado == null)
                             {
@@ -1016,7 +1017,7 @@ namespace AventasApi.Controllers
                             respuestaPagoRecibo.CodigoUltimoRecibo = recibo.RECIBO;
                             try
                             {
-                                pagoAplicado.Parcial2 += Double.Parse(recibo.DESCUENTO);
+                                pagoAplicado.Parcial2 += detalleReciboXCliente.EsAbono.Value ? 0 : Double.Parse(recibo.DESCUENTO);
                             }
                             catch (Exception)
                             {
