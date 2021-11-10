@@ -28,6 +28,7 @@ namespace AventasApi.Models
         public string ModoEntrega { get; set; }
         //public List<string> CuentaCorriente;
         public List<ContactosxClienteViewModel> Contacto ;
+        public List<DescuentoViewModel> MaestroDescuento;
         public List<string> PedidosAbierto ;
         public List<CuentaCorrienteViewModel> CuentaCorriente;
         public List<AcuerdoVentaViewModel> AcuerdosVenta;
@@ -51,6 +52,7 @@ namespace AventasApi.Models
         public ClienteViewModel()
         {
             this.Contacto = new List<ContactosxClienteViewModel>();
+            this.MaestroDescuento = new List<DescuentoViewModel>();
             this.CuentaCorriente = new List<CuentaCorrienteViewModel>();
             this.AcuerdosVenta = new List<AcuerdoVentaViewModel>();
             this.PedidosAbierto = new List<string>();
@@ -83,6 +85,7 @@ namespace AventasApi.Models
         public List<PResumenCredito_Result> Credito { get; set; }
         public decimal? Longitud { get; internal set; }
         public decimal? Latitud { get; internal set; }
+        public bool IncluyeImpuesto { get; internal set; }
 
         public ClientePedidoViewModel()
         {

@@ -12,30 +12,29 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class MaestroBodegaAlmacenes
+    public partial class MotivosDevolucion
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public MaestroBodegaAlmacenes()
+        public MotivosDevolucion()
         {
-            this.PaqueteBodegaEspecifico = new HashSet<PaqueteBodegaEspecifico>();
-            this.UbicacionesXAlmacen = new HashSet<UbicacionesXAlmacen>();
+            this.MotivosDevolucionDetalle = new HashSet<MotivosDevolucionDetalle>();
+            this.MotivosDevConAprobacion = new HashSet<MotivosDevConAprobacion>();
         }
     
-        public int AlmacenId { get; set; }
-        public string Almacen { get; set; }
-        public string Nombre { get; set; }
-        public Nullable<int> SitioId { get; set; }
+        public int IdMotivoDevolucion { get; set; }
+        public string CodigoMotivoDevolucion { get; set; }
+        public string Descripcion { get; set; }
         public string EmpresaId { get; set; }
-        public string Etiqueta { get; set; }
-        public bool Estatus { get; set; }
-        public string ModificadoPor { get; set; }
-        public Nullable<System.DateTime> FechaModificacion { get; set; }
+        public bool aprobacionObligatoria { get; set; }
+        public bool Estado { get; set; }
+        public Nullable<System.DateTime> FechaModifica { get; set; }
+        public Nullable<int> UsuarioModifica { get; set; }
     
         public virtual Empresa Empresa { get; set; }
-        public virtual MaestroBodegaSitios MaestroBodegaSitios { get; set; }
+        public virtual Usuarios Usuarios { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<PaqueteBodegaEspecifico> PaqueteBodegaEspecifico { get; set; }
+        public virtual ICollection<MotivosDevolucionDetalle> MotivosDevolucionDetalle { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UbicacionesXAlmacen> UbicacionesXAlmacen { get; set; }
+        public virtual ICollection<MotivosDevConAprobacion> MotivosDevConAprobacion { get; set; }
     }
 }

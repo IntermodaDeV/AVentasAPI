@@ -12,22 +12,18 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class PedidosDetalle
+    public partial class DevolucionDetalle
     {
-        public int IdPedidoDetalle { get; set; }
-        public string PedidoId { get; set; }
-        public Nullable<int> IdProducto { get; set; }
+        public int IdDevolucionDetalle { get; set; }
+        public string NumDevolucion { get; set; }
+        public int IdProducto { get; set; }
         public string CodigoColor { get; set; }
         public string CodigoTalla { get; set; }
-        public Nullable<int> Linea { get; set; }
-        public Nullable<decimal> Cantidad { get; set; }
+        public int Cantidad { get; set; }
         public Nullable<decimal> PrecioUnitario { get; set; }
         public Nullable<decimal> MontoLinea { get; set; }
-        public Nullable<System.DateTime> Fecha { get; set; }
-        public string CodigoAsesor { get; set; }
-        public Nullable<decimal> CantidadDevolucion { get; set; }
     
+        public virtual Devolucion Devolucion { get; set; }
         public virtual ProductosxColeccion ProductosxColeccion { get; set; }
-        public virtual PedidosxCliente PedidosxCliente { get; set; }
     }
 }

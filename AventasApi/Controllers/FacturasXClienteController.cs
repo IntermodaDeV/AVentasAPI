@@ -8,6 +8,7 @@ using System.Web.Http;
 using DBData.Database;
 using AventasApi.Models;
 using AventasApi.Models.ViewModels;
+using System.Data.Entity;
 
 namespace AventasApi.Controllers
 {
@@ -82,6 +83,30 @@ namespace AventasApi.Controllers
 
                 return Ok(facturas);
             }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+
+        }
+
+        [HttpGet]
+        [Route("api/factura/{cliente}")]
+        public async Task<IHttpActionResult> GetFacturaCliente(string cliente)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var facturas = await ctx.FacturasxCliente
+                        .Where(x => x.CodigoCliente == cliente && x.Tipo.Contains("Factura") && x.NumeroPedido!=null)
+                        .OrderByDescending(x => x.FechaFactura)
+                        .Select(x => new { factura = x.Factura, pedido = x.NumeroPedido,linea=x.IdLinea })                       
+                        .ToListAsync();
+
+                    return Ok(facturas);
+                }
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }

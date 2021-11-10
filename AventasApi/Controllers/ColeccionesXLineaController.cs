@@ -408,7 +408,7 @@ namespace AventasApi.Controllers
                                        ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo != null).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) >= 0)
                                            .Select(txp => new TallaViewModel
                                            {
-                                               Talla = txp.CodigoTalla,
+                                               Talla = txp.CodigoTalla.ToUpper(),
                                                GrupoTallaId = txp.CodigoGrupoTalla,
                                                Orden = txp.Orden ?? 0,
                                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
@@ -448,7 +448,7 @@ namespace AventasApi.Controllers
                                               .Select(f => new FisicoDisponibleViewModel
                                               {
                                                   CodigoColor = f.CodigoColor,
-                                                  IdTalla = f.CodigoTalla,
+                                                  IdTalla = f.CodigoTalla.ToUpper(),
                                                   Cantidad = f.Disponible < 0 ? 0 : f.Disponible,
                                                   MinStock = f.MinStock,
                                                   PreciosEspecificos = f.PrecioEspecifico.Where(preEsp => filtarXGrupoPrecio).Where(preEsp => preEsp.GrupoPrecio == grupoprecio).Select(preEsp => new PrecioEspecificoViewModel
@@ -469,6 +469,88 @@ namespace AventasApi.Controllers
 
                     return Ok(colecciones[0].Edades);
                         
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/producto/{pais}/{grupoPrecio}/{producto}/{color}")]
+        public async Task<IHttpActionResult> GetProducto(string pais,string grupoPrecio ,string producto, string color)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var prod = ctx.ProductosxColeccion.Where(pxc => pxc.EmpresaId == pais.ToUpper() && pxc.CodigoProducto == producto).Select(pxc => new ProductoXColeccionViewModel
+                    {
+                        ProductoId = pxc.CodigoProducto,
+                        idColeccion = pxc.IdColeccion,
+                        CantidadMinima = pxc.CantidadMinima == null ? 0 : pxc.CantidadMinima,
+                        CodigoProducto = pxc.IdProducto,
+                        NombreProducto = pxc.NombreProducto,
+                        StockVisible = pxc.StockVisible,
+                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
+                        Precio = pxc.PreciosxProducto.Where(preEsp =>preEsp.GrupoPrecio == grupoPrecio).Select(precio => new PrecioXProductoViewModel
+                        {
+                            GrupoPrecio = precio.GrupoPrecio,
+                            IdMoneda = precio.IdMoneda,
+                            Precio = precio.Hasta == new DateTime(1900, 1, 1) ? precio.Precio : 0
+                        }).ToList(),
+                        GrupoTalla = pxc.CodigoGrupoTalla,
+                        Linea = new LineaViewModel
+                        {
+                            IdLinea = pxc.MaestroLinea.IdLinea,
+                            Linea = pxc.MaestroLinea.Linea,
+                        },
+                        ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo != null).Select(txp => txp.TallasXGrupo)
+                                             .Select(txp => new TallaViewModel
+                                             {
+                                                 Talla = txp.CodigoTalla.ToUpper(),
+                                                 GrupoTallaId = txp.CodigoGrupoTalla,
+                                                 Orden = txp.Orden ?? 0,
+                                                 Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                                 {
+                                                     IdDistribucion = dis.IdDistribucion,
+                                                     IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                     NombreDistribucion = dis.NombreDistribucion,
+                                                     NombreTalla = dis.NombreTalla,
+                                                     Cantidad = dis.Cantidad,
+                                                     Orden = dis.Orden,
+                                                 }).OrderBy(or => or.Orden).ToList(),
+
+                                             }).OrderBy(txp => txp.Orden).ToList(),
+                        ListaColores = ctx.Colores.Where(x=>x.CodigoColor==color).Select(cpp => new ColorViewModel
+                        {
+                            CodigoColor = cpp.CodigoColor,
+                            NombreColor = cpp.Color,
+                            Color = cpp.Rgb,
+                        }).ToList(),
+                        fisicaDisponible = pxc.FisicoDisponible
+                                              .Select(f => new FisicoDisponibleViewModel
+                                              {
+                                                  CodigoColor = f.CodigoColor,
+                                                  IdTalla = f.CodigoTalla.ToUpper(),
+                                                  Cantidad = f.Disponible < 0 ? 0 : f.Disponible,
+                                                  MinStock = f.MinStock,
+                                                  PreciosEspecificos = f.PrecioEspecifico.Where(preEsp => preEsp.GrupoPrecio == grupoPrecio).Select(preEsp => new PrecioEspecificoViewModel
+                                                  {
+                                                      IdPrecioEspecifico = preEsp.IdPrecioEspecifico,
+                                                      IdMoneda = preEsp.IdMoneda,
+                                                      IdProducto = preEsp.IdProducto,
+                                                      GrupoPrecio = preEsp.GrupoPrecio,
+                                                      IdFisicoDisponible = preEsp.IdFisicoDisponible,
+                                                      Precio = preEsp.Hasta == new DateTime(1900, 1, 1) ? preEsp.Precio : pxc.PreciosxProducto.FirstOrDefault(pre => pre.GrupoPrecio == grupoPrecio && pre.IdProducto == preEsp.IdProducto).Precio,
+                                                  }).ToList(),
+                                              }).ToList()
+                    }).ToList();
+
+
+                    return Ok(prod.First());
+
                 }
             }
             catch (Exception e)
@@ -539,7 +621,7 @@ namespace AventasApi.Controllers
                                        ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo != null).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) >= 0)
                                            .Select(txp => new TallaViewModel
                                            {
-                                               Talla = txp.CodigoTalla,
+                                               Talla = txp.CodigoTalla.ToUpper(),
                                                GrupoTallaId = txp.CodigoGrupoTalla,
                                                Orden = txp.Orden ?? 0,
                                                Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
@@ -579,7 +661,7 @@ namespace AventasApi.Controllers
                                               .Select(f => new FisicoDisponibleViewModel
                                               {
                                                   CodigoColor = f.CodigoColor,
-                                                  IdTalla = f.CodigoTalla,
+                                                  IdTalla = f.CodigoTalla.ToUpper(),
                                                   Cantidad = f.Disponible < 0 ? 0 : f.Disponible,
                                                   MinStock = f.MinStock,
                                                   PreciosEspecificos = f.PrecioEspecifico.Where(preEsp => filtarXGrupoPrecio).Where(preEsp => preEsp.GrupoPrecio == grupoprecio).Select(preEsp => new PrecioEspecificoViewModel
@@ -700,7 +782,7 @@ namespace AventasApi.Controllers
                                                                             ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo!=null).Select(txp => txp.TallasXGrupo).Where(txp => false || (vw_coleccion.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) >= 0)
                                                                             .Select(txp => new TallaViewModel
                                                                             {
-                                                                                Talla = txp.CodigoTalla,
+                                                                                Talla = txp.CodigoTalla.ToUpper(),
                                                                                 GrupoTallaId = txp.CodigoGrupoTalla,
                                                                                 Orden = txp.Orden ?? 0,
                                                                                 Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
@@ -739,7 +821,7 @@ namespace AventasApi.Controllers
                                                                                .Select(f => new FisicoDisponibleViewModel
                                                                                {
                                                                                    CodigoColor = f.CodigoColor,
-                                                                                   IdTalla = f.CodigoTalla,
+                                                                                   IdTalla = f.CodigoTalla.ToUpper(),
                                                                                    Cantidad = f.Disponible < 0 ? 0 : f.Disponible,
                                                                                    MinStock = f.MinStock,
                                                                                    PreciosEspecificos = f.PrecioEspecifico.Where(preEsp => filtarXGrupoPrecio).Where(preEsp => ListaGrupoPrecios.Contains(preEsp.GrupoPrecio)).Select(preEsp => new PrecioEspecificoViewModel

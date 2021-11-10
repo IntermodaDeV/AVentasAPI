@@ -283,6 +283,39 @@
         <AssociationConnector Association="AventasModel.FK__RutasxAse__Codig__6497E884" />
         <AssociationConnector Association="AventasModel.FK__Usuarios___Usuar__37311087" />
         <EntityTypeShape EntityType="AventasModel.Asesores" Width="1.5" PointX="0.75" PointY="19.75" />
+        <EntityTypeShape EntityType="AventasModel.UbicacionesXAlmacen" Width="1.5" PointX="15.5" PointY="73.75" />
+        <AssociationConnector Association="AventasModel.FK__Ubicacion__Almac__14C6E9EA" />
+        <EntityTypeShape EntityType="AventasModel.Descuento" Width="1.5" PointX="3" PointY="57.875" />
+        <EntityTypeShape EntityType="AventasModel.DescuentoDetalle" Width="1.5" PointX="13.25" PointY="29.75" />
+        <AssociationConnector Association="AventasModel.FK_tbDescuento_tbEmpresa_EmpresaId" />
+        <AssociationConnector Association="AventasModel.FK_tbDescuentoDetalle_tbDescuento_idDescuento" />
+        <AssociationConnector Association="AventasModel.FK_tbDescuentoDetalle_tbLinea_idLinea" />
+        <EntityTypeShape EntityType="AventasModel.MotivosDevolucion" Width="1.5" PointX="19.25" PointY="27.875" />
+        <EntityTypeShape EntityType="AventasModel.MotivosDevolucionDetalle" Width="1.5" PointX="29.5" PointY="38.375" />
+        <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCION_EMPRESAID" />
+        <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_EMPRESA" />
+        <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCION_USUARIO" />
+        <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_DEVOLUCION" />
+        <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO" />
+        <EntityTypeShape EntityType="AventasModel.MotivosDevConAprobacion" Width="1.5" PointX="21.5" PointY="28.125" />
+        <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION" />
+        <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO" />
+        <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA" />
+        <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS" />
+        <EntityTypeShape EntityType="AventasModel.Devolucion" Width="1.5" PointX="31.75" PointY="38.75" />
+        <EntityTypeShape EntityType="AventasModel.DevolucionDetalle" Width="1.5" PointX="34" PointY="41.375" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucion_Clientes_CodigoCliente" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucion_Empresa_EmpresaId" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucion_Linea_IdLinea" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" />
+        <EntityTypeShape EntityType="AventasModel.AprobacionDevoluciones" Width="1.5" PointX="34" PointY="34.875" />
+        <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_Devolucion_NumeroDevolucion" />
+        <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_usuario" />
+        <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_Usuario_IdUsuario" />
+        <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

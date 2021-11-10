@@ -121,6 +121,7 @@ namespace AventasApi.Controllers
                 AcuerdosxCliente acuerdoVenta;
                 TiposdePedido tipoPedido;
                 Clientes cliente;
+                UbicacionesXAlmacen ubicacion;
                 ClienteContado clienteContado;
                 CONFIGURACIONE SyncTelContado;
                 CONFIGURACIONE SyncTelCredito;
@@ -139,9 +140,10 @@ namespace AventasApi.Controllers
                     tipoPedido = acuerdoVenta?.TiposdePedido;
                     cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
                     coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
+                    ubicacion = context.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == Pedido.Almacen && x.Estatus == true);
                 }
                 DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
-
+                
                 if (found == null)
                 {
                     PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
@@ -167,7 +169,8 @@ namespace AventasApi.Controllers
                         RequiereEntrega = Pedido.RequiereEntrega,
                         BodegaEspecifica=Pedido.BodegaEspecifica,
                         Sitio=Pedido.Sitio,
-                        Almacen=Pedido.Almacen
+                        Almacen=Pedido.Almacen,
+                        Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : ""
                     };
 
                     foreach (var detalle in Pedido.DetallePedido)
@@ -179,7 +182,6 @@ namespace AventasApi.Controllers
                             PedidoBDAGuardar.TotalUnidades += cantidad;
                             decimal precioUnitario = 0;
                             decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                            PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
 
                             PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
                             {
@@ -190,14 +192,16 @@ namespace AventasApi.Controllers
                                 MontoLinea = (precioUnitario * cantidad),
                                 Fecha = DateTime.Now,
                                 CodigoAsesor = asesor.CodigoAsesor,
-                                PrecioUnitario = precioUnitario
+                                PrecioUnitario = precioUnitario,
+                                CantidadDevolucion = 0
                             });
                         }
 
                     }
 
+                    PedidoBDAGuardar.Subtotal = cliente.IncluyeImpuesto.Value ? Pedido.subtotal - decimal.Parse(Pedido.Impuesto.ToString()) : Pedido.subtotal;
                     PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
-                    PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                    PedidoBDAGuardar.TotalPedido = cliente.IncluyeImpuesto.Value ? (Pedido.subtotal + Pedido.Flete) : (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
                     PedidoBDAGuardar.PedidoId = numeroReferencia;
                     PedidoBDAGuardar.NumeroPedido = "";
                     PedidoBDAGuardar.Sincronizado = false;
@@ -249,7 +253,8 @@ namespace AventasApi.Controllers
                             ESTADO = 0,
                             BodegaEspecifica = Pedido.BodegaEspecifica,
                             Sitio = Pedido.Sitio,
-                            Almacen = Pedido.Almacen
+                            Almacen = Pedido.Almacen,
+                            Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : ""
                         };
 
                         //if (numeroReferencia == "")
@@ -269,7 +274,6 @@ namespace AventasApi.Controllers
                                 PedidoFlotante.TotalUnidades += cantidad;
                                 decimal precioUnitario = 0;
                                 decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                                PedidoFlotante.Subtotal += (precioUnitario * cantidad);
 
                                 PedidoFlotante.PedidosDetalleFlotante.Add(new PedidosDetalleFlotante
                                 {
@@ -287,8 +291,9 @@ namespace AventasApi.Controllers
 
                         }
 
+                        PedidoFlotante.Subtotal = cliente.IncluyeImpuesto.Value ? Pedido.subtotal - decimal.Parse(Pedido.Impuesto.ToString()) : Pedido.subtotal;
                         PedidoFlotante.TotalImpuesto = Pedido.Impuesto;
-                        PedidoFlotante.TotalPedido = (PedidoFlotante.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                        PedidoFlotante.TotalPedido = cliente.IncluyeImpuesto.Value ? (Pedido.subtotal + Pedido.Flete) : (PedidoFlotante.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
                         PedidoFlotante.PedidoId = numeroReferencia;
                         PedidoFlotante.NumeroPedido = "";
                         PedidoFlotante.Sincronizado = false;
@@ -328,7 +333,8 @@ namespace AventasApi.Controllers
                         ESTADO = 0,
                         BodegaEspecifica = Pedido.BodegaEspecifica,
                         Sitio = Pedido.Sitio,
-                        Almacen = Pedido.Almacen
+                        Almacen = Pedido.Almacen,
+                        Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : ""
                     };
 
                     //if (numeroReferencia == "")
@@ -348,7 +354,6 @@ namespace AventasApi.Controllers
                             PedidoBDAGuardar.TotalUnidades += cantidad;
                             decimal precioUnitario = 0;
                             decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
-                            PedidoBDAGuardar.Subtotal += (precioUnitario * cantidad);
 
                             PedidoBDAGuardar.PedidosDetalleFlotante.Add(new PedidosDetalleFlotante
                             {
@@ -366,8 +371,9 @@ namespace AventasApi.Controllers
 
                     }
 
+                    PedidoBDAGuardar.Subtotal = cliente.IncluyeImpuesto.Value ? Pedido.subtotal - decimal.Parse(Pedido.Impuesto.ToString()) : Pedido.subtotal;
                     PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
-                    PedidoBDAGuardar.TotalPedido = (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                    PedidoBDAGuardar.TotalPedido = cliente.IncluyeImpuesto.Value ? (Pedido.subtotal + Pedido.Flete) : (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
                     PedidoBDAGuardar.PedidoId = numeroReferencia;
                     PedidoBDAGuardar.NumeroPedido = "";
                     PedidoBDAGuardar.Sincronizado = false;
@@ -759,10 +765,11 @@ namespace AventasApi.Controllers
                         SALES_MANAGER = pedidoDB.CodigoAsesor,
                         SALES_ORDER_TYPE = (pedidoDB.Colecciones.TiposdeColeccion.ColeccionTipo == "B") ? "SINLOTE" : "LOTE-CONFC",
                         USER = pedidoDB.CodigoAsesor,
-                        INCLUDE_TAX = "0",
+                        INCLUDE_TAX = pedidoDB.Clientes.IncluyeImpuesto.Value ? "1" : "0",
                         ESPEC_INV = pedidoDB.BodegaEspecifica == null ? "0" : (pedidoDB.BodegaEspecifica.Value ? "1" : "0"),
                         LOCATION = pedidoDB.Almacen,
-                        SITE = pedidoDB.Sitio
+                        SITE = pedidoDB.Sitio,
+                        WMSLOCATION = pedidoDB.Ubicacion==null?"":pedidoDB.Ubicacion
                     };
                     if (pedidoDB.ClienteContadoId != null)
                     {
@@ -890,7 +897,7 @@ namespace AventasApi.Controllers
                             if (response.Content.Substring(1, 7).ToUpper() == "SUCCESS")
                             {
                                 var pedidoAX = response.Content.Substring(9, 11);
-                                pedidoDB.NumeroPedido = pedidoAX;
+                                pedidoDB.NumeroPedido = pedidoAX.Trim();
                                 pedidoDB.Sincronizado = true;
                                 respuesta = $"Pedido {pedido.REFERENCE} sincronizado exitosamente con AX.";
                             }
@@ -1231,7 +1238,7 @@ namespace AventasApi.Controllers
                     var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == pedido.CodigoAsesor && x.CorrelativoPedidos!=null);
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
                     string numeroReferencia = $"{asesor.InicialesNombre}-1{numeroCorelativo.ToString("D5")}";
-
+                    var ubicacion = ctx.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == pedido.Almacen && x.Estatus == true);
                     PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
                     {
                         IdTipoPedido = pedido.IdTipoPedido,
@@ -1261,7 +1268,8 @@ namespace AventasApi.Controllers
                         NumeroPedido = "",
                         BodegaEspecifica=pedido.BodegaEspecifica,
                         Sitio=pedido.Sitio,
-                        Almacen=pedido.Almacen
+                        Almacen=pedido.Almacen,
+                        Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : ""
                     };
 
                     foreach (var detalle in pedido.PedidosDetalleFlotante)

@@ -59,6 +59,35 @@ namespace AventasApi.Services.AsyncJobs
             }
         }
 
+        public static bool IngresarDevolucion(Devolucion devolucion, string empresa)
+        {
+            try
+            {
+                bool value = true;
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    context.Devolucion.Add(devolucion);
+                    int rowAffected = context.SaveChanges();
+                    if (rowAffected > 0)
+                    {
+                        ValidarCorrelativoDevolucion(devolucion.CodigoAsesor, empresa);
+                    }
+                    else
+                    {
+                        value = false;
+                    }
+                    
+                    value = true;
+                }
+
+                return value;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
         private static void ValidarCorrelativoPedido(string CodigoAsesor,string empresa)
         {
             using(AVentasEntities context = new AVentasEntities())
@@ -78,6 +107,35 @@ namespace AventasApi.Services.AsyncJobs
                     else
                     {
                         ValidarCorrelativoPedido(CodigoAsesor,empresa);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+        }
+
+        private static void ValidarCorrelativoDevolucion(string CodigoAsesor, string empresa)
+        {
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                try
+                {
+                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor && x.EmpresaId == empresa);
+                    asesor.CorrelativoDevolucion = (asesor.CorrelativoDevolucion != null ? asesor.CorrelativoDevolucion : 0) + 1;
+                    context.SaveChanges();
+
+                    var correlativo = $"{asesor.InicialesNombre}-{100000 + (asesor.CorrelativoDevolucion != null ? asesor.CorrelativoDevolucion : 0)}";
+
+                    if (context.Devolucion.FirstOrDefault(x => x.NumDevolucion == correlativo) == null)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        ValidarCorrelativoDevolucion(CodigoAsesor, empresa);
                     }
 
                 }
@@ -147,6 +205,7 @@ namespace AventasApi.Services.AsyncJobs
                             Valor = recDet.Valor,
                             Descuento = recDet.Descuento,
                             EsAbono = recDet.EsAbono,
+                            ValorFactura = recDet.ValorFactura
                         }).ToList()
                     }).ToList();
 

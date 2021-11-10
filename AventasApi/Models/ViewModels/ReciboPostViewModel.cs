@@ -19,6 +19,7 @@ namespace AventasApi.Models.ViewModels
         public string EsContado { get; set; }
         public string NumeroRecibo { get; set; }
         public string EmpresaUsuario { get; set; }
+        public bool ReciboProforma { get; set; }
         public Location location = new Location();
         public List<LogRecibosViewModel> LogImpresion { get; set; }
 

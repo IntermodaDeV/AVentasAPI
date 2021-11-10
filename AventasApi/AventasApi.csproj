@@ -15,8 +15,7 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>
-    </Use64BitIISExpress>
+    <Use64BitIISExpress>false</Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -184,10 +183,13 @@
     <Compile Include="Controllers\ConfiguracionesController.cs" />
     <Compile Include="Controllers\CoordenadasXClienteController.cs" />
     <Compile Include="Controllers\CorreoController.cs" />
+    <Compile Include="Controllers\DevolucionController.cs" />
     <Compile Include="Controllers\DocumentosPendientesController.cs" />
     <Compile Include="Controllers\EmpresaController.cs" />
     <Compile Include="Controllers\LogsImpresionesController.cs" />
     <Compile Include="Controllers\MaestroBodegaAlmacenesController.cs" />
+    <Compile Include="Controllers\MotivosDevolucionController.cs" />
+    <Compile Include="Controllers\ProductosDevolucionController.cs" />
     <Compile Include="Controllers\ProformaController.cs" />
     <Compile Include="Controllers\RespuestaController.cs" />
     <Compile Include="Controllers\PreguntaController.cs" />
@@ -217,6 +219,7 @@
     <Compile Include="Controllers\TiposColeccionController.cs" />
     <Compile Include="Controllers\TipoVisitaClienteController.cs" />
     <Compile Include="Controllers\TransporteController.cs" />
+    <Compile Include="Controllers\UbicacionController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Filters\Auth.cs" />
     <Compile Include="Global.asax.cs">
@@ -286,9 +289,14 @@
     <Compile Include="Models\ViewModels\CuentaCorrienteViewModel.cs" />
     <Compile Include="Models\ViewModels\CuentaBancariaViewModel.cs" />
     <Compile Include="Models\ViewModels\CuotasXAcuerdosViewModel.cs" />
+    <Compile Include="Models\ViewModels\DescuentoDetalleViewModel.cs" />
+    <Compile Include="Models\ViewModels\DescuentoViewModel.cs" />
     <Compile Include="Models\ViewModels\DetallePedidoPostViewModel.cs" />
     <Compile Include="Models\ViewModels\DetalleXPedidoViewModel.cs" />
     <Compile Include="Models\ViewModels\DetPedTempViewModel.cs" />
+    <Compile Include="Models\ViewModels\DevolucionDetallePostModel.cs" />
+    <Compile Include="Models\ViewModels\DevolucionesViewModel.cs" />
+    <Compile Include="Models\ViewModels\DevolucionPostModel.cs" />
     <Compile Include="Models\ViewModels\DistribucionXTallaViewModel.cs" />
     <Compile Include="Models\ViewModels\EdadesViewModel.cs" />
     <Compile Include="Models\ViewModels\EmpresaViewModel.cs" />
@@ -297,6 +305,7 @@
     <Compile Include="Models\ViewModels\GrupoOpcionesViewModel.cs" />
     <Compile Include="Models\ViewModels\LogProformaViewModel.cs" />
     <Compile Include="Models\ViewModels\LogRecibosViewModel.cs" />
+    <Compile Include="Models\ViewModels\MotivosDevolucionViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasOpcionesViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasAnidadasViewModel.cs" />
     <Compile Include="Models\ViewModels\RecibosxClienteFlotanteViewModel.cs" />
@@ -350,6 +359,7 @@
     <Compile Include="Services\Authentication\AuthenticationAppService.cs" />
     <Compile Include="Singleton\GestorManager.cs" />
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
+    <Compile Include="Utils\Email.cs" />
     <Compile Include="Utils\logicValidation.cs" />
     <Compile Include="Utils\SyncAcuerdosVentas.cs" />
     <Compile Include="Utils\SyncCuentaCorriente.cs" />

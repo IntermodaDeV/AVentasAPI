@@ -25,5 +25,6 @@ namespace DBData.Database
         public string Diario { get; set; }
         public Nullable<bool> Activo { get; set; }
         public int AsesorId { get; set; }
+        public Nullable<int> CorrelativoDevolucion { get; set; }
     }
 }

@@ -277,7 +277,20 @@ namespace AventasApi.Controllers
                         GrupoPrecio = cli.GrupoPrecio,
                         GrupoCliente = cli.GrupoCliente,
                         Descuento = cli.Descuento,
-                        Direccion = cli.Direccion,
+                        MaestroDescuento = context.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper()).Select(x => new DescuentoViewModel
+                        {
+                            Codigo = x.Codigo,
+                            Descripcion = x.Descripcion,
+                            Empresa = x.EmpresaId,
+                            DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
+                            {
+                                Linea = d.IdLinea,
+                                CodigoDescuento = d.CodigoDescuento,
+                                DiasDescuento = d.DiasDescuento,
+                                Porcentaje = d.Porcentaje
+                            }).ToList(),
+                        }).ToList(),
+                    Direccion = cli.Direccion,
                         Moneda = cli.IdMoneda,
                         Ruta = cli.ClientesxRuta.FirstOrDefault().Rutas.Nombre,
                         CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
@@ -518,13 +531,13 @@ namespace AventasApi.Controllers
                             CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
                             Latitud = cli.Latitud,
                             Longitud = cli.Longitud,
-                            NumeroFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite),
+                            /*NumeroFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite),
                             MontoFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite).Sum(faccli => faccli.Saldo) ?? 0,
                             NumeroFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo),
-                            MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,
+                            MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,*/
                         }).ToListAsync();
 
-                        foreach (var cliente in clientes)
+                        /*foreach (var cliente in clientes)
                         {
                             cliente.AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                             {
@@ -590,7 +603,7 @@ namespace AventasApi.Controllers
 
                                 }).ToList()
                             }).ToList();
-                        }
+                        }*/
                         listaClientes.AddRange(clientes);
                     }
                     return Ok(listaClientes);
@@ -636,13 +649,13 @@ namespace AventasApi.Controllers
                             CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
                             Latitud = cli.Latitud,
                             Longitud = cli.Longitud,
-                            NumeroFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite),
+                            /*NumeroFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite),
                             MontoFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite).Sum(faccli => faccli.Saldo) ?? 0,
                             NumeroFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo),
-                            MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,
+                            MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,*/
                         }).ToListAsync();
 
-                        foreach (var cliente in lista)
+                        /*foreach (var cliente in lista)
                         {
                             cliente.AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                             {
@@ -708,7 +721,7 @@ namespace AventasApi.Controllers
 
                                 }).ToList()
                             }).ToList();
-                        }
+                        }*/
                         listaClientes.AddRange(lista);
                     }
                     return Ok(listaClientes);
@@ -765,6 +778,7 @@ namespace AventasApi.Controllers
                             CreditoDisponible = cli.CreditoDisponible ?? 0,
                             Longitud=cli.Longitud,
                             Latitud=cli.Latitud,
+                            IncluyeImpuesto = cli.IncluyeImpuesto.Value,
                             GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
                             ModoEntrega = cli.ModoEntrega,
                             FacturacionEntrega = cli.FacturacionEntrega,
@@ -858,6 +872,19 @@ namespace AventasApi.Controllers
                             GrupoPrecio = cli.GrupoPrecio,
                             GrupoCliente = cli.GrupoCliente,
                             Descuento = cli.Descuento,
+                            MaestroDescuento = ctx.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper()).Select(x => new DescuentoViewModel
+                            {
+                                Codigo = x.Codigo,
+                                Descripcion = x.Descripcion,
+                                Empresa = x.EmpresaId,
+                                DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
+                                {
+                                    Linea = d.IdLinea,
+                                    CodigoDescuento = d.CodigoDescuento,
+                                    DiasDescuento = d.DiasDescuento,
+                                    Porcentaje = d.Porcentaje
+                                }).ToList(),
+                            }).ToList(),
                             Direccion = cli.Direccion,
                             Moneda = cli.IdMoneda,
                             Ruta = cli.ClientesxRuta.FirstOrDefault().Rutas.Nombre,
@@ -998,6 +1025,19 @@ namespace AventasApi.Controllers
                         GrupoPrecio = cli.GrupoPrecio,
                         GrupoCliente = cli.GrupoCliente,
                         Descuento = cli.Descuento,
+                        MaestroDescuento = ctx.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper()).Select(x => new DescuentoViewModel
+                        {
+                            Codigo = x.Codigo,
+                            Descripcion = x.Descripcion,
+                            Empresa = x.EmpresaId,
+                            DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
+                            {
+                                Linea = d.IdLinea,
+                                CodigoDescuento = d.CodigoDescuento,
+                                DiasDescuento = d.DiasDescuento,
+                                Porcentaje = d.Porcentaje
+                            }).ToList(),
+                        }).ToList(),
                         Direccion = cli.Direccion,
                         Moneda = cli.IdMoneda,
                         Ruta = cli.ClientesxRuta.FirstOrDefault().Rutas.Nombre,
@@ -1206,6 +1246,19 @@ namespace AventasApi.Controllers
                         GrupoPrecio = cli.GrupoPrecio,
                         GrupoCliente = cli.GrupoCliente,
                         Descuento = cli.Descuento,
+                        MaestroDescuento = ctx.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper()).Select(x => new DescuentoViewModel
+                        {
+                            Codigo = x.Codigo,
+                            Descripcion = x.Descripcion,
+                            Empresa = x.EmpresaId,
+                            DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
+                            {
+                                Linea = d.IdLinea,
+                                CodigoDescuento = d.CodigoDescuento,
+                                DiasDescuento = d.DiasDescuento,
+                                Porcentaje = d.Porcentaje
+                            }).ToList(),
+                        }).ToList(),
                         Direccion = cli.Direccion,
                         Moneda = cli.IdMoneda,
                         Ruta = cli.ClientesxRuta.FirstOrDefault().Rutas.Nombre,

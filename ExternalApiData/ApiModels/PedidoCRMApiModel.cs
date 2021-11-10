@@ -33,6 +33,7 @@ namespace ExternalApiData.Models.ApiModels
         public string ESPEC_INV { get; set; }
         public string SITE { get; set; }
         public string LOCATION { get; set; }
+        public string WMSLOCATION { get; set; }
 
         public List<PedidoJsonItems> PedidoJsonItems { get; set; }
     }

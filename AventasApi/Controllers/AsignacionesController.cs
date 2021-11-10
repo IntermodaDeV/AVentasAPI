@@ -175,6 +175,60 @@ namespace AventasApi.Controllers
             
         }
 
+        [HttpGet]
+        [Route("~/api/asignaciones/reporte/{cliente}")]
+        public IHttpActionResult GetReporteAsignaciones(string cliente)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    List<VisitasCliente_Result> reporte = ctx.VisitasCliente(cliente).ToList();
+                    return Ok(reporte);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/asignaciones/reporte/{asesor}")]
+        public IHttpActionResult GetReporteAsignacionesAsesor(string asesor, DateTime inicio, DateTime final)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    List<VisitasClientePorAsesor_Result> reporte = ctx.VisitasClientePorAsesor(asesor, inicio, final).ToList();
+                    return Ok(reporte);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/asignaciones/reporte")]
+        public IHttpActionResult GetReporteAsignacionesGlobal(DateTime inicio, DateTime final)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    List<VisitasClienteGlobal_Result> reporte = ctx.VisitasClienteGlobal(inicio, final).ToList();
+                    return Ok(reporte);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
         private bool GuardarAsignaciones(List<AsignacionxAsesor> asignacionxAsesor)
         {
             try

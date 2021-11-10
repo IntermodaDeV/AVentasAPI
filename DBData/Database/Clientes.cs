@@ -29,6 +29,7 @@ namespace DBData.Database
             this.BitacoraVisitasCliente = new HashSet<BitacoraVisitasCliente>();
             this.PedidosxCliente = new HashSet<PedidosxCliente>();
             this.PedidosxClienteFlotante = new HashSet<PedidosxClienteFlotante>();
+            this.Devolucion = new HashSet<Devolucion>();
         }
     
         public string CodigoCliente { get; set; }
@@ -57,6 +58,7 @@ namespace DBData.Database
         public byte[] VersionRegistro { get; set; }
         public Nullable<long> VersionRegistroBINT { get; set; }
         public Nullable<bool> IgnorarSeqFact { get; set; }
+        public Nullable<bool> IncluyeImpuesto { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AcuerdosxCliente> AcuerdosxCliente { get; set; }
@@ -85,5 +87,7 @@ namespace DBData.Database
         public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosxClienteFlotante> PedidosxClienteFlotante { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Devolucion> Devolucion { get; set; }
     }
 }

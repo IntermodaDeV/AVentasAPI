@@ -20,7 +20,7 @@ namespace DBData.Database
         public AVentasEntities()
             : base("name=AVentasEntities")
         {
-            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 360;
+            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 1440;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -138,6 +138,15 @@ namespace DBData.Database
         public virtual DbSet<RutasxAsesor> RutasxAsesor { get; set; }
         public virtual DbSet<Usuarios_Asesores> Usuarios_Asesores { get; set; }
         public virtual DbSet<Asesores> Asesores { get; set; }
+        public virtual DbSet<UbicacionesXAlmacen> UbicacionesXAlmacen { get; set; }
+        public virtual DbSet<Descuento> Descuento { get; set; }
+        public virtual DbSet<DescuentoDetalle> DescuentoDetalle { get; set; }
+        public virtual DbSet<MotivosDevolucion> MotivosDevolucion { get; set; }
+        public virtual DbSet<MotivosDevolucionDetalle> MotivosDevolucionDetalle { get; set; }
+        public virtual DbSet<MotivosDevConAprobacion> MotivosDevConAprobacion { get; set; }
+        public virtual DbSet<Devolucion> Devolucion { get; set; }
+        public virtual DbSet<DevolucionDetalle> DevolucionDetalle { get; set; }
+        public virtual DbSet<AprobacionDevoluciones> AprobacionDevoluciones { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -289,6 +298,67 @@ namespace DBData.Database
                 new ObjectParameter("User", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_VISITASPORMES_Result1>("SP_VISITASPORMES", userParameter);
+        }
+    
+        public virtual ObjectResult<PRODUCTOSDEFACTURA_Result> PRODUCTOSDEFACTURA(string numFactura)
+        {
+            var numFacturaParameter = numFactura != null ?
+                new ObjectParameter("numFactura", numFactura) :
+                new ObjectParameter("numFactura", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PRODUCTOSDEFACTURA_Result>("PRODUCTOSDEFACTURA", numFacturaParameter);
+        }
+    
+        public virtual ObjectResult<VisitasCliente_Result> VisitasCliente(string codigoCliente)
+        {
+            var codigoClienteParameter = codigoCliente != null ?
+                new ObjectParameter("CodigoCliente", codigoCliente) :
+                new ObjectParameter("CodigoCliente", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<VisitasCliente_Result>("VisitasCliente", codigoClienteParameter);
+        }
+    
+        public virtual ObjectResult<VisitasClienteGlobal_Result> VisitasClienteGlobal(Nullable<System.DateTime> fechaInicio, Nullable<System.DateTime> fechaFinal)
+        {
+            var fechaInicioParameter = fechaInicio.HasValue ?
+                new ObjectParameter("FechaInicio", fechaInicio) :
+                new ObjectParameter("FechaInicio", typeof(System.DateTime));
+    
+            var fechaFinalParameter = fechaFinal.HasValue ?
+                new ObjectParameter("FechaFinal", fechaFinal) :
+                new ObjectParameter("FechaFinal", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<VisitasClienteGlobal_Result>("VisitasClienteGlobal", fechaInicioParameter, fechaFinalParameter);
+        }
+    
+        public virtual ObjectResult<VisitasClientePorAsesor_Result> VisitasClientePorAsesor(string codigoAsesor, Nullable<System.DateTime> fechaInicio, Nullable<System.DateTime> fechaFinal)
+        {
+            var codigoAsesorParameter = codigoAsesor != null ?
+                new ObjectParameter("CodigoAsesor", codigoAsesor) :
+                new ObjectParameter("CodigoAsesor", typeof(string));
+    
+            var fechaInicioParameter = fechaInicio.HasValue ?
+                new ObjectParameter("FechaInicio", fechaInicio) :
+                new ObjectParameter("FechaInicio", typeof(System.DateTime));
+    
+            var fechaFinalParameter = fechaFinal.HasValue ?
+                new ObjectParameter("FechaFinal", fechaFinal) :
+                new ObjectParameter("FechaFinal", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<VisitasClientePorAsesor_Result>("VisitasClientePorAsesor", codigoAsesorParameter, fechaInicioParameter, fechaFinalParameter);
+        }
+    
+        public virtual ObjectResult<SP_ObtencionFacturas_Result> SP_ObtencionFacturas(string codigoProducto, string cliente)
+        {
+            var codigoProductoParameter = codigoProducto != null ?
+                new ObjectParameter("codigoProducto", codigoProducto) :
+                new ObjectParameter("codigoProducto", typeof(string));
+    
+            var clienteParameter = cliente != null ?
+                new ObjectParameter("cliente", cliente) :
+                new ObjectParameter("cliente", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtencionFacturas_Result>("SP_ObtencionFacturas", codigoProductoParameter, clienteParameter);
         }
     }
 }

@@ -66,6 +66,9 @@
     <Compile Include="Database\AnticiposxCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\AprobacionDevoluciones.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Asesores.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -154,6 +157,18 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\CuentasBancarias.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Descuento.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\DescuentoDetalle.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\Devolucion.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\DevolucionDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\DistribucionxTalla.cs">
@@ -285,6 +300,15 @@
     <Compile Include="Database\MonedasxEmpresa.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\MotivosDevConAprobacion.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\MotivosDevolucion.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\MotivosDevolucionDetalle.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Pantallas.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -334,6 +358,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\PrioridadAsignacion.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\PRODUCTOSDEFACTURA_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\ProductosxColeccion.cs">
@@ -396,6 +423,9 @@
     <Compile Include="Database\sp_helpdiagrams_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\SP_ObtencionFacturas_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\SP_POST_LISTA_EJECUCION_MANUAL_Result.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
@@ -438,6 +468,9 @@
     <Compile Include="Database\TransportePrecioCaja.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\UbicacionesXAlmacen.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Usuarios.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -448,6 +481,15 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\Usuario_Rol.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\VisitasClienteGlobal_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\VisitasClientePorAsesor_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\VisitasCliente_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\vw_AtributosxColeccion.cs">

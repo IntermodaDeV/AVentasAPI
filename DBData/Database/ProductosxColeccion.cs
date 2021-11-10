@@ -26,6 +26,7 @@ namespace DBData.Database
             this.PedidosDetalle = new HashSet<PedidosDetalle>();
             this.FotografiasXProducto = new HashSet<FotografiasXProducto>();
             this.PedidosDetalleFlotante = new HashSet<PedidosDetalleFlotante>();
+            this.DevolucionDetalle = new HashSet<DevolucionDetalle>();
         }
     
         public int IdProducto { get; set; }
@@ -66,5 +67,7 @@ namespace DBData.Database
         public virtual Colecciones Colecciones { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosDetalleFlotante> PedidosDetalleFlotante { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DevolucionDetalle> DevolucionDetalle { get; set; }
     }
 }

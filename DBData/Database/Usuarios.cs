@@ -24,6 +24,15 @@ namespace DBData.Database
             this.Respuestas = new HashSet<Respuestas>();
             this.LogSesion = new HashSet<LogSesion>();
             this.Usuarios_Asesores = new HashSet<Usuarios_Asesores>();
+            this.MotivosDevolucion = new HashSet<MotivosDevolucion>();
+            this.MotivosDevolucionDetalle = new HashSet<MotivosDevolucionDetalle>();
+            this.MotivosDevConAprobacion = new HashSet<MotivosDevConAprobacion>();
+            this.MotivosDevConAprobacion1 = new HashSet<MotivosDevConAprobacion>();
+            this.MotivosDevConAprobacion2 = new HashSet<MotivosDevConAprobacion>();
+            this.AprobacionDevoluciones = new HashSet<AprobacionDevoluciones>();
+            this.AprobacionDevoluciones1 = new HashSet<AprobacionDevoluciones>();
+            this.AprobacionDevoluciones2 = new HashSet<AprobacionDevoluciones>();
+            this.Devolucion = new HashSet<Devolucion>();
         }
     
         public int Id { get; set; }
@@ -42,6 +51,8 @@ namespace DBData.Database
         public Nullable<bool> FlagAdministradorProductos { get; set; }
         public Nullable<bool> SesionActiva { get; set; }
         public bool FlagBodegaEspecifico { get; set; }
+        public Nullable<bool> CorreoDevolucion { get; set; }
+        public string Correo { get; set; }
     
         public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -58,5 +69,23 @@ namespace DBData.Database
         public virtual ICollection<LogSesion> LogSesion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Usuarios_Asesores> Usuarios_Asesores { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevolucion> MotivosDevolucion { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevolucionDetalle> MotivosDevolucionDetalle { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevConAprobacion> MotivosDevConAprobacion { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevConAprobacion> MotivosDevConAprobacion1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MotivosDevConAprobacion> MotivosDevConAprobacion2 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AprobacionDevoluciones> AprobacionDevoluciones { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AprobacionDevoluciones> AprobacionDevoluciones1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AprobacionDevoluciones> AprobacionDevoluciones2 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Devolucion> Devolucion { get; set; }
     }
 }

@@ -11,6 +11,12 @@ using System.Web.Http;
 
 namespace AventasApi.Controllers
 {
+    public class ActualizarCorreo
+    {
+        public string Correo { get; set; }
+        public bool CorreoDevolucion { get; set; }
+    }
+
     [RoutePrefix("api/usuario")]
     public class UsuarioController : ApiController
     {
@@ -48,7 +54,9 @@ namespace AventasApi.Controllers
                         BloqueoAsesores=x.FlagTodosAsesores,
                         UsuarioOficina = x.FlagUsuarioOficina,
                         AdministradorProductos=x.FlagAdministradorProductos,
-                        ManejaBodegaEspecifico = x.FlagBodegaEspecifico
+                        ManejaBodegaEspecifico = x.FlagBodegaEspecifico,
+                        CorreoDevolucion=x.CorreoDevolucion,
+                        Correo=x.Correo
                     }).ToListAsync();
                     return Ok(usuarios);
                 }
@@ -82,6 +90,8 @@ namespace AventasApi.Controllers
                         FlagTodosAsesores=false,
                         FlagUsuarioOficina = false,
                         FlagAdministradorProductos=false,
+                        CorreoDevolucion=false,
+                        Correo="",
                         CreatedBy = usuario.creador,
                         CreatedDate=DateTime.Now,
                         ModifiedBy=usuario.creador,
@@ -97,6 +107,34 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("correo/{id}")]
+        public async Task<IHttpActionResult> ActualizarCorreo(int id,[FromBody] ActualizarCorreo correo)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var usuario = await ctx.Usuarios.FindAsync(id);
+
+                    if (usuario == null)
+                    {
+                        return BadRequest("El usuario no existe");
+                    }
+
+                    usuario.Correo = correo.Correo;
+                    usuario.CorreoDevolucion = correo.CorreoDevolucion;
+
+                    await ctx.SaveChangesAsync();
+
+                    return Ok();
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
             }
         }
 
