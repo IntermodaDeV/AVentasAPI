@@ -451,71 +451,102 @@ namespace AventasApi.Controllers
                     var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null).Select(x => x.Correo).ToListAsync();
                     var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devolucion.MotivoDevolucionDetalle);
 
-                    Devolucion devolucionDB = new Devolucion()
-                    {
-                        NumDevolucion = devolucion.Correlativo,
-                        CodigoCliente = devolucion.CodigoCliente,
-                        IdLinea = devolucion.Linea,
-                        IdMotivoDevDetalle = devolucion.MotivoDevolucionDetalle,
-                        EmpresaId = devolucion.Empresa,
-                        PedidoOrigen = devolucion.PedidoOriginal,
-                        FacturaOrigen = devolucion.FacturaOriginal,
-                        CodigoAsesor = cliente.CodigoAsesor,
-                        UsuarioCrea = user.Id,
-                        FechaCrea = DateTime.Now,
-                        Sincronizado = false,
-                        Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
-                        Subtotal = devolucion.SubTotal,
-                        TotalUnidades = 0
-                    };
+                    var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
+                    int minutosValue = 2;
 
-                    foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
+                    if (minutosConf != null)
                     {
-                        devolucionDB.TotalUnidades += detalle.Cantidad;
-
-                        devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
+                        try
                         {
-                            NumDevolucion = devolucion.Correlativo,
-                            IdProducto = detalle.IdProducto,
-                            CodigoColor = detalle.CodigoColor,
-                            CodigoTalla = detalle.CodigoTalla,
-                            Cantidad = detalle.Cantidad,
-                            PrecioUnitario = detalle.PrecioUnitario,
-                            MontoLinea = detalle.Cantidad * detalle.PrecioUnitario
-                        });
-                    }
-                    bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
-
-                    if (!guardadoExito)
-                    {
-                        return BadRequest("No se pudo guardar la devolucion.");
-                    }
-
-                    if (PendienteAprobacion.Count > 0)
-                    {
-                        foreach (var x in PendienteAprobacion)
+                            int.TryParse(minutosConf.Valor, out minutosValue);
+                        }
+                        catch (Exception)
                         {
-                            AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
-                            {
-                                IdUsuario = x.IdUsuario,
-                                NumDevolucion = devolucion.Correlativo,
-                                Estado = true,
-                                UsuarioCrea = user.Id,
-                                FechaCrea = DateTime.Now
-                            };
-                            ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
-                            var result = await ctx.SaveChangesAsync();
                         }
                     }
+                    Devolucion found = null;
+                    var fechaDesde = DateTime.Now.AddMinutes(Convert.ToDouble(minutosValue * -1));
+                    var totalUnidades = devolucion.DetalleDevolucion.Sum(x => decimal.Parse(x.Cantidad.ToString()));
+                    var totalPedido = devolucion.SubTotal;
 
-                    if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
+                    found = ctx.Devolucion.FirstOrDefault(x => (x.FechaCrea >= fechaDesde && x.FechaCrea <= DateTime.Now)
+                                                                && x.CodigoCliente == devolucion.CodigoCliente
+                                                                && x.Subtotal == totalPedido
+                                                                && x.TotalUnidades == totalUnidades
+                                                                && x.CodigoAsesor == user.UserAccount);
+
+                    if (found == null)
                     {
-                        ReducirPendienteDevolucion(devolucionDB);
+                        found = ctx.Devolucion.FirstOrDefault(x => x.NumDevolucion == devolucion.Correlativo);
                     }
 
+                    if (found == null)
+                    {
+                        Devolucion devolucionDB = new Devolucion()
+                        {
+                            NumDevolucion = devolucion.Correlativo,
+                            CodigoCliente = devolucion.CodigoCliente,
+                            IdLinea = devolucion.Linea,
+                            IdMotivoDevDetalle = devolucion.MotivoDevolucionDetalle,
+                            EmpresaId = devolucion.Empresa,
+                            PedidoOrigen = devolucion.PedidoOriginal,
+                            FacturaOrigen = devolucion.FacturaOriginal,
+                            CodigoAsesor = cliente.CodigoAsesor,
+                            UsuarioCrea = user.Id,
+                            FechaCrea = DateTime.Now,
+                            Sincronizado = false,
+                            Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
+                            Subtotal = devolucion.SubTotal,
+                            TotalUnidades = 0
+                        };
 
-                    _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion} ", correos);
-                
+                        foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
+                        {
+                            devolucionDB.TotalUnidades += detalle.Cantidad;
+
+                            devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
+                            {
+                                NumDevolucion = devolucion.Correlativo,
+                                IdProducto = detalle.IdProducto,
+                                CodigoColor = detalle.CodigoColor,
+                                CodigoTalla = detalle.CodigoTalla,
+                                Cantidad = detalle.Cantidad,
+                                PrecioUnitario = detalle.PrecioUnitario,
+                                MontoLinea = detalle.Cantidad * detalle.PrecioUnitario
+                            });
+                        }
+                        bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
+
+                        if (!guardadoExito)
+                        {
+                            return BadRequest("No se pudo guardar la devolucion.");
+                        }
+
+                        if (PendienteAprobacion.Count > 0)
+                        {
+                            foreach (var x in PendienteAprobacion)
+                            {
+                                AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
+                                {
+                                    IdUsuario = x.IdUsuario,
+                                    NumDevolucion = devolucion.Correlativo,
+                                    Estado = true,
+                                    UsuarioCrea = user.Id,
+                                    FechaCrea = DateTime.Now
+                                };
+                                ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
+                                var result = await ctx.SaveChangesAsync();
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
+                        {
+                            ReducirPendienteDevolucion(devolucionDB);
+                        }
+
+
+                        _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion} ", correos);
+                    }
 
                     return Ok(devolucion.Correlativo);
                 }
@@ -543,6 +574,19 @@ namespace AventasApi.Controllers
                     List<MotivosDevConAprobacion> AprobadoresSinFactura = new List<MotivosDevConAprobacion>();
                     var empresa = devoluciones[0].Empresa;
                     var motivoSinFactura = await ctx.MotivosDevolucion.FirstOrDefaultAsync(x => x.CodigoMotivoDevolucion == "SIN-FACTURA" && x.EmpresaId == empresa);
+                    var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
+                    int minutosValue = 2;
+
+                    if (minutosConf != null)
+                    {
+                        try
+                        {
+                            int.TryParse(minutosConf.Valor, out minutosValue);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
 
                     if (motivoSinFactura != null)
                     {
@@ -553,89 +597,105 @@ namespace AventasApi.Controllers
                     {
                         var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == usuario.EmpresaId);
                         var PendienteAprobacion = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToListAsync();
-                        int numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
-                        string inicialesAsesor = asesor.InicialesNombre;
-                        string numeroReferencia = $"{inicialesAsesor}DEV-1{numeroCorelativo.ToString("D5")}";
+                        Devolucion found = null;
+                        var fechaDesde = DateTime.Now.AddMinutes(Convert.ToDouble(minutosValue * -1));
+                        var totalUnidades = devolucion.DetalleDevolucion.Sum(x => decimal.Parse(x.Cantidad.ToString()));
+                        var totalPedido = devolucion.SubTotal;
 
-                        Devolucion devolucionDB = new Devolucion()
+                        found = ctx.Devolucion.FirstOrDefault(x => (x.FechaCrea >= fechaDesde && x.FechaCrea <= DateTime.Now)
+                                                                    && x.CodigoCliente == devolucion.CodigoCliente
+                                                                    && x.Subtotal == totalPedido
+                                                                    && x.TotalUnidades == totalUnidades
+                                                                    && x.CodigoAsesor == user.UserAccount);
+
+                        if (found == null)
                         {
-                            NumDevolucion = numeroReferencia,
-                            CodigoCliente = devolucion.CodigoCliente,
-                            IdLinea = devolucion.Linea,
-                            IdMotivoDevDetalle = devolucion.MotivoDevolucionDetalle,
-                            EmpresaId = devolucion.Empresa,
-                            PedidoOrigen = devolucion.PedidoOriginal,
-                            FacturaOrigen = devolucion.FacturaOriginal,
-                            CodigoAsesor = cliente.CodigoAsesor,
-                            UsuarioCrea = user.Id,
-                            FechaCrea = DateTime.Now,
-                            Sincronizado = false,
-                            Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
-                            Subtotal = devolucion.SubTotal,
-                            TotalUnidades = 0
-                        };
-
-                        foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
-                        {
-                            devolucionDB.TotalUnidades += detalle.Cantidad;
-
-                            devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
-                            {
-                                NumDevolucion = numeroReferencia,
-                                IdProducto = detalle.IdProducto,
-                                CodigoColor = detalle.CodigoColor,
-                                CodigoTalla = detalle.CodigoTalla,
-                                Cantidad = detalle.Cantidad,
-                                PrecioUnitario = detalle.PrecioUnitario,
-                                MontoLinea = detalle.Cantidad * detalle.PrecioUnitario
-                            });
+                            found = ctx.Devolucion.FirstOrDefault(x => x.NumDevolucion == devolucion.Correlativo);
                         }
-                        bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
 
-                        if (guardadoExito)
+                        if (found == null)
                         {
-                            if (string.IsNullOrEmpty(devolucion.FacturaOriginal) || string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
+
+                            Devolucion devolucionDB = new Devolucion()
                             {
-                                foreach (var x in AprobadoresSinFactura)
+                                NumDevolucion = devolucion.Correlativo,
+                                CodigoCliente = devolucion.CodigoCliente,
+                                IdLinea = devolucion.Linea,
+                                IdMotivoDevDetalle = devolucion.MotivoDevolucionDetalle,
+                                EmpresaId = devolucion.Empresa,
+                                PedidoOrigen = devolucion.PedidoOriginal,
+                                FacturaOrigen = devolucion.FacturaOriginal,
+                                CodigoAsesor = cliente.CodigoAsesor,
+                                UsuarioCrea = user.Id,
+                                FechaCrea = DateTime.Now,
+                                Sincronizado = false,
+                                Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
+                                Subtotal = devolucion.SubTotal,
+                                TotalUnidades = 0
+                            };
+
+                            foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
+                            {
+                                devolucionDB.TotalUnidades += detalle.Cantidad;
+
+                                devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
                                 {
-                                    AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
+                                    NumDevolucion = devolucion.Correlativo,
+                                    IdProducto = detalle.IdProducto,
+                                    CodigoColor = detalle.CodigoColor,
+                                    CodigoTalla = detalle.CodigoTalla,
+                                    Cantidad = detalle.Cantidad,
+                                    PrecioUnitario = detalle.PrecioUnitario,
+                                    MontoLinea = detalle.Cantidad * detalle.PrecioUnitario
+                                });
+                            }
+                            bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
+
+                            if (guardadoExito)
+                            {
+                                if (string.IsNullOrEmpty(devolucion.FacturaOriginal) || string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
+                                {
+                                    foreach (var x in AprobadoresSinFactura)
                                     {
-                                        IdUsuario = x.IdUsuario,
-                                        NumDevolucion = numeroReferencia,
-                                        Estado = true,
-                                        UsuarioCrea = user.Id,
-                                        FechaCrea = DateTime.Now
-                                    };
-                                    ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
-                                    var result = await ctx.SaveChangesAsync();
+                                        AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
+                                        {
+                                            IdUsuario = x.IdUsuario,
+                                            NumDevolucion = devolucion.Correlativo,
+                                            Estado = true,
+                                            UsuarioCrea = user.Id,
+                                            FechaCrea = DateTime.Now
+                                        };
+                                        ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
+                                        var result = await ctx.SaveChangesAsync();
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var x in PendienteAprobacion)
+                                    {
+                                        AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
+                                        {
+                                            IdUsuario = x.IdUsuario,
+                                            NumDevolucion = devolucion.Correlativo,
+                                            Estado = true,
+                                            UsuarioCrea = user.Id,
+                                            FechaCrea = DateTime.Now
+                                        };
+                                        ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
+                                        var result = await ctx.SaveChangesAsync();
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
+                                {
+                                    ReducirPendienteDevolucion(devolucionDB);
                                 }
                             }
-                            else
-                            {
-                                foreach (var x in PendienteAprobacion)
-                                {
-                                    AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
-                                    {
-                                        IdUsuario = x.IdUsuario,
-                                        NumDevolucion = numeroReferencia,
-                                        Estado = true,
-                                        UsuarioCrea = user.Id,
-                                        FechaCrea = DateTime.Now
-                                    };
-                                    ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
-                                    var result = await ctx.SaveChangesAsync();
-                                }
-                            }
 
-                            if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
-                            {
-                                ReducirPendienteDevolucion(devolucionDB);
-                            }
-
-                            nuevasDevoluciones.Add(new { referencia = numeroReferencia, factura = devolucion.FacturaOriginal });
-
-                            _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {numeroReferencia} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion}", correos);
+                            _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion}", correos);
                         }
+
+                        nuevasDevoluciones.Add(new { referencia = devolucion.Correlativo, factura = devolucion.FacturaOriginal });
 
                     }
 
