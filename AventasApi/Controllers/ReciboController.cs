@@ -151,6 +151,7 @@ namespace AventasApi.Controllers
                         new RecibosDetalleViewModel
                         {
                             IdReciboDetalle = recDet.IdReciboDetalle,
+                            cuota = recDet.SubFacturasxCliente.NumeroCuota,
                             Factura = recDet.SubFacturasxCliente.Factura,
                             NumeroFel = recDet.SubFacturasxCliente.NumeroFEL,
                             FechaFactura = recDet.SubFacturasxCliente.FacturasxCliente.FechaFactura,
@@ -162,10 +163,11 @@ namespace AventasApi.Controllers
                             ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
                             Descuento = recDet.Descuento,
                             EsAbono = recDet.EsAbono,
-                            DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0
+                            DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0               
                         } : new RecibosDetalleViewModel
                         {
                             IdReciboDetalle = recDet.IdReciboDetalle,
+                            cuota = null,
                             Factura = "SALDO_FAVOR",
                             NumeroFel = "",
                             FechaFactura = null,
@@ -1007,6 +1009,7 @@ namespace AventasApi.Controllers
                                     Dias = dias,
                                     TipoDocumento = subfactura.FacturasxCliente.Tipo,
                                     EsAbono = detalleReciboXCliente.EsAbono,
+                                    cuota = subfactura.NumeroCuota
                                 };
                                 respuestaPagoRecibo.Facturas.Add(pagoAplicado);
                             }
@@ -1993,6 +1996,7 @@ namespace AventasApi.Controllers
         public int Dias { get; set; }
         public string TipoDocumento { get; set; }
         public bool? EsAbono { get; set; }
+        public int? cuota { get; set; }
     }
     public class RespuestaPago
     {
