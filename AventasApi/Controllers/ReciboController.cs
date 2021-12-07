@@ -851,7 +851,7 @@ namespace AventasApi.Controllers
                                 }
                             }
                             var fechaDesde = DateTime.Now.AddMinutes(minutosValue * -1).AddSeconds(-30);
-                            var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pagoBD.Codigo && rec.REFERENCIA == pago.Referencia && rec.FACTURA == subfactura.Factura);
+                            var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pagoBD.Codigo && rec.REFERENCIA == pago.Referencia && rec.FACTURA == subfactura.Factura && rec.REF_TRANSOPEN == subfactura.Referencia);
                             RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago && recXCli.Referencia == pago.Referencia);
                             existeRecibo = context.RecibosxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
 
