@@ -20,5 +20,6 @@ namespace AventasApi.Models.ViewModels
         public string Factura { get; set; }
         public string NumeroFel { get; set; }
         public string Tipo { get; set; }
+        public int? cuota { get; set; }
     }
 }
