@@ -405,7 +405,8 @@ namespace AventasApi.Controllers
                     }
 
                     List<ReciboApiModel> ReciboSincronizar = new List<ReciboApiModel>();
-                    var ReciboDetalle = ctx.RecibosDetalle.Where(s => s.RecibosxCliente.NumeroRecibo == recibo).ToList();
+                    var ReciboDetalle = ctx.RecibosDetalle.Where(s => s.RecibosxCliente.NumeroRecibo == recibo && s.IdSubFactura!=null).ToList();
+                    var saldoFavor = ctx.RecibosDetalle.FirstOrDefault(x=>x.ReciboId == Recibo.ReciboId && x.IdSubFactura==null);
                     string empresa = Recibo.CodigoCliente.Substring(0, 4);
                     var asesor = ctx.Asesores.Where(a => a.CodigoAsesor == Recibo.CodigoAsesor && a.EmpresaId==empresa).FirstOrDefault();
                     var TipoPago = ctx.TiposdePago.Where(a => a.IdTipoPago == Recibo.IdTipoPago).FirstOrDefault();
@@ -442,6 +443,14 @@ namespace AventasApi.Controllers
                         };
                         ReciboSincronizar.Add(Recibos);
                     }
+
+                    if (saldoFavor != null)
+                    {
+                        string ultimoValor = ReciboSincronizar[ReciboSincronizar.Count() - 1].APLICADO;
+                        decimal valorConSaldoFavor = decimal.Parse(ultimoValor) + saldoFavor.Valor.Value;
+                        ReciboSincronizar[ReciboSincronizar.Count() - 1].APLICADO = valorConSaldoFavor.ToString();
+                    }
+
                     return await PostReciboAx(ReciboSincronizar);
                 }
             }
