@@ -525,6 +525,16 @@ namespace AventasApi.Controllers
         {
             try
             {
+                try
+                {
+                    var json = new JavaScriptSerializer().Serialize(anticipoPost);
+
+                    EscribirEnArchivo($"Recibo At: {DateTime.Now} : {json}.\n");
+                }
+                catch (Exception)
+                {
+
+                }
                 RespuestaRecibo respuestaPagoRecibo = new RespuestaRecibo();
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                 var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount && ase.EmpresaId==anticipoPost.EmpresaUsuario);
@@ -557,19 +567,13 @@ namespace AventasApi.Controllers
                         }
                         var fechaDesde = DateTime.Now.AddMinutes(minutosValue * -1).AddSeconds(-30);
                         var TipoPago = int.Parse(pago.CodigoTipoPago);
-                        existeAnticipo = context.AnticiposxCliente.Where(x => x.CodigoCliente == anticipoPost.CodigoCliente
-                                                                            && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
-                                                                            && x.IdTipoPago == TipoPago
-                                                                            && x.SpecPago == pago.TipoPagoDetalle
-                                                                            && x.Valor == valorPago).Count();
                         if (anticipoPost.ReciboProforma)
                         {
                             existeProforma = context.RecibosProforma.Where(x => x.CodigoCliente == anticipoPost.CodigoCliente
                                                                            && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
                                                                            && x.IdTipoPago == TipoPago
                                                                            && x.SpecPago == pago.TipoPagoDetalle
-                                                                           && x.Valor == valorPago).Count();
-
+                                                                           && x.Valor == valorPago).Count();  
                             if (existeProforma == 0)
                             {
                                 existeProforma = context.RecibosProforma.Where(x => x.NumeroProforma == anticipoPost.NumeroRecibo).Count();
@@ -624,10 +628,20 @@ namespace AventasApi.Controllers
                         }
                         else
                         {
+                            existeAnticipo = context.AnticiposxCliente.Where(x => x.NumeroRecibo == anticipoPost.NumeroRecibo).Count();
+                            
+                            if (existeAnticipo == 0)
+                            {
+                                existeAnticipo = context.RecibosxCliente.Where(x => x.NumeroRecibo == anticipoPost.NumeroRecibo).Count();
+                            }
 
                             if (existeAnticipo == 0)
                             {
-                                existeAnticipo = context.AnticiposxCliente.Where(x => x.NumeroRecibo == anticipoPost.NumeroRecibo).Count();
+                                existeAnticipo = context.AnticiposxCliente.Where(x => x.CodigoCliente == anticipoPost.CodigoCliente
+                                                                             && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
+                                                                             && x.IdTipoPago == TipoPago
+                                                                             && x.SpecPago == pago.TipoPagoDetalle
+                                                                             && x.Valor == valorPago).Count();
                             }
                             if (existeAnticipo == 0)
                             {
@@ -703,8 +717,6 @@ namespace AventasApi.Controllers
                             respuestapago.Banco = bank.Descripcion;
                         }
                         respuestaPagoRecibo.Pagos.Add(respuestapago);
-                       
-                        asesor.CorrelativoRecibos = numeroCorrelativoRecibo + 1;
 
                         RespuestaFactura pagoAplicado = new RespuestaFactura
                         {
@@ -720,7 +732,14 @@ namespace AventasApi.Controllers
                         respuestaPagoRecibo.CodigoUltimoRecibo = anticipoPost.NumeroRecibo;
                         respuestaPagoRecibo.Facturas.Add(pagoAplicado);
 
-                        ReciboApiModel anticipoAX = new ReciboApiModel
+
+                        if (existeAnticipo > 0)
+                        {
+                            respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
+                            return Ok(respuestaPagoRecibo);
+                        }
+                       
+                            ReciboApiModel anticipoAX = new ReciboApiModel
                         {
                             COMPANY = asesor.EmpresaId,
                             ASESOR = asesor.Usuario,
@@ -748,12 +767,19 @@ namespace AventasApi.Controllers
                         };
                         recibos.Add(anticipoAX);
                     }
-                    context.SaveChanges();
-                    
-                    _ = PostAnticipoAx(recibos);
+                    int affectedRows = context.SaveChanges();
 
-                    respuestaPagoRecibo.Mensaje = "";
-                    return Ok(respuestaPagoRecibo);
+                    if(affectedRows> 0)
+                    {
+                        AsyncSqlInsert.ValidarCorrelativoRecibo(asesor.CodigoAsesor, asesor.EmpresaId);
+                        _ = PostAnticipoAx(recibos);
+                        respuestaPagoRecibo.Mensaje = "";
+                        return Ok(respuestaPagoRecibo);
+                    }
+                    else
+                    {
+                        return BadRequest("Error al guardar el recibo");
+                    }
                 }
                 return BadRequest();
             }
@@ -864,7 +890,12 @@ namespace AventasApi.Controllers
                             RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago && recXCli.Referencia == pago.Referencia);
                             existeRecibo = context.RecibosxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
 
-                            if(existeRecibo == 0)
+                            if (existeRecibo == 0)
+                            {
+                                existeRecibo = context.AnticiposxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
+                            }
+
+                            if (existeRecibo == 0)
                             {
                                 existeRecibo = context.RecibosxCliente.Where(x => x.CodigoCliente == subfactura.CodigoCliente
                                                                              && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
@@ -924,6 +955,7 @@ namespace AventasApi.Controllers
                                     SpecPago = pago.TipoPagoDetalle,
                                     UsuarioCreacion = user.UserAccount,
                                     FechaCreacion = DateTime.Now,
+                                    EmpresaUsuario = reciboPost.EmpresaUsuario
                                 };
                                 recibosxCliente.Add(reciboXCliente);
                             }
@@ -1146,7 +1178,7 @@ namespace AventasApi.Controllers
                                 //        context.SaveChanges();
                                 //    }
                                 //}
-                                ValidarCorrelativoRecibo(asesor.CodigoAsesor,reciboPost.EmpresaUsuario);
+                                //ValidarCorrelativoRecibo(asesor.CodigoAsesor,reciboPost.EmpresaUsuario);
 
                                 foreach (var iter in recibos)
                                 {
@@ -1245,7 +1277,7 @@ namespace AventasApi.Controllers
                         //        ctx.SaveChanges();
                         //    }
                         //}
-                        ValidarCorrelativoRecibo(asesor.CodigoAsesor,reciboPost.EmpresaUsuario);
+                        //ValidarCorrelativoRecibo(asesor.CodigoAsesor,reciboPost.EmpresaUsuario);
 
 
                         foreach (var iter in recibos)
@@ -1278,35 +1310,6 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.ToString());
-            }
-        }
-
-        private void ValidarCorrelativoRecibo(string CodigoAsesor,string empresa)
-        {
-            using (AVentasEntities context = new AVentasEntities())
-            {
-                try
-                {
-                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor && x.EmpresaId==empresa);
-                    asesor.CorrelativoRecibos = (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0) + 1;
-                    context.SaveChanges();
-
-                    var correlativo = $"{asesor.InicialesNombre}-{100000 + (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0)}";
-
-                    if (context.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo == correlativo) == null)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        ValidarCorrelativoRecibo(CodigoAsesor,empresa);
-                    }
-
-                }
-                catch (Exception ex)
-                {
-
-                }
             }
         }
 
