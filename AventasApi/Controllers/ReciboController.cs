@@ -845,226 +845,229 @@ namespace AventasApi.Controllers
                     double valor = pago.Valor;
                     foreach (SubFacturasxCliente subfactura in subFacturas)
                     {
-                        double montoAplicado = 0;
-                        double valorCuota = Decimal.ToDouble(subfactura.Saldo ?? 0);
-                        var Factura = context.FacturasxCliente.Where(fa => fa.Factura == subfactura.Factura).FirstOrDefault();
-                        double valorCuotaOriginal = string.IsNullOrEmpty(subfactura.IdAcuerdoxCliente) ? Decimal.ToDouble(subfactura.Saldo.Value) : Decimal.ToDouble(Factura.Saldo.Value);
-                        Factura.PendienteFactura = Decimal.Parse((valor).ToString());
-                        if ((valor > 0) && (valorCuota > 0))
+                        if (valor > 0)
                         {
-                            bool aplicaDescuento = false;
-                            aplicaDescuento = /*(pagoDetalleBD.CodigoDetalle != "CH_PSF" &&*/ (subfactura.FechaMaxDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
-                                (subfactura.FechaVencimientoDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaVencimientoDescuento.Value.Date)
-                                //reciboPost.FechaPago.Date <= subfactura.FacturasxCliente.FechaMaxDescuento
-                                /*)*/;
-                            if (aplicaDescuento)
+                            double montoAplicado = 0;
+                            double valorCuota = Decimal.ToDouble(subfactura.Saldo ?? 0);
+                            var Factura = context.FacturasxCliente.Where(fa => fa.Factura == subfactura.Factura).FirstOrDefault();
+                            double valorCuotaOriginal = string.IsNullOrEmpty(subfactura.IdAcuerdoxCliente) ? Decimal.ToDouble(subfactura.Saldo.Value) : Decimal.ToDouble(Factura.Saldo.Value);
+                            Factura.PendienteFactura = Decimal.Parse((valor).ToString());
+                            if ((valor > 0) && (valorCuota > 0))
                             {
-                                /*if((subfactura.Descuento ?? 0) == 0)
-                                 {
-                                     var cliente = context.Clientes.Where(x => x.CodigoCliente == subfactura.CodigoCliente && x.EmpresaId == subfactura.EmpresaId).FirstOrDefault();
-                                     var descuento = context.Descuento.Where(x => x.Codigo == cliente.Descuento && x.EmpresaId == cliente.EmpresaId).FirstOrDefault();
-                                     var descuentoDetalle = context.DescuentoDetalle.Where(x => x.IdDescuento == descuento.IdDescuento && x.IdLinea == subfactura.FacturasxCliente.IdLinea).FirstOrDefault();
-                                     Descuento = descuentoDetalle != null ? subfactura.FacturasxCliente.TotalFactura.Value * (descuentoDetalle.Porcentaje.Value/100) : 0m;                                  
-                                     valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - Descuento);
-                                 }
-                               {*/
-                                valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
-                                //}
-                            }
-                            var pagoValor = Decimal.Parse((valor).ToString());
-                            var minutosConf = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotanteRecibo");
-                            double minutosValue = 1;
+                                bool aplicaDescuento = false;
+                                aplicaDescuento = /*(pagoDetalleBD.CodigoDetalle != "CH_PSF" &&*/ (subfactura.FechaMaxDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
+                                    (subfactura.FechaVencimientoDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaVencimientoDescuento.Value.Date)
+                                    //reciboPost.FechaPago.Date <= subfactura.FacturasxCliente.FechaMaxDescuento
+                                    /*)*/;
+                                if (aplicaDescuento)
+                                {
+                                    /*if((subfactura.Descuento ?? 0) == 0)
+                                     {
+                                         var cliente = context.Clientes.Where(x => x.CodigoCliente == subfactura.CodigoCliente && x.EmpresaId == subfactura.EmpresaId).FirstOrDefault();
+                                         var descuento = context.Descuento.Where(x => x.Codigo == cliente.Descuento && x.EmpresaId == cliente.EmpresaId).FirstOrDefault();
+                                         var descuentoDetalle = context.DescuentoDetalle.Where(x => x.IdDescuento == descuento.IdDescuento && x.IdLinea == subfactura.FacturasxCliente.IdLinea).FirstOrDefault();
+                                         Descuento = descuentoDetalle != null ? subfactura.FacturasxCliente.TotalFactura.Value * (descuentoDetalle.Porcentaje.Value/100) : 0m;                                  
+                                         valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - Descuento);
+                                     }
+                                   {*/
+                                    valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
+                                    //}
+                                }
+                                var pagoValor = Decimal.Parse((valor).ToString());
+                                var minutosConf = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotanteRecibo");
+                                double minutosValue = 1;
 
-                            if (minutosConf != null)
-                            {
+                                if (minutosConf != null)
+                                {
+                                    try
+                                    {
+                                        double.TryParse(minutosConf.Valor, out minutosValue);
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+                                }
+                                var fechaDesde = DateTime.Now.AddMinutes(minutosValue * -1).AddSeconds(-30);
+                                var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pagoBD.Codigo && rec.REFERENCIA == pago.Referencia && rec.FACTURA == subfactura.Factura && rec.REF_TRANSOPEN == subfactura.Referencia);
+                                RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago && recXCli.Referencia == pago.Referencia);
+                                existeRecibo = context.RecibosxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
+
+                                if (existeRecibo == 0)
+                                {
+                                    existeRecibo = context.AnticiposxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
+                                }
+
+                                if (existeRecibo == 0)
+                                {
+                                    existeRecibo = context.RecibosxCliente.Where(x => x.CodigoCliente == subfactura.CodigoCliente
+                                                                                 && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
+                                                                                 && x.IdTipoPago == pagoBD.IdTipoPago
+                                                                                 && x.Referencia == pago.Referencia
+                                                                                 && x.SpecPago == pago.TipoPagoDetalle
+                                                                                 && x.Valor == pagoValor
+                                                                                 && x.IdFactura == subfactura.IdFactura).Count();
+                                }
+                                if (recibo == null)
+                                {
+                                    recibo = new ReciboApiModel
+                                    {
+                                        COMPANY = subfactura.EmpresaId,
+                                        ASESOR = asesor.Usuario,
+                                        ASESOR_NOMBRE = asesor.Nombre,
+                                        ASESOR_DIARIO = asesor.CodigoAsesor,
+                                        RECIBO = reciboPost.NumeroRecibo,
+                                        CLIENTE = subfactura.CodigoCliente,
+                                        MONEDA = pago.IdMoneda,
+                                        FECHA = DateTime.Now.ToString("dd/MM/yyyy"),
+                                        DESCRIPCION = reciboPost.Descripcion,
+                                        TIPO_PAGO = pagoBD.Codigo,
+                                        SPEC_PAGO = pago.TipoPagoDetalle,
+                                        BANCO = bank != null ? bank.NombreBanco : "",
+                                        REFERENCIA = pago.Referencia,
+                                        FECHA_PAGO = reciboPost.FechaPago.ToString("dd/MM/yyyy"),
+                                        FACTURA = subfactura.Factura,
+                                        APLICADO = "0",
+                                        DESCUENTO = "0",
+                                        REF_TRANSOPEN = subfactura.Referencia,
+                                    };
+                                    recibosXPago.Add(recibo);
+                                    //if (reciboPost.Pagos.Count() > 1)
+                                    //numeroCorrelativoRecibo++;
+                                }
+                                if (reciboXCliente == null && existeRecibo == 0)
+                                {
+                                    codigoCliente = recibo.CLIENTE;
+                                    reciboXCliente = new RecibosxClienteViewModel
+                                    {
+                                        NumeroRecibo = recibo.RECIBO,
+                                        CodigoCliente = recibo.CLIENTE,
+                                        Fecha = DateTime.Now,
+                                        IdTipoPago = pagoBD.IdTipoPago,
+                                        Referencia = recibo.REFERENCIA,
+                                        FechaPago = reciboPost.FechaPago,
+                                        IdBanco = bank?.IdBanco,
+                                        Valor = 0,
+                                        IdMoneda = pago.IdMoneda,
+                                        Sincronizado = false,
+                                        CodigoAsesor = asesor.CodigoAsesor,
+                                        IdFactura = subfactura.IdFactura,
+                                        Descuento = 0,
+                                        Latitude = (reciboPost.location != null) ? reciboPost.location.latitude : null,
+                                        Longitude = (reciboPost.location != null) ? reciboPost.location.longitude : null,
+                                        SpecPago = pago.TipoPagoDetalle,
+                                        UsuarioCreacion = user.UserAccount,
+                                        FechaCreacion = DateTime.Now,
+                                        EmpresaUsuario = reciboPost.EmpresaUsuario
+                                    };
+                                    recibosxCliente.Add(reciboXCliente);
+                                }
+                                else if (existeRecibo > 0)
+                                {
+                                    codigoCliente = recibo.CLIENTE;
+                                    reciboXClienteFlotante = new RecibosxClienteFlotanteViewModel
+                                    {
+                                        NumeroRecibo = recibo.RECIBO,
+                                        CodigoCliente = recibo.CLIENTE,
+                                        Fecha = DateTime.Now,
+                                        IdTipoPago = pagoBD.IdTipoPago,
+                                        Referencia = recibo.REFERENCIA,
+                                        FechaPago = reciboPost.FechaPago,
+                                        IdBanco = bank?.IdBanco,
+                                        Valor = 0,
+                                        IdMoneda = pago.IdMoneda,
+                                        Sincronizado = false,
+                                        CodigoAsesor = asesor.CodigoAsesor,
+                                        IdFactura = subfactura.IdFactura,
+                                        Descuento = 0,
+                                        Latitude = (reciboPost.location != null) ? reciboPost.location.latitude : null,
+                                        Longitude = (reciboPost.location != null) ? reciboPost.location.longitude : null,
+                                        SpecPago = pago.TipoPagoDetalle,
+                                        UsuarioCreacion = user.UserAccount,
+                                        FechaCreacion = DateTime.Now,
+                                        Estado = 0  ///0: Pendiente, 1: Sincronizado, 2:Cancelado
+                                    };
+                                    recibosxClienteFlotante.Add(reciboXClienteFlotante);
+                                }
+                                double aplicadoDouble = 0;
+                                double.TryParse(recibo.APLICADO, out aplicadoDouble);
+                                RecibosDetalleViewModel detalleReciboXCliente = new RecibosDetalleViewModel
+                                {
+                                    IdSubFactura = subfactura.IdSubFactura,
+                                    Descuento = 0
+                                };
+                                if (Math.Round(valorCuota, 2) > Math.Round(valor, 2))
+                                {
+                                    detalleReciboXCliente.Valor = Decimal.Parse((valor).ToString());
+                                    recibo.APLICADO = (aplicadoDouble + valor).ToString();
+                                    subfactura.Saldo = (subfactura.Saldo ?? 0) - detalleReciboXCliente.Valor;
+                                    detalleReciboXCliente.EsAbono = true;
+                                    montoAplicado = valor;
+                                    valor = 0;
+                                }
+                                else
+                                {
+                                    detalleReciboXCliente.Valor = Decimal.Parse((valorCuota).ToString());
+                                    var aplicado = detalleReciboXCliente.Valor.Value /*+ Descuento*/;
+                                    recibo.APLICADO = aplicado.ToString();
+                                    valor -= valorCuota;
+                                    montoAplicado = valorCuota;
+                                    if (aplicaDescuento)
+                                    {
+                                        detalleReciboXCliente.Descuento = subfactura.Descuento;
+                                        recibo.DESCUENTO = (decimal.Parse(recibo.DESCUENTO) + subfactura.Descuento).ToString();
+                                    }
+                                    subfactura.Saldo = 0;
+                                    detalleReciboXCliente.EsAbono = false;
+                                }
+                                detalleReciboXCliente.ValorFactura = Factura.Saldo;
+                                context.SaveChanges();
+
+                                if (existeRecibo == 0)
+                                {
+                                    reciboXCliente.Descuento += detalleReciboXCliente.Descuento;
+                                    reciboXCliente.Valor += detalleReciboXCliente.Valor;
+                                    reciboXCliente.DetalleRecibo.Add(detalleReciboXCliente);
+                                }
+                                else
+                                {
+                                    reciboXClienteFlotante.Descuento += detalleReciboXCliente.Descuento;
+                                    reciboXClienteFlotante.Valor += detalleReciboXCliente.Valor;
+                                    reciboXClienteFlotante.DetalleRecibo.Add(detalleReciboXCliente);
+                                }
+
+
+                                var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == subfactura.Factura && string.IsNullOrEmpty(subfactura.IdAcuerdoxCliente));
+                                var fechaFactura = context.FacturasxCliente.FirstOrDefault(x => x.Factura == subfactura.Factura).FechaFactura;
+                                if (pagoAplicado == null)
+                                {
+                                    TimeSpan ts = reciboPost.Fecha - subfactura.FechaVencimiento.Value;
+
+                                    int dias = ts.Days;
+
+                                    pagoAplicado = new RespuestaFactura
+                                    {
+                                        IdFactura = recibo.FACTURA,
+                                        NumeroFEL = subfactura.NumeroFEL,
+                                        Fecha = fechaFactura.Value,
+                                        Dias = dias,
+                                        TipoDocumento = subfactura.FacturasxCliente.Tipo,
+                                        EsAbono = detalleReciboXCliente.EsAbono,
+                                        cuota = subfactura.NumeroCuota
+                                    };
+                                    respuestaPagoRecibo.Facturas.Add(pagoAplicado);
+                                }
+                                respuestaPagoRecibo.Total += montoAplicado;
+                                pagoAplicado.Aplicado += montoAplicado;
+                                pagoAplicado.Parcial += valorCuotaOriginal;
+
+                                respuestaPagoRecibo.CodigoUltimoRecibo = recibo.RECIBO;
                                 try
                                 {
-                                    double.TryParse(minutosConf.Valor, out minutosValue);
+                                    pagoAplicado.Parcial2 += detalleReciboXCliente.EsAbono.Value ? 0 : Double.Parse(recibo.DESCUENTO);
                                 }
                                 catch (Exception)
                                 {
                                 }
-                            }
-                            var fechaDesde = DateTime.Now.AddMinutes(minutosValue * -1).AddSeconds(-30);
-                            var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pagoBD.Codigo && rec.REFERENCIA == pago.Referencia && rec.FACTURA == subfactura.Factura && rec.REF_TRANSOPEN == subfactura.Referencia);
-                            RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago && recXCli.Referencia == pago.Referencia);
-                            existeRecibo = context.RecibosxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
-
-                            if (existeRecibo == 0)
-                            {
-                                existeRecibo = context.AnticiposxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
-                            }
-
-                            if (existeRecibo == 0)
-                            {
-                                existeRecibo = context.RecibosxCliente.Where(x => x.CodigoCliente == subfactura.CodigoCliente
-                                                                             && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
-                                                                             && x.IdTipoPago == pagoBD.IdTipoPago
-                                                                             && x.Referencia == pago.Referencia
-                                                                             && x.SpecPago == pago.TipoPagoDetalle
-                                                                             && x.Valor == pagoValor
-                                                                             && x.IdFactura == subfactura.IdFactura).Count();
-                            }
-                            if (recibo == null)
-                            {
-                                recibo = new ReciboApiModel
-                                {
-                                    COMPANY = subfactura.EmpresaId,
-                                    ASESOR = asesor.Usuario,
-                                    ASESOR_NOMBRE = asesor.Nombre,
-                                    ASESOR_DIARIO = asesor.CodigoAsesor,
-                                    RECIBO =  reciboPost.NumeroRecibo,
-                                    CLIENTE = subfactura.CodigoCliente,
-                                    MONEDA = pago.IdMoneda,
-                                    FECHA = DateTime.Now.ToString("dd/MM/yyyy"),
-                                    DESCRIPCION = reciboPost.Descripcion,
-                                    TIPO_PAGO = pagoBD.Codigo,
-                                    SPEC_PAGO = pago.TipoPagoDetalle,
-                                    BANCO = bank != null ? bank.NombreBanco : "",
-                                    REFERENCIA = pago.Referencia,
-                                    FECHA_PAGO = reciboPost.FechaPago.ToString("dd/MM/yyyy"),
-                                    FACTURA = subfactura.Factura,
-                                    APLICADO = "0",
-                                    DESCUENTO = "0",
-                                    REF_TRANSOPEN = subfactura.Referencia,
-                                };
-                                recibosXPago.Add(recibo);
-                                //if (reciboPost.Pagos.Count() > 1)
-                                    //numeroCorrelativoRecibo++;
-                            }
-                            if (reciboXCliente == null && existeRecibo == 0)
-                            {
-                                codigoCliente = recibo.CLIENTE;
-                                reciboXCliente = new RecibosxClienteViewModel
-                                {
-                                    NumeroRecibo = recibo.RECIBO,
-                                    CodigoCliente = recibo.CLIENTE,
-                                    Fecha = DateTime.Now,
-                                    IdTipoPago = pagoBD.IdTipoPago,
-                                    Referencia = recibo.REFERENCIA,
-                                    FechaPago = reciboPost.FechaPago,
-                                    IdBanco = bank?.IdBanco,
-                                    Valor = 0,
-                                    IdMoneda = pago.IdMoneda,
-                                    Sincronizado = false,
-                                    CodigoAsesor = asesor.CodigoAsesor,
-                                    IdFactura = subfactura.IdFactura,
-                                    Descuento = 0,
-                                    Latitude = (reciboPost.location != null) ? reciboPost.location.latitude : null,
-                                    Longitude = (reciboPost.location != null) ? reciboPost.location.longitude : null,
-                                    SpecPago = pago.TipoPagoDetalle,
-                                    UsuarioCreacion = user.UserAccount,
-                                    FechaCreacion = DateTime.Now,
-                                    EmpresaUsuario = reciboPost.EmpresaUsuario
-                                };
-                                recibosxCliente.Add(reciboXCliente);
-                            }
-                            else if(existeRecibo > 0)
-                            {
-                                codigoCliente = recibo.CLIENTE;
-                                reciboXClienteFlotante = new RecibosxClienteFlotanteViewModel
-                                {
-                                    NumeroRecibo = recibo.RECIBO,
-                                    CodigoCliente = recibo.CLIENTE,
-                                    Fecha = DateTime.Now,
-                                    IdTipoPago = pagoBD.IdTipoPago,
-                                    Referencia = recibo.REFERENCIA,
-                                    FechaPago = reciboPost.FechaPago,
-                                    IdBanco = bank?.IdBanco,
-                                    Valor = 0,
-                                    IdMoneda = pago.IdMoneda,
-                                    Sincronizado = false,
-                                    CodigoAsesor = asesor.CodigoAsesor,
-                                    IdFactura = subfactura.IdFactura,
-                                    Descuento = 0,
-                                    Latitude = (reciboPost.location != null) ? reciboPost.location.latitude : null,
-                                    Longitude = (reciboPost.location != null) ? reciboPost.location.longitude : null,
-                                    SpecPago = pago.TipoPagoDetalle,
-                                    UsuarioCreacion = user.UserAccount,
-                                    FechaCreacion = DateTime.Now,
-                                    Estado = 0  ///0: Pendiente, 1: Sincronizado, 2:Cancelado
-                                };
-                                recibosxClienteFlotante.Add(reciboXClienteFlotante);
-                            }
-                            double aplicadoDouble = 0;
-                            double.TryParse(recibo.APLICADO, out aplicadoDouble);
-                            RecibosDetalleViewModel detalleReciboXCliente = new RecibosDetalleViewModel
-                            {
-                                IdSubFactura = subfactura.IdSubFactura,
-                                Descuento = 0
-                            };
-                            if (Math.Round(valorCuota, 2) > Math.Round(valor, 2))
-                            {
-                                detalleReciboXCliente.Valor = Decimal.Parse((valor).ToString());
-                                recibo.APLICADO = (aplicadoDouble + valor).ToString();
-                                subfactura.Saldo = (subfactura.Saldo ?? 0) - detalleReciboXCliente.Valor;
-                                detalleReciboXCliente.EsAbono = true;
-                                montoAplicado = valor;
-                                valor = 0;
-                            }
-                            else
-                            {
-                                detalleReciboXCliente.Valor = Decimal.Parse((valorCuota).ToString());
-                                var aplicado = detalleReciboXCliente.Valor.Value /*+ Descuento*/;
-                                recibo.APLICADO = aplicado.ToString();
-                                valor -= valorCuota;
-                                montoAplicado = valorCuota;
-                                if (aplicaDescuento)
-                                {
-                                    detalleReciboXCliente.Descuento = subfactura.Descuento;
-                                    recibo.DESCUENTO = (decimal.Parse(recibo.DESCUENTO) + subfactura.Descuento).ToString();
-                                }
-                                subfactura.Saldo = 0;
-                                detalleReciboXCliente.EsAbono = false;
-                            }
-                            detalleReciboXCliente.ValorFactura = Factura.Saldo;
-                            context.SaveChanges();
-
-                            if(existeRecibo == 0)
-                            {
-                                reciboXCliente.Descuento += detalleReciboXCliente.Descuento;
-                                reciboXCliente.Valor += detalleReciboXCliente.Valor;
-                                reciboXCliente.DetalleRecibo.Add(detalleReciboXCliente);
-                            }
-                            else
-                            {
-                                reciboXClienteFlotante.Descuento += detalleReciboXCliente.Descuento;
-                                reciboXClienteFlotante.Valor += detalleReciboXCliente.Valor;
-                                reciboXClienteFlotante.DetalleRecibo.Add(detalleReciboXCliente);
-                            }
-
-
-                            var pagoAplicado = respuestaPagoRecibo.Facturas.FirstOrDefault(fact => fact.IdFactura == subfactura.Factura && string.IsNullOrEmpty(subfactura.IdAcuerdoxCliente));
-                            var fechaFactura = context.FacturasxCliente.FirstOrDefault(x=>x.Factura == subfactura.Factura).FechaFactura;
-                            if (pagoAplicado == null)
-                            {
-                                TimeSpan ts = reciboPost.Fecha - subfactura.FechaVencimiento.Value;
-
-                                int dias = ts.Days;
-
-                                pagoAplicado = new RespuestaFactura
-                                {
-                                    IdFactura = recibo.FACTURA,
-                                    NumeroFEL = subfactura.NumeroFEL,
-                                    Fecha = fechaFactura.Value,
-                                    Dias = dias,
-                                    TipoDocumento = subfactura.FacturasxCliente.Tipo,
-                                    EsAbono = detalleReciboXCliente.EsAbono,
-                                    cuota = subfactura.NumeroCuota
-                                };
-                                respuestaPagoRecibo.Facturas.Add(pagoAplicado);
-                            }
-                            respuestaPagoRecibo.Total += montoAplicado;
-                            pagoAplicado.Aplicado += montoAplicado;
-                            pagoAplicado.Parcial += valorCuotaOriginal;
-
-                            respuestaPagoRecibo.CodigoUltimoRecibo = recibo.RECIBO;
-                            try
-                            {
-                                pagoAplicado.Parcial2 += detalleReciboXCliente.EsAbono.Value ? 0 : Double.Parse(recibo.DESCUENTO);
-                            }
-                            catch (Exception)
-                            {
                             }
                         }
                     }
