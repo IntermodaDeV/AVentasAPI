@@ -1073,8 +1073,9 @@ namespace AventasApi.Controllers
                     int totalFacturas = recibosXPago.GroupBy(recXPag => recXPag.FACTURA).Count();
                     recibosXPago.ForEach(recXPag =>
                     {
-                        recXPag.TOTAL_APLICADO = totalRecibo.ToString();
-                        recXPag.TOTAL_RECIBO = totalRecibo.ToString();
+                        var totalRec = reciboPost.SaldoFavor > 0 ? reciboPost.SaldoFavor + totalRecibo : totalRecibo;
+                        recXPag.TOTAL_APLICADO = totalRec.ToString();
+                        recXPag.TOTAL_RECIBO = totalRec.ToString();
                         recXPag.TOTAL_FACTURAS = totalFacturas.ToString();
                     });
                     recibos.AddRange(recibosXPago);
@@ -1156,7 +1157,15 @@ namespace AventasApi.Controllers
                             }
                             else
                             {
-                                var reciboHeaders = new List<ReciboApiModel>();
+
+                            if (reciboPost.SaldoFavor > 0)
+                            {
+                                string ultimoValor = recibos[recibos.Count() - 1].APLICADO;
+                                decimal valorConSaldoFavor = decimal.Parse(ultimoValor) + Convert.ToDecimal(reciboPost.SaldoFavor);
+
+                                recibos[recibos.Count() - 1].APLICADO = valorConSaldoFavor.ToString();
+                            }
+                            var reciboHeaders = new List<ReciboApiModel>();
                                 var client = new RestClient();
                                 var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
                                 {
