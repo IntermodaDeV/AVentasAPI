@@ -789,6 +789,12 @@ namespace AventasApi.Controllers
             }    
         }
 
+        private bool noEsExponencial(double valor)
+        {
+            var numeroString = valor.ToString();
+            return !(numeroString.Contains('E') || numeroString.Contains('e'));
+        }
+
         [HttpPost]
         public IHttpActionResult PostRecibo(ReciboPostViewModel reciboPost)
         {
@@ -845,7 +851,7 @@ namespace AventasApi.Controllers
                     double valor = pago.Valor;
                     foreach (SubFacturasxCliente subfactura in subFacturas)
                     {
-                        if (valor > 0)
+                        if (valor > 0 && noEsExponencial(valor))
                         {
                             double montoAplicado = 0;
                             double valorCuota = Decimal.ToDouble(subfactura.Saldo ?? 0);
