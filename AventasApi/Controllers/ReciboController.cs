@@ -772,7 +772,40 @@ namespace AventasApi.Controllers
                     if(affectedRows> 0)
                     {
                         AsyncSqlInsert.ValidarCorrelativoRecibo(asesor.CodigoAsesor, asesor.EmpresaId);
-                        _ = PostAnticipoAx(recibos);
+                        if (EnLinea(recibos[0].COMPANY, recibos[0].ASESOR))
+                        {
+                            try
+                            {
+                                var client = new RestClient();
+                                var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
+                                {
+                                    RequestFormat = DataFormat.Json
+                                };
+                                request.AddHeader("Content-type", "application/json; charset=utf-8");
+                                request.Parameters.Clear();
+                                request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
+                                var respuesta = client.Execute(request);
+
+                                if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
+                                {
+                                    using (var ctx = new AVentasEntities())
+                                    {
+                                        var numeroRecibo = recibos[0].RECIBO;
+                                        var recibo =  ctx.AnticiposxCliente.FirstOrDefault(x => x.NumeroRecibo == numeroRecibo);
+                                        recibo.Sincronizado = true;
+                                        ctx.SaveChanges();
+                                    }
+
+                                    syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE);
+                                    syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
+                                }
+                                
+                            }
+                            catch (Exception)
+                            {
+                                
+                            }
+                        }
                         respuestaPagoRecibo.Mensaje = "";
                         return Ok(respuestaPagoRecibo);
                     }
