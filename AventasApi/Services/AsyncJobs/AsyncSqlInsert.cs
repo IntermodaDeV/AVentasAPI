@@ -95,8 +95,6 @@ namespace AventasApi.Services.AsyncJobs
                 try
                 {
                     var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor && x.EmpresaId == empresa);
-                    asesor.CorrelativoPedidos = (asesor.CorrelativoPedidos != null ? asesor.CorrelativoPedidos : 0) + 1;
-                    context.SaveChanges();
 
                     var correlativo = $"{asesor.InicialesNombre}-{100000+ (asesor.CorrelativoPedidos != null ? asesor.CorrelativoPedidos : 0)}";
 
@@ -106,6 +104,8 @@ namespace AventasApi.Services.AsyncJobs
                     }
                     else
                     {
+                        asesor.CorrelativoPedidos = (asesor.CorrelativoPedidos != null ? asesor.CorrelativoPedidos : 0) + 1;
+                        context.SaveChanges();
                         ValidarCorrelativoPedido(CodigoAsesor,empresa);
                     }
 
@@ -153,9 +153,6 @@ namespace AventasApi.Services.AsyncJobs
                 try
                 {
                     var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor && x.EmpresaId == empresa);
-                    asesor.CorrelativoRecibos = (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0) + 1;
-                    context.SaveChanges();
-
                     var correlativo = $"{asesor.InicialesNombre}-{100000 + (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0)}";
 
                     if (context.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo == correlativo) == null && context.AnticiposxCliente.FirstOrDefault(x => x.NumeroRecibo == correlativo) == null)
@@ -164,6 +161,8 @@ namespace AventasApi.Services.AsyncJobs
                     }
                     else
                     {
+                        asesor.CorrelativoRecibos = (asesor.CorrelativoRecibos != null ? asesor.CorrelativoRecibos : 0) + 1;
+                        context.SaveChanges();
                         ValidarCorrelativoRecibo(CodigoAsesor, empresa);
                     }
 
