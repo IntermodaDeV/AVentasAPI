@@ -71,7 +71,7 @@ namespace AventasApi.Services.Authentication
 
                     var user = new Usuario { IdUsuario = userBD.usuario, Pin = null };
 
-                    if (EnLinea(userBD.EmpresaId, userBD.usuario))
+                    /*if (EnLinea(userBD.EmpresaId, userBD.usuario))
                     {
                         //Validar con usuario de Intermoda
                         var client = new RestClient(Enviroment.AuthenticationApi);
@@ -86,7 +86,7 @@ namespace AventasApi.Services.Authentication
                         }
 
                         var content = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FailResponse>>(response.Content)[0];
-                        if (false && content.Message != "Ok")
+                        if (content.Message != "Ok")
                         {
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
                         }
@@ -116,11 +116,11 @@ namespace AventasApi.Services.Authentication
                         }
 
                         var isSamePassword = BCrypt.Net.BCrypt.Verify(credential.Password, entityFound.password);
-                        if (false&&!isSamePassword)
+                        if (!isSamePassword)
                         {
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
                         }
-                    }
+                    }*/
                     
                    
 
