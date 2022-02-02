@@ -13,6 +13,15 @@ using System.Data.Entity;
 
 namespace AventasApi.Controllers
 {
+    public class AsignacionMovil
+    {
+        public string CodigoAsesor { get; set; }
+        public string CodigoCliente { get; set; }
+        public DateTime FechaAsignacion { get; set; }
+        public DateTime HoraInicio { get; set; }
+        public DateTime HoraFinal { get; set; }
+        public int Prioridad { get; set; }
+    }
     //[Auth]
     public class AsignacionesController : ApiController
     {
@@ -74,7 +83,8 @@ namespace AventasApi.Controllers
                                 Observacion = axa.Observacion,
                                 PrioridadAsignacion = axa.PrioridadAsignacion,
                                 Checkin = axa.BloqueoCheckin,
-                                Checkout = axa.BloqueoCheckout
+                                Checkout = axa.BloqueoCheckout,
+                                Cancelada = axa.Cancelada,
                             }).OrderBy(axa => axa.HoraInicio).ToList();
 
                     
@@ -102,7 +112,8 @@ namespace AventasApi.Controllers
                                     ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
                                     Checkin = asignacion.Checkin,
                                     Checkout = asignacion.Checkout,
-                                    Asesor = asignacion.CodigoAsesor
+                                    Asesor = asignacion.CodigoAsesor,
+                                    Cancelada=asignacion.Cancelada
                                 });
                                 asignacionesXFecha.Add(nuevaAsignacionXFecha);
                             }
@@ -120,7 +131,8 @@ namespace AventasApi.Controllers
                                     ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
                                     Checkin = asignacion.Checkin,
                                     Checkout = asignacion.Checkout,
-                                    Asesor = asignacion.CodigoAsesor
+                                    Asesor = asignacion.CodigoAsesor,
+                                    Cancelada = asignacion.Cancelada
                                 });
                             }
                         }
@@ -596,6 +608,57 @@ namespace AventasApi.Controllers
                 BloqueoCheckin = false,
                 BloqueoCheckout = true
             }).ToList();
+        }
+
+        [HttpPost]
+        [Route("~/api/asignaciones/crear/movil")]
+        public async Task<IHttpActionResult> CrearAsignacionMovil([FromBody] AsignacionMovil asignacion)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    AsignacionxAsesor nuevaAsignacion = new AsignacionxAsesor
+                    {
+                        CodigoAsesor = asignacion.CodigoAsesor,
+                        CodigoCliente = asignacion.CodigoCliente,
+                        Fecha = asignacion.FechaAsignacion,
+                        FechaAsignacion = asignacion.FechaAsignacion,
+                        HoraInicio = asignacion.HoraInicio,
+                        HoraFinal = asignacion.HoraFinal,
+                        idPrioridad = asignacion.Prioridad,
+                        BloqueoCheckin = false,
+                        BloqueoCheckout = true,
+                        Cancelada = false
+                    };
+
+                    ctx.AsignacionxAsesor.Add(nuevaAsignacion);
+                    int affectedRows = await ctx.SaveChangesAsync();
+
+                    if (affectedRows > 0)
+                    {
+                        return Ok(new
+                        {
+                            IdAsignacionxAsesor = nuevaAsignacion.IdAsignacionxAsesor,
+                            cliente = nuevaAsignacion.CodigoCliente,
+                            HoraInicio = nuevaAsignacion.HoraInicio,
+                            HoraFin = nuevaAsignacion.HoraFinal,
+                            IdPrioridad = nuevaAsignacion.idPrioridad,
+                            IdTipoVisita = nuevaAsignacion.idTipoVisita,
+                            Observacion = nuevaAsignacion.Observacion,
+                            Checkin = nuevaAsignacion.BloqueoCheckin,
+                            Checkout = nuevaAsignacion.BloqueoCheckout,
+                            Asesor = nuevaAsignacion.CodigoAsesor,
+                            Cancelada = nuevaAsignacion.Cancelada
+                        });
+                    }
+
+                    return BadRequest("Ocurrio un error y no se pudo guardar la asignación");
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

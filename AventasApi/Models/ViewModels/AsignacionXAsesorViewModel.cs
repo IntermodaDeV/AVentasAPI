@@ -17,6 +17,7 @@ namespace AventasApi.Models.ViewModels
         public string ColorRelleno { get; set; }
         public bool Checkin { get; set; }
         public bool Checkout { get; set; }
+        public bool Cancelada { get; set; }
         public string Asesor { get; set; }
     }
 }
