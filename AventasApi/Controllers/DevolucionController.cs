@@ -569,7 +569,7 @@ namespace AventasApi.Controllers
                     Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
                     Clientes cliente = await ctx.Clientes.FindAsync(devoluciones[0].CodigoCliente);
                     List<Object> nuevasDevoluciones = new List<Object>();
-                    var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null).Select(x => x.Correo).ToListAsync();
+                    
                     var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devoluciones[0].MotivoDevolucionDetalle);
                     List<MotivosDevConAprobacion> AprobadoresSinFactura = new List<MotivosDevConAprobacion>();
                     var empresa = devoluciones[0].Empresa;
@@ -595,6 +595,8 @@ namespace AventasApi.Controllers
 
                     foreach (DevolucionPostModel devolucion in devoluciones)
                     {
+                        var usuariosCorreo = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToListAsync();
+                        var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null && usuariosCorreo.Contains(x.Id)).Select(x => x.Correo).ToListAsync();
                         var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == usuario.EmpresaId);
                         var PendienteAprobacion = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToListAsync();
                         Devolucion found = null;
