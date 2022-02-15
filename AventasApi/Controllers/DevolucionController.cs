@@ -185,7 +185,8 @@ namespace AventasApi.Controllers
                         REASON_CODE = devolucionDB.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
                         REFERENCE = devolucionDB.NumDevolucion,
                         SALES_NAME = devolucionDB.Clientes.Nombre,
-                        LINE = string.IsNullOrEmpty(devolucionDB.IdLinea)?"TPT": devolucionDB.IdLinea
+                        LINE = string.IsNullOrEmpty(devolucionDB.IdLinea) ? "TPT" : devolucionDB.IdLinea,
+                        LOCATION = devolucionDB.almacen
                     };
 
                     foreach (var detalle in ctx.DevolucionDetalle.Where(det => det.Devolucion.NumDevolucion == devolucion))
@@ -497,7 +498,8 @@ namespace AventasApi.Controllers
                             Sincronizado = false,
                             Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
                             Subtotal = devolucion.SubTotal,
-                            TotalUnidades = 0
+                            TotalUnidades = 0,
+                            almacen = devolucion.Almacen
                         };
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -633,7 +635,8 @@ namespace AventasApi.Controllers
                                 Sincronizado = false,
                                 Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
                                 Subtotal = devolucion.SubTotal,
-                                TotalUnidades = 0
+                                TotalUnidades = 0,
+                                almacen = devolucion.Almacen
                             };
 
                             foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)

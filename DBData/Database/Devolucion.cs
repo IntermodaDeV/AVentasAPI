@@ -40,6 +40,7 @@ namespace DBData.Database
         public bool Sincronizado { get; set; }
         public Nullable<int> TotalUnidades { get; set; }
         public Nullable<decimal> Subtotal { get; set; }
+        public string almacen { get; set; }
     
         public virtual Clientes Clientes { get; set; }
         public virtual Empresa Empresa { get; set; }

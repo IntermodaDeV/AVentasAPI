@@ -17,6 +17,7 @@ namespace ExternalApiData.ApiModels
         public string REFERENCE { get; set; }
         public string SALES_NAME { get; set; }
         public string LINE { get; set; }
+        public string LOCATION { get; set; }
         public List<DevolucionDetalleJson> DevolucionDetalleJson { get; set; }
     }
 }

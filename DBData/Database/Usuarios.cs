@@ -45,7 +45,7 @@ namespace DBData.Database
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public string ModifiedBy { get; set; }
         public Nullable<System.DateTime> ModifiedDate { get; set; }
-        public Nullable<bool> BloqueoInfoCredito { get; set; }
+        public bool BloqueoInfoCredito { get; set; }
         public Nullable<bool> FlagTodosAsesores { get; set; }
         public Nullable<bool> FlagUsuarioOficina { get; set; }
         public Nullable<bool> FlagAdministradorProductos { get; set; }
