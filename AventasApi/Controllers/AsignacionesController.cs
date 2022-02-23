@@ -617,7 +617,26 @@ namespace AventasApi.Controllers
             try
             {
                 using (AVentasEntities ctx = new AVentasEntities())
-                {
+                { 
+                    List<AsignacionxAsesor> asignacionesDelDia = await ctx.AsignacionxAsesor
+                        .Where(a => a.CodigoAsesor == asignacion.CodigoAsesor 
+                        && a.FechaAsignacion.Value.Year == asignacion.FechaAsignacion.Year
+                        && a.FechaAsignacion.Value.Month == asignacion.FechaAsignacion.Month
+                        && a.FechaAsignacion.Value.Day == asignacion.FechaAsignacion.Day
+                        ).ToListAsync();
+
+                    foreach(AsignacionxAsesor a in asignacionesDelDia)
+                    {
+                        if ((asignacion.HoraInicio >= a.HoraInicio) && (asignacion.HoraInicio <= a.HoraFinal)){
+                            return BadRequest("La visita no puede ser creada porque tiene conflicto de horarios con otra visita.");
+                        }
+
+                        if ((asignacion.HoraFinal >= a.HoraInicio) && (asignacion.HoraFinal <= a.HoraFinal))
+                        {
+                            return BadRequest("La visita no puede ser creada porque tiene conflicto de horarios con otra visita.");
+                        }
+                    }
+
                     AsignacionxAsesor nuevaAsignacion = new AsignacionxAsesor
                     {
                         CodigoAsesor = asignacion.CodigoAsesor,
