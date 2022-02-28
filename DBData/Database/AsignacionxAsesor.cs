@@ -42,6 +42,7 @@ namespace DBData.Database
         public bool BloqueoCheckin { get; set; }
         public bool BloqueoCheckout { get; set; }
         public bool Cancelada { get; set; }
+        public Nullable<bool> Deshabilitada { get; set; }
     
         public virtual Clientes Clientes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

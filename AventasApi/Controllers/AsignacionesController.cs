@@ -85,6 +85,7 @@ namespace AventasApi.Controllers
                                 Checkin = axa.BloqueoCheckin,
                                 Checkout = axa.BloqueoCheckout,
                                 Cancelada = axa.Cancelada,
+                                Deshabilitada = axa.Deshabilitada
                             }).OrderBy(axa => axa.HoraInicio).ToList();
 
                     
@@ -113,7 +114,8 @@ namespace AventasApi.Controllers
                                     Checkin = asignacion.Checkin,
                                     Checkout = asignacion.Checkout,
                                     Asesor = asignacion.CodigoAsesor,
-                                    Cancelada=asignacion.Cancelada
+                                    Cancelada=asignacion.Cancelada,
+                                    Deshabilitada=asignacion.Deshabilitada.Value
                                 });
                                 asignacionesXFecha.Add(nuevaAsignacionXFecha);
                             }
@@ -132,7 +134,8 @@ namespace AventasApi.Controllers
                                     Checkin = asignacion.Checkin,
                                     Checkout = asignacion.Checkout,
                                     Asesor = asignacion.CodigoAsesor,
-                                    Cancelada = asignacion.Cancelada
+                                    Cancelada = asignacion.Cancelada,
+                                    Deshabilitada = asignacion.Deshabilitada.Value
                                 });
                             }
                         }
@@ -356,6 +359,7 @@ namespace AventasApi.Controllers
                     foreach (var tarea in asignaciones)
                     {
                         tarea.BloqueoCheckin = true;
+                        tarea.Deshabilitada = true;
                         await ctx.SaveChangesAsync();
                     }
 
@@ -432,6 +436,7 @@ namespace AventasApi.Controllers
                     foreach (var tarea in asignaciones)
                     {
                         tarea.BloqueoCheckin = false;
+                        tarea.Deshabilitada = false;
                         await ctx.SaveChangesAsync();
                     }
 
@@ -606,7 +611,8 @@ namespace AventasApi.Controllers
                 HoraFinal = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraFinal}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
                 CodigoCliente = x.CodigoCliente,
                 BloqueoCheckin = false,
-                BloqueoCheckout = true
+                BloqueoCheckout = true,
+                Deshabilitada=false
             }).ToList();
         }
 
@@ -623,6 +629,7 @@ namespace AventasApi.Controllers
                         && a.FechaAsignacion.Value.Year == asignacion.FechaAsignacion.Year
                         && a.FechaAsignacion.Value.Month == asignacion.FechaAsignacion.Month
                         && a.FechaAsignacion.Value.Day == asignacion.FechaAsignacion.Day
+                        && a.Cancelada == false
                         ).ToListAsync();
 
                     foreach(AsignacionxAsesor a in asignacionesDelDia)
@@ -648,7 +655,8 @@ namespace AventasApi.Controllers
                         idPrioridad = asignacion.Prioridad,
                         BloqueoCheckin = false,
                         BloqueoCheckout = true,
-                        Cancelada = false
+                        Cancelada = false,
+                        Deshabilitada=false
                     };
 
                     ctx.AsignacionxAsesor.Add(nuevaAsignacion);
@@ -668,7 +676,8 @@ namespace AventasApi.Controllers
                             Checkin = nuevaAsignacion.BloqueoCheckin,
                             Checkout = nuevaAsignacion.BloqueoCheckout,
                             Asesor = nuevaAsignacion.CodigoAsesor,
-                            Cancelada = nuevaAsignacion.Cancelada
+                            Cancelada = nuevaAsignacion.Cancelada,
+                            Deshabilitada = nuevaAsignacion.Deshabilitada
                         });
                     }
 

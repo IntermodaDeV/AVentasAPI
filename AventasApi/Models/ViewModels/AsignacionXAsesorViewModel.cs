@@ -18,6 +18,7 @@ namespace AventasApi.Models.ViewModels
         public bool Checkin { get; set; }
         public bool Checkout { get; set; }
         public bool Cancelada { get; set; }
+        public bool Deshabilitada { get; set; }
         public string Asesor { get; set; }
     }
 }

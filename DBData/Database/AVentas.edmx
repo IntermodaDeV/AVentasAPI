@@ -132,6 +132,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="BloqueoCheckin" Type="bit" Nullable="false" />
           <Property Name="BloqueoCheckout" Type="bit" Nullable="false" />
           <Property Name="Cancelada" Type="bit" Nullable="false" />
+          <Property Name="Deshabilitada" Type="bit" />
         </EntityType>
         <EntityType Name="AsignacionxAsesorDetalle">
           <Key>
@@ -9370,6 +9371,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PrioridadAsignacion" Relationship="AventasModel.FK__Asignacio__idPri__24134F1B" FromRole="AsignacionxAsesor" ToRole="PrioridadAsignacion" />
           <NavigationProperty Name="TipoVisitaCliente" Relationship="AventasModel.FK__Asignacio__idTip__26EFBBC6" FromRole="AsignacionxAsesor" ToRole="TipoVisitaCliente" />
           <NavigationProperty Name="BitacoraGeoposicion" Relationship="AventasModel.FK__BitacoraG__IdAsi__4C214075" FromRole="AsignacionxAsesor" ToRole="BitacoraGeoposicion" />
+          <Property Name="Deshabilitada" Type="Boolean" />
         </EntityType>
         <EntityType Name="BitacoraGeoposicion">
           <Key>
@@ -11940,6 +11942,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="AsignacionxAsesor">
             <EntityTypeMapping TypeName="AventasModel.AsignacionxAsesor">
               <MappingFragment StoreEntitySet="AsignacionxAsesor">
+                <ScalarProperty Name="Deshabilitada" ColumnName="Deshabilitada" />
                 <ScalarProperty Name="Cancelada" ColumnName="Cancelada" />
                 <ScalarProperty Name="BloqueoCheckout" ColumnName="BloqueoCheckout" />
                 <ScalarProperty Name="BloqueoCheckin" ColumnName="BloqueoCheckin" />

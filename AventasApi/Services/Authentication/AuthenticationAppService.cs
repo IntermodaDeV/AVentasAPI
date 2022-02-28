@@ -141,6 +141,99 @@ namespace AventasApi.Services.Authentication
                 }
             }
         }
+
+        public AuthenticationResponse AuthenticationMovil(Credential credential)
+        {
+            using (var context = new AVentasEntities())
+            {
+                try
+                {
+                    string message = string.Empty;
+                    if (credential.IsValid(out message) == false)
+                        return new AuthenticationResponse { Message = message, Data = null };
+
+                    var userBD = context.Usuarios.AsNoTracking().FirstOrDefault(x => x.usuario.Equals(credential.UserAccount));
+
+                    if (userBD == null)
+                        return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
+
+                    if (!userBD.status)
+                    {
+                        return new AuthenticationResponse { Message = "Usuario se encuentra deshabilitado para el sistema.", Data = null };
+                    }
+
+                    var user = new Usuario { IdUsuario = userBD.usuario, Pin = null };
+
+                    if (EnLinea(userBD.EmpresaId, userBD.usuario))
+                    {
+                        //Validar con usuario de Intermoda
+                        var client = new RestClient(Enviroment.AuthenticationApi);
+                        var request = new RestRequest(Method.POST);
+                        request.AddHeader("Accept", "application/json");
+                        request.AddJsonBody(new {dominio="INTERMODA",usuario=credential.UserAccount,psd=credential.Password});
+                        IRestResponse response = client.Execute(request);
+
+                        if (response.IsSuccessful == false)
+                        {
+                            return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
+                        }
+
+                        var content = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FailResponse>>(response.Content)[0];
+                        if (content.Message != "Ok")
+                        {
+                            return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
+                        }
+
+                        var entityFound = context.Usuarios.FirstOrDefault(x => x.usuario.Equals(credential.UserAccount));
+                        if (entityFound == null)
+                        {
+                            var newUser = new Usuarios();
+                            newUser.usuario = credential.UserAccount;
+                            newUser.password = BCrypt.Net.BCrypt.HashPassword(credential.Password);
+                            context.Usuarios.Add(newUser);
+                            context.SaveChanges();
+                        }
+                        else
+                        {
+                            entityFound.password = BCrypt.Net.BCrypt.HashPassword(credential.Password);
+                            context.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
+                            context.SaveChanges();
+                        }
+                    }
+                    else
+                    {
+                        var entityFound = context.Usuarios.FirstOrDefault(x => x.usuario.Equals(credential.UserAccount));
+                        if (entityFound == null)
+                        {
+                            return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
+                        }
+
+                        var isSamePassword = BCrypt.Net.BCrypt.Verify(credential.Password, entityFound.password);
+                        if (!isSamePassword)
+                        {
+                            return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
+                        }
+                    }
+
+
+
+                    var token = encoder.Encode(new UserAuthenticated
+                    {
+                        Id = userBD.Id,
+                        UserAccount = userBD.usuario,
+                        DueDate = DateTime.Now.AddHours(12)
+                    }, secret);
+
+                    var result = new Data { Token = token, Usuario = user, Empresa = userBD.EmpresaId, Nombre = userBD.nombre };
+
+                    return new AuthenticationResponse { Type = "1", Message = "Ok", Data = result };
+                }
+                catch (Exception ex)
+                {
+                    return new AuthenticationResponse { Message = ex.Message, Data = null };
+                }
+            }
+        }
         public UserAuthenticated Validate(string token)
         {
             return decoder.DecodeToObject<UserAuthenticated>(token);
