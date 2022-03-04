@@ -88,16 +88,29 @@ namespace AventasApi.Controllers
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var listaDevoluciones = db.AprobacionDevoluciones.Where(x => x.IdUsuario == user.Id && x.Aprobado == false && x.Estado == true).Select(x => new 
                     {
-                       IdDevAprobacion = x.IdDevAprobacion,
-                       NumeroDevolucion = x.NumDevolucion,
-                       CodigoCliente = x.Devolucion.CodigoCliente,
-                       NombreCliente = x.Devolucion.Clientes.Nombre,
-                       Linea = x.Devolucion.IdLinea,
-                       Estado = x.Devolucion.Estado,
-                       FacturaOrigen = x.Devolucion.FacturaOrigen,
-                       PedidoOrigen = x.Devolucion.PedidoOrigen,
-                       Usuario = x.Devolucion.Usuarios.usuario,
-                       MotivoDevolucion = x.Devolucion.MotivosDevolucionDetalle.Descripcion
+                        IdDevAprobacion = x.IdDevAprobacion,
+                        NumDevolucion = x.NumDevolucion,
+                        NumeroRMA = x.Devolucion.NumeroRMA,
+                        PedidoDevolucion = x.Devolucion.PedidoDevolucion,
+                        CodigoCliente = x.Devolucion.CodigoCliente,
+                        NombreCliente = x.Devolucion.Clientes.Nombre,
+                        Linea = x.Devolucion.IdLinea,
+                        MotivoDevolucion = x.Devolucion.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        TotalUnidades = x.Devolucion.TotalUnidades,
+                        Estado = x.Devolucion.Estado,
+                        FacturaOrigen = x.Devolucion.FacturaOrigen,
+                        PedidoOrigen = x.Devolucion.PedidoOrigen,
+                        FechaCreacion = x.FechaCrea,
+                        SubTotal = x.Devolucion.Subtotal,
+                        Usuario = db.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.Devolucion.CodigoAsesor).Nombre,
+                        Cliente = new ClienteViewModel
+                        {
+                            Codigo = x.Devolucion.Clientes.CodigoCliente,
+                            Nombre = x.Devolucion.Clientes.Nombre,
+                            Direccion = x.Devolucion.Clientes.Direccion,
+                            Moneda = x.Devolucion.Clientes.IdMoneda,
+                            EmpresaId = x.Devolucion.Clientes.EmpresaId
+                        }
                     }).ToList();
                     return Ok(listaDevoluciones);
                 }
