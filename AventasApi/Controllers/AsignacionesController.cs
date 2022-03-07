@@ -296,7 +296,8 @@ namespace AventasApi.Controllers
                             idTipoVisita = asi.IdTipoVisita,
                             Observacion = asi.Observacion,
                             BloqueoCheckin = false,
-                            BloqueoCheckout = true
+                            BloqueoCheckout = true,
+                            Deshabilitada = false
                         }).ToList();
 
                         foreach (var asignacion in asignaciones)
