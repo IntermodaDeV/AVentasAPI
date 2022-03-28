@@ -68,28 +68,31 @@ namespace AventasApi.Controllers
                     foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                         var asignaciones = context.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == asesor && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).Select(axa => new
-                            {
-                                IdAsignacionxAsesor = axa.IdAsignacionxAsesor,
-                                Fecha = axa.Fecha,
-                                CodigoCliente = axa.CodigoCliente,
-                                CodigoAsesor = axa.CodigoAsesor,
-                                Usuario = axa.Usuario,
-                                FechaAsignacion = axa.FechaAsignacion,
-                                Orden = axa.Orden,
-                                HoraInicio = axa.HoraInicio,
-                                HoraFinal = axa.HoraFinal,
-                                idPrioridad = axa.idPrioridad,
-                                idTipoVisita = axa.idTipoVisita,
-                                Observacion = axa.Observacion,
-                                PrioridadAsignacion = axa.PrioridadAsignacion,
-                                Checkin = axa.BloqueoCheckin,
-                                Checkout = axa.BloqueoCheckout,
-                                Cancelada = axa.Cancelada,
-                                Deshabilitada = axa.Deshabilitada
-                            }).OrderBy(axa => axa.HoraInicio).ToList();
+                        {
+                            IdAsignacionxAsesor = axa.IdAsignacionxAsesor,
+                            Fecha = axa.Fecha,
+                            CodigoCliente = axa.CodigoCliente,
+                            NombreCliente = axa.Clientes.Nombre,
+                            CodigoAsesor = axa.CodigoAsesor,
+                            Usuario = axa.Usuario,
+                            FechaAsignacion = axa.FechaAsignacion,
+                            Orden = axa.Orden,
+                            HoraInicio = axa.HoraInicio,
+                            HoraFinal = axa.HoraFinal,
+                            idPrioridad = axa.idPrioridad,
+                            idTipoVisita = axa.idTipoVisita,
+                            Observacion = axa.Observacion,
+                            PrioridadAsignacion = axa.PrioridadAsignacion,
+                            Checkin = axa.BloqueoCheckin,
+                            Checkout = axa.BloqueoCheckout,
+                            Cancelada = axa.Cancelada,
+                            Deshabilitada = axa.Deshabilitada,
+                            Latitud = axa.Clientes.Latitud,
+                            Longitud = axa.Clientes.Longitud,
+                        }).OrderBy(axa => axa.HoraInicio).ToList();
 
-                    
-                    foreach (var asignacion in asignaciones)
+
+                        foreach (var asignacion in asignaciones)
                         {
                             int indexAsignacionXFecha = asignacionesXFecha.FindIndex(axf => axf.fecha.Value.Year == asignacion.FechaAsignacion.Value.Year && axf.fecha.Value.DayOfYear == asignacion.FechaAsignacion.Value.DayOfYear);
 
@@ -105,26 +108,7 @@ namespace AventasApi.Controllers
                                 {
                                     IdAsignacionxAsesor = asignacion.IdAsignacionxAsesor,
                                     cliente = asignacion.CodigoCliente,
-                                    HoraInicio = asignacion.HoraInicio,
-                                    HoraFin = asignacion.HoraFinal,
-                                    IdPrioridad = asignacion.idPrioridad,
-                                    IdTipoVisita = asignacion.idTipoVisita,
-                                    Observacion = asignacion.Observacion,
-                                    ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
-                                    Checkin = asignacion.Checkin,
-                                    Checkout = asignacion.Checkout,
-                                    Asesor = asignacion.CodigoAsesor,
-                                    Cancelada=asignacion.Cancelada,
-                                    Deshabilitada=asignacion.Deshabilitada.Value
-                                });
-                                asignacionesXFecha.Add(nuevaAsignacionXFecha);
-                            }
-                            else
-                            {
-                                asignacionesXFecha[indexAsignacionXFecha].asignaciones.Add(new AsignacionXAsesorViewModel
-                                {
-                                    IdAsignacionxAsesor = asignacion.IdAsignacionxAsesor,
-                                    cliente = asignacion.CodigoCliente,
+                                    NombreCliente = asignacion.NombreCliente,
                                     HoraInicio = asignacion.HoraInicio,
                                     HoraFin = asignacion.HoraFinal,
                                     IdPrioridad = asignacion.idPrioridad,
@@ -135,21 +119,45 @@ namespace AventasApi.Controllers
                                     Checkout = asignacion.Checkout,
                                     Asesor = asignacion.CodigoAsesor,
                                     Cancelada = asignacion.Cancelada,
-                                    Deshabilitada = asignacion.Deshabilitada.Value
+                                    Deshabilitada = asignacion.Deshabilitada.Value,
+                                    Latitud = asignacion.Latitud,
+                                    Longitud = asignacion.Longitud,
+                                });
+                                asignacionesXFecha.Add(nuevaAsignacionXFecha);
+                            }
+                            else
+                            {
+                                asignacionesXFecha[indexAsignacionXFecha].asignaciones.Add(new AsignacionXAsesorViewModel
+                                {
+                                    IdAsignacionxAsesor = asignacion.IdAsignacionxAsesor,
+                                    cliente = asignacion.CodigoCliente,
+                                    NombreCliente = asignacion.NombreCliente,
+                                    HoraInicio = asignacion.HoraInicio,
+                                    HoraFin = asignacion.HoraFinal,
+                                    IdPrioridad = asignacion.idPrioridad,
+                                    IdTipoVisita = asignacion.idTipoVisita,
+                                    Observacion = asignacion.Observacion,
+                                    ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
+                                    Checkin = asignacion.Checkin,
+                                    Checkout = asignacion.Checkout,
+                                    Asesor = asignacion.CodigoAsesor,
+                                    Cancelada = asignacion.Cancelada,
+                                    Deshabilitada = asignacion.Deshabilitada.Value,
+                                    Latitud = asignacion.Latitud,
+                                    Longitud = asignacion.Longitud,
                                 });
                             }
                         }
                     }
                     return Ok(asignacionesXFecha);
                 }
-                
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }
-            
-        }
+    }
         [HttpGet]
         public async Task<IHttpActionResult> GetAsignacionesCorrespondientes()
         {

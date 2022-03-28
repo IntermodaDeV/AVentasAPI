@@ -1004,5 +1004,37 @@ namespace AventasApi.Controllers
             }
         }
 
+        
+
+        [HttpGet]
+        [Route("~/api/colecciones/inventario/{codigoPaquete}")]
+        public async Task<IHttpActionResult> ObtenerInventarioDisponible(string codigoPaquete)
+        
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var Inventario = await ctx.FisicoDisponible.Where(x => x.ProductosxColeccion.Colecciones.CodigoColeccion == codigoPaquete && x.ProductosxColeccion.EmpresaId == "IMHN" && x.ProductosxColeccion.VisibleParaVentas == true && x.Disponible > 0
+                    && ctx.TallasxProducto.Where(cl => cl.IdProducto == x.IdProducto).Select(t => t.TallasXGrupo.CodigoTalla).Contains(x.CodigoTalla)
+                    && ctx.ColoresxProducto.Where(cl => cl.IdProducto == x.IdProducto).Select(cl => cl.CodigoColor).Contains(x.CodigoColor)).Select(x => new
+                    {
+                        Producto = x.ProductosxColeccion.CodigoProducto,
+                        Nombre_Producto = x.ProductosxColeccion.NombreProducto,
+                        Color = x.CodigoColor,
+                        Nombre_Color = x.Colores.Color,
+                        Talla = x.CodigoTalla,
+                        Inventario = x.Disponible
+                    }).ToListAsync();
+
+                    return Ok(Inventario);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
     }
 }

@@ -39,7 +39,7 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/cliente/global")]
+        [Route("~/api/cliente/ubicacion/global")]
         public List<Coordenada> GetClientes()
         {
             try
