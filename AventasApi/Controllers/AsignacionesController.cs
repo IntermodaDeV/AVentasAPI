@@ -689,5 +689,122 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("~/api/asignaciones/movil/creadaoffline")]
+        public async Task<IHttpActionResult> CreacionOfflineMovil([FromBody] Models.AsignacionMovil asignacion)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    if (asignacion == null)
+                    {
+                        return BadRequest();
+                    }
+
+                    AsignacionxAsesor asignacionBD = new AsignacionxAsesor()
+                    {
+                        latitudeCheckIn = asignacion.LatitudeCheckIn,
+                        latitudeCheckOut = asignacion.LatitudeCheckOut,
+                        longitudeCheckIn = asignacion.LongitudeCheckIn,
+                        longitudeCheckOut = asignacion.LongitudeCheckOut,
+                        fechaCheckIn = asignacion.FechaCheckIn,
+                        fechaCheckOut = asignacion.FechaCheckOut,
+                        BloqueoCheckin = asignacion.Cancelada ? true : asignacion.BloqueoCheckin,
+                        BloqueoCheckout = asignacion.BloqueoCheckout,
+                        Cancelada = asignacion.Cancelada,
+                        Deshabilitada = asignacion.Deshabilitada,
+                        Observacion = asignacion.Cancelada ? "" : asignacion.Observacion,
+                        Fecha = asignacion.Fecha,
+                        FechaAsignacion = asignacion.Fecha,
+                        idPrioridad = asignacion.idPrioridad,
+                        HoraInicio = asignacion.HoraInicio,
+                        HoraFinal = asignacion.HoraFinal,
+                        CodigoAsesor=asignacion.CodigoAsesor,
+                        CodigoCliente=asignacion.CodigoCliente
+                    };
+                    
+
+                    ctx.AsignacionxAsesor.Add(asignacionBD);
+                    await ctx.SaveChangesAsync();
+
+                    if (asignacion.Cancelada)
+                    {
+                        BitacoraVisitasCliente bitacora = new BitacoraVisitasCliente()
+                        {
+                            Fecha = DateTime.Now,
+                            IdRazonNoVentaTipo = asignacion.idRazonNoVentaTipo,
+                            IdRazonNoVentaCausa = asignacion.idRazonNoVentaCausa,
+                            CodigoCliente = asignacion.CodigoCliente,
+                            CodigoAsesor = asignacion.CodigoAsesor,
+                            IdAsignacionxAsesor = asignacionBD.IdAsignacionxAsesor,
+                            Observacion = asignacion.Observacion
+                        };
+
+                        ctx.BitacoraVisitasCliente.Add(bitacora);
+                        await ctx.SaveChangesAsync();
+                    }
+
+                    return Ok(asignacionBD.IdAsignacionxAsesor);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/asignaciones/movil/modificadaoffline")]
+        public async Task<IHttpActionResult> ModificacionOfflineMovil([FromBody] Models.AsignacionMovil asignacion)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var asignacionBD = await ctx.AsignacionxAsesor.FindAsync(asignacion.IdAsignacionxAsesor);
+                    if (asignacionBD == null)
+                    {
+                        return NotFound();
+                    }
+
+                    asignacionBD.latitudeCheckIn = asignacion.LatitudeCheckIn;
+                    asignacionBD.latitudeCheckOut = asignacion.LatitudeCheckOut;
+                    asignacionBD.longitudeCheckIn = asignacion.LongitudeCheckIn;
+                    asignacionBD.longitudeCheckOut = asignacion.LongitudeCheckOut;
+                    asignacionBD.fechaCheckIn = asignacion.FechaCheckIn;
+                    asignacionBD.fechaCheckOut = asignacion.FechaCheckOut;
+                    asignacionBD.BloqueoCheckin = asignacion.Cancelada ? true : asignacion.BloqueoCheckin;
+                    asignacionBD.BloqueoCheckout = asignacion.BloqueoCheckout;
+                    asignacionBD.Cancelada = asignacion.Cancelada;
+                    asignacionBD.Deshabilitada = asignacion.Deshabilitada;
+                    asignacionBD.Observacion = asignacion.Cancelada ? "":asignacion.Observacion; 
+
+                    if (asignacion.Cancelada)
+                    {
+                        BitacoraVisitasCliente bitacora = new BitacoraVisitasCliente()
+                        {
+                            Fecha=DateTime.Now,
+                            IdRazonNoVentaTipo=asignacion.idRazonNoVentaTipo,
+                            IdRazonNoVentaCausa=asignacion.idRazonNoVentaCausa,
+                            CodigoCliente = asignacion.CodigoCliente,
+                            CodigoAsesor=asignacion.CodigoAsesor,
+                            IdAsignacionxAsesor=asignacionBD.IdAsignacionxAsesor,
+                            Observacion=asignacion.Observacion
+                        };
+
+                        ctx.BitacoraVisitasCliente.Add(bitacora);
+                    }
+
+                    await ctx.SaveChangesAsync();
+
+                    return Ok();
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }
