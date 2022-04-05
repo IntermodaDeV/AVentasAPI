@@ -349,6 +349,7 @@ namespace AventasApi.Controllers
                     asignacion.fechaCheckIn = model.Fecha;
                     asignacion.BloqueoCheckin = true;
                     asignacion.BloqueoCheckout = false;
+                    asignacion.Observacion = model.observacion;
 
                     await ctx.SaveChangesAsync();
 
@@ -359,12 +360,12 @@ namespace AventasApi.Controllers
                     var asignaciones = await ctx.AsignacionxAsesor.Where(axa =>
                         axa.CodigoAsesor == model.Asesor 
                         && axa.FechaAsignacion >= FechaInicio 
-                        && axa.FechaAsignacion < FechaFin 
+                        && axa.FechaAsignacion < FechaFin
                         && axa.IdAsignacionxAsesor != model.IdAsignacionxAsesor
                         && axa.fechaCheckIn == null
                         && axa.Cancelada == false
                     ).ToListAsync();
-
+                  
                     foreach (var tarea in asignaciones)
                     {
                         tarea.BloqueoCheckin = true;
@@ -425,6 +426,7 @@ namespace AventasApi.Controllers
                     asignacion.latitudeCheckOut = (model.location != null) ? model.location.latitude : null;
                     asignacion.longitudeCheckOut = (model.location != null) ? model.location.longitude : null;
                     asignacion.fechaCheckOut = model.Fecha;
+                    asignacion.Observacion = model.observacion;
                     asignacion.BloqueoCheckout = true;
 
                     await ctx.SaveChangesAsync();
@@ -441,7 +443,7 @@ namespace AventasApi.Controllers
                         && axa.fechaCheckIn==null
                         && axa.Cancelada == false
                     ).ToListAsync();
-
+                  
                     foreach (var tarea in asignaciones)
                     {
                         tarea.BloqueoCheckin = false;
