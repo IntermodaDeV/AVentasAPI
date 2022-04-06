@@ -343,10 +343,11 @@ namespace AventasApi.Controllers
 
                 using (var ctx = new AVentasEntities())
                 {
+                    DateTime fechaCheckin = string.IsNullOrEmpty(model.origen) ? model.Fecha : DateTime.Now;
                     var asignacion = ctx.AsignacionxAsesor.FirstOrDefault(x => x.IdAsignacionxAsesor == model.IdAsignacionxAsesor);
                     asignacion.latitudeCheckIn = (model.location != null) ? model.location.latitude : null;
                     asignacion.longitudeCheckIn = (model.location != null) ? model.location.longitude : null;
-                    asignacion.fechaCheckIn = model.Fecha;
+                    asignacion.fechaCheckIn = fechaCheckin;
                     asignacion.BloqueoCheckin = true;
                     asignacion.BloqueoCheckout = false;
                     asignacion.Observacion = model.observacion;
@@ -422,10 +423,11 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
+                    DateTime fechaCheckout = string.IsNullOrEmpty(model.origen) ? model.Fecha : DateTime.Now;
                     var asignacion = ctx.AsignacionxAsesor.FirstOrDefault(x => x.IdAsignacionxAsesor == model.IdAsignacionxAsesor);
                     asignacion.latitudeCheckOut = (model.location != null) ? model.location.latitude : null;
                     asignacion.longitudeCheckOut = (model.location != null) ? model.location.longitude : null;
-                    asignacion.fechaCheckOut = model.Fecha;
+                    asignacion.fechaCheckOut = fechaCheckout;
                     asignacion.Observacion = model.observacion;
                     asignacion.BloqueoCheckout = true;
 

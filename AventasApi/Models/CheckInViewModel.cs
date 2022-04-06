@@ -12,5 +12,6 @@ namespace AventasApi.Models
         public DateTime Fin { get; set; }
         public string Asesor { get; set; }
         public string observacion { get; set; }
+        public string origen { get; set; }
     }
 }
