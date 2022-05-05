@@ -462,7 +462,8 @@ namespace AventasApi.Controllers
                     Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
                     Clientes cliente = await ctx.Clientes.FindAsync(devolucion.CodigoCliente);
                     var PendienteAprobacion = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToListAsync();
-                    var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null).Select(x => x.Correo).ToListAsync();
+                    var usuariosCorreo = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToListAsync();
+                    var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null && usuariosCorreo.Contains(x.Id)).Select(x => x.Correo).ToListAsync();
                     var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devolucion.MotivoDevolucionDetalle);
 
                     var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");

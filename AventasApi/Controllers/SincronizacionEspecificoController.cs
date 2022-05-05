@@ -219,6 +219,11 @@ namespace AventasApi.Controllers
         {
             try
             {
+                var paqueteSeleccionado = paquete.ToUpper();
+                if (paqueteSeleccionado == "BDEN" || paqueteSeleccionado == "BTPT" || paqueteSeleccionado == "BEST" || paqueteSeleccionado == "BROP")
+                {
+                    return BadRequest("El paquete pertenece a la bodega local. Seleccione BODEGA LOCAL en pantalla.");
+                }
                 var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}paquetes/{empresa}/{paquete}/existe");
                 client.Timeout = 480 * (1000);
                 var request = new RestRequest(Method.GET);
@@ -232,6 +237,31 @@ namespace AventasApi.Controllers
 
                 var content = Newtonsoft.Json.JsonConvert.DeserializeObject<ColeccionApiModel>(response.Content);
                 return Ok(content);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("verificarBodegaLocal/{empresa}/{paquete}")]
+        public IHttpActionResult VerificarPaqueteBodegaLocal(string paquete, string empresa)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var bodegaLocal = ctx.vw_ColeccionesBodegaEspecifico.Where(x => x.CodigoColeccion == paquete && x.EmpresaId == empresa).FirstOrDefault();
+                    
+                    if(bodegaLocal == null)
+                    {
+                        return BadRequest("No existe el codigo de coleccion ingresado.");
+                    }
+
+                    return Ok("Codigo Correcto");
+                }
+                    
             }
             catch (Exception e)
             {

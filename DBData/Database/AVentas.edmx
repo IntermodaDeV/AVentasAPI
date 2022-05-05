@@ -1631,6 +1631,31 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene defin
           <Property Name="Ruta" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <EntityType Name="vw_ColeccionesBodegaEspecifico">
+          <Key>
+            <PropertyRef Name="IdColeccion" />
+          </Key>
+          <Property Name="IdColeccion" Type="int" Nullable="false" />
+          <Property Name="CodigoColeccion" Type="varchar" MaxLength="250" />
+          <Property Name="Nombre" Type="varchar(max)" />
+          <Property Name="ColeccionTipo" Type="varchar" MaxLength="50" />
+          <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
+          <Property Name="DisenoInicio" Type="datetime" />
+          <Property Name="DisenoFinal" Type="datetime" />
+          <Property Name="EntregaInicio" Type="datetime" />
+          <Property Name="EntregaFinal" Type="datetime" />
+          <Property Name="Estatus" Type="int" />
+          <Property Name="ProduccionInicio" Type="datetime" />
+          <Property Name="ProduccionFinal" Type="datetime" />
+          <Property Name="VentaInicio" Type="datetime" />
+          <Property Name="VentaFinal" Type="datetime" />
+          <Property Name="FotoPortada" Type="varchar" MaxLength="2500" />
+          <Property Name="FechaUltSincronizacion" Type="datetime" />
+          <Property Name="Sitio" Type="varchar" MaxLength="50" />
+          <Property Name="Almacen" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <!--Errores durante la generación:
 advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_ColoresxProducto">
           <Key>
@@ -4154,6 +4179,28 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
     [vw_ClientesxRuta].[Longitud] AS [Longitud], 
     [vw_ClientesxRuta].[Ruta] AS [Ruta]
     FROM [dbo].[vw_ClientesxRuta] AS [vw_ClientesxRuta]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_ColeccionesBodegaEspecifico" EntityType="Self.vw_ColeccionesBodegaEspecifico" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_ColeccionesBodegaEspecifico].[IdColeccion] AS [IdColeccion], 
+    [vw_ColeccionesBodegaEspecifico].[CodigoColeccion] AS [CodigoColeccion], 
+    [vw_ColeccionesBodegaEspecifico].[Nombre] AS [Nombre], 
+    [vw_ColeccionesBodegaEspecifico].[ColeccionTipo] AS [ColeccionTipo], 
+    [vw_ColeccionesBodegaEspecifico].[EmpresaId] AS [EmpresaId], 
+    [vw_ColeccionesBodegaEspecifico].[DisenoInicio] AS [DisenoInicio], 
+    [vw_ColeccionesBodegaEspecifico].[DisenoFinal] AS [DisenoFinal], 
+    [vw_ColeccionesBodegaEspecifico].[EntregaInicio] AS [EntregaInicio], 
+    [vw_ColeccionesBodegaEspecifico].[EntregaFinal] AS [EntregaFinal], 
+    [vw_ColeccionesBodegaEspecifico].[Estatus] AS [Estatus], 
+    [vw_ColeccionesBodegaEspecifico].[ProduccionInicio] AS [ProduccionInicio], 
+    [vw_ColeccionesBodegaEspecifico].[ProduccionFinal] AS [ProduccionFinal], 
+    [vw_ColeccionesBodegaEspecifico].[VentaInicio] AS [VentaInicio], 
+    [vw_ColeccionesBodegaEspecifico].[VentaFinal] AS [VentaFinal], 
+    [vw_ColeccionesBodegaEspecifico].[FotoPortada] AS [FotoPortada], 
+    [vw_ColeccionesBodegaEspecifico].[FechaUltSincronizacion] AS [FechaUltSincronizacion], 
+    [vw_ColeccionesBodegaEspecifico].[Sitio] AS [Sitio], 
+    [vw_ColeccionesBodegaEspecifico].[Almacen] AS [Almacen]
+    FROM [dbo].[vw_ColeccionesBodegaEspecifico] AS [vw_ColeccionesBodegaEspecifico]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vw_ColoresxProducto" EntityType="Self.vw_ColoresxProducto" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -7291,6 +7338,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <Parameter Name="codigoProducto" Mode="In" Type="String" />
             <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="vw_ColeccionesBodegaEspecifico" EntityType="AventasModel.vw_ColeccionesBodegaEspecifico" />
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -10370,6 +10418,29 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="String" Name="Linea" Nullable="true" MaxLength="250" />
           <Property Type="Int32" Name="Abierta" Nullable="false" />
         </ComplexType>
+        <EntityType Name="vw_ColeccionesBodegaEspecifico">
+          <Key>
+            <PropertyRef Name="IdColeccion" />
+          </Key>
+          <Property Name="IdColeccion" Type="Int32" Nullable="false" />
+          <Property Name="CodigoColeccion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Nombre" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ColeccionTipo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="DisenoInicio" Type="DateTime" Precision="3" />
+          <Property Name="DisenoFinal" Type="DateTime" Precision="3" />
+          <Property Name="EntregaInicio" Type="DateTime" Precision="3" />
+          <Property Name="EntregaFinal" Type="DateTime" Precision="3" />
+          <Property Name="Estatus" Type="Int32" />
+          <Property Name="ProduccionInicio" Type="DateTime" Precision="3" />
+          <Property Name="ProduccionFinal" Type="DateTime" Precision="3" />
+          <Property Name="VentaInicio" Type="DateTime" Precision="3" />
+          <Property Name="VentaFinal" Type="DateTime" Precision="3" />
+          <Property Name="FotoPortada" Type="String" MaxLength="2500" FixedLength="false" Unicode="false" />
+          <Property Name="FechaUltSincronizacion" Type="DateTime" Precision="3" />
+          <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12322,6 +12393,30 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="vw_ColeccionesBodegaEspecifico">
+            <EntityTypeMapping TypeName="AventasModel.vw_ColeccionesBodegaEspecifico">
+              <MappingFragment StoreEntitySet="vw_ColeccionesBodegaEspecifico">
+                <ScalarProperty Name="Almacen" ColumnName="Almacen" />
+                <ScalarProperty Name="Sitio" ColumnName="Sitio" />
+                <ScalarProperty Name="FechaUltSincronizacion" ColumnName="FechaUltSincronizacion" />
+                <ScalarProperty Name="FotoPortada" ColumnName="FotoPortada" />
+                <ScalarProperty Name="VentaFinal" ColumnName="VentaFinal" />
+                <ScalarProperty Name="VentaInicio" ColumnName="VentaInicio" />
+                <ScalarProperty Name="ProduccionFinal" ColumnName="ProduccionFinal" />
+                <ScalarProperty Name="ProduccionInicio" ColumnName="ProduccionInicio" />
+                <ScalarProperty Name="Estatus" ColumnName="Estatus" />
+                <ScalarProperty Name="EntregaFinal" ColumnName="EntregaFinal" />
+                <ScalarProperty Name="EntregaInicio" ColumnName="EntregaInicio" />
+                <ScalarProperty Name="DisenoFinal" ColumnName="DisenoFinal" />
+                <ScalarProperty Name="DisenoInicio" ColumnName="DisenoInicio" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="ColeccionTipo" ColumnName="ColeccionTipo" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="CodigoColeccion" ColumnName="CodigoColeccion" />
+                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

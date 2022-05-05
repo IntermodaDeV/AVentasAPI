@@ -147,6 +147,7 @@ namespace DBData.Database
         public virtual DbSet<Devolucion> Devolucion { get; set; }
         public virtual DbSet<DevolucionDetalle> DevolucionDetalle { get; set; }
         public virtual DbSet<AprobacionDevoluciones> AprobacionDevoluciones { get; set; }
+        public virtual DbSet<vw_ColeccionesBodegaEspecifico> vw_ColeccionesBodegaEspecifico { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
