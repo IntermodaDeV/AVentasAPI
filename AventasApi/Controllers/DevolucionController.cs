@@ -15,6 +15,8 @@ using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
 using AventasApi.Models;
 using AventasApi.Utils;
+using System.IO;
+using System.Web.Script.Serialization;
 
 namespace AventasApi.Controllers
 {
@@ -456,6 +458,17 @@ namespace AventasApi.Controllers
         {
             try
             {
+                try
+                {
+                    var json = new JavaScriptSerializer().Serialize(devolucion);
+
+                    EscribirLogDevolucion($"Devolucion At: {DateTime.Now} : {json}.\n");
+                }
+                catch (Exception)
+                {
+
+                }
+
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
@@ -579,6 +592,17 @@ namespace AventasApi.Controllers
         {
             try
             {
+                try
+                {
+                    var json = new JavaScriptSerializer().Serialize(devoluciones);
+
+                    EscribirLogDevolucion($"Devolucion At: {DateTime.Now} : {json}.\n");
+                }
+                catch (Exception)
+                {
+
+                }
+
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
@@ -788,6 +812,42 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.ToString());
+            }
+        }
+
+        private void EscribirLogDevolucion(string Message)
+        {
+            try
+            {
+                #region Creacion Carpeta
+                string path = @"C:\AVentasAPIDevoluciones";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                #endregion Creacion Carpeta
+
+                #region Creacion Archivo
+                string filepath = path + "\\ServiceLog_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+                if (!File.Exists(filepath))
+                {
+                    using (StreamWriter sw = File.CreateText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                else
+                {
+                    using (StreamWriter sw = File.AppendText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                #endregion Creacion Archivo
+            }
+            catch (Exception ex)
+            {
+
             }
         }
     }
