@@ -498,6 +498,9 @@
     <Compile Include="Database\vw_ClientesxRuta.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\vw_ColeccionesBodegaEspecifico.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\vw_ColoresxProducto.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

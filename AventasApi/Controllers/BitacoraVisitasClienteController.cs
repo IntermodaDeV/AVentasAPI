@@ -63,7 +63,7 @@ namespace AventasApi.Controllers
                     BitacoraVisitasCliente bitacoraVisitaCliente = new BitacoraVisitasCliente
                     {
                         IdBitacoraVisitaCliente = bitacoraVisitasCliente.IdBitacoraVisitaCliente,
-                        Fecha = bitacoraVisitasCliente.Fecha,
+                        Fecha = DateTime.Now,
                         IdAsignacionxAsesor = bitacoraVisitasCliente.IdAsignacionxAsesor,
                         IdRazonNoVentaTipo = bitacoraVisitasCliente.IdRazonNoVentaTipo,
                         IdRazonNoVentaCausa = bitacoraVisitasCliente.IdRazonNoVentaCausa,
@@ -76,7 +76,7 @@ namespace AventasApi.Controllers
                 }
                 else
                 {
-                    bitacora.Fecha = bitacoraVisitasCliente.Fecha;
+                    bitacora.Fecha = DateTime.Now;
                     bitacora.IdRazonNoVentaTipo = bitacoraVisitasCliente.IdRazonNoVentaTipo;
                     bitacora.IdRazonNoVentaCausa = bitacoraVisitasCliente.IdRazonNoVentaCausa;
                     bitacora.CodigoCliente = bitacoraVisitasCliente.CodigoCliente;

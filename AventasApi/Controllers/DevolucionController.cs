@@ -15,6 +15,8 @@ using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
 using AventasApi.Models;
 using AventasApi.Utils;
+using System.IO;
+using System.Web.Script.Serialization;
 
 namespace AventasApi.Controllers
 {
@@ -88,16 +90,29 @@ namespace AventasApi.Controllers
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var listaDevoluciones = db.AprobacionDevoluciones.Where(x => x.IdUsuario == user.Id && x.Aprobado == false && x.Estado == true).Select(x => new 
                     {
-                       IdDevAprobacion = x.IdDevAprobacion,
-                       NumeroDevolucion = x.NumDevolucion,
-                       CodigoCliente = x.Devolucion.CodigoCliente,
-                       NombreCliente = x.Devolucion.Clientes.Nombre,
-                       Linea = x.Devolucion.IdLinea,
-                       Estado = x.Devolucion.Estado,
-                       FacturaOrigen = x.Devolucion.FacturaOrigen,
-                       PedidoOrigen = x.Devolucion.PedidoOrigen,
-                       Usuario = x.Devolucion.Usuarios.usuario,
-                       MotivoDevolucion = x.Devolucion.MotivosDevolucionDetalle.Descripcion
+                        IdDevAprobacion = x.IdDevAprobacion,
+                        NumDevolucion = x.NumDevolucion,
+                        NumeroRMA = x.Devolucion.NumeroRMA,
+                        PedidoDevolucion = x.Devolucion.PedidoDevolucion,
+                        CodigoCliente = x.Devolucion.CodigoCliente,
+                        NombreCliente = x.Devolucion.Clientes.Nombre,
+                        Linea = x.Devolucion.IdLinea,
+                        MotivoDevolucion = x.Devolucion.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        TotalUnidades = x.Devolucion.TotalUnidades,
+                        Estado = x.Devolucion.Estado,
+                        FacturaOrigen = x.Devolucion.FacturaOrigen,
+                        PedidoOrigen = x.Devolucion.PedidoOrigen,
+                        FechaCreacion = x.FechaCrea,
+                        SubTotal = x.Devolucion.Subtotal,
+                        Usuario = db.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.Devolucion.CodigoAsesor).Nombre,
+                        Cliente = new ClienteViewModel
+                        {
+                            Codigo = x.Devolucion.Clientes.CodigoCliente,
+                            Nombre = x.Devolucion.Clientes.Nombre,
+                            Direccion = x.Devolucion.Clientes.Direccion,
+                            Moneda = x.Devolucion.Clientes.IdMoneda,
+                            EmpresaId = x.Devolucion.Clientes.EmpresaId
+                        }
                     }).ToList();
                     return Ok(listaDevoluciones);
                 }
@@ -185,7 +200,8 @@ namespace AventasApi.Controllers
                         REASON_CODE = devolucionDB.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
                         REFERENCE = devolucionDB.NumDevolucion,
                         SALES_NAME = devolucionDB.Clientes.Nombre,
-                        LINE = string.IsNullOrEmpty(devolucionDB.IdLinea)?"TPT": devolucionDB.IdLinea
+                        LINE = string.IsNullOrEmpty(devolucionDB.IdLinea) ? "TPT" : devolucionDB.IdLinea,
+                        LOCATION = devolucionDB.almacen
                     };
 
                     foreach (var detalle in ctx.DevolucionDetalle.Where(det => det.Devolucion.NumDevolucion == devolucion))
@@ -442,13 +458,25 @@ namespace AventasApi.Controllers
         {
             try
             {
+                try
+                {
+                    var json = new JavaScriptSerializer().Serialize(devolucion);
+
+                    EscribirLogDevolucion($"Devolucion At: {DateTime.Now} : {json}.\n");
+                }
+                catch (Exception)
+                {
+
+                }
+
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
                     Clientes cliente = await ctx.Clientes.FindAsync(devolucion.CodigoCliente);
                     var PendienteAprobacion = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToListAsync();
-                    var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null).Select(x => x.Correo).ToListAsync();
+                    var usuariosCorreo = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToListAsync();
+                    var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null && usuariosCorreo.Contains(x.Id)).Select(x => x.Correo).ToListAsync();
                     var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devolucion.MotivoDevolucionDetalle);
 
                     var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
@@ -497,7 +525,8 @@ namespace AventasApi.Controllers
                             Sincronizado = false,
                             Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
                             Subtotal = devolucion.SubTotal,
-                            TotalUnidades = 0
+                            TotalUnidades = 0,
+                            almacen = devolucion.Almacen
                         };
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -563,13 +592,24 @@ namespace AventasApi.Controllers
         {
             try
             {
+                try
+                {
+                    var json = new JavaScriptSerializer().Serialize(devoluciones);
+
+                    EscribirLogDevolucion($"Devolucion At: {DateTime.Now} : {json}.\n");
+                }
+                catch (Exception)
+                {
+
+                }
+
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
                     Clientes cliente = await ctx.Clientes.FindAsync(devoluciones[0].CodigoCliente);
                     List<Object> nuevasDevoluciones = new List<Object>();
-                    var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null).Select(x => x.Correo).ToListAsync();
+                    
                     var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devoluciones[0].MotivoDevolucionDetalle);
                     List<MotivosDevConAprobacion> AprobadoresSinFactura = new List<MotivosDevConAprobacion>();
                     var empresa = devoluciones[0].Empresa;
@@ -595,6 +635,8 @@ namespace AventasApi.Controllers
 
                     foreach (DevolucionPostModel devolucion in devoluciones)
                     {
+                        var usuariosCorreo = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToListAsync();
+                        var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null && usuariosCorreo.Contains(x.Id)).Select(x => x.Correo).ToListAsync();
                         var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == usuario.EmpresaId);
                         var PendienteAprobacion = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToListAsync();
                         Devolucion found = null;
@@ -631,7 +673,8 @@ namespace AventasApi.Controllers
                                 Sincronizado = false,
                                 Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
                                 Subtotal = devolucion.SubTotal,
-                                TotalUnidades = 0
+                                TotalUnidades = 0,
+                                almacen = devolucion.Almacen
                             };
 
                             foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -769,6 +812,42 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.ToString());
+            }
+        }
+
+        private void EscribirLogDevolucion(string Message)
+        {
+            try
+            {
+                #region Creacion Carpeta
+                string path = @"C:\AVentasAPIDevoluciones";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                #endregion Creacion Carpeta
+
+                #region Creacion Archivo
+                string filepath = path + "\\ServiceLog_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+                if (!File.Exists(filepath))
+                {
+                    using (StreamWriter sw = File.CreateText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                else
+                {
+                    using (StreamWriter sw = File.AppendText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                #endregion Creacion Archivo
+            }
+            catch (Exception ex)
+            {
+
             }
         }
     }

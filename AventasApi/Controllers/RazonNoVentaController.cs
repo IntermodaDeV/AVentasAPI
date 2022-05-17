@@ -6,9 +6,12 @@ using System.Net.Http;
 using System.Web.Http;
 using DBData.Database;
 using AventasApi.Models;
+using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace AventasApi.Controllers
 {
+    [RoutePrefix("api/razonnoventa")]
     public class RazonNoVentaController : ApiController
     {
         AVentasEntities context = new AVentasEntities();
@@ -32,6 +35,41 @@ namespace AventasApi.Controllers
             }catch(Exception e)
             {
                 return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("tipo")]
+        public async Task<IHttpActionResult> GetTipos()
+        {
+            try
+            {
+                using(AVentasEntities context = new AVentasEntities())
+                {
+                    var tipos = await context.RazonNoVentaTipo.Select(x => new {id=x.IdRazonNoVentaTipo,tipo=x.Tipo }).ToListAsync();
+                    return Ok(tipos);
+                }
+            }catch(Exception e)
+            {
+                return InternalServerError();
+            }
+        }
+
+        [HttpGet]
+        [Route("causa")]
+        public async Task<IHttpActionResult> GetCausas()
+        {
+            try
+            {
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    var tipos = await context.RazonNoVentaCausa.Select(x => new { id = x.IdRazonNoVentaCausa, idRazonTipo = x.IdRazonNoVentaTipo,causa=x.Causa }).ToListAsync();
+                    return Ok(tipos);
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
             }
         }
     }

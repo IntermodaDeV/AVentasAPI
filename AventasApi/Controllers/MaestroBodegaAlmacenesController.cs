@@ -53,6 +53,31 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/devolucion/almacenes/{empresa}")]
+        public async Task<IHttpActionResult> ObtenerAlmacenesDevolucion(string empresa)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var almacenes = await ctx.MaestroBodegaAlmacenes.Where(x => x.EmpresaId == empresa && x.ActivoDevolucion == true).Select(x => new {
+                        Id = x.AlmacenId,
+                        Sitio = x.MaestroBodegaSitios.Nombre,
+                        Almacen = x.Almacen,
+                        Nombre = x.Nombre,
+                        Empresa = x.EmpresaId,
+                        Etiqueta = x.Etiqueta
+                    }).ToListAsync();
+                    return Ok(almacenes);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
         [Route("~/api/almacenes")]
         public async Task<IHttpActionResult> ObtenerAlmacenes()
         {

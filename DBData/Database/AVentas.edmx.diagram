@@ -316,6 +316,7 @@
         <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_Usuario_IdUsuario" />
         <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" />
+        <EntityTypeShape EntityType="AventasModel.vw_ColeccionesBodegaEspecifico" Width="1.5" PointX="8.375" PointY="19.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

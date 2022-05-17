@@ -13,6 +13,15 @@ using System.Data.Entity;
 
 namespace AventasApi.Controllers
 {
+    public class AsignacionMovil
+    {
+        public string CodigoAsesor { get; set; }
+        public string CodigoCliente { get; set; }
+        public DateTime FechaAsignacion { get; set; }
+        public DateTime HoraInicio { get; set; }
+        public DateTime HoraFinal { get; set; }
+        public int Prioridad { get; set; }
+    }
     //[Auth]
     public class AsignacionesController : ApiController
     {
@@ -59,26 +68,31 @@ namespace AventasApi.Controllers
                     foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
                         var asignaciones = context.AsignacionxAsesor.Where(axa => axa.CodigoAsesor == asesor && axa.FechaAsignacion >= FechaInicio && axa.FechaAsignacion < FechaFin).Select(axa => new
-                            {
-                                IdAsignacionxAsesor = axa.IdAsignacionxAsesor,
-                                Fecha = axa.Fecha,
-                                CodigoCliente = axa.CodigoCliente,
-                                CodigoAsesor = axa.CodigoAsesor,
-                                Usuario = axa.Usuario,
-                                FechaAsignacion = axa.FechaAsignacion,
-                                Orden = axa.Orden,
-                                HoraInicio = axa.HoraInicio,
-                                HoraFinal = axa.HoraFinal,
-                                idPrioridad = axa.idPrioridad,
-                                idTipoVisita = axa.idTipoVisita,
-                                Observacion = axa.Observacion,
-                                PrioridadAsignacion = axa.PrioridadAsignacion,
-                                Checkin = axa.BloqueoCheckin,
-                                Checkout = axa.BloqueoCheckout
-                            }).OrderBy(axa => axa.HoraInicio).ToList();
+                        {
+                            IdAsignacionxAsesor = axa.IdAsignacionxAsesor,
+                            Fecha = axa.Fecha,
+                            CodigoCliente = axa.CodigoCliente,
+                            NombreCliente = axa.Clientes.Nombre,
+                            CodigoAsesor = axa.CodigoAsesor,
+                            Usuario = axa.Usuario,
+                            FechaAsignacion = axa.FechaAsignacion,
+                            Orden = axa.Orden,
+                            HoraInicio = axa.HoraInicio,
+                            HoraFinal = axa.HoraFinal,
+                            idPrioridad = axa.idPrioridad,
+                            idTipoVisita = axa.idTipoVisita,
+                            Observacion = axa.Observacion,
+                            PrioridadAsignacion = axa.PrioridadAsignacion,
+                            Checkin = axa.BloqueoCheckin,
+                            Checkout = axa.BloqueoCheckout,
+                            Cancelada = axa.Cancelada,
+                            Deshabilitada = axa.Deshabilitada,
+                            Latitud = axa.Clientes.Latitud,
+                            Longitud = axa.Clientes.Longitud,
+                        }).OrderBy(axa => axa.HoraInicio).ToList();
 
-                    
-                    foreach (var asignacion in asignaciones)
+
+                        foreach (var asignacion in asignaciones)
                         {
                             int indexAsignacionXFecha = asignacionesXFecha.FindIndex(axf => axf.fecha.Value.Year == asignacion.FechaAsignacion.Value.Year && axf.fecha.Value.DayOfYear == asignacion.FechaAsignacion.Value.DayOfYear);
 
@@ -94,6 +108,7 @@ namespace AventasApi.Controllers
                                 {
                                     IdAsignacionxAsesor = asignacion.IdAsignacionxAsesor,
                                     cliente = asignacion.CodigoCliente,
+                                    NombreCliente = asignacion.NombreCliente,
                                     HoraInicio = asignacion.HoraInicio,
                                     HoraFin = asignacion.HoraFinal,
                                     IdPrioridad = asignacion.idPrioridad,
@@ -102,7 +117,11 @@ namespace AventasApi.Controllers
                                     ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
                                     Checkin = asignacion.Checkin,
                                     Checkout = asignacion.Checkout,
-                                    Asesor = asignacion.CodigoAsesor
+                                    Asesor = asignacion.CodigoAsesor,
+                                    Cancelada = asignacion.Cancelada,
+                                    Deshabilitada = asignacion.Deshabilitada.Value,
+                                    Latitud = asignacion.Latitud,
+                                    Longitud = asignacion.Longitud,
                                 });
                                 asignacionesXFecha.Add(nuevaAsignacionXFecha);
                             }
@@ -112,6 +131,7 @@ namespace AventasApi.Controllers
                                 {
                                     IdAsignacionxAsesor = asignacion.IdAsignacionxAsesor,
                                     cliente = asignacion.CodigoCliente,
+                                    NombreCliente = asignacion.NombreCliente,
                                     HoraInicio = asignacion.HoraInicio,
                                     HoraFin = asignacion.HoraFinal,
                                     IdPrioridad = asignacion.idPrioridad,
@@ -120,21 +140,24 @@ namespace AventasApi.Controllers
                                     ColorRelleno = asignacion.PrioridadAsignacion.ColorRelleno,
                                     Checkin = asignacion.Checkin,
                                     Checkout = asignacion.Checkout,
-                                    Asesor = asignacion.CodigoAsesor
+                                    Asesor = asignacion.CodigoAsesor,
+                                    Cancelada = asignacion.Cancelada,
+                                    Deshabilitada = asignacion.Deshabilitada.Value,
+                                    Latitud = asignacion.Latitud,
+                                    Longitud = asignacion.Longitud,
                                 });
                             }
                         }
                     }
                     return Ok(asignacionesXFecha);
                 }
-                
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }
-            
-        }
+    }
         [HttpGet]
         public async Task<IHttpActionResult> GetAsignacionesCorrespondientes()
         {
@@ -281,7 +304,8 @@ namespace AventasApi.Controllers
                             idTipoVisita = asi.IdTipoVisita,
                             Observacion = asi.Observacion,
                             BloqueoCheckin = false,
-                            BloqueoCheckout = true
+                            BloqueoCheckout = true,
+                            Deshabilitada = false
                         }).ToList();
 
                         foreach (var asignacion in asignaciones)
@@ -319,12 +343,14 @@ namespace AventasApi.Controllers
 
                 using (var ctx = new AVentasEntities())
                 {
+                    DateTime fechaCheckin = string.IsNullOrEmpty(model.origen) ? model.Fecha : DateTime.Now;
                     var asignacion = ctx.AsignacionxAsesor.FirstOrDefault(x => x.IdAsignacionxAsesor == model.IdAsignacionxAsesor);
                     asignacion.latitudeCheckIn = (model.location != null) ? model.location.latitude : null;
                     asignacion.longitudeCheckIn = (model.location != null) ? model.location.longitude : null;
-                    asignacion.fechaCheckIn = model.Fecha;
+                    asignacion.fechaCheckIn = fechaCheckin;
                     asignacion.BloqueoCheckin = true;
                     asignacion.BloqueoCheckout = false;
+                    asignacion.Observacion = model.observacion;
 
                     await ctx.SaveChangesAsync();
 
@@ -335,15 +361,16 @@ namespace AventasApi.Controllers
                     var asignaciones = await ctx.AsignacionxAsesor.Where(axa =>
                         axa.CodigoAsesor == model.Asesor 
                         && axa.FechaAsignacion >= FechaInicio 
-                        && axa.FechaAsignacion < FechaFin 
+                        && axa.FechaAsignacion < FechaFin
                         && axa.IdAsignacionxAsesor != model.IdAsignacionxAsesor
                         && axa.fechaCheckIn == null
                         && axa.Cancelada == false
                     ).ToListAsync();
-
+                  
                     foreach (var tarea in asignaciones)
                     {
                         tarea.BloqueoCheckin = true;
+                        tarea.Deshabilitada = true;
                         await ctx.SaveChangesAsync();
                     }
 
@@ -396,10 +423,12 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
+                    DateTime fechaCheckout = string.IsNullOrEmpty(model.origen) ? model.Fecha : DateTime.Now;
                     var asignacion = ctx.AsignacionxAsesor.FirstOrDefault(x => x.IdAsignacionxAsesor == model.IdAsignacionxAsesor);
                     asignacion.latitudeCheckOut = (model.location != null) ? model.location.latitude : null;
                     asignacion.longitudeCheckOut = (model.location != null) ? model.location.longitude : null;
-                    asignacion.fechaCheckOut = model.Fecha;
+                    asignacion.fechaCheckOut = fechaCheckout;
+                    asignacion.Observacion = model.observacion;
                     asignacion.BloqueoCheckout = true;
 
                     await ctx.SaveChangesAsync();
@@ -416,10 +445,11 @@ namespace AventasApi.Controllers
                         && axa.fechaCheckIn==null
                         && axa.Cancelada == false
                     ).ToListAsync();
-
+                  
                     foreach (var tarea in asignaciones)
                     {
                         tarea.BloqueoCheckin = false;
+                        tarea.Deshabilitada = false;
                         await ctx.SaveChangesAsync();
                     }
 
@@ -594,8 +624,199 @@ namespace AventasApi.Controllers
                 HoraFinal = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraFinal}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
                 CodigoCliente = x.CodigoCliente,
                 BloqueoCheckin = false,
-                BloqueoCheckout = true
+                BloqueoCheckout = true,
+                Deshabilitada=false
             }).ToList();
+        }
+
+        [HttpPost]
+        [Route("~/api/asignaciones/crear/movil")]
+        public async Task<IHttpActionResult> CrearAsignacionMovil([FromBody] AsignacionMovil asignacion)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                { 
+                    List<AsignacionxAsesor> asignacionesDelDia = await ctx.AsignacionxAsesor
+                        .Where(a => a.CodigoAsesor == asignacion.CodigoAsesor 
+                        && a.FechaAsignacion.Value.Year == asignacion.FechaAsignacion.Year
+                        && a.FechaAsignacion.Value.Month == asignacion.FechaAsignacion.Month
+                        && a.FechaAsignacion.Value.Day == asignacion.FechaAsignacion.Day
+                        && a.Cancelada == false
+                        ).ToListAsync();
+
+                    foreach(AsignacionxAsesor a in asignacionesDelDia)
+                    {
+                        if ((asignacion.HoraInicio >= a.HoraInicio) && (asignacion.HoraInicio <= a.HoraFinal)){
+                            return BadRequest("La visita no puede ser creada porque tiene conflicto de horarios con otra visita.");
+                        }
+
+                        if ((asignacion.HoraFinal >= a.HoraInicio) && (asignacion.HoraFinal <= a.HoraFinal))
+                        {
+                            return BadRequest("La visita no puede ser creada porque tiene conflicto de horarios con otra visita.");
+                        }
+                    }
+
+                    AsignacionxAsesor nuevaAsignacion = new AsignacionxAsesor
+                    {
+                        CodigoAsesor = asignacion.CodigoAsesor,
+                        CodigoCliente = asignacion.CodigoCliente,
+                        Fecha = asignacion.FechaAsignacion,
+                        FechaAsignacion = asignacion.FechaAsignacion,
+                        HoraInicio = asignacion.HoraInicio,
+                        HoraFinal = asignacion.HoraFinal,
+                        idPrioridad = asignacion.Prioridad,
+                        BloqueoCheckin = false,
+                        BloqueoCheckout = true,
+                        Cancelada = false,
+                        Deshabilitada=false
+                    };
+
+                    ctx.AsignacionxAsesor.Add(nuevaAsignacion);
+                    int affectedRows = await ctx.SaveChangesAsync();
+
+                    if (affectedRows > 0)
+                    {
+                        return Ok(new
+                        {
+                            IdAsignacionxAsesor = nuevaAsignacion.IdAsignacionxAsesor,
+                            cliente = nuevaAsignacion.CodigoCliente,
+                            HoraInicio = nuevaAsignacion.HoraInicio,
+                            HoraFin = nuevaAsignacion.HoraFinal,
+                            IdPrioridad = nuevaAsignacion.idPrioridad,
+                            IdTipoVisita = nuevaAsignacion.idTipoVisita,
+                            Observacion = nuevaAsignacion.Observacion,
+                            Checkin = nuevaAsignacion.BloqueoCheckin,
+                            Checkout = nuevaAsignacion.BloqueoCheckout,
+                            Asesor = nuevaAsignacion.CodigoAsesor,
+                            Cancelada = nuevaAsignacion.Cancelada,
+                            Deshabilitada = nuevaAsignacion.Deshabilitada
+                        });
+                    }
+
+                    return BadRequest("Ocurrio un error y no se pudo guardar la asignación");
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/asignaciones/movil/creadaoffline")]
+        public async Task<IHttpActionResult> CreacionOfflineMovil([FromBody] Models.AsignacionMovil asignacion)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    if (asignacion == null)
+                    {
+                        return BadRequest();
+                    }
+
+                    AsignacionxAsesor asignacionBD = new AsignacionxAsesor()
+                    {
+                        latitudeCheckIn = asignacion.LatitudeCheckIn,
+                        latitudeCheckOut = asignacion.LatitudeCheckOut,
+                        longitudeCheckIn = asignacion.LongitudeCheckIn,
+                        longitudeCheckOut = asignacion.LongitudeCheckOut,
+                        fechaCheckIn = asignacion.FechaCheckIn,
+                        fechaCheckOut = asignacion.FechaCheckOut,
+                        BloqueoCheckin = asignacion.Cancelada ? true : asignacion.BloqueoCheckin,
+                        BloqueoCheckout = asignacion.BloqueoCheckout,
+                        Cancelada = asignacion.Cancelada,
+                        Deshabilitada = asignacion.Deshabilitada,
+                        Observacion = asignacion.Cancelada ? "" : asignacion.Observacion,
+                        Fecha = asignacion.Fecha,
+                        FechaAsignacion = asignacion.Fecha,
+                        idPrioridad = asignacion.idPrioridad,
+                        HoraInicio = asignacion.HoraInicio,
+                        HoraFinal = asignacion.HoraFinal,
+                        CodigoAsesor=asignacion.CodigoAsesor,
+                        CodigoCliente=asignacion.CodigoCliente
+                    };
+                    
+
+                    ctx.AsignacionxAsesor.Add(asignacionBD);
+                    await ctx.SaveChangesAsync();
+
+                    if (asignacion.Cancelada)
+                    {
+                        BitacoraVisitasCliente bitacora = new BitacoraVisitasCliente()
+                        {
+                            Fecha = DateTime.Now,
+                            IdRazonNoVentaTipo = asignacion.idRazonNoVentaTipo,
+                            IdRazonNoVentaCausa = asignacion.idRazonNoVentaCausa,
+                            CodigoCliente = asignacion.CodigoCliente,
+                            CodigoAsesor = asignacion.CodigoAsesor,
+                            IdAsignacionxAsesor = asignacionBD.IdAsignacionxAsesor,
+                            Observacion = asignacion.Observacion
+                        };
+
+                        ctx.BitacoraVisitasCliente.Add(bitacora);
+                        await ctx.SaveChangesAsync();
+                    }
+
+                    return Ok(asignacionBD.IdAsignacionxAsesor);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/asignaciones/movil/modificadaoffline")]
+        public async Task<IHttpActionResult> ModificacionOfflineMovil([FromBody] Models.AsignacionMovil asignacion)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var asignacionBD = await ctx.AsignacionxAsesor.FindAsync(asignacion.IdAsignacionxAsesor);
+                    if (asignacionBD == null)
+                    {
+                        return NotFound();
+                    }
+
+                    asignacionBD.latitudeCheckIn = asignacion.LatitudeCheckIn;
+                    asignacionBD.latitudeCheckOut = asignacion.LatitudeCheckOut;
+                    asignacionBD.longitudeCheckIn = asignacion.LongitudeCheckIn;
+                    asignacionBD.longitudeCheckOut = asignacion.LongitudeCheckOut;
+                    asignacionBD.fechaCheckIn = asignacion.FechaCheckIn;
+                    asignacionBD.fechaCheckOut = asignacion.FechaCheckOut;
+                    asignacionBD.BloqueoCheckin = asignacion.Cancelada ? true : asignacion.BloqueoCheckin;
+                    asignacionBD.BloqueoCheckout = asignacion.BloqueoCheckout;
+                    asignacionBD.Cancelada = asignacion.Cancelada;
+                    asignacionBD.Deshabilitada = asignacion.Deshabilitada;
+                    asignacionBD.Observacion = asignacion.Cancelada ? "":asignacion.Observacion; 
+
+                    if (asignacion.Cancelada)
+                    {
+                        BitacoraVisitasCliente bitacora = new BitacoraVisitasCliente()
+                        {
+                            Fecha=DateTime.Now,
+                            IdRazonNoVentaTipo=asignacion.idRazonNoVentaTipo,
+                            IdRazonNoVentaCausa=asignacion.idRazonNoVentaCausa,
+                            CodigoCliente = asignacion.CodigoCliente,
+                            CodigoAsesor=asignacion.CodigoAsesor,
+                            IdAsignacionxAsesor=asignacionBD.IdAsignacionxAsesor,
+                            Observacion=asignacion.Observacion
+                        };
+
+                        ctx.BitacoraVisitasCliente.Add(bitacora);
+                    }
+
+                    await ctx.SaveChangesAsync();
+
+                    return Ok();
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
     }
 }

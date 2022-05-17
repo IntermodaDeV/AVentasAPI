@@ -11,12 +11,18 @@ namespace AventasApi.Models.ViewModels
         public DateTime? HoraInicio { get; set; }
         public DateTime? HoraFin { get; set; }
         public string cliente { get; set; }
+        public string NombreCliente { get; set; }
+        
         public Nullable<int> IdPrioridad { get; set; }
         public Nullable<int> IdTipoVisita { get; set; }
         public string Observacion { get; set; }
         public string ColorRelleno { get; set; }
         public bool Checkin { get; set; }
         public bool Checkout { get; set; }
+        public bool Cancelada { get; set; }
+        public bool Deshabilitada { get; set; }
         public string Asesor { get; set; }
+        public Decimal? Latitud { get; set; }
+        public Decimal? Longitud { get; set; }
     }
 }

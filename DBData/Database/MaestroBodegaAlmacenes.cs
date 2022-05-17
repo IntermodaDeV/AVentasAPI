@@ -30,6 +30,7 @@ namespace DBData.Database
         public bool Estatus { get; set; }
         public string ModificadoPor { get; set; }
         public Nullable<System.DateTime> FechaModificacion { get; set; }
+        public bool ActivoDevolucion { get; set; }
     
         public virtual Empresa Empresa { get; set; }
         public virtual MaestroBodegaSitios MaestroBodegaSitios { get; set; }

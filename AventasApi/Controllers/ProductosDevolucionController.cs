@@ -77,13 +77,12 @@ namespace AventasApi.Controllers
                             IdLinea = pxc.MaestroLinea.IdLinea,
                             Linea = pxc.MaestroLinea.Linea,
                         },
-                        ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto).Select(txp => txp.TallasXGrupo).Where(t=>tallas.Contains(t.CodigoTalla))
-                                             .Select(txp => new TallaViewModel
-                                             {
-                                                 Talla = txp.CodigoTalla.ToUpper(),
-                                                 GrupoTallaId = txp.CodigoGrupoTalla,
-                                                 Orden = txp.Orden ?? 0,
-                                             }).OrderBy(txp => txp.Orden).ToList(),
+                        ListaTalla = ctx.GrupoTalla.FirstOrDefault(x=>x.CodigoGrupoTalla == pxc.CodigoGrupoTalla).TallasXGrupo.Where(t => tallas.Contains(t.CodigoTalla)).Select(txp => new TallaViewModel
+                        {
+                            Talla = txp.CodigoTalla.ToUpper(),
+                            GrupoTallaId = txp.CodigoGrupoTalla,
+                            Orden = txp.Orden ?? 0,
+                        }).OrderBy(txp => txp.Orden).ToList(),
                         ListaColores = ctx.Colores.Where(x => colores.Contains(x.CodigoColor)).Select(cpp => new ColorViewModel
                         {
                             CodigoColor = cpp.CodigoColor,
