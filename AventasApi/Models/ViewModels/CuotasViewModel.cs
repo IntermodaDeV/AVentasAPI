@@ -31,5 +31,7 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> ValorVencidoCuota { get; set; }
         public string ReferenciaCuotas { get; set; }
         public Nullable<int> IdFactura { get; set; }
+        public Nullable<bool> completaCuota { get; set; }
+        public Nullable<decimal> Valor { get; set; }
     }
 }

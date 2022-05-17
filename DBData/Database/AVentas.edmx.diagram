@@ -317,6 +317,12 @@
         <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" />
         <EntityTypeShape EntityType="AventasModel.vw_ColeccionesBodegaEspecifico" Width="1.5" PointX="8.375" PointY="19.75" />
+        <EntityTypeShape EntityType="AventasModel.CuotasXAcuerdo" Width="1.5" PointX="5.25" PointY="61.625" />
+        <EntityTypeShape EntityType="AventasModel.FacturasEnCuotasAcuerdos" Width="1.5" PointX="7.5" PointY="61.625" />
+        <EntityTypeShape EntityType="AventasModel.PagosAFacturasDeCuotas" Width="1.5" PointX="9.75" PointY="61.75" />
+        <AssociationConnector Association="AventasModel.FK_AcuerdoVenta_IdAcuerdoVenta" />
+        <AssociationConnector Association="AventasModel.FK_FacturasEnAcuerdos_IdCuotaXAcuerdo" />
+        <AssociationConnector Association="AventasModel.FK_PagosAFacturas_IdFacturaXCuota" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

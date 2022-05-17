@@ -20,6 +20,7 @@ namespace DBData.Database
             this.AcuerdosxClienteDetalle = new HashSet<AcuerdosxClienteDetalle>();
             this.SubFacturasxCliente = new HashSet<SubFacturasxCliente>();
             this.FacturasxCliente = new HashSet<FacturasxCliente>();
+            this.CuotasXAcuerdo = new HashSet<CuotasXAcuerdo>();
         }
     
         public string IdAcuerdoxCliente { get; set; }
@@ -49,5 +50,7 @@ namespace DBData.Database
         public virtual ICollection<SubFacturasxCliente> SubFacturasxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FacturasxCliente> FacturasxCliente { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CuotasXAcuerdo> CuotasXAcuerdo { get; set; }
     }
 }

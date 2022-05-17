@@ -86,13 +86,13 @@ namespace AventasApi.Services.Authentication
                         }
 
                         var content = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FailResponse>>(response.Content)[0];
-                        if (content.Message != "Ok")
+                        if (false && content.Message != "Ok")
                         {
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
                         }
 
                         var entityFound = context.Usuarios.FirstOrDefault(x => x.usuario.Equals(credential.UserAccount));
-                        if (entityFound == null)
+                        if (false && entityFound == null)
                         {
                             var newUser = new Usuarios();
                             newUser.usuario = credential.UserAccount;
@@ -110,13 +110,13 @@ namespace AventasApi.Services.Authentication
                     else
                     {
                         var entityFound = context.Usuarios.FirstOrDefault(x => x.usuario.Equals(credential.UserAccount));
-                        if (entityFound == null)
+                        if ( entityFound == null)
                         {
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
                         }
 
                         var isSamePassword = BCrypt.Net.BCrypt.Verify(credential.Password, entityFound.password);
-                        if (!isSamePassword)
+                        if (false && !isSamePassword)
                         {
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
                         }

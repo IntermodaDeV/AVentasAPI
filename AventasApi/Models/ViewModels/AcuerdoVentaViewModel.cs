@@ -20,11 +20,15 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> Liberado { get; set; }
         public Nullable<decimal> Facturado { get; set; }
         public Nullable<decimal> Entregado { get; set; }
+        public Nullable<DateTime> Desde { get; set; }
+        public Nullable<DateTime> Hasta { get; set; }
         public List<AcuerdoVentaDetalleViewModel> detalleAcuerdo  { get; set; }
+        public List<CuotasDeAcuerdoViewModel> CuotasDeAcuerdo { get; set; }
 
         public AcuerdoVentaViewModel()
         {
             detalleAcuerdo = new List<AcuerdoVentaDetalleViewModel>();
+            CuotasDeAcuerdo = new List<CuotasDeAcuerdoViewModel>();
         }
     }
 }

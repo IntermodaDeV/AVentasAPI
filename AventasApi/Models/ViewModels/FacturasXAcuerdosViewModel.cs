@@ -13,12 +13,14 @@ namespace AventasApi.Models.ViewModels
         //public string SaldoTotal { get; set; }
 
         public List<FacturasXClienteViewModel> Facturas;
+        public List<DocumentosAplicadosAFacturasViewModel> DocumentosAplicadosxCuotas;
         public FacturasXAcuerdosViewModel()
         {
             this.Facturas = new List<FacturasXClienteViewModel>();
+            this.DocumentosAplicadosxCuotas = new List<DocumentosAplicadosAFacturasViewModel>();
 
         }
-
+        
         public List<PedidosXClienteViewModel> Pedidos;
     }
 }
