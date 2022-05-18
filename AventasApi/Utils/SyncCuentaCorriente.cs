@@ -45,7 +45,7 @@ namespace AventasApi.Utils
                             newEntity.TotalFactura = Decimal.TryParse(factura.AMOUNT_CUR, out tFactura) ? tFactura : 0;
                             newEntity.PendienteFactura = Decimal.TryParse(factura.AMOUNT_PENDING, out pFactura) ? pFactura : 0;
                             newEntity.Saldo = Decimal.TryParse(factura.REMAIN_AMOUNT_CUR, out sFactura) ? sFactura : 0;
-                            newEntity.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;
+                            newEntity.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;         
                             /*if (newEntity.PendienteFactura > 0)
                             {
                                 newEntity.Saldo = newEntity.Saldo - newEntity.PendienteFactura - (entityFound.FechaMaxDescuento < DateTime.Today ? 0 : entityFound.Descuento);
@@ -164,6 +164,7 @@ namespace AventasApi.Utils
                             {
                                 entityFound.Saldo = 0;
                             }
+                            entityFound.IdAcuerdoxCliente = String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? null: subFactura.AGREEMENT_NAME;
                             fFactura.IdAcuerdoxCliente = entityFound.IdAcuerdoxCliente;
                             entityFound.SaldoDivisa = Decimal.TryParse(subFactura.AMOUNT_MST, out tFacturaDivisa) ? tFacturaDivisa : 0;
                             entityFound.Descuento = Decimal.TryParse(subFactura.DISC_AMOUNT, out sDesc) ? sDesc : 0;
