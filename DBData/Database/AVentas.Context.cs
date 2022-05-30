@@ -151,6 +151,7 @@ namespace DBData.Database
         public virtual DbSet<CuotasXAcuerdo> CuotasXAcuerdo { get; set; }
         public virtual DbSet<FacturasEnCuotasAcuerdos> FacturasEnCuotasAcuerdos { get; set; }
         public virtual DbSet<PagosAFacturasDeCuotas> PagosAFacturasDeCuotas { get; set; }
+        public virtual DbSet<PromesaPago> PromesaPago { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

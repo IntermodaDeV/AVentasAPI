@@ -375,6 +375,9 @@
     <Compile Include="Database\ProductosxColeccion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\PromesaPago.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\RazonNoVentaCausa.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
