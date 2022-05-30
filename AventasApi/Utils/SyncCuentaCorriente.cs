@@ -18,6 +18,7 @@ namespace AventasApi.Utils
             {
                 using (AVentasEntities context = new AVentasEntities())
                 {
+                    _= context.SP_FacturasxCliente_UpdateSaldoXCliente(facturas[0].ACCOUNT_NUM, facturas[0].ENTITY);
                    foreach(var factura in facturas)
                     {
                         var entityFound = context.FacturasxCliente.FirstOrDefault(x => x.Factura == factura.INVOICE);
@@ -30,6 +31,7 @@ namespace AventasApi.Utils
                             DateTime dummy = new DateTime();
                             decimal tFactura = 0, sFactura = 0, pFactura = 0, desc = 0;
                             int nPagos = 0;
+                            newEntity.Factura = factura.INVOICE;
                             newEntity.Clientes = context.Clientes.FirstOrDefault(p => p.CodigoCliente == factura.ACCOUNT_NUM);
                             newEntity.TiposdePedido = context.TiposdePedido.FirstOrDefault(p => p.IdTipoPedido == tipoPedido.IdTipoPedido);
                             newEntity.MaestroMoneda = context.MaestroMoneda.FirstOrDefault(p => p.IdMoneda == factura.CURRENCY_CODE);
@@ -43,13 +45,12 @@ namespace AventasApi.Utils
                             newEntity.TotalFactura = Decimal.TryParse(factura.AMOUNT_CUR, out tFactura) ? tFactura : 0;
                             newEntity.PendienteFactura = Decimal.TryParse(factura.AMOUNT_PENDING, out pFactura) ? pFactura : 0;
                             newEntity.Saldo = Decimal.TryParse(factura.REMAIN_AMOUNT_CUR, out sFactura) ? sFactura : 0;
-                            newEntity.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;
-
+                            newEntity.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;         
                             /*if (newEntity.PendienteFactura > 0)
                             {
                                 newEntity.Saldo = newEntity.Saldo - newEntity.PendienteFactura - (entityFound.FechaMaxDescuento < DateTime.Today ? 0 : entityFound.Descuento);
                             }*/
-                            
+                            //newEntity.NumeroPedido = factura.SALESID;
                             newEntity.FacturaStatus = factura.STATUS;
                             newEntity.NumeroPagos = int.TryParse(factura.N_PAYMENTS, out nPagos) ? nPagos : 0;
                             newEntity.Referencia = factura.REF_TRANS;
@@ -79,7 +80,7 @@ namespace AventasApi.Utils
                             {
                                 entityFound.Saldo = entityFound.Saldo - entityFound.PendienteFactura - (entityFound.FechaMaxDescuento < DateTime.Today ? 0 : entityFound.Descuento);
                             }
-
+                           
                             entityFound.FacturaStatus = factura.STATUS;
                             entityFound.NumeroPagos = int.TryParse(factura.N_PAYMENTS, out nPagos) ? nPagos : 0;
                             entityFound.Referencia = factura.REF_TRANS;
@@ -101,7 +102,8 @@ namespace AventasApi.Utils
             {
                 using(AVentasEntities context = new AVentasEntities())
                 {
-                    foreach(var subFactura in subFacturas)
+                    _ = context.SP_SubFacturasxCliente_UpdateSaldoXCliente(subFacturas[0].ACCOUNT_NUM, subFacturas[0].ENTITY);
+                    foreach (var subFactura in subFacturas)
                     {
                         var fFactura = context.FacturasxCliente.FirstOrDefault(x => x.Referencia == subFactura.REF_CUSTTRANS);
                         var entityFound = context.SubFacturasxCliente.FirstOrDefault(p => p.Factura == fFactura.Factura && p.Referencia == subFactura.REF_TRANSOPEN);
@@ -115,6 +117,7 @@ namespace AventasApi.Utils
 
                             newEntity.Factura = fFactura.Factura;
                             newEntity.FacturasxCliente = context.FacturasxCliente.FirstOrDefault(p => p.Factura == fFactura.Factura);
+                            newEntity.AcuerdosxCliente = context.AcuerdosxCliente.FirstOrDefault(x => x.IdAcuerdoxCliente == subFactura.AGREEMENT_NAME);
                             newEntity.Clientes = context.Clientes.FirstOrDefault(p => p.CodigoCliente == subFactura.ACCOUNT_NUM);
                             newEntity.Empresa = context.Empresa.FirstOrDefault(p => p.EmpresaId == subFactura.ENTITY);
                             newEntity.MaestroMoneda = context.MaestroMoneda.FirstOrDefault(p => p.IdMoneda == subFactura.CURRENCY_CODE);
@@ -123,7 +126,7 @@ namespace AventasApi.Utils
                             newEntity.FechaMaxDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             newEntity.FechaVencimientoDescuento = DateTime.TryParseExact(subFactura.LIMIT_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.LIMIT_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             newEntity.Saldo = Decimal.TryParse(subFactura.AMOUNT_CUR, out ssFactura) ? ssFactura : 0;
-
+                            fFactura.IdAcuerdoxCliente = String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? null : subFactura.AGREEMENT_NAME;
                             if (fFactura.Saldo == 0)
                             {
                                 newEntity.Saldo = 0;
@@ -139,7 +142,7 @@ namespace AventasApi.Utils
                             newEntity.ValorCuota = Decimal.TryParse(subFactura.PA_PAYM_AMOUNT, out svCuota) ? svCuota : 0;
                             newEntity.ValorVencidoCuota = Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out svVencidoCuota) ? svVencidoCuota : 0;
                             newEntity.ReferenciaCuotas = subFactura.PA_REF_APSA;
-
+                           
                             context.SubFacturasxCliente.Add(newEntity);
                         }
                         else
@@ -161,6 +164,8 @@ namespace AventasApi.Utils
                             {
                                 entityFound.Saldo = 0;
                             }
+                            entityFound.IdAcuerdoxCliente = String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? null: subFactura.AGREEMENT_NAME;
+                            fFactura.IdAcuerdoxCliente = entityFound.IdAcuerdoxCliente;
                             entityFound.SaldoDivisa = Decimal.TryParse(subFactura.AMOUNT_MST, out tFacturaDivisa) ? tFacturaDivisa : 0;
                             entityFound.Descuento = Decimal.TryParse(subFactura.DISC_AMOUNT, out sDesc) ? sDesc : 0;
                             entityFound.PendientePago = Decimal.TryParse(subFactura.PAYM_AMOUNT, out psFactura) ? psFactura : 0;
@@ -171,7 +176,7 @@ namespace AventasApi.Utils
                             entityFound.ValorCuota = Decimal.TryParse(subFactura.PA_PAYM_AMOUNT, out svCuota) ? svCuota : 0;
                             entityFound.ValorVencidoCuota = Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out svVencidoCuota) ? svVencidoCuota : 0;
                             entityFound.ReferenciaCuotas = subFactura.PA_REF_APSA;
-
+                          
                             context.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
                         }
                         context.SaveChanges();

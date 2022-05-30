@@ -148,6 +148,9 @@ namespace DBData.Database
         public virtual DbSet<DevolucionDetalle> DevolucionDetalle { get; set; }
         public virtual DbSet<AprobacionDevoluciones> AprobacionDevoluciones { get; set; }
         public virtual DbSet<vw_ColeccionesBodegaEspecifico> vw_ColeccionesBodegaEspecifico { get; set; }
+        public virtual DbSet<CuotasXAcuerdo> CuotasXAcuerdo { get; set; }
+        public virtual DbSet<FacturasEnCuotasAcuerdos> FacturasEnCuotasAcuerdos { get; set; }
+        public virtual DbSet<PagosAFacturasDeCuotas> PagosAFacturasDeCuotas { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -360,6 +363,32 @@ namespace DBData.Database
                 new ObjectParameter("cliente", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtencionFacturas_Result>("SP_ObtencionFacturas", codigoProductoParameter, clienteParameter);
+        }
+    
+        public virtual int SP_FacturasxCliente_UpdateSaldoXCliente(string cLIENTE, string eMPRESA)
+        {
+            var cLIENTEParameter = cLIENTE != null ?
+                new ObjectParameter("CLIENTE", cLIENTE) :
+                new ObjectParameter("CLIENTE", typeof(string));
+    
+            var eMPRESAParameter = eMPRESA != null ?
+                new ObjectParameter("EMPRESA", eMPRESA) :
+                new ObjectParameter("EMPRESA", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_FacturasxCliente_UpdateSaldoXCliente", cLIENTEParameter, eMPRESAParameter);
+        }
+    
+        public virtual int SP_SubFacturasxCliente_UpdateSaldoXCliente(string cLIENTE, string eMPRESA)
+        {
+            var cLIENTEParameter = cLIENTE != null ?
+                new ObjectParameter("CLIENTE", cLIENTE) :
+                new ObjectParameter("CLIENTE", typeof(string));
+    
+            var eMPRESAParameter = eMPRESA != null ?
+                new ObjectParameter("EMPRESA", eMPRESA) :
+                new ObjectParameter("EMPRESA", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_SubFacturasxCliente_UpdateSaldoXCliente", cLIENTEParameter, eMPRESAParameter);
         }
     }
 }

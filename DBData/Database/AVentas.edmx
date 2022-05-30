@@ -332,6 +332,17 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="IdMoneda" Type="varchar" MaxLength="100" />
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
         </EntityType>
+        <EntityType Name="CuotasXAcuerdo">
+          <Key>
+            <PropertyRef Name="IdCuotasXAcuerdoVenta" />
+          </Key>
+          <Property Name="IdCuotasXAcuerdoVenta" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdAcuerdoVenta" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="NumCuota" Type="int" Nullable="false" />
+          <Property Name="ValorCuota" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="SaldoDiponible" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="FechaVencimiento" Type="date" />
+        </EntityType>
         <EntityType Name="Descuento">
           <Key>
             <PropertyRef Name="IdDescuento" />
@@ -498,6 +509,17 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           </Key>
           <Property Name="IdEstado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Estado" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="FacturasEnCuotasAcuerdos">
+          <Key>
+            <PropertyRef Name="IdFacturaXCuota" />
+          </Key>
+          <Property Name="IdFacturaXCuota" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idCuotaXAcuerdo" Type="int" Nullable="false" />
+          <Property Name="Factura" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Valor" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="FechaFactura" Type="date" />
+          <Property Name="FechaVencimiento" Type="date" />
         </EntityType>
         <EntityType Name="FacturasxCliente">
           <Key>
@@ -849,6 +871,17 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Estado" Type="bit" Nullable="false" />
           <Property Name="FechaModifica" Type="datetime" />
           <Property Name="UsuarioModifica" Type="int" />
+        </EntityType>
+        <EntityType Name="PagosAFacturasDeCuotas">
+          <Key>
+            <PropertyRef Name="IdPagosAFacturasDeCuota" />
+          </Key>
+          <Property Name="IdPagosAFacturasDeCuota" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdFacturaXCuota" Type="int" Nullable="false" />
+          <Property Name="NumeroDocumento" Type="varchar" MaxLength="150" />
+          <Property Name="Valor" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="FechaLiquidacion" Type="date" />
+          <Property Name="FechaDeposito" Type="date" />
         </EntityType>
         <EntityType Name="Pantallas">
           <Key>
@@ -3376,6 +3409,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AcuerdoVenta_IdAcuerdoVenta">
+          <End Role="AcuerdosxCliente" Type="Self.AcuerdosxCliente" Multiplicity="1" />
+          <End Role="CuotasXAcuerdo" Type="Self.CuotasXAcuerdo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AcuerdosxCliente">
+              <PropertyRef Name="IdAcuerdoxCliente" />
+            </Principal>
+            <Dependent Role="CuotasXAcuerdo">
+              <PropertyRef Name="IdAcuerdoVenta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE">
           <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
           <End Role="Respuestas" Type="Self.Respuestas" Multiplicity="*" />
@@ -3409,6 +3454,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="Respuestas">
               <PropertyRef Name="EncuestaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FacturasEnAcuerdos_IdCuotaXAcuerdo">
+          <End Role="CuotasXAcuerdo" Type="Self.CuotasXAcuerdo" Multiplicity="1" />
+          <End Role="FacturasEnCuotasAcuerdos" Type="Self.FacturasEnCuotasAcuerdos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CuotasXAcuerdo">
+              <PropertyRef Name="IdCuotasXAcuerdoVenta" />
+            </Principal>
+            <Dependent Role="FacturasEnCuotasAcuerdos">
+              <PropertyRef Name="idCuotaXAcuerdo" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3577,6 +3634,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="MotivosDevolucionDetalle">
               <PropertyRef Name="UsuarioModifica" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PagosAFacturas_IdFacturaXCuota">
+          <End Role="FacturasEnCuotasAcuerdos" Type="Self.FacturasEnCuotasAcuerdos" Multiplicity="1" />
+          <End Role="PagosAFacturasDeCuotas" Type="Self.PagosAFacturasDeCuotas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FacturasEnCuotasAcuerdos">
+              <PropertyRef Name="IdFacturaXCuota" />
+            </Principal>
+            <Dependent Role="PagosAFacturasDeCuotas">
+              <PropertyRef Name="IdFacturaXCuota" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -3996,6 +4065,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
         </Function>
+        <Function Name="SP_FacturasxCliente_UpdateSaldoXCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
+          <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
@@ -4012,6 +4085,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
           <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="SP_SubFacturasxCliente_UpdateSaldoXCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
+          <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="SP_VISITASPORMES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -4051,6 +4128,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="ComunidadAutonoma" EntityType="Self.ComunidadAutonoma" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Configuraciones" EntityType="Self.Configuraciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CuentasBancarias" EntityType="Self.CuentasBancarias" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CuotasXAcuerdo" EntityType="Self.CuotasXAcuerdo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Descuento" EntityType="Self.Descuento" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DescuentoDetalle" EntityType="Self.DescuentoDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Devolucion" EntityType="Self.Devolucion" Schema="dbo" store:Type="Tables" />
@@ -4064,6 +4142,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="Encuesta" EntityType="Self.Encuesta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Errores" EntityType="Self.Errores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EstadosPedido" EntityType="Self.EstadosPedido" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FacturasEnCuotasAcuerdos" EntityType="Self.FacturasEnCuotasAcuerdos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FacturasxCliente" EntityType="Self.FacturasxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FirmasxPedido" EntityType="Self.FirmasxPedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FisicoDisponible" EntityType="Self.FisicoDisponible" Schema="dbo" store:Type="Tables" />
@@ -4094,6 +4173,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="MotivosDevConAprobacion" EntityType="Self.MotivosDevConAprobacion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MotivosDevolucion" EntityType="Self.MotivosDevolucion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MotivosDevolucionDetalle" EntityType="Self.MotivosDevolucionDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PagosAFacturasDeCuotas" EntityType="Self.PagosAFacturasDeCuotas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pantallas" EntityType="Self.Pantallas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pantallas_Funciones" EntityType="Self.Pantallas_Funciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PantallasxUsuario" EntityType="Self.PantallasxUsuario" Schema="dbo" store:Type="Tables" />
@@ -4792,6 +4872,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="Usuarios" EntitySet="Usuarios" />
           </AssociationSet>
+          <AssociationSet Name="FK_AcuerdoVenta_IdAcuerdoVenta" Association="Self.FK_AcuerdoVenta_IdAcuerdoVenta">
+            <End Role="AcuerdosxCliente" EntitySet="AcuerdosxCliente" />
+            <End Role="CuotasXAcuerdo" EntitySet="CuotasXAcuerdo" />
+          </AssociationSet>
           <AssociationSet Name="FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE" Association="Self.FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE">
             <End Role="Clientes" EntitySet="Clientes" />
             <End Role="Respuestas" EntitySet="Respuestas" />
@@ -4803,6 +4887,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK_ENCUESTA_ID_RESPUESTA_ENCUESTAID" Association="Self.FK_ENCUESTA_ID_RESPUESTA_ENCUESTAID">
             <End Role="Encuesta" EntitySet="Encuesta" />
             <End Role="Respuestas" EntitySet="Respuestas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FacturasEnAcuerdos_IdCuotaXAcuerdo" Association="Self.FK_FacturasEnAcuerdos_IdCuotaXAcuerdo">
+            <End Role="CuotasXAcuerdo" EntitySet="CuotasXAcuerdo" />
+            <End Role="FacturasEnCuotasAcuerdos" EntitySet="FacturasEnCuotasAcuerdos" />
           </AssociationSet>
           <AssociationSet Name="FK_FacturasxCliente_AcuerdosxCliente" Association="Self.FK_FacturasxCliente_AcuerdosxCliente">
             <End Role="AcuerdosxCliente" EntitySet="AcuerdosxCliente" />
@@ -4859,6 +4947,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO" Association="Self.FK_MOTIVOSDEVOLUCIONDETALLE_USUARIO">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="MotivosDevolucionDetalle" EntitySet="MotivosDevolucionDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PagosAFacturas_IdFacturaXCuota" Association="Self.FK_PagosAFacturas_IdFacturaXCuota">
+            <End Role="FacturasEnCuotasAcuerdos" EntitySet="FacturasEnCuotasAcuerdos" />
+            <End Role="PagosAFacturasDeCuotas" EntitySet="PagosAFacturasDeCuotas" />
           </AssociationSet>
           <AssociationSet Name="FK_PedidosDetalle_ProductosxColeccion" Association="Self.FK_PedidosDetalle_ProductosxColeccion">
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
@@ -5020,6 +5112,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="FacturasxCliente" Relationship="Self.FK_FacturasxCliente_AcuerdosxCliente" FromRole="AcuerdosxCliente" ToRole="FacturasxCliente" />
           <Property Name="Desde" Type="DateTime" Precision="3" />
           <Property Name="Hasta" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="CuotasXAcuerdo" Relationship="AventasModel.FK_AcuerdoVenta_IdAcuerdoVenta" FromRole="AcuerdosxCliente" ToRole="CuotasXAcuerdo" />
         </EntityType>
         <EntityType Name="AcuerdosxClienteDetalle">
           <Key>
@@ -7339,6 +7432,29 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="vw_ColeccionesBodegaEspecifico" EntityType="AventasModel.vw_ColeccionesBodegaEspecifico" />
+          <EntitySet Name="CuotasXAcuerdo" EntityType="AventasModel.CuotasXAcuerdo" />
+          <EntitySet Name="FacturasEnCuotasAcuerdos" EntityType="AventasModel.FacturasEnCuotasAcuerdos" />
+          <EntitySet Name="PagosAFacturasDeCuotas" EntityType="AventasModel.PagosAFacturasDeCuotas" />
+          <AssociationSet Name="FK_AcuerdoVenta_IdAcuerdoVenta" Association="AventasModel.FK_AcuerdoVenta_IdAcuerdoVenta">
+            <End Role="AcuerdosxCliente" EntitySet="AcuerdosxCliente" />
+            <End Role="CuotasXAcuerdo" EntitySet="CuotasXAcuerdo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FacturasEnAcuerdos_IdCuotaXAcuerdo" Association="AventasModel.FK_FacturasEnAcuerdos_IdCuotaXAcuerdo">
+            <End Role="CuotasXAcuerdo" EntitySet="CuotasXAcuerdo" />
+            <End Role="FacturasEnCuotasAcuerdos" EntitySet="FacturasEnCuotasAcuerdos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PagosAFacturas_IdFacturaXCuota" Association="AventasModel.FK_PagosAFacturas_IdFacturaXCuota">
+            <End Role="FacturasEnCuotasAcuerdos" EntitySet="FacturasEnCuotasAcuerdos" />
+            <End Role="PagosAFacturasDeCuotas" EntitySet="PagosAFacturasDeCuotas" />
+          </AssociationSet>
+          <FunctionImport Name="SP_FacturasxCliente_UpdateSaldoXCliente">
+            <Parameter Name="CLIENTE" Mode="In" Type="String" />
+            <Parameter Name="EMPRESA" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_SubFacturasxCliente_UpdateSaldoXCliente">
+            <Parameter Name="CLIENTE" Mode="In" Type="String" />
+            <Parameter Name="EMPRESA" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -10441,6 +10557,80 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="CuotasXAcuerdo">
+          <Key>
+            <PropertyRef Name="IdCuotasXAcuerdoVenta" />
+          </Key>
+          <Property Name="IdCuotasXAcuerdoVenta" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdAcuerdoVenta" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="NumCuota" Type="Int32" Nullable="false" />
+          <Property Name="ValorCuota" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="SaldoDiponible" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="FechaVencimiento" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="AcuerdosxCliente" Relationship="AventasModel.FK_AcuerdoVenta_IdAcuerdoVenta" FromRole="CuotasXAcuerdo" ToRole="AcuerdosxCliente" />
+          <NavigationProperty Name="FacturasEnCuotasAcuerdos" Relationship="AventasModel.FK_FacturasEnAcuerdos_IdCuotaXAcuerdo" FromRole="CuotasXAcuerdo" ToRole="FacturasEnCuotasAcuerdos" />
+        </EntityType>
+        <EntityType Name="FacturasEnCuotasAcuerdos">
+          <Key>
+            <PropertyRef Name="IdFacturaXCuota" />
+          </Key>
+          <Property Name="IdFacturaXCuota" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idCuotaXAcuerdo" Type="Int32" Nullable="false" />
+          <Property Name="Factura" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Valor" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="FechaFactura" Type="DateTime" Precision="0" />
+          <Property Name="FechaVencimiento" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="CuotasXAcuerdo" Relationship="AventasModel.FK_FacturasEnAcuerdos_IdCuotaXAcuerdo" FromRole="FacturasEnCuotasAcuerdos" ToRole="CuotasXAcuerdo" />
+          <NavigationProperty Name="PagosAFacturasDeCuotas" Relationship="AventasModel.FK_PagosAFacturas_IdFacturaXCuota" FromRole="FacturasEnCuotasAcuerdos" ToRole="PagosAFacturasDeCuotas" />
+        </EntityType>
+        <EntityType Name="PagosAFacturasDeCuotas">
+          <Key>
+            <PropertyRef Name="IdPagosAFacturasDeCuota" />
+          </Key>
+          <Property Name="IdPagosAFacturasDeCuota" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdFacturaXCuota" Type="Int32" Nullable="false" />
+          <Property Name="NumeroDocumento" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Valor" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="FechaLiquidacion" Type="DateTime" Precision="0" />
+          <Property Name="FechaDeposito" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="FacturasEnCuotasAcuerdos" Relationship="AventasModel.FK_PagosAFacturas_IdFacturaXCuota" FromRole="PagosAFacturasDeCuotas" ToRole="FacturasEnCuotasAcuerdos" />
+        </EntityType>
+        <Association Name="FK_AcuerdoVenta_IdAcuerdoVenta">
+          <End Type="AventasModel.AcuerdosxCliente" Role="AcuerdosxCliente" Multiplicity="1" />
+          <End Type="AventasModel.CuotasXAcuerdo" Role="CuotasXAcuerdo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AcuerdosxCliente">
+              <PropertyRef Name="IdAcuerdoxCliente" />
+            </Principal>
+            <Dependent Role="CuotasXAcuerdo">
+              <PropertyRef Name="IdAcuerdoVenta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_FacturasEnAcuerdos_IdCuotaXAcuerdo">
+          <End Type="AventasModel.CuotasXAcuerdo" Role="CuotasXAcuerdo" Multiplicity="1" />
+          <End Type="AventasModel.FacturasEnCuotasAcuerdos" Role="FacturasEnCuotasAcuerdos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CuotasXAcuerdo">
+              <PropertyRef Name="IdCuotasXAcuerdoVenta" />
+            </Principal>
+            <Dependent Role="FacturasEnCuotasAcuerdos">
+              <PropertyRef Name="idCuotaXAcuerdo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PagosAFacturas_IdFacturaXCuota">
+          <End Type="AventasModel.FacturasEnCuotasAcuerdos" Role="FacturasEnCuotasAcuerdos" Multiplicity="1" />
+          <End Type="AventasModel.PagosAFacturasDeCuotas" Role="PagosAFacturasDeCuotas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="FacturasEnCuotasAcuerdos">
+              <PropertyRef Name="IdFacturaXCuota" />
+            </Principal>
+            <Dependent Role="PagosAFacturasDeCuotas">
+              <PropertyRef Name="IdFacturaXCuota" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12417,6 +12607,44 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="CuotasXAcuerdo">
+            <EntityTypeMapping TypeName="AventasModel.CuotasXAcuerdo">
+              <MappingFragment StoreEntitySet="CuotasXAcuerdo">
+                <ScalarProperty Name="FechaVencimiento" ColumnName="FechaVencimiento" />
+                <ScalarProperty Name="SaldoDiponible" ColumnName="SaldoDiponible" />
+                <ScalarProperty Name="ValorCuota" ColumnName="ValorCuota" />
+                <ScalarProperty Name="NumCuota" ColumnName="NumCuota" />
+                <ScalarProperty Name="IdAcuerdoVenta" ColumnName="IdAcuerdoVenta" />
+                <ScalarProperty Name="IdCuotasXAcuerdoVenta" ColumnName="IdCuotasXAcuerdoVenta" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FacturasEnCuotasAcuerdos">
+            <EntityTypeMapping TypeName="AventasModel.FacturasEnCuotasAcuerdos">
+              <MappingFragment StoreEntitySet="FacturasEnCuotasAcuerdos">
+                <ScalarProperty Name="FechaVencimiento" ColumnName="FechaVencimiento" />
+                <ScalarProperty Name="FechaFactura" ColumnName="FechaFactura" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="Factura" ColumnName="Factura" />
+                <ScalarProperty Name="idCuotaXAcuerdo" ColumnName="idCuotaXAcuerdo" />
+                <ScalarProperty Name="IdFacturaXCuota" ColumnName="IdFacturaXCuota" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PagosAFacturasDeCuotas">
+            <EntityTypeMapping TypeName="AventasModel.PagosAFacturasDeCuotas">
+              <MappingFragment StoreEntitySet="PagosAFacturasDeCuotas">
+                <ScalarProperty Name="FechaDeposito" ColumnName="FechaDeposito" />
+                <ScalarProperty Name="FechaLiquidacion" ColumnName="FechaLiquidacion" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="NumeroDocumento" ColumnName="NumeroDocumento" />
+                <ScalarProperty Name="IdFacturaXCuota" ColumnName="IdFacturaXCuota" />
+                <ScalarProperty Name="IdPagosAFacturasDeCuota" ColumnName="IdPagosAFacturasDeCuota" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_FacturasxCliente_UpdateSaldoXCliente" FunctionName="AventasModel.Store.SP_FacturasxCliente_UpdateSaldoXCliente" />
+          <FunctionImportMapping FunctionImportName="SP_SubFacturasxCliente_UpdateSaldoXCliente" FunctionName="AventasModel.Store.SP_SubFacturasxCliente_UpdateSaldoXCliente" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

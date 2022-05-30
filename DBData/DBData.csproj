@@ -159,6 +159,9 @@
     <Compile Include="Database\CuentasBancarias.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\CuotasXAcuerdo.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Descuento.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -199,6 +202,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\EstadosPedido.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\FacturasEnCuotasAcuerdos.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\FacturasxCliente.cs">
@@ -307,6 +313,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\MotivosDevolucionDetalle.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\PagosAFacturasDeCuotas.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\Pantallas.cs">

@@ -10,6 +10,7 @@ namespace AventasApi.Models.ViewModels
         public FacturasXClienteViewModel()
         {
             this.Cuotas = new List<CuotasViewModel>();
+            this.DocumentosAplicadosAFacturas = new List<DocumentosAplicadosAFacturasViewModel>();
         }
         public int IdFactura { get; set; }
         public string Factura { get; set; }
@@ -33,5 +34,7 @@ namespace AventasApi.Models.ViewModels
         public string TipoPedidoString { get; set; }
         public Nullable<int> IdTipoPedido { get; set; }
         public List<CuotasViewModel> Cuotas { get; set; }
+        public List<DocumentosAplicadosAFacturasViewModel> DocumentosAplicadosAFacturas { get; set; }
+       
     }
 }

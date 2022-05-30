@@ -15,7 +15,8 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -170,6 +171,7 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccionesController.cs" />
+    <Compile Include="Controllers\AcuerdoVentaController.cs" />
     <Compile Include="Controllers\AsesorController.cs" />
     <Compile Include="Controllers\AsesorXClienteController.cs" />
     <Compile Include="Controllers\AsignacionesController.cs" />
@@ -289,6 +291,7 @@
     <Compile Include="Models\ViewModels\CreditoXClienteViewModel.cs" />
     <Compile Include="Models\ViewModels\CuentaCorrienteViewModel.cs" />
     <Compile Include="Models\ViewModels\CuentaBancariaViewModel.cs" />
+    <Compile Include="Models\ViewModels\CuotasDeAcuerdoViewModel.cs" />
     <Compile Include="Models\ViewModels\CuotasXAcuerdosViewModel.cs" />
     <Compile Include="Models\ViewModels\DescuentoDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\DescuentoViewModel.cs" />
@@ -299,14 +302,17 @@
     <Compile Include="Models\ViewModels\DevolucionesViewModel.cs" />
     <Compile Include="Models\ViewModels\DevolucionPostModel.cs" />
     <Compile Include="Models\ViewModels\DistribucionXTallaViewModel.cs" />
+    <Compile Include="Models\ViewModels\DocumentosAplicadosAFacturasViewModel.cs" />
     <Compile Include="Models\ViewModels\EdadesViewModel.cs" />
     <Compile Include="Models\ViewModels\EmpresaViewModel.cs" />
     <Compile Include="Models\ViewModels\EncPedTempViewModel.cs" />
+    <Compile Include="Models\ViewModels\FacturasEnCuotasAcuerdoViewModel.cs" />
     <Compile Include="Models\ViewModels\GrupoOpcionesDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\GrupoOpcionesViewModel.cs" />
     <Compile Include="Models\ViewModels\LogProformaViewModel.cs" />
     <Compile Include="Models\ViewModels\LogRecibosViewModel.cs" />
     <Compile Include="Models\ViewModels\MotivosDevolucionViewModel.cs" />
+    <Compile Include="Models\ViewModels\PagosAFacturasXCuotaViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasOpcionesViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasAnidadasViewModel.cs" />
     <Compile Include="Models\ViewModels\RecibosxClienteFlotanteViewModel.cs" />
