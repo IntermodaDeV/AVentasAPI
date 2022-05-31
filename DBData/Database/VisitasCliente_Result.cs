@@ -15,10 +15,12 @@ namespace DBData.Database
     {
         public string CodigoCliente { get; set; }
         public Nullable<System.DateTime> FechaAsignacion { get; set; }
-        public Nullable<System.TimeSpan> Hora_Inicio { get; set; }
-        public Nullable<System.TimeSpan> Hora_Final { get; set; }
         public Nullable<decimal> Ventas { get; set; }
         public Nullable<decimal> Cobros { get; set; }
         public string Estado { get; set; }
+        public Nullable<System.TimeSpan> Hora_Inicio { get; set; }
+        public Nullable<System.TimeSpan> Hora_Final { get; set; }
+        public Nullable<decimal> Promesa_de_Pago { get; set; }
+        public Nullable<System.DateTime> FechaPromesaPago { get; set; }
     }
 }

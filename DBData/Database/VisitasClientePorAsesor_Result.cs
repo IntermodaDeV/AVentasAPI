@@ -20,5 +20,7 @@ namespace DBData.Database
         public Nullable<decimal> Ventas { get; set; }
         public Nullable<decimal> Cobros { get; set; }
         public string Estado { get; set; }
+        public Nullable<decimal> PromesaPago { get; set; }
+        public Nullable<System.DateTime> FechaPromesaPago { get; set; }
     }
 }

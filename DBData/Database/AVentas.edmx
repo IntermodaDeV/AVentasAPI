@@ -10364,11 +10364,13 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <ComplexType Name="VisitasCliente_Result">
           <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
           <Property Type="DateTime" Name="FechaAsignacion" Nullable="true" Precision="23" />
-          <Property Type="Time" Name="Hora_Inicio" Nullable="true" />
-          <Property Type="Time" Name="Hora_Final" Nullable="true" />
           <Property Type="Decimal" Name="Ventas" Nullable="true" Precision="38" Scale="2" />
           <Property Type="Decimal" Name="Cobros" Nullable="true" Precision="38" Scale="4" />
           <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
+          <Property Type="Time" Name="Hora_Inicio" Nullable="true" />
+          <Property Type="Time" Name="Hora_Final" Nullable="true" />
+          <Property Type="Decimal" Name="Promesa_de_Pago" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="DateTime" Name="FechaPromesaPago" Nullable="true" />
         </ComplexType>
         <EntityType Name="Devolucion">
           <Key>
@@ -10497,6 +10499,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="Decimal" Name="Ventas" Nullable="true" Precision="38" Scale="2" />
           <Property Type="Decimal" Name="Cobros" Nullable="true" Precision="38" Scale="4" />
           <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
+          <Property Type="Decimal" Name="PromesaPago" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="DateTime" Name="FechaPromesaPago" Nullable="true" />
         </ComplexType>
         <ComplexType Name="VisitasClientePorAsesor_Result">
           <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
@@ -10506,6 +10510,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="Decimal" Name="Ventas" Nullable="true" Precision="38" Scale="2" />
           <Property Type="Decimal" Name="Cobros" Nullable="true" Precision="38" Scale="4" />
           <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
+          <Property Type="Decimal" Name="PromesaPago" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="DateTime" Name="FechaPromesaPago" Nullable="true" />
         </ComplexType>
         <EntityType Name="AprobacionDevoluciones">
           <Key>
@@ -12579,11 +12585,13 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               <ComplexTypeMapping TypeName="AventasModel.VisitasCliente_Result">
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
                 <ScalarProperty Name="FechaAsignacion" ColumnName="FechaAsignacion" />
-                <ScalarProperty Name="Hora_Inicio" ColumnName="Hora_Inicio" />
-                <ScalarProperty Name="Hora_Final" ColumnName="Hora_Final" />
                 <ScalarProperty Name="Ventas" ColumnName="Ventas" />
                 <ScalarProperty Name="Cobros" ColumnName="Cobros" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Hora_Inicio" ColumnName="Hora Inicio" />
+                <ScalarProperty Name="Hora_Final" ColumnName="Hora Final" />
+                <ScalarProperty Name="Promesa_de_Pago" ColumnName="Promesa de Pago" />
+                <ScalarProperty Name="FechaPromesaPago" ColumnName="FechaPromesaPago" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -12637,6 +12645,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Ventas" ColumnName="Ventas" />
                 <ScalarProperty Name="Cobros" ColumnName="Cobros" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="PromesaPago" ColumnName="PromesaPago" />
+                <ScalarProperty Name="FechaPromesaPago" ColumnName="FechaPromesaPago" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -12650,6 +12660,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Ventas" ColumnName="Ventas" />
                 <ScalarProperty Name="Cobros" ColumnName="Cobros" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="PromesaPago" ColumnName="PromesaPago" />
+                <ScalarProperty Name="FechaPromesaPago" ColumnName="FechaPromesaPago" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
