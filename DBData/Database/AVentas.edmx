@@ -957,6 +957,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Fecha" Type="datetime" />
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
           <Property Name="CantidadDevolucion" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="PrecioFacturado" Type="decimal" Precision="18" Scale="2" Nullable="false" />
         </EntityType>
         <EntityType Name="PedidosDetalleFlotante">
           <Key>
@@ -1176,6 +1177,17 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="VisibleParaVentas" Type="bit" Nullable="false" />
           <Property Name="CantidadMinima" Type="decimal" Precision="18" Scale="2" />
           <Property Name="StockVisible" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PromesaPago">
+          <Key>
+            <PropertyRef Name="IdPromesaPago" />
+          </Key>
+          <Property Name="IdPromesaPago" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdAsignacionXAsesor" Type="int" Nullable="false" />
+          <Property Name="FechaPromesa" Type="date" Nullable="false" />
+          <Property Name="Valor" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="FechaCrea" Type="datetime" Nullable="false" />
+          <Property Name="UsuarioCrea" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -3421,6 +3433,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AsignacionesXAsesor_IdAsignacionxAsesor">
+          <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="1" />
+          <End Role="PromesaPago" Type="Self.PromesaPago" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AsignacionxAsesor">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Principal>
+            <Dependent Role="PromesaPago">
+              <PropertyRef Name="IdAsignacionXAsesor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE">
           <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
           <End Role="Respuestas" Type="Self.Respuestas" Multiplicity="*" />
@@ -3997,6 +4021,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Usuarios_IdUsuario">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="PromesaPago" Type="Self.PromesaPago" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PromesaPago">
+              <PropertyRef Name="UsuarioCrea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Usuarios_Usuar_37311087">
           <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
           <End Role="Usuarios_Asesores" Type="Self.Usuarios_Asesores" Multiplicity="*" />
@@ -4190,6 +4226,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="PreguntasOpcionesAnidadas" EntityType="Self.PreguntasOpcionesAnidadas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PrioridadAsignacion" EntityType="Self.PrioridadAsignacion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductosxColeccion" EntityType="Self.ProductosxColeccion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PromesaPago" EntityType="Self.PromesaPago" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RazonNoVentaCausa" EntityType="Self.RazonNoVentaCausa" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RazonNoVentaTipo" EntityType="Self.RazonNoVentaTipo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecibosDetalle" EntityType="Self.RecibosDetalle" Schema="dbo" store:Type="Tables" />
@@ -4876,6 +4913,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="AcuerdosxCliente" EntitySet="AcuerdosxCliente" />
             <End Role="CuotasXAcuerdo" EntitySet="CuotasXAcuerdo" />
           </AssociationSet>
+          <AssociationSet Name="FK_AsignacionesXAsesor_IdAsignacionxAsesor" Association="Self.FK_AsignacionesXAsesor_IdAsignacionxAsesor">
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+            <End Role="PromesaPago" EntitySet="PromesaPago" />
+          </AssociationSet>
           <AssociationSet Name="FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE" Association="Self.FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE">
             <End Role="Clientes" EntitySet="Clientes" />
             <End Role="Respuestas" EntitySet="Respuestas" />
@@ -5067,6 +5108,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK_USUARIOS_ID_RESPUESTA_USUARIOID" Association="Self.FK_USUARIOS_ID_RESPUESTA_USUARIOID">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Respuestas" EntitySet="Respuestas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Usuarios_IdUsuario" Association="Self.FK_Usuarios_IdUsuario">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="PromesaPago" EntitySet="PromesaPago" />
           </AssociationSet>
           <AssociationSet Name="FK_Usuarios_Usuar_37311087" Association="Self.FK_Usuarios_Usuar_37311087">
             <End Role="Usuarios" EntitySet="Usuarios" />
@@ -7455,6 +7500,15 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <Parameter Name="CLIENTE" Mode="In" Type="String" />
             <Parameter Name="EMPRESA" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="PromesaPago" EntityType="AventasModel.PromesaPago" />
+          <AssociationSet Name="FK_AsignacionesXAsesor_IdAsignacionxAsesor" Association="AventasModel.FK_AsignacionesXAsesor_IdAsignacionxAsesor">
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+            <End Role="PromesaPago" EntitySet="PromesaPago" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Usuarios_IdUsuario" Association="AventasModel.FK_Usuarios_IdUsuario">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="PromesaPago" EntitySet="PromesaPago" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -7875,6 +7929,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion" FromRole="PedidosDetalle" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosDetalle" ToRole="PedidosxCliente" />
           <Property Name="CantidadDevolucion" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="PrecioFacturado" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
         </EntityType>
         <Association Name="FK_PedidosDetalle_ProductosxColeccion">
           <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="0..1" />
@@ -8151,6 +8206,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" FromRole="Usuarios" ToRole="Devolucion" />
           <Property Name="CorreoDevolucion" Type="Boolean" />
           <Property Name="Correo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="PromesaPago" Relationship="AventasModel.FK_Usuarios_IdUsuario" FromRole="Usuarios" ToRole="PromesaPago" />
         </EntityType>
         <Association Name="FK__Usuarios__Empres__28E2F130">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -9536,6 +9592,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="TipoVisitaCliente" Relationship="AventasModel.FK__Asignacio__idTip__26EFBBC6" FromRole="AsignacionxAsesor" ToRole="TipoVisitaCliente" />
           <NavigationProperty Name="BitacoraGeoposicion" Relationship="AventasModel.FK__BitacoraG__IdAsi__4C214075" FromRole="AsignacionxAsesor" ToRole="BitacoraGeoposicion" />
           <Property Name="Deshabilitada" Type="Boolean" />
+          <NavigationProperty Name="PromesaPago" Relationship="AventasModel.FK_AsignacionesXAsesor_IdAsignacionxAsesor" FromRole="AsignacionxAsesor" ToRole="PromesaPago" />
         </EntityType>
         <EntityType Name="BitacoraGeoposicion">
           <Key>
@@ -10307,11 +10364,13 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <ComplexType Name="VisitasCliente_Result">
           <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
           <Property Type="DateTime" Name="FechaAsignacion" Nullable="true" Precision="23" />
-          <Property Type="Time" Name="Hora_Inicio" Nullable="true" />
-          <Property Type="Time" Name="Hora_Final" Nullable="true" />
           <Property Type="Decimal" Name="Ventas" Nullable="true" Precision="38" Scale="2" />
           <Property Type="Decimal" Name="Cobros" Nullable="true" Precision="38" Scale="4" />
           <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
+          <Property Type="Time" Name="Hora_Inicio" Nullable="true" />
+          <Property Type="Time" Name="Hora_Final" Nullable="true" />
+          <Property Type="Decimal" Name="Promesa_de_Pago" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="DateTime" Name="FechaPromesaPago" Nullable="true" />
         </ComplexType>
         <EntityType Name="Devolucion">
           <Key>
@@ -10440,6 +10499,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="Decimal" Name="Ventas" Nullable="true" Precision="38" Scale="2" />
           <Property Type="Decimal" Name="Cobros" Nullable="true" Precision="38" Scale="4" />
           <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
+          <Property Type="Decimal" Name="PromesaPago" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="DateTime" Name="FechaPromesaPago" Nullable="true" />
         </ComplexType>
         <ComplexType Name="VisitasClientePorAsesor_Result">
           <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
@@ -10449,6 +10510,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="Decimal" Name="Ventas" Nullable="true" Precision="38" Scale="2" />
           <Property Type="Decimal" Name="Cobros" Nullable="true" Precision="38" Scale="4" />
           <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
+          <Property Type="Decimal" Name="PromesaPago" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="DateTime" Name="FechaPromesaPago" Nullable="true" />
         </ComplexType>
         <EntityType Name="AprobacionDevoluciones">
           <Key>
@@ -10628,6 +10691,43 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="PagosAFacturasDeCuotas">
               <PropertyRef Name="IdFacturaXCuota" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PromesaPago">
+          <Key>
+            <PropertyRef Name="IdPromesaPago" />
+          </Key>
+          <Property Name="IdPromesaPago" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdAsignacionXAsesor" Type="Int32" Nullable="false" />
+          <Property Name="FechaPromesa" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Valor" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="FechaCrea" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UsuarioCrea" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AsignacionxAsesor" Relationship="AventasModel.FK_AsignacionesXAsesor_IdAsignacionxAsesor" FromRole="PromesaPago" ToRole="AsignacionxAsesor" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_Usuarios_IdUsuario" FromRole="PromesaPago" ToRole="Usuarios" />
+        </EntityType>
+        <Association Name="FK_AsignacionesXAsesor_IdAsignacionxAsesor">
+          <End Type="AventasModel.AsignacionxAsesor" Role="AsignacionxAsesor" Multiplicity="1" />
+          <End Type="AventasModel.PromesaPago" Role="PromesaPago" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AsignacionxAsesor">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Principal>
+            <Dependent Role="PromesaPago">
+              <PropertyRef Name="IdAsignacionXAsesor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Usuarios_IdUsuario">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="1" />
+          <End Type="AventasModel.PromesaPago" Role="PromesaPago" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PromesaPago">
+              <PropertyRef Name="UsuarioCrea" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -11553,6 +11653,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosDetalle">
             <EntityTypeMapping TypeName="AventasModel.PedidosDetalle">
               <MappingFragment StoreEntitySet="PedidosDetalle">
+                <ScalarProperty Name="PrecioFacturado" ColumnName="PrecioFacturado" />
                 <ScalarProperty Name="CantidadDevolucion" ColumnName="CantidadDevolucion" />
                 <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
                 <ScalarProperty Name="Fecha" ColumnName="Fecha" />
@@ -12484,11 +12585,13 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               <ComplexTypeMapping TypeName="AventasModel.VisitasCliente_Result">
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
                 <ScalarProperty Name="FechaAsignacion" ColumnName="FechaAsignacion" />
-                <ScalarProperty Name="Hora_Inicio" ColumnName="Hora_Inicio" />
-                <ScalarProperty Name="Hora_Final" ColumnName="Hora_Final" />
                 <ScalarProperty Name="Ventas" ColumnName="Ventas" />
                 <ScalarProperty Name="Cobros" ColumnName="Cobros" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Hora_Inicio" ColumnName="Hora Inicio" />
+                <ScalarProperty Name="Hora_Final" ColumnName="Hora Final" />
+                <ScalarProperty Name="Promesa_de_Pago" ColumnName="Promesa de Pago" />
+                <ScalarProperty Name="FechaPromesaPago" ColumnName="FechaPromesaPago" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -12542,6 +12645,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Ventas" ColumnName="Ventas" />
                 <ScalarProperty Name="Cobros" ColumnName="Cobros" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="PromesaPago" ColumnName="PromesaPago" />
+                <ScalarProperty Name="FechaPromesaPago" ColumnName="FechaPromesaPago" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -12555,6 +12660,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Ventas" ColumnName="Ventas" />
                 <ScalarProperty Name="Cobros" ColumnName="Cobros" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="PromesaPago" ColumnName="PromesaPago" />
+                <ScalarProperty Name="FechaPromesaPago" ColumnName="FechaPromesaPago" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -12645,6 +12752,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SP_FacturasxCliente_UpdateSaldoXCliente" FunctionName="AventasModel.Store.SP_FacturasxCliente_UpdateSaldoXCliente" />
           <FunctionImportMapping FunctionImportName="SP_SubFacturasxCliente_UpdateSaldoXCliente" FunctionName="AventasModel.Store.SP_SubFacturasxCliente_UpdateSaldoXCliente" />
+          <EntitySetMapping Name="PromesaPago">
+            <EntityTypeMapping TypeName="AventasModel.PromesaPago">
+              <MappingFragment StoreEntitySet="PromesaPago">
+                <ScalarProperty Name="UsuarioCrea" ColumnName="UsuarioCrea" />
+                <ScalarProperty Name="FechaCrea" ColumnName="FechaCrea" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="FechaPromesa" ColumnName="FechaPromesa" />
+                <ScalarProperty Name="IdAsignacionXAsesor" ColumnName="IdAsignacionXAsesor" />
+                <ScalarProperty Name="IdPromesaPago" ColumnName="IdPromesaPago" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -193,6 +193,7 @@
     <Compile Include="Controllers\MotivosDevolucionController.cs" />
     <Compile Include="Controllers\ProductosDevolucionController.cs" />
     <Compile Include="Controllers\ProformaController.cs" />
+    <Compile Include="Controllers\PromesaPagoController.cs" />
     <Compile Include="Controllers\RespuestaController.cs" />
     <Compile Include="Controllers\PreguntaController.cs" />
     <Compile Include="Controllers\GrupoOpcionesController.cs" />
@@ -242,6 +243,7 @@
     <Compile Include="Models\CustomerLocationApp\ClientesConCoordendasViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\CoordenadasXClienteViewModel.cs" />
     <Compile Include="Models\CustomerLocationApp\RutaConCoordenadaViewModel.cs" />
+    <Compile Include="Models\DescuentoEnAcuerdosViewModel.cs" />
     <Compile Include="Models\Empresa.cs" />
     <Compile Include="Models\EmpresaTransporte.cs" />
     <Compile Include="Models\EncuestaCompletada.cs" />
@@ -255,6 +257,7 @@
     <Compile Include="Models\PantallaModel.cs" />
     <Compile Include="Models\PosteoColeccionSincEspecificoModel.cs" />
     <Compile Include="Models\ProductoImpuestoModel.cs" />
+    <Compile Include="Models\PromesaPagoModel.cs" />
     <Compile Include="Models\RazonNoVentaCausaViewModel.cs" />
     <Compile Include="Models\RazonNoVentaTipoViewModel.cs" />
     <Compile Include="Models\RolCrearModel.cs" />

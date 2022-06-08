@@ -323,6 +323,9 @@
         <AssociationConnector Association="AventasModel.FK_AcuerdoVenta_IdAcuerdoVenta" />
         <AssociationConnector Association="AventasModel.FK_FacturasEnAcuerdos_IdCuotaXAcuerdo" />
         <AssociationConnector Association="AventasModel.FK_PagosAFacturas_IdFacturaXCuota" />
+        <EntityTypeShape EntityType="AventasModel.PromesaPago" Width="1.5" PointX="23.875" PointY="26.25" />
+        <AssociationConnector Association="AventasModel.FK_AsignacionesXAsesor_IdAsignacionxAsesor" />
+        <AssociationConnector Association="AventasModel.FK_Usuarios_IdUsuario" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
