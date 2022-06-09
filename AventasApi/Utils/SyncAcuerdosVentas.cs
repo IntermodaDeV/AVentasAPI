@@ -68,6 +68,7 @@ namespace AventasApi.Utils
                             newEntity.IdLinea = acuerdo.LINE;
                             newEntity.Desde = DateTime.TryParseExact(acuerdo.STARTDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(acuerdo.STARTDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now; 
                             newEntity.Hasta = DateTime.TryParseExact(acuerdo.ENDDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(acuerdo.ENDDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now; ;
+                            context.AcuerdosxCliente.Add(newEntity);
                         }
                         else
                         {
