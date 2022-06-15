@@ -20,10 +20,14 @@ namespace AventasApi.Controllers
         AVentasEntities context = new AVentasEntities();
         private readonly AuthenticationAppService _authenticationAppService;
         private SyncCuentaCorriente syncCuentaCorriente;
+        private SyncAcuerdosVentas syncAcuerdosVentas;
+        private SyncClientes syncClientes;
         public ClienteController()
         {
             _authenticationAppService = new AuthenticationAppService();
             syncCuentaCorriente = new SyncCuentaCorriente();
+            syncAcuerdosVentas = new SyncAcuerdosVentas();
+            syncClientes = new SyncClientes();
         }
 
         private bool EnLinea(string empresa, string asesor)
@@ -1214,6 +1218,8 @@ namespace AventasApi.Controllers
                     {
                         syncCuentaCorriente.SyncFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente);
                         syncCuentaCorriente.SyncSubFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
+                        syncAcuerdosVentas.SyncAcuerdoVenta(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
+                        syncClientes.SyncCliente(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
                         return Ok("Cuenta del cliente actualizada exitosamente.");
                     }
                     else
