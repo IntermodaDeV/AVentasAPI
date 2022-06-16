@@ -59,21 +59,21 @@ namespace AventasApi.Utils
                             entityFound.ComunidadAutonoma = cli.AUTONOMOUS_COMMUNITY;
                             entityFound.GrupoPrecio = cli.PRICE;
                             entityFound.GrupoCliente = cli.CUSTOMER_GROUP;
-                            entityFound.Descuento = cli.DISCOUNT_GROUP;
+                            //entityFound.Descuento = cli.DISCOUNT_GROUP;
                             entityFound.Direccion = cli.ADDRESS;
                             entityFound.IdMoneda = cli.CURRENCY;
                             entityFound.FacturacionEntrega = cli.BLOCKED;
-                            entityFound.IncluyeImpuesto = cli.INCLUDE_TAX == "Sí";
+                            //entityFound.IncluyeImpuesto = cli.INCLUDE_TAX == "Sí";
                             entityFound.Provincias = null;
                             entityFound.Region = null;
                             entityFound.Revision = null;
                             entityFound.LimiteCredito = Decimal.TryParse(cli.CREDIT_LIMIT, out cLimite) ? cLimite : 0;
                             entityFound.CreditoDisponible = Decimal.TryParse(cli.CREDIT_LIMIT, out cDisponible) ? cDisponible : 0;
-                            entityFound.ModoEntrega = cli.DLVMODE;
+                            //entityFound.ModoEntrega = cli.DLVMODE;
                             entityFound.Telefono = cli.PHONE;
                             entityFound.GrupoImpuesto = cli.TAX_GROUP;
                             entityFound.Habilitado = true;
-                            entityFound.IgnorarSeqFact = cli.FLAG_SEQFACT == "Sí" ? true : false;
+                            //entityFound.IgnorarSeqFact = cli.FLAG_SEQFACT == "Sí" ? true : false;
 
 
                             db.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
