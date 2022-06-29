@@ -10,6 +10,7 @@ namespace AventasApi.Models
         public string ACCOUNT { get; set; }
         public string NAME { get; set; }
         public string COMPANY { get; set; }
+        public string ADVISER { get; set; }
         public decimal LATITUDE { get; set; }
         public decimal LONGITUD { get; set; }
     }

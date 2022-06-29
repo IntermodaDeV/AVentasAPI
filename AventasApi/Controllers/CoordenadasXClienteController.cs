@@ -44,7 +44,7 @@ namespace AventasApi.Controllers
         {
             try
             {
-                var result = context.Clientes.Where(x => x.Longitud != null && x.Latitud != null).ToList();
+                var result = context.Clientes.Where(x => x.Longitud != null && x.Latitud != null && x.FacturacionEntrega.ToUpper() != "TODO" && x.Habilitado == true).ToList();
                 if (result.Count > 0)
                 {
                     var clientes = result.Select(x => new Coordenada()
@@ -53,7 +53,8 @@ namespace AventasApi.Controllers
                         NAME = x.Nombre,
                         LATITUDE = x.Latitud.Value,
                         LONGITUD = x.Longitud.Value,
-                        COMPANY = x.EmpresaId
+                        COMPANY = x.EmpresaId,
+                        ADVISER = x.CodigoAsesor
                     }).ToList();
 
                     return clientes;

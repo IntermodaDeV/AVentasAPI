@@ -153,6 +153,50 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+        
+        
+        [HttpPost]
+        [Route("rechazarDevoluciones/{numDevAprobacion}/{justificado}")]
+        public IHttpActionResult rechazarDevoluciones(string numDevAprobacion, string justificado)
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var AprobacionDevoluciones = db.AprobacionDevoluciones.Where(x => x.NumDevolucion == numDevAprobacion).ToList() ;
+
+
+                    var Devolucion = db.Devolucion.FirstOrDefault(x => x.NumDevolucion == numDevAprobacion);
+
+                    if (AprobacionDevoluciones == null)
+                    {
+                        return BadRequest("No existe el registro");
+                    } 
+                    
+                    if (Devolucion == null)
+                    {
+                        return BadRequest("No existe el registro");
+                    }
+
+                    AprobacionDevoluciones.ForEach(x => x.Estado = false);
+                    AprobacionDevoluciones.ForEach(x => x.UsuarioModifica = user.Id);
+                    AprobacionDevoluciones.ForEach(x => x.FechaModifica = DateTime.Now);
+
+                    Devolucion.Observacion = justificado;
+                    Devolucion.Estado = "No autorizado";
+                    Devolucion.Sincronizado = true;
+                 
+                    var result = db.SaveChanges();
+                    return Ok(result);
+                }
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
 
         [HttpPost]
         [Route("sincronizar/{devolucion}")]
@@ -183,6 +227,7 @@ namespace AventasApi.Controllers
                         return BadRequest($"El pedido {devolucion} se encuentra pendiente a la aprobacion de: {nombres}.");
                     }
                     var devolucionDB = await ctx.Devolucion.FirstOrDefaultAsync(x => x.NumDevolucion == devolucion && x.Procesando == false);
+                    var ubicacion = await ctx.UbicacionesXAlmacen.FirstOrDefaultAsync(x => x.MaestroBodegaAlmacenes.Almacen == devolucionDB.almacen && x.MaestroBodegaAlmacenes.EmpresaId == devolucionDB.EmpresaId && x.ActivoDevolucion == true);
 
                     if (devolucionDB == null)
                     {
@@ -201,7 +246,7 @@ namespace AventasApi.Controllers
                         REFERENCE = devolucionDB.NumDevolucion,
                         SALES_NAME = devolucionDB.Clientes.Nombre,
                         LINE = string.IsNullOrEmpty(devolucionDB.IdLinea) ? "TPT" : devolucionDB.IdLinea,
-                        LOCATION = devolucionDB.almacen
+                        LOCATION = devolucionDB.almacen,
                     };
 
                     foreach (var detalle in ctx.DevolucionDetalle.Where(det => det.Devolucion.NumDevolucion == devolucion))
@@ -215,7 +260,8 @@ namespace AventasApi.Controllers
                              SIZE = detalle.CodigoTalla.Trim(),
                              REFERENCE = detalle.NumDevolucion,
                              SALES_NUMBER = devolucionDB.PedidoOrigen,
-                             UNIT = "Und"
+                             UNIT = "Und",
+                             UBICATION = ubicacion.CodigoUbicacion
                          });
                     }
 
@@ -312,6 +358,8 @@ namespace AventasApi.Controllers
                         FechaCreacion = x.FechaCrea.Value,
                         SubTotal = x.Subtotal,
                         Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
+                        Observacion = x.Observacion,
+                        UsuarioModifica = x.AprobacionDevoluciones.FirstOrDefault().Usuarios1.nombre,
                         Cliente = new ClienteViewModel
                         {
                             Codigo = x.Clientes.CodigoCliente,
@@ -496,7 +544,8 @@ namespace AventasApi.Controllers
                     var fechaDesde = DateTime.Now.AddMinutes(Convert.ToDouble(minutosValue * -1));
                     var totalUnidades = devolucion.DetalleDevolucion.Sum(x => decimal.Parse(x.Cantidad.ToString()));
                     var totalPedido = devolucion.SubTotal;
-
+                    var ubicacion = await ctx.UbicacionesXAlmacen.FirstOrDefaultAsync(x => x.MaestroBodegaAlmacenes.Almacen == devolucion.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == devolucion.Empresa && x.ActivoDevolucion == true);
+                    
                     found = ctx.Devolucion.FirstOrDefault(x => (x.FechaCrea >= fechaDesde && x.FechaCrea <= DateTime.Now)
                                                                 && x.CodigoCliente == devolucion.CodigoCliente
                                                                 && x.Subtotal == totalPedido
@@ -526,7 +575,8 @@ namespace AventasApi.Controllers
                             Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
                             Subtotal = devolucion.SubTotal,
                             TotalUnidades = 0,
-                            almacen = devolucion.Almacen
+                            almacen = devolucion.Almacen,
+                            IdUbicacion = ubicacion.UbicacionId
                         };
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -616,6 +666,7 @@ namespace AventasApi.Controllers
                     var motivoSinFactura = await ctx.MotivosDevolucion.FirstOrDefaultAsync(x => x.CodigoMotivoDevolucion == "SIN-FACTURA" && x.EmpresaId == empresa);
                     var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
                     int minutosValue = 2;
+                   
 
                     if (minutosConf != null)
                     {
@@ -643,6 +694,7 @@ namespace AventasApi.Controllers
                         var fechaDesde = DateTime.Now.AddMinutes(Convert.ToDouble(minutosValue * -1));
                         var totalUnidades = devolucion.DetalleDevolucion.Sum(x => decimal.Parse(x.Cantidad.ToString()));
                         var totalPedido = devolucion.SubTotal;
+                        var ubicacion = await ctx.UbicacionesXAlmacen.FirstOrDefaultAsync(x => x.MaestroBodegaAlmacenes.Almacen == devolucion.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == devolucion.Empresa && x.ActivoDevolucion == true);
 
                         found = ctx.Devolucion.FirstOrDefault(x => (x.FechaCrea >= fechaDesde && x.FechaCrea <= DateTime.Now)
                                                                     && x.CodigoCliente == devolucion.CodigoCliente
@@ -674,7 +726,8 @@ namespace AventasApi.Controllers
                                 Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
                                 Subtotal = devolucion.SubTotal,
                                 TotalUnidades = 0,
-                                almacen = devolucion.Almacen
+                                almacen = devolucion.Almacen,
+                                IdUbicacion = ubicacion.UbicacionId
                             };
 
                             foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)

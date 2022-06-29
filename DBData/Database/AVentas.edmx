@@ -5,8 +5,8 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="AventasModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Acciones">
           <Key>
             <PropertyRef Name="IdAccion" />
@@ -387,6 +387,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="TotalUnidades" Type="int" />
           <Property Name="Subtotal" Type="decimal" Precision="10" Scale="2" />
           <Property Name="almacen" Type="varchar" MaxLength="10" />
+          <Property Name="IdUbicacion" Type="int" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -1578,6 +1579,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Estatus" Type="bit" Nullable="false" />
           <Property Name="ModificadoPor" Type="varchar" MaxLength="50" />
           <Property Name="FechaModificacion" Type="datetime" />
+          <Property Name="ActivoDevolucion" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Usuario_Rol">
           <Key>
@@ -1641,8 +1643,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
           <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_AtributosxColeccion">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -1654,8 +1656,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
           <Property Name="CodigoAtributo" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ClientesxRuta">
           <Key>
             <PropertyRef Name="CodigoCliente" />
@@ -1675,8 +1677,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene defin
           <Property Name="Longitud" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Ruta" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ColeccionesBodegaEspecifico">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -1700,8 +1702,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' 
           <Property Name="Sitio" Type="varchar" MaxLength="50" />
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ColoresxProducto">
           <Key>
             <PropertyRef Name="IdColorxProducto" />
@@ -1712,8 +1714,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene de
           <Property Name="Rgb" Type="varchar" MaxLength="250" />
           <Property Name="IdProducto" Type="int" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_FisicoDisponible">
           <Key>
             <PropertyRef Name="IdFisicoDisponible" />
@@ -1725,8 +1727,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene de
           <Property Name="Disponible" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_TallasxProducto">
           <Key>
             <PropertyRef Name="IdProducto" />
@@ -3949,6 +3951,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion">
+          <End Role="UbicacionesXAlmacen" Type="Self.UbicacionesXAlmacen" Multiplicity="0..1" />
+          <End Role="Devolucion" Type="Self.Devolucion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UbicacionesXAlmacen">
+              <PropertyRef Name="UbicacionId" />
+            </Principal>
+            <Dependent Role="Devolucion">
+              <PropertyRef Name="IdUbicacion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tbDevolucion_Usuario_IdUsuario">
           <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
           <End Role="Devolucion" Type="Self.Devolucion" Multiplicity="*" />
@@ -5083,6 +5097,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </AssociationSet>
           <AssociationSet Name="FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle" Association="Self.FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle">
             <End Role="MotivosDevolucionDetalle" EntitySet="MotivosDevolucionDetalle" />
+            <End Role="Devolucion" EntitySet="Devolucion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion" Association="Self.FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion">
+            <End Role="UbicacionesXAlmacen" EntitySet="UbicacionesXAlmacen" />
             <End Role="Devolucion" EntitySet="Devolucion" />
           </AssociationSet>
           <AssociationSet Name="FK_tbDevolucion_Usuario_IdUsuario" Association="Self.FK_tbDevolucion_Usuario_IdUsuario">
@@ -7508,6 +7526,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK_Usuarios_IdUsuario" Association="AventasModel.FK_Usuarios_IdUsuario">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="PromesaPago" EntitySet="PromesaPago" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion" Association="AventasModel.FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion">
+            <End Role="UbicacionesXAlmacen" EntitySet="UbicacionesXAlmacen" />
+            <End Role="Devolucion" EntitySet="Devolucion" />
           </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -10118,6 +10140,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="ModificadoPor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
           <NavigationProperty Name="MaestroBodegaAlmacenes" Relationship="AventasModel.FK__Ubicacion__Almac__14C6E9EA" FromRole="UbicacionesXAlmacen" ToRole="MaestroBodegaAlmacenes" />
+          <Property Name="ActivoDevolucion" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion" FromRole="UbicacionesXAlmacen" ToRole="Devolucion" />
         </EntityType>
         <Association Name="FK__Ubicacion__Almac__14C6E9EA">
           <End Type="AventasModel.MaestroBodegaAlmacenes" Role="MaestroBodegaAlmacenes" Multiplicity="0..1" />
@@ -10403,6 +10427,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="TotalUnidades" Type="Int32" />
           <Property Name="Subtotal" Type="Decimal" Precision="10" Scale="2" />
           <Property Name="almacen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="IdUbicacion" Type="Int32" />
+          <NavigationProperty Name="UbicacionesXAlmacen" Relationship="AventasModel.FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion" FromRole="Devolucion" ToRole="UbicacionesXAlmacen" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -10728,6 +10754,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="PromesaPago">
               <PropertyRef Name="UsuarioCrea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion">
+          <End Type="AventasModel.UbicacionesXAlmacen" Role="UbicacionesXAlmacen" Multiplicity="0..1" />
+          <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UbicacionesXAlmacen">
+              <PropertyRef Name="UbicacionId" />
+            </Principal>
+            <Dependent Role="Devolucion">
+              <PropertyRef Name="IdUbicacion" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -12492,6 +12530,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="UbicacionesXAlmacen">
             <EntityTypeMapping TypeName="AventasModel.UbicacionesXAlmacen">
               <MappingFragment StoreEntitySet="UbicacionesXAlmacen">
+                <ScalarProperty Name="ActivoDevolucion" ColumnName="ActivoDevolucion" />
                 <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
                 <ScalarProperty Name="ModificadoPor" ColumnName="ModificadoPor" />
                 <ScalarProperty Name="Estatus" ColumnName="Estatus" />
@@ -12598,6 +12637,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Devolucion">
             <EntityTypeMapping TypeName="AventasModel.Devolucion">
               <MappingFragment StoreEntitySet="Devolucion">
+                <ScalarProperty Name="IdUbicacion" ColumnName="IdUbicacion" />
                 <ScalarProperty Name="almacen" ColumnName="almacen" />
                 <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
                 <ScalarProperty Name="TotalUnidades" ColumnName="TotalUnidades" />
