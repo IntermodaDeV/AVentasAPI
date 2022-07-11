@@ -24,6 +24,7 @@ namespace AventasApi.Models.ViewModels
         public string EmpresaId { get; set; }
 
         public string Observacion { get; set; }
+        public string UsuarioModifica { get; set; }
 
         public string CodigoAsesor { get; set; }
 

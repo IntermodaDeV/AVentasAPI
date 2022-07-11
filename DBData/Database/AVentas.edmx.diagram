@@ -326,6 +326,7 @@
         <EntityTypeShape EntityType="AventasModel.PromesaPago" Width="1.5" PointX="23.875" PointY="26.25" />
         <AssociationConnector Association="AventasModel.FK_AsignacionesXAsesor_IdAsignacionxAsesor" />
         <AssociationConnector Association="AventasModel.FK_Usuarios_IdUsuario" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

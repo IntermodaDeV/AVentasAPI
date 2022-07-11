@@ -9,5 +9,6 @@
         public string REFERENCE { get; set; }
         public string SALES_NUMBER { get; set; }
         public string UNIT { get; set; }
+        public string UBICATION { get; set; }
     }
 }
