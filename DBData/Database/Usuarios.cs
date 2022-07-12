@@ -34,6 +34,7 @@ namespace DBData.Database
             this.AprobacionDevoluciones2 = new HashSet<AprobacionDevoluciones>();
             this.Devolucion = new HashSet<Devolucion>();
             this.PromesaPago = new HashSet<PromesaPago>();
+            this.BitacoraNoVentaEnVisitas = new HashSet<BitacoraNoVentaEnVisitas>();
         }
     
         public int Id { get; set; }
@@ -90,5 +91,7 @@ namespace DBData.Database
         public virtual ICollection<Devolucion> Devolucion { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PromesaPago> PromesaPago { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BitacoraNoVentaEnVisitas> BitacoraNoVentaEnVisitas { get; set; }
     }
 }

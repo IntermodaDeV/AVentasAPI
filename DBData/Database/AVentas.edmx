@@ -190,6 +190,17 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Fecha" Type="datetime" />
           <Property Name="CodigoCliente" Type="varchar" MaxLength="250" />
         </EntityType>
+        <EntityType Name="BitacoraNoVentaEnVisitas">
+          <Key>
+            <PropertyRef Name="IdNoVentaEnVisita" />
+          </Key>
+          <Property Name="IdNoVentaEnVisita" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdRazonNoVenta" Type="int" Nullable="false" />
+          <Property Name="IdAsignacionXAsesor" Type="int" Nullable="false" />
+          <Property Name="Comentarios" Type="varchar(max)" />
+          <Property Name="FechaCrea" Type="datetime" />
+          <Property Name="UsuarioCrea" Type="int" />
+        </EntityType>
         <EntityType Name="BitacoraVisitasCliente">
           <Key>
             <PropertyRef Name="IdBitacoraVisitaCliente" />
@@ -1189,6 +1200,14 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Valor" Type="decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="FechaCrea" Type="datetime" Nullable="false" />
           <Property Name="UsuarioCrea" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RazonesNoVenta">
+          <Key>
+            <PropertyRef Name="IdRazonNoVenta" />
+          </Key>
+          <Property Name="IdRazonNoVenta" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RazonNoVenta" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -3447,6 +3466,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AsignacionXAsesor_IdAsignacionXAsesor">
+          <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="1" />
+          <End Role="BitacoraNoVentaEnVisitas" Type="Self.BitacoraNoVentaEnVisitas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AsignacionxAsesor">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Principal>
+            <Dependent Role="BitacoraNoVentaEnVisitas">
+              <PropertyRef Name="IdAsignacionXAsesor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE">
           <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
           <End Role="Respuestas" Type="Self.Respuestas" Multiplicity="*" />
@@ -3747,6 +3778,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_RazonesNoVenta_IdRazonNoVenta">
+          <End Role="RazonesNoVenta" Type="Self.RazonesNoVenta" Multiplicity="1" />
+          <End Role="BitacoraNoVentaEnVisitas" Type="Self.BitacoraNoVentaEnVisitas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RazonesNoVenta">
+              <PropertyRef Name="IdRazonNoVenta" />
+            </Principal>
+            <Dependent Role="BitacoraNoVentaEnVisitas">
+              <PropertyRef Name="IdRazonNoVenta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ReciboXClienteFlotante___FacturaXCliente">
           <End Role="FacturasxCliente" Type="Self.FacturasxCliente" Multiplicity="0..1" />
           <End Role="RecibosxClienteFlotante" Type="Self.RecibosxClienteFlotante" Multiplicity="*" />
@@ -4011,6 +4054,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Usuario_UsuarioCrea">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="BitacoraNoVentaEnVisitas" Type="Self.BitacoraNoVentaEnVisitas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="BitacoraNoVentaEnVisitas">
+              <PropertyRef Name="UsuarioCrea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_USUARIOP">
           <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
           <End Role="PantallasxUsuario" Type="Self.PantallasxUsuario" Multiplicity="*" />
@@ -4168,6 +4223,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="AtributosxProducto" EntityType="Self.AtributosxProducto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Bancos" EntityType="Self.Bancos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BitacoraGeoposicion" EntityType="Self.BitacoraGeoposicion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BitacoraNoVentaEnVisitas" EntityType="Self.BitacoraNoVentaEnVisitas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BitacoraVisitasCliente" EntityType="Self.BitacoraVisitasCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClienteContado" EntityType="Self.ClienteContado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Clientes" EntityType="Self.Clientes" Schema="dbo" store:Type="Tables" />
@@ -4241,6 +4297,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="PrioridadAsignacion" EntityType="Self.PrioridadAsignacion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductosxColeccion" EntityType="Self.ProductosxColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PromesaPago" EntityType="Self.PromesaPago" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RazonesNoVenta" EntityType="Self.RazonesNoVenta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RazonNoVentaCausa" EntityType="Self.RazonNoVentaCausa" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RazonNoVentaTipo" EntityType="Self.RazonNoVentaTipo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecibosDetalle" EntityType="Self.RecibosDetalle" Schema="dbo" store:Type="Tables" />
@@ -4931,6 +4988,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
             <End Role="PromesaPago" EntitySet="PromesaPago" />
           </AssociationSet>
+          <AssociationSet Name="FK_AsignacionXAsesor_IdAsignacionXAsesor" Association="Self.FK_AsignacionXAsesor_IdAsignacionXAsesor">
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+            <End Role="BitacoraNoVentaEnVisitas" EntitySet="BitacoraNoVentaEnVisitas" />
+          </AssociationSet>
           <AssociationSet Name="FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE" Association="Self.FK_CLIENTE_CODIGOCLIENTE_RESPUESTA_CODIGOCLIENTE">
             <End Role="Clientes" EntitySet="Clientes" />
             <End Role="Respuestas" EntitySet="Respuestas" />
@@ -5031,6 +5092,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="PreguntasOpcionesAnidadas" EntitySet="PreguntasOpcionesAnidadas" />
             <End Role="RespuestaAnidadaDetalle" EntitySet="RespuestaAnidadaDetalle" />
           </AssociationSet>
+          <AssociationSet Name="FK_RazonesNoVenta_IdRazonNoVenta" Association="Self.FK_RazonesNoVenta_IdRazonNoVenta">
+            <End Role="RazonesNoVenta" EntitySet="RazonesNoVenta" />
+            <End Role="BitacoraNoVentaEnVisitas" EntitySet="BitacoraNoVentaEnVisitas" />
+          </AssociationSet>
           <AssociationSet Name="FK_ReciboXClienteFlotante___FacturaXCliente" Association="Self.FK_ReciboXClienteFlotante___FacturaXCliente">
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
             <End Role="RecibosxClienteFlotante" EntitySet="RecibosxClienteFlotante" />
@@ -5118,6 +5183,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK_USUARIO" Association="Self.FK_USUARIO">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Usuario_Rol" EntitySet="Usuario_Rol" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Usuario_UsuarioCrea" Association="Self.FK_Usuario_UsuarioCrea">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="BitacoraNoVentaEnVisitas" EntitySet="BitacoraNoVentaEnVisitas" />
           </AssociationSet>
           <AssociationSet Name="FK_USUARIOP" Association="Self.FK_USUARIOP">
             <End Role="Usuarios" EntitySet="Usuarios" />
@@ -7531,6 +7600,20 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="UbicacionesXAlmacen" EntitySet="UbicacionesXAlmacen" />
             <End Role="Devolucion" EntitySet="Devolucion" />
           </AssociationSet>
+          <EntitySet Name="BitacoraNoVentaEnVisitas" EntityType="AventasModel.BitacoraNoVentaEnVisitas" />
+          <EntitySet Name="RazonesNoVenta" EntityType="AventasModel.RazonesNoVenta" />
+          <AssociationSet Name="FK_AsignacionXAsesor_IdAsignacionXAsesor" Association="AventasModel.FK_AsignacionXAsesor_IdAsignacionXAsesor">
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+            <End Role="BitacoraNoVentaEnVisitas" EntitySet="BitacoraNoVentaEnVisitas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_RazonesNoVenta_IdRazonNoVenta" Association="AventasModel.FK_RazonesNoVenta_IdRazonNoVenta">
+            <End Role="RazonesNoVenta" EntitySet="RazonesNoVenta" />
+            <End Role="BitacoraNoVentaEnVisitas" EntitySet="BitacoraNoVentaEnVisitas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Usuario_UsuarioCrea" Association="AventasModel.FK_Usuario_UsuarioCrea">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="BitacoraNoVentaEnVisitas" EntitySet="BitacoraNoVentaEnVisitas" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -8229,6 +8312,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="CorreoDevolucion" Type="Boolean" />
           <Property Name="Correo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PromesaPago" Relationship="AventasModel.FK_Usuarios_IdUsuario" FromRole="Usuarios" ToRole="PromesaPago" />
+          <NavigationProperty Name="BitacoraNoVentaEnVisitas" Relationship="AventasModel.FK_Usuario_UsuarioCrea" FromRole="Usuarios" ToRole="BitacoraNoVentaEnVisitas" />
         </EntityType>
         <Association Name="FK__Usuarios__Empres__28E2F130">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -9615,6 +9699,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="BitacoraGeoposicion" Relationship="AventasModel.FK__BitacoraG__IdAsi__4C214075" FromRole="AsignacionxAsesor" ToRole="BitacoraGeoposicion" />
           <Property Name="Deshabilitada" Type="Boolean" />
           <NavigationProperty Name="PromesaPago" Relationship="AventasModel.FK_AsignacionesXAsesor_IdAsignacionxAsesor" FromRole="AsignacionxAsesor" ToRole="PromesaPago" />
+          <NavigationProperty Name="BitacoraNoVentaEnVisitas" Relationship="AventasModel.FK_AsignacionXAsesor_IdAsignacionXAsesor" FromRole="AsignacionxAsesor" ToRole="BitacoraNoVentaEnVisitas" />
         </EntityType>
         <EntityType Name="BitacoraGeoposicion">
           <Key>
@@ -10766,6 +10851,65 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="Devolucion">
               <PropertyRef Name="IdUbicacion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="BitacoraNoVentaEnVisitas">
+          <Key>
+            <PropertyRef Name="IdNoVentaEnVisita" />
+          </Key>
+          <Property Name="IdNoVentaEnVisita" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdRazonNoVenta" Type="Int32" Nullable="false" />
+          <Property Name="IdAsignacionXAsesor" Type="Int32" Nullable="false" />
+          <Property Name="Comentarios" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCrea" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioCrea" Type="Int32" />
+          <NavigationProperty Name="AsignacionxAsesor" Relationship="AventasModel.FK_AsignacionXAsesor_IdAsignacionXAsesor" FromRole="BitacoraNoVentaEnVisitas" ToRole="AsignacionxAsesor" />
+          <NavigationProperty Name="RazonesNoVenta" Relationship="AventasModel.FK_RazonesNoVenta_IdRazonNoVenta" FromRole="BitacoraNoVentaEnVisitas" ToRole="RazonesNoVenta" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_Usuario_UsuarioCrea" FromRole="BitacoraNoVentaEnVisitas" ToRole="Usuarios" />
+        </EntityType>
+        <EntityType Name="RazonesNoVenta">
+          <Key>
+            <PropertyRef Name="IdRazonNoVenta" />
+          </Key>
+          <Property Name="IdRazonNoVenta" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RazonNoVenta" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="BitacoraNoVentaEnVisitas" Relationship="AventasModel.FK_RazonesNoVenta_IdRazonNoVenta" FromRole="RazonesNoVenta" ToRole="BitacoraNoVentaEnVisitas" />
+        </EntityType>
+        <Association Name="FK_AsignacionXAsesor_IdAsignacionXAsesor">
+          <End Type="AventasModel.AsignacionxAsesor" Role="AsignacionxAsesor" Multiplicity="1" />
+          <End Type="AventasModel.BitacoraNoVentaEnVisitas" Role="BitacoraNoVentaEnVisitas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AsignacionxAsesor">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Principal>
+            <Dependent Role="BitacoraNoVentaEnVisitas">
+              <PropertyRef Name="IdAsignacionXAsesor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_RazonesNoVenta_IdRazonNoVenta">
+          <End Type="AventasModel.RazonesNoVenta" Role="RazonesNoVenta" Multiplicity="1" />
+          <End Type="AventasModel.BitacoraNoVentaEnVisitas" Role="BitacoraNoVentaEnVisitas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RazonesNoVenta">
+              <PropertyRef Name="IdRazonNoVenta" />
+            </Principal>
+            <Dependent Role="BitacoraNoVentaEnVisitas">
+              <PropertyRef Name="IdRazonNoVenta" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Usuario_UsuarioCrea">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="AventasModel.BitacoraNoVentaEnVisitas" Role="BitacoraNoVentaEnVisitas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="BitacoraNoVentaEnVisitas">
+              <PropertyRef Name="UsuarioCrea" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -12801,6 +12945,27 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="FechaPromesa" ColumnName="FechaPromesa" />
                 <ScalarProperty Name="IdAsignacionXAsesor" ColumnName="IdAsignacionXAsesor" />
                 <ScalarProperty Name="IdPromesaPago" ColumnName="IdPromesaPago" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BitacoraNoVentaEnVisitas">
+            <EntityTypeMapping TypeName="AventasModel.BitacoraNoVentaEnVisitas">
+              <MappingFragment StoreEntitySet="BitacoraNoVentaEnVisitas">
+                <ScalarProperty Name="UsuarioCrea" ColumnName="UsuarioCrea" />
+                <ScalarProperty Name="FechaCrea" ColumnName="FechaCrea" />
+                <ScalarProperty Name="Comentarios" ColumnName="Comentarios" />
+                <ScalarProperty Name="IdAsignacionXAsesor" ColumnName="IdAsignacionXAsesor" />
+                <ScalarProperty Name="IdRazonNoVenta" ColumnName="IdRazonNoVenta" />
+                <ScalarProperty Name="IdNoVentaEnVisita" ColumnName="IdNoVentaEnVisita" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RazonesNoVenta">
+            <EntityTypeMapping TypeName="AventasModel.RazonesNoVenta">
+              <MappingFragment StoreEntitySet="RazonesNoVenta">
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="RazonNoVenta" ColumnName="RazonNoVenta" />
+                <ScalarProperty Name="IdRazonNoVenta" ColumnName="IdRazonNoVenta" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

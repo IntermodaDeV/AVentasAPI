@@ -327,6 +327,11 @@
         <AssociationConnector Association="AventasModel.FK_AsignacionesXAsesor_IdAsignacionxAsesor" />
         <AssociationConnector Association="AventasModel.FK_Usuarios_IdUsuario" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion" />
+        <EntityTypeShape EntityType="AventasModel.BitacoraNoVentaEnVisitas" Width="1.5" PointX="26.875" PointY="52.25" />
+        <EntityTypeShape EntityType="AventasModel.RazonesNoVenta" Width="1.5" PointX="24.625" PointY="58.75" />
+        <AssociationConnector Association="AventasModel.FK_AsignacionXAsesor_IdAsignacionXAsesor" />
+        <AssociationConnector Association="AventasModel.FK_RazonesNoVenta_IdRazonNoVenta" />
+        <AssociationConnector Association="AventasModel.FK_Usuario_UsuarioCrea" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

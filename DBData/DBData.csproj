@@ -120,6 +120,9 @@
     <Compile Include="Database\BitacoraGeoposicion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\BitacoraNoVentaEnVisitas.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\BitacoraVisitasCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -376,6 +379,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\PromesaPago.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\RazonesNoVenta.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\RazonNoVentaCausa.cs">
