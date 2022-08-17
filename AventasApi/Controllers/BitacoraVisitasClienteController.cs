@@ -11,6 +11,7 @@ using AventasApi.Models;
 using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
 using AventasApi.Services.Authentication;
+using System.Threading.Tasks;
 //using IMS.Tokens.Services;
 
 namespace AventasApi.Controllers
@@ -91,6 +92,39 @@ namespace AventasApi.Controllers
 
                 return StatusCode(HttpStatusCode.NoContent);
             }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+        [HttpPost]
+        [Route("~/api/bitacoraRazonNoVenta/crear")]
+        public async Task<IHttpActionResult> CrearBitacora([FromBody] BitacoraNoVentaEnVisitasViewModel datos)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var usuario = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                    var bitacoraBD = ctx.BitacoraNoVentaEnVisitas.Where(x => x.IdAsignacionXAsesor == datos.IdAsignacionXAsesor).ToList();
+                    if (bitacoraBD.Count() > 0)
+                    {
+                        return BadRequest("Ya existe una razon no venta registrada para la visita.");
+                    }
+                    var bitacora = new BitacoraNoVentaEnVisitas()
+                    {
+                        IdAsignacionXAsesor = datos.IdAsignacionXAsesor,
+                        IdRazonNoVenta = datos.IdRazonNoVenta,
+                        Comentarios = datos.Comentarios,
+                        UsuarioCrea = usuario.Id,
+                        FechaCrea = DateTime.Now
+                    };
+                    ctx.BitacoraNoVentaEnVisitas.Add(bitacora);
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }

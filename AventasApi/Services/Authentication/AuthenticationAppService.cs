@@ -92,7 +92,7 @@ namespace AventasApi.Services.Authentication
                         }
 
                         var entityFound = context.Usuarios.FirstOrDefault(x => x.usuario.Equals(credential.UserAccount));
-                        if (false && entityFound == null)
+                        if (entityFound == null)
                         {
                             var newUser = new Usuarios();
                             newUser.usuario = credential.UserAccount;
@@ -116,7 +116,7 @@ namespace AventasApi.Services.Authentication
                         }
 
                         var isSamePassword = BCrypt.Net.BCrypt.Verify(credential.Password, entityFound.password);
-                        if (false && !isSamePassword)
+                        if (!isSamePassword)
                         {
                             return new AuthenticationResponse { Message = "Usuario o contraseña incorrectos.", Data = null };
                         }

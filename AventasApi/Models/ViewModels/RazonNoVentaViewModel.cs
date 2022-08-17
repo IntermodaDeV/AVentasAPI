@@ -10,7 +10,7 @@ namespace AventasApi.Models.ViewModels
         public int IdRazonNoVenta { get; set; }
 
         public string RazonNoVenta { get; set; }
-        
+
         public bool Activo { get; set; }
     }
 }
