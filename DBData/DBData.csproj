@@ -126,6 +126,9 @@
     <Compile Include="Database\BitacoraVisitasCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\CategoriaTipoGastoViaje.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\ClienteContado.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -204,6 +207,9 @@
     <Compile Include="Database\EstadisticaVisita_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Estado.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\EstadosPedido.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -235,6 +241,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\Funciones_Roles.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\GastosViajeDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\GESTORES.cs">
@@ -463,6 +472,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\TallasxProducto.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\TipoGastoViaje.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\TiposdeColeccion.cs">

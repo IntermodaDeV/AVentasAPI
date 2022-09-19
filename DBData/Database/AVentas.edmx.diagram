@@ -332,6 +332,13 @@
         <AssociationConnector Association="AventasModel.FK_AsignacionXAsesor_IdAsignacionXAsesor" />
         <AssociationConnector Association="AventasModel.FK_RazonesNoVenta_IdRazonNoVenta" />
         <AssociationConnector Association="AventasModel.FK_Usuario_UsuarioCrea" />
+        <EntityTypeShape EntityType="AventasModel.CategoriaTipoGastoViaje" Width="1.5" PointX="22.625" PointY="1.75" />
+        <EntityTypeShape EntityType="AventasModel.Estado" Width="1.5" PointX="22.625" PointY="7.5" />
+        <EntityTypeShape EntityType="AventasModel.GastosViajeDetalle" Width="1.5" PointX="24.875" PointY="1" />
+        <EntityTypeShape EntityType="AventasModel.TipoGastoViaje" Width="1.5" PointX="20.375" PointY="2.25" />
+        <AssociationConnector Association="AventasModel.fkCategoriaTipoGastoViaje" />
+        <AssociationConnector Association="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" />
+        <AssociationConnector Association="AventasModel.fkGastosViajeDetalleEstado" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
