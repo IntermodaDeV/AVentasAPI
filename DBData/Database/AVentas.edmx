@@ -10603,7 +10603,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </ReferentialConstraint>
         </Association>
         <ComplexType Name="VisitasClienteGlobal_Result">
-          <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="CodigoCliente" Nullable="false" MaxLength="250" />
           <Property Type="DateTime" Name="FechaAsignacion" Nullable="true" Precision="23" />
           <Property Type="Time" Name="Hora_Inicio" Nullable="true" />
           <Property Type="Time" Name="Hora_Final" Nullable="true" />
@@ -10612,6 +10612,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="String" Name="Estado" Nullable="false" MaxLength="9" />
           <Property Type="Decimal" Name="PromesaPago" Nullable="true" Precision="38" Scale="2" />
           <Property Type="DateTime" Name="FechaPromesaPago" Nullable="true" />
+          <Property Type="String" Name="Nombre" Nullable="true" />
         </ComplexType>
         <ComplexType Name="VisitasClientePorAsesor_Result">
           <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
@@ -12831,6 +12832,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
                 <ScalarProperty Name="PromesaPago" ColumnName="PromesaPago" />
                 <ScalarProperty Name="FechaPromesaPago" ColumnName="FechaPromesaPago" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

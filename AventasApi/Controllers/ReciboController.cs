@@ -123,6 +123,11 @@ namespace AventasApi.Controllers
                         IdFactura = rec.IdFactura,
                         Longitude = rec.Longitude,
                         Latitude = rec.Latitude,
+                        locationCliente = new LocationCliente
+                        {
+                            latitude = context.Clientes.FirstOrDefault(x => x.CodigoCliente == rec.CodigoCliente).Latitud,
+                            longitude = context.Clientes.FirstOrDefault(x => x.CodigoCliente == rec.CodigoCliente).Longitud
+                        },
                         DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == rec.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
                         Descuento = rec.Descuento,
                         Cliente = context.Clientes.Where(cli => cli.CodigoCliente == rec.CodigoCliente).Select(cli => new ClienteViewModel
