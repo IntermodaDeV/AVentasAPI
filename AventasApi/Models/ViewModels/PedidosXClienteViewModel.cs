@@ -17,6 +17,12 @@ namespace AventasApi.Models.ViewModels
 
     }
 
+    public class LocationCliente
+    {
+        public decimal? latitude { get; set; }
+        public decimal? longitude { get; set; }
+    }
+
     public class ProductosXDetPed
     {
         public List<ColoresXProdXDetPed> coloresXProdXDetPed;
@@ -88,6 +94,8 @@ namespace AventasApi.Models.ViewModels
         public ClienteViewModel Cliente { get; set; }
 
         public Location location = new Location();
+
+        public LocationCliente locationCliente = new LocationCliente();
 
         public List<ProductosXPedidoViewModel> Productos;
         public List<GruposTallaXDetPed> gruposXDetPed;

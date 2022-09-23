@@ -22,5 +22,6 @@ namespace DBData.Database
         public string Estado { get; set; }
         public Nullable<decimal> PromesaPago { get; set; }
         public Nullable<System.DateTime> FechaPromesaPago { get; set; }
+        public string Nombre { get; set; }
     }
 }

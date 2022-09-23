@@ -29,6 +29,8 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> Descuento { get; set; }
         public Nullable<decimal> Latitude { get; set; }
         public Nullable<decimal> Longitude { get; set; }
+
+        public LocationCliente locationCliente = new LocationCliente();
         public TipoPagoViewModel TipoPago{ get; set; }
         public ClienteViewModel Cliente { get; set; }
         public PedidosXClienteViewModel Pedido { get; set; }
