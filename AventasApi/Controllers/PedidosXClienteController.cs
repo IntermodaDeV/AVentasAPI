@@ -426,6 +426,57 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/reportePedidos/{asesor}/{FechaInicio}/{FechaFin}")]
+        public async Task<IHttpActionResult> ListadoPedidoReporte(string Asesor, DateTime FechaInicio, DateTime FechaFin)
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+                {
+                    var pedidos = await db.PedidosxCliente.Where(x => x.CodigoAsesor == Asesor && x.Fecha >= FechaInicio && x.Fecha < FechaFin).Select(x => new ReportePedidoViewModel
+                    {
+                        NumeroPedido = x.NumeroPedido,
+                        codigoCliente = x.CodigoCliente,
+                        nombre = x.Clientes.Nombre,
+                        asesor = x.CodigoAsesor,
+                        latitud = x.Latitude,
+                        longitud = x.Longitude,
+                        clienteLatitud = x.Clientes.Latitud,
+                        clienteLongitud = x.Clientes.Longitud,
+                        distancia = "",
+                        estado = ""
+                    }).ToListAsync();
+
+                    foreach (var pedido in pedidos)
+                    {
+                        var distancia = CalcularDistancia(pedido.latitud, pedido.longitud, pedido.clienteLatitud, pedido.clienteLongitud);
+                        pedido.distancia = distancia.ToString() + " Metros";
+
+                        if (distancia <= 50)
+                        {
+                            pedido.estado = "Dentro del Rango";
+                        }
+                        else if (distancia <= 100)
+                        {
+                            pedido.estado = "Cerca del Rango";
+                        }
+                        else
+                        {
+                            pedido.estado = "Lejos del cliente";
+                        }
+
+                    }
+
+                    return Ok(pedidos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet]
         [Route("~/api/PedidosXCliente/{asesor}/{FechaInicio}/{FechaFin}")]
         public async Task<IHttpActionResult> Get(string Asesor, DateTime FechaInicio, DateTime FechaFin)
         {
@@ -513,6 +564,11 @@ namespace AventasApi.Controllers
                             latitude = ped.Latitude,
                             longitude = ped.Longitude,
                             error = ped.Error
+                        },
+                        locationCliente = new LocationCliente
+                        {
+                            latitude = ped.Clientes.Latitud,
+                            longitude = ped.Clientes.Longitud
                         }
                     }).ToList();
                         ListaPedidos.AddRange(pedidos);
@@ -1418,7 +1474,24 @@ namespace AventasApi.Controllers
                 }
             }
         }
-
+        private double rad(double x)
+        {
+            return x * Math.PI / 180;
+        }
+        private double CalcularDistancia(decimal? latitud1, decimal? longitud1, decimal? latitud2, decimal? longitud2)
+        {
+            var lat1 = Convert.ToDouble(latitud1);
+            var lat2 = Convert.ToDouble(latitud2);
+            var long1 = Convert.ToDouble(longitud1);
+            var long2 = Convert.ToDouble(longitud2);
+            var R = 6378.137;//Radio de la tierra en km
+            var dLat = rad(lat2 - lat1);
+            var dLong = rad(long2 - long1);
+            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) + Math.Cos(rad(lat1)) * Math.Cos(rad(lat2)) * Math.Sin(dLong / 2) * Math.Sin(dLong / 2);
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            var d = R * c;
+            return 1000 * Math.Round(d, 3);//Retorna valor en metros
+        }
         public void EscribirEnArchivo(string Message)
         {
             try
