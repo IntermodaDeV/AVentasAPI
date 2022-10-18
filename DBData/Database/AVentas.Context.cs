@@ -393,5 +393,14 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_SubFacturasxCliente_UpdateSaldoXCliente", cLIENTEParameter, eMPRESAParameter);
         }
+    
+        public virtual ObjectResult<SP_PRODUCTOSENBASEAL_MRA_Result> SP_PRODUCTOSENBASEAL_MRA(string numRMA)
+        {
+            var numRMAParameter = numRMA != null ?
+                new ObjectParameter("numRMA", numRMA) :
+                new ObjectParameter("numRMA", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_PRODUCTOSENBASEAL_MRA_Result>("SP_PRODUCTOSENBASEAL_MRA", numRMAParameter);
+        }
     }
 }
