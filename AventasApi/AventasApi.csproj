@@ -300,6 +300,7 @@
     <Compile Include="Models\ViewModels\CuotasDeAcuerdoViewModel.cs" />
     <Compile Include="Models\ViewModels\CuotasXAcuerdosViewModel.cs" />
     <Compile Include="Models\ViewModels\DatosAxViewModel.cs" />
+    <Compile Include="Models\ViewModels\DatosCorreoViewModel.cs" />
     <Compile Include="Models\ViewModels\DescuentoDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\DescuentoViewModel.cs" />
     <Compile Include="Models\ViewModels\DetallePedidoPostViewModel.cs" />
@@ -309,6 +310,7 @@
     <Compile Include="Models\ViewModels\DevolucionesViewModel.cs" />
     <Compile Include="Models\ViewModels\DevolucionPostModel.cs" />
     <Compile Include="Models\ViewModels\DistribucionXTallaViewModel.cs" />
+    <Compile Include="Models\ViewModels\DocumentoFiscalViewModel.cs" />
     <Compile Include="Models\ViewModels\DocumentosAplicadosAFacturasViewModel.cs" />
     <Compile Include="Models\ViewModels\EdadesViewModel.cs" />
     <Compile Include="Models\ViewModels\EmpresaViewModel.cs" />
@@ -320,9 +322,12 @@
     <Compile Include="Models\ViewModels\GrupoOpcionesDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\GrupoOpcionesViewModel.cs" />
     <Compile Include="Models\ViewModels\HistorialGastosViewModel.cs" />
+    <Compile Include="Models\ViewModels\HistorialViewModel.cs" />
+    <Compile Include="Models\ViewModels\HistorilDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\LogProformaViewModel.cs" />
     <Compile Include="Models\ViewModels\LogRecibosViewModel.cs" />
     <Compile Include="Models\ViewModels\MotivosDevolucionViewModel.cs" />
+    <Compile Include="Models\ViewModels\noSyncViewModel.cs" />
     <Compile Include="Models\ViewModels\PagosAFacturasXCuotaViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasOpcionesViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasAnidadasViewModel.cs" />

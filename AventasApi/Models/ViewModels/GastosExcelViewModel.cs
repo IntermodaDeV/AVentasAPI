@@ -12,6 +12,7 @@ namespace AventasApi.Models.ViewModels
         public string descripcion { get; set; }
         public DateTime fecha { get; set; }
         public Double valor { get; set; }
+        public string nombre { get; set; }
 
     }
 }
