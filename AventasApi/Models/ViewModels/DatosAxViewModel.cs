@@ -12,7 +12,8 @@ namespace AventasApi.Models.ViewModels
         public string TRANSDATE { get; set; }
         public string NUMBERINVOCEID { get; set; }
         public string DESCRIPTION { get; set; }
-        public double CREDIT { get; set; }
+        public double? EXENTO { get; set; }
+        public double? GRAVADO { get; set; }
         public string VENDACCOUNT { get; set; }
         public string USERID { get; set; }
         public string JOURNALNAME { get; set; }

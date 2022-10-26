@@ -227,6 +227,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Activo" Type="bit" Nullable="false" />
           <Property Name="ProveedorPredefinido" Type="varchar" MaxLength="50" />
           <Property Name="CuentaContrapartida" Type="varchar" MaxLength="50" />
+          <Property Name="GrupoImpuestos" Type="varchar" MaxLength="50" />
+          <Property Name="GrupoImpuestosArticulo" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ClienteContado">
           <Key>
@@ -702,6 +704,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="DescripcionGasto" Type="varchar" MaxLength="300" />
           <Property Name="Administrador" Type="varchar" MaxLength="100" />
           <Property Name="serie" Type="varchar" MaxLength="50" />
+          <Property Name="importeExento" Type="float" />
+          <Property Name="importeGravado" Type="float" />
         </EntityType>
         <EntityType Name="GrupoImpuestoArticulo">
           <Key>
@@ -11049,6 +11053,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="CuentaContrapartida" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="TipoGastoViaje" Relationship="AventasModel.fkCategoriaTipoGastoViaje" FromRole="CategoriaTipoGastoViaje" ToRole="TipoGastoViaje" />
           <NavigationProperty Name="GastosViajeDetalle" Relationship="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" FromRole="CategoriaTipoGastoViaje" ToRole="GastosViajeDetalle" />
+          <Property Name="GrupoImpuestos" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="GrupoImpuestosArticulo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Estado">
           <Key>
@@ -11080,6 +11086,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="serie" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="CategoriaTipoGastoViaje" Relationship="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" FromRole="GastosViajeDetalle" ToRole="CategoriaTipoGastoViaje" />
           <NavigationProperty Name="Estado" Relationship="AventasModel.fkGastosViajeDetalleEstado" FromRole="GastosViajeDetalle" ToRole="Estado" />
+          <Property Name="importeExento" Type="Double" />
+          <Property Name="importeGravado" Type="Double" />
         </EntityType>
         <EntityType Name="TipoGastoViaje">
           <Key>
@@ -13188,6 +13196,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="CategoriaTipoGastoViaje">
             <EntityTypeMapping TypeName="AventasModel.CategoriaTipoGastoViaje">
               <MappingFragment StoreEntitySet="CategoriaTipoGastoViaje">
+                <ScalarProperty Name="GrupoImpuestosArticulo" ColumnName="GrupoImpuestosArticulo" />
+                <ScalarProperty Name="GrupoImpuestos" ColumnName="GrupoImpuestos" />
                 <ScalarProperty Name="CuentaContrapartida" ColumnName="CuentaContrapartida" />
                 <ScalarProperty Name="ProveedorPredefinido" ColumnName="ProveedorPredefinido" />
                 <ScalarProperty Name="Activo" ColumnName="Activo" />
@@ -13211,6 +13221,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="GastosViajeDetalle">
             <EntityTypeMapping TypeName="AventasModel.GastosViajeDetalle">
               <MappingFragment StoreEntitySet="GastosViajeDetalle">
+                <ScalarProperty Name="importeGravado" ColumnName="importeGravado" />
+                <ScalarProperty Name="importeExento" ColumnName="importeExento" />
                 <ScalarProperty Name="serie" ColumnName="serie" />
                 <ScalarProperty Name="Administrador" ColumnName="Administrador" />
                 <ScalarProperty Name="DescripcionGasto" ColumnName="DescripcionGasto" />

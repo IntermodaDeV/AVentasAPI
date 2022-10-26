@@ -29,6 +29,8 @@ namespace DBData.Database
         public bool Activo { get; set; }
         public string ProveedorPredefinido { get; set; }
         public string CuentaContrapartida { get; set; }
+        public string GrupoImpuestos { get; set; }
+        public string GrupoImpuestosArticulo { get; set; }
     
         public virtual TipoGastoViaje TipoGastoViaje { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

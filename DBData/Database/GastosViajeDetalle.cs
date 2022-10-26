@@ -30,6 +30,8 @@ namespace DBData.Database
         public string DescripcionGasto { get; set; }
         public string Administrador { get; set; }
         public string serie { get; set; }
+        public Nullable<double> importeExento { get; set; }
+        public Nullable<double> importeGravado { get; set; }
     
         public virtual CategoriaTipoGastoViaje CategoriaTipoGastoViaje { get; set; }
         public virtual Estado Estado { get; set; }

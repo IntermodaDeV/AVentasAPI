@@ -129,7 +129,7 @@ namespace AventasApi.Controllers
                 }
             }catch(Exception e)
             {
-                return BadRequest("Error al cargar el historial");
+                return BadRequest("Error al cargar el historial" + e.ToString());
             }
         }
 
@@ -161,6 +161,8 @@ namespace AventasApi.Controllers
                         NoFactura = x.GastoCategoria.Gasto.NoFactura,
                         Descripcion = x.GastoCategoria.Gasto.Descripcion,
                         DescripcionAdmin = x.GastoCategoria.Gasto.DescripcionAdmin != null ? x.GastoCategoria.Gasto.DescripcionAdmin : "",
+                        importeExento = x.GastoCategoria.Gasto.importeExento != null?x.GastoCategoria.Gasto.importeExento: 0,
+                        importeGravado = x.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoria.Gasto.importeGravado: 0,
                         ValorFactura = x.GastoCategoria.Gasto.ValorFactura,
                         FechaFactura = x.GastoCategoria.Gasto.FechaFactura,
                         FechaCreacion = x.GastoCategoria.Gasto.FechaCreacion,
@@ -217,15 +219,23 @@ namespace AventasApi.Controllers
 
 
         [HttpGet]
-        [Route("~/api/GastoViajeDetalle/verificar/{noFactura}/{proveedor}")]
-        public bool verificarFactura(string noFactura, string proveedor)
+        [Route("~/api/GastoViajeDetalle/verificar/{noFactura}/{proveedor}/{serie}")]
+        public bool verificarFactura(string noFactura, string proveedor,string serie)
         {
             try
             {
                    using(var ctx = new AVentasEntities())
                 {
-                    var num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor);
-                    if(num == 0)
+                    var num = 0; ;
+                    if (serie == "-")
+                    {
+                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor && x.serie == serie);
+                    }
+                    else
+                    {
+                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor);
+                    }
+                    if (num == 0)
                     {
                         return false;
                     }
@@ -306,6 +316,8 @@ namespace AventasApi.Controllers
                             UsuarioAsesor = x.GastoCategoria.Gasto.UsuarioAsesor,
                             NoFactura = x.GastoCategoria.Gasto.NoFactura,
                             Descripcion = x.GastoCategoria.Gasto.Descripcion,
+                            importeExento = x.GastoCategoria.Gasto.importeExento != null? x.GastoCategoria.Gasto.importeExento : 0,
+                            importeGravado = x.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoria.Gasto.importeGravado : 0,
                             ValorFactura = x.GastoCategoria.Gasto.ValorFactura,
                             FechaFactura = x.GastoCategoria.Gasto.FechaFactura,
                             FechaCreacion = x.GastoCategoria.Gasto.FechaCreacion,
@@ -350,6 +362,8 @@ namespace AventasApi.Controllers
                             NoFactura = x.GastoCategoria.Gasto.NoFactura,
                             Descripcion = x.GastoCategoria.Gasto.Descripcion,
                             MensajeAX = x.GastoCategoria.Gasto.MensajeAX,
+                            importeExento = x.GastoCategoria.Gasto.importeExento != null ? x.GastoCategoria.Gasto.importeExento : 0,
+                            importeGravado = x.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoria.Gasto.importeGravado : 0,
                             ValorFactura = x.GastoCategoria.Gasto.ValorFactura,
                             FechaFactura = x.GastoCategoria.Gasto.FechaFactura,
                             FechaCreacion = x.GastoCategoria.Gasto.FechaCreacion
@@ -404,6 +418,8 @@ namespace AventasApi.Controllers
                             NoFactura = x.GastoEstado.GastoCategoria.Gasto.NoFactura,
                             Descripcion = x.GastoEstado.GastoCategoria.Gasto.Descripcion,
                             DescripcionAdmin = x.GastoEstado.GastoCategoria.Gasto.DescripcionAdmin,
+                            importeExento = x.GastoEstado.GastoCategoria.Gasto.importeExento != null ? x.GastoEstado.GastoCategoria.Gasto.importeExento : 0,
+                            importeGravado = x.GastoEstado.GastoCategoria.Gasto.importeGravado != null ? x.GastoEstado.GastoCategoria.Gasto.importeGravado : 0,
                             ValorFactura = x.GastoEstado.GastoCategoria.Gasto.ValorFactura,
                             FechaFactura = x.GastoEstado.GastoCategoria.Gasto.FechaFactura,
                             FechaCreacion = x.GastoEstado.GastoCategoria.Gasto.FechaCreacion,
@@ -423,7 +439,7 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/GastosExcel/{usuario}/{dateIni}/{dateFin}")]
+        [Route("~/api/GastosPDF/{usuario}/{dateIni}/{dateFin}")]
         public async Task<IHttpActionResult> ObtenerGastosExcel(string usuario, DateTime dateIni, DateTime dateFin)
         {
             dateFin = dateFin.AddHours(23);
@@ -459,6 +475,8 @@ namespace AventasApi.Controllers
                             categoria = x.GastoEstado.GastoCategoria.Categoria.Nombre,
                             descripcion = x.GastoEstado.GastoCategoria.Gasto.Descripcion,
                             fecha = x.GastoEstado.GastoCategoria.Gasto.FechaFactura,
+                            importeExento = x.GastoEstado.GastoCategoria.Gasto.importeExento != null ? x.GastoEstado.GastoCategoria.Gasto.importeExento : 0,
+                            importeGravado = x.GastoEstado.GastoCategoria.Gasto.importeGravado != null ? x.GastoEstado.GastoCategoria.Gasto.importeGravado : 0,
                             valor = x.GastoEstado.GastoCategoria.Gasto.ValorFactura,
                             nombre = nombre.nombre
                         }).ToListAsync();
@@ -531,7 +549,8 @@ namespace AventasApi.Controllers
                             TRANSDATE = x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(8, 2) + "/" + x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(5, 2) +"/"+ x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(0,4),
                             NUMBERINVOCEID = x.GastoCategoriaTipo.GastoCategoria.Gasto.NoFactura.Replace("-", "").Replace("-", "").Replace("-", ""),
                             DESCRIPTION = x.GastoCategoriaTipo.GastoCategoria.Gasto.DescripcionGasto,
-                            CREDIT = x.GastoCategoriaTipo.GastoCategoria.Gasto.ValorFactura,
+                            EXENTO = x.GastoCategoriaTipo.GastoCategoria.Gasto.importeExento!=null? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeExento:0,
+                            GRAVADO = x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado:0,
                             VENDACCOUNT = x.GastoCategoriaTipo.GastoCategoria.Gasto.Proveedor,
                             USERID = x.GastoCategoriaTipo.GastoCategoria.Gasto.UsuarioAsesor,
                             JOURNALNAME = x.GastoCategoriaTipo.Tipo.Diario,
@@ -548,7 +567,8 @@ namespace AventasApi.Controllers
                         datosAX.TRANSDATE = dato.TRANSDATE;
                         datosAX.NUMBERINVOCEID = dato.NUMBERINVOCEID;
                         datosAX.DESCRIPTION = dato.DESCRIPTION;
-                        datosAX.CREDIT = dato.CREDIT;
+                        datosAX.EXENTO = dato.EXENTO;
+                        datosAX.GRAVADO = dato.GRAVADO;
                         datosAX.VENDACCOUNT = dato.VENDACCOUNT;
                         datosAX.USERID = dato.USERID;
                         datosAX.JOURNALNAME = dato.JOURNALNAME;

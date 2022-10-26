@@ -15,6 +15,8 @@ namespace AventasApi.Models.ViewModels
         public string NoFactura { get; set; }
         public string Descripcion { get; set; }
         public string DescripcionAdmin { get; set; }
+        public double? importeExento { get; set; }
+        public double? importeGravado { get; set; }
         public double ValorFactura { get; set; }
         public DateTime FechaFactura { get; set; }
         public DateTime FechaCreacion { get; set; }
