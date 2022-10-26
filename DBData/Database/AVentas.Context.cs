@@ -402,5 +402,18 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_PRODUCTOSENBASEAL_MRA_Result>("SP_PRODUCTOSENBASEAL_MRA", numRMAParameter);
         }
+    
+        public virtual ObjectResult<SP_ObtenerProductosRMA_Result> SP_ObtenerProductosRMA(string rma, string pais)
+        {
+            var rmaParameter = rma != null ?
+                new ObjectParameter("rma", rma) :
+                new ObjectParameter("rma", typeof(string));
+    
+            var paisParameter = pais != null ?
+                new ObjectParameter("pais", pais) :
+                new ObjectParameter("pais", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerProductosRMA_Result>("SP_ObtenerProductosRMA", rmaParameter, paisParameter);
+        }
     }
 }

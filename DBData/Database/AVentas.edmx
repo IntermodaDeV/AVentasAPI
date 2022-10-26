@@ -4186,8 +4186,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="codigoProducto" Type="varchar" Mode="In" />
           <Parameter Name="cliente" Type="varchar" Mode="In" />
         </Function>
-        <Function Name="SP_PRODUCTOSENBASEAL_MRA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="numRMA" Type="varchar" Mode="In" />
+        <Function Name="SP_ObtenerProductosRMA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="rma" Type="varchar" Mode="In" />
+          <Parameter Name="pais" Type="varchar" Mode="In" />
         </Function>
         <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
@@ -7620,6 +7621,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <FunctionImport Name="SP_PRODUCTOSENBASEAL_MRA" ReturnType="Collection(AventasModel.SP_PRODUCTOSENBASEAL_MRA_Result)">
             <Parameter Name="numRMA" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="SP_ObtenerProductosRMA" ReturnType="Collection(AventasModel.SP_ObtenerProductosRMA_Result)">
+            <Parameter Name="rma" Mode="In" Type="String" />
+            <Parameter Name="pais" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -10931,6 +10936,13 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="Decimal" Name="PorcentajeCliente" Nullable="false" Precision="10" Scale="2" />
           <Property Type="Decimal" Name="PorcentajeArticulo" Nullable="false" Precision="10" Scale="2" />
         </ComplexType>
+        <ComplexType Name="SP_ObtenerProductosRMA_Result">
+          <Property Type="String" Name="codigoProducto" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="grupoTalla" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="talla" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="color" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="cantidad" Nullable="true" Precision="18" Scale="2" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12988,18 +13000,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="SP_PRODUCTOSENBASEAL_MRA" FunctionName="AventasModel.Store.SP_PRODUCTOSENBASEAL_MRA">
+          <FunctionImportMapping FunctionImportName="SP_ObtenerProductosRMA" FunctionName="AventasModel.Store.SP_ObtenerProductosRMA">
             <ResultMapping>
-              <ComplexTypeMapping TypeName="AventasModel.SP_PRODUCTOSENBASEAL_MRA_Result">
-                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
-                <ScalarProperty Name="CodigoProducto" ColumnName="CodigoProducto" />
-                <ScalarProperty Name="CodigoGrupoTalla" ColumnName="CodigoGrupoTalla" />
-                <ScalarProperty Name="CodigoTalla" ColumnName="CodigoTalla" />
-                <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
-                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
-                <ScalarProperty Name="PrecioUnitario" ColumnName="PrecioUnitario" />
-                <ScalarProperty Name="PorcentajeCliente" ColumnName="PorcentajeCliente" />
-                <ScalarProperty Name="PorcentajeArticulo" ColumnName="PorcentajeArticulo" />
+              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerProductosRMA_Result">
+                <ScalarProperty Name="codigoProducto" ColumnName="codigoProducto" />
+                <ScalarProperty Name="grupoTalla" ColumnName="grupoTalla" />
+                <ScalarProperty Name="talla" ColumnName="talla" />
+                <ScalarProperty Name="color" ColumnName="color" />
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
