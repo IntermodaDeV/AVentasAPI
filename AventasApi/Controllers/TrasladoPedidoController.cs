@@ -1,12 +1,9 @@
 ﻿using AventasApi.Models.ViewModels;
 using DBData.Database;
-using ExternalApiData.Models.ApiModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Drawing;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -113,7 +110,42 @@ namespace AventasApi.Controllers
         }
 
 
+        [HttpGet]
+        [Route("getcoleccioneById/{coleccionId}")]
+        public async Task<IHttpActionResult> GetcoleccioneById(int coleccionId)
+        {
+            try
+            {
 
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var coleccion = await ctx.Colecciones.FirstOrDefaultAsync(a => a.IdColeccion == coleccionId);
+
+                    if (coleccion == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var coleccionDTO = new
+                    {
+                        id = coleccion.IdColeccion,
+                        codigoColeccion = coleccion.CodigoColeccion,
+                        ventaFinal = coleccion.VentaFinal,
+                        entregaInicio = coleccion.EntregaInicio,
+                        entregaFinal = coleccion.EntregaFinal,
+                        linea = coleccion.Linea,
+                        coleccionTipo = coleccion.ColeccionTipo
+                    };
+
+                    return Ok(coleccionDTO);
+                }
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
 
 
 
