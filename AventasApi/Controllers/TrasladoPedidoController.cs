@@ -1,9 +1,11 @@
-﻿using AventasApi.Models.ViewModels;
+﻿using AventasApi.Models;
+using AventasApi.Models.ViewModels;
 using DBData.Database;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -138,6 +140,157 @@ namespace AventasApi.Controllers
                     };
 
                     return Ok(coleccionDTO);
+                }
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("getPedido/{pedidoId}")]
+        public async Task<IHttpActionResult> GetPedido(string pedidoId)
+        {
+            try
+            {
+
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+
+                    List<PedidosXClienteViewModel> pedidos = ctx.PedidosxCliente.Where(p => p.PedidoId == pedidoId).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
+                    {
+                        Asesor = ped.CodigoAsesor,
+                        PedidoId = ped.PedidoId,
+                        BodegaEspecifica = ped.BodegaEspecifica,
+                        NumeroPedido = ped.NumeroPedido,
+                        Sincronizado = ped.Sincronizado,
+                        CodigoColeccion = ped.Colecciones.CodigoColeccion,
+                        NombreColeccion = ped.Colecciones.Nombre,
+                        TotalUnidades = ped.TotalUnidades,
+                        TotalXPedido = ped.TotalPedido,
+                        SubTotalXPedido = ped.Subtotal,
+                        Impuesto = ped.TotalImpuesto,
+                        ClienteContadoId = ped.ClienteContadoId,
+                        ModoVenta = ped.ModoVenta,
+                        Flete = ped.Flete,
+                        Cliente = new ClienteViewModel
+                        {
+                            Codigo = ped.Clientes.CodigoCliente,
+                            Nombre = ped.Clientes.Nombre,
+                            Direccion = ped.Clientes.Direccion,
+                            Moneda = ped.Clientes.IdMoneda,
+                            EmpresaId = ped.Clientes.EmpresaId
+                        },
+                        Linea = ctx.MaestroLinea.Select(ml => new LineaViewModel
+                        {
+                            IdLinea = ml.IdLinea,
+                            Linea = ml.Linea,
+                        }).FirstOrDefault(ml => ml.IdLinea == ped.IdLinea),
+                        TipoPedido = ctx.TiposdePedido.Select(tp => new TipoPedidoViewModel
+                        {
+                            IdTipoPedido = tp.IdTipoPedido,
+                            TipoPedido = tp.TipoPedido,
+                            HabilitaEstilos = tp.HabilitaEstilos ?? false,
+                            Imagen = tp.Url_Imagen,
+                            Aplica_Todos = tp.Aplica_Todos ?? false,
+                            Restrictivo = tp.Restrictivo ?? false
+                        }).FirstOrDefault(tp => tp.IdTipoPedido == ped.IdTipoPedido),
+                        AcuerdoVenta = ped.AcuerdoVenta,
+                        EmpresaId = ped.EmpresaId,
+                        FechaActual = ped.Fecha,
+                        Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == ped.CodigoAsesor).Nombre,
+                        FechaEntrega = ped.FechaEntrega,
+                        Observacion = ped.Observacion,
+                        location = new Location
+                        {
+                            mocked = ped.Mocked ?? false,
+                            accuracy = ped.Accuracy,
+                            altitude = ped.Altitude,
+                            latitude = ped.Latitude,
+                            longitude = ped.Longitude,
+                            error = ped.Error
+                        },
+                        locationCliente = new LocationCliente
+                        {
+                            latitude = ped.Clientes.Latitud,
+                            longitude = ped.Clientes.Longitud
+                        },
+                        gruposXDetPed = ped.PedidosDetalle.GroupBy(gruposXDetPed => gruposXDetPed.ProductosxColeccion.CodigoGrupoTalla)
+                            .Select(gruposXDetPed => new GruposTallaXDetPed
+                            {
+                                GrupoTalla = gruposXDetPed.Key,
+                                ListaTalla = gruposXDetPed.GroupBy(pedDet => pedDet.CodigoTalla).Select(pedDet => pedDet.Key).SelectMany(pedDet => ctx.TallasXGrupo.Where(txp => txp.CodigoTalla == pedDet && txp.CodigoGrupoTalla == gruposXDetPed.Key)).Select(txp => new TallaViewModel
+                                {
+                                    GrupoTallaId = txp.CodigoGrupoTalla,
+                                    Talla = txp.CodigoTalla,
+                                    Orden = txp.Orden ?? 0,
+                                    Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                    {
+                                        IdDistribucion = dis.IdDistribucion,
+                                        IdTallaxGrupo = dis.IdTallaxGrupo,
+                                        NombreDistribucion = dis.NombreDistribucion,
+                                        NombreTalla = dis.NombreTalla,
+                                        Cantidad = dis.Cantidad,
+                                        Orden = dis.Orden
+                                    }).ToList()
+                                }).OrderBy(txp => txp.Orden).ToList(),
+                                prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.IdProducto)
+                            .Select(pedDet => new ProductosXDetPed
+                            {
+                                IdProducto = pedDet.Key,
+                                CodigoProducto = pedDet.FirstOrDefault().ProductosxColeccion.CodigoProducto,
+                                NombreProducto = pedDet.FirstOrDefault().ProductosxColeccion.NombreProducto,
+                                Imagen = pedDet.FirstOrDefault().ProductosxColeccion.FotografiasXProducto.FirstOrDefault().FotografiaProducto,
+                                CantidadXProducto = pedDet.Sum(cant => cant.Cantidad),
+                                TotalXProducto = pedDet.Sum(cant => cant.MontoLinea),
+                                coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.CodigoColor).Where(colXprod => colXprod.Sum(det => det.Cantidad) > 0).Select(colXprod =>
+                                         new ColoresXProdXDetPed
+                                         {
+                                             CantidadXColor = colXprod.Sum(cant => cant.Cantidad),
+                                             TotalXColor = colXprod.Sum(cant => cant.MontoLinea),
+                                             PrecioXColor = colXprod.FirstOrDefault().PrecioUnitario,
+                                             IdColor = colXprod.Key,
+                                             NombreColor = ctx.Colores.FirstOrDefault(color => color.CodigoColor == colXprod.Key).Color,
+                                             DetallesXPedido = colXprod.Select(detPed => new DetalleXPedidoViewModel
+                                             {
+                                                 IdRegistro = detPed.IdPedidoDetalle,
+                                                 PedidoId = detPed.PedidoId,
+                                                 Cantidad = detPed.Cantidad,
+
+                                                 Linea = detPed.Linea,
+                                                 MontoLinea = detPed.MontoLinea,
+                                                 PrecioUnitario = detPed.PrecioUnitario,
+                                                 Talla = detPed.CodigoTalla,
+                                                 TallaObject = ctx.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == detPed.ProductosxColeccion.CodigoGrupoTalla && txp.CodigoTalla == detPed.CodigoTalla)/*.Where(txp => false || (ped.Colecciones.ColeccionTipo == "F") || gruposXDetPed.Any(pxc => pxc.ProductosxColeccion.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) > 0))*/.Select(txp => new TallaViewModel
+                                                 {
+                                                     GrupoTallaId = txp.CodigoGrupoTalla,
+                                                     Talla = txp.CodigoTalla,
+                                                     Orden = txp.Orden ?? 0,
+                                                     Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                                     {
+                                                         IdDistribucion = dis.IdDistribucion,
+                                                         IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                         NombreDistribucion = dis.NombreDistribucion,
+                                                         NombreTalla = dis.NombreTalla,
+                                                         Cantidad = dis.Cantidad,
+                                                         Orden = dis.Orden
+                                                     }).ToList()
+                                                 }).FirstOrDefault()
+                                             }).ToList()
+
+                                         }).ToList()
+                            }).ToList()
+                            }).ToList()
+                    }).ToList();
+
+
+            
+
+
+
+                    return Ok(pedidos.First());
                 }
 
             }
