@@ -4,6 +4,7 @@ using DBData.Database;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Drawing;
 using System.Linq;
 
 using System.Threading.Tasks;
@@ -158,7 +159,7 @@ namespace AventasApi.Controllers
 
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-
+                    var firma = "data:image/png;base64," + Convert.ToBase64String(ctx.FirmasxPedido.FirstOrDefault(fir => fir.PedidoId == pedidoId).Firma);
                     List<PedidosXClienteViewModel> pedidos = ctx.PedidosxCliente.Where(p => p.PedidoId == pedidoId).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
                     {
                         Asesor = ped.CodigoAsesor,
@@ -175,6 +176,7 @@ namespace AventasApi.Controllers
                         ClienteContadoId = ped.ClienteContadoId,
                         ModoVenta = ped.ModoVenta,
                         Flete = ped.Flete,
+                        Firma = firma,
                         Cliente = new ClienteViewModel
                         {
                             Codigo = ped.Clientes.CodigoCliente,
