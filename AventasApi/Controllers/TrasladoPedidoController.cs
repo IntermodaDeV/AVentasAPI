@@ -1,6 +1,7 @@
 ﻿using AventasApi.Models;
 using AventasApi.Models.ViewModels;
 using DBData.Database;
+using ExternalApiData.Models.ApiModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -66,6 +67,12 @@ namespace AventasApi.Controllers
                         StockVisible = pxc.StockVisible,
                         GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
                         GrupoTalla = pxc.CodigoGrupoTalla,
+                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoPrecio).Select(precio => new PrecioXProductoViewModel
+                        {
+                            GrupoPrecio = precio.GrupoPrecio,
+                            IdMoneda = precio.IdMoneda,
+                            Precio = precio.Hasta == new DateTime(1900, 1, 1) ? precio.Precio : 0
+                        }).ToList(),
                         Linea = new LineaViewModel
                         {
                             IdLinea = pxc.MaestroLinea.IdLinea,
