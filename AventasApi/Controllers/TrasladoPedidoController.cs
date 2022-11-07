@@ -83,6 +83,15 @@ namespace AventasApi.Controllers
                             Talla = txp.CodigoTalla.ToUpper(),
                             GrupoTallaId = txp.CodigoGrupoTalla,
                             Orden = txp.Orden ?? 0,
+                            Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                            {
+                                IdDistribucion = dis.IdDistribucion,
+                                IdTallaxGrupo = dis.IdTallaxGrupo,
+                                NombreDistribucion = dis.NombreDistribucion,
+                                NombreTalla = dis.NombreTalla,
+                                Cantidad = dis.Cantidad,
+                                Orden = dis.Orden
+                            }).ToList(),
                         }).OrderBy(txp => txp.Orden).ToList(),
                         fisicaDisponible = pxc.FisicoDisponible
                           .Select(f => new FisicoDisponibleViewModel
