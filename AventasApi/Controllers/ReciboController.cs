@@ -864,7 +864,7 @@ namespace AventasApi.Controllers
                 var Descuento = 0m;
                 int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
                 string inicialesAsesor = asesor.InicialesNombre;
-                var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(subFac => subFac.FechaVencimiento).ToList();
+                var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(x=>x.NumeroCuota).ThenBy(subFac => subFac.FechaVencimiento).ThenBy(x=>x.Factura).ToList();
                 List <ReciboApiModel> recibos = new List<ReciboApiModel>();
                 var isOnline = EnLinea(asesor.EmpresaId, asesor.CodigoAsesor);
                 foreach (PagosReciboPostViewModel pago in reciboPost.Pagos.OrderBy(pag => pag.Orden))
