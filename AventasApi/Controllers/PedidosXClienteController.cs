@@ -140,7 +140,7 @@ namespace AventasApi.Controllers
                     tipoPedido = acuerdoVenta?.TiposdePedido;
                     cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
                     coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
-                    ubicacion = context.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == Pedido.Almacen && x.Estatus == true);
+                    ubicacion = context.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == Pedido.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == cliente.EmpresaId && x.Estatus == true);
                 }
                 DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
                 
