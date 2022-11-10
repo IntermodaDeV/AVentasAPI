@@ -227,8 +227,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Activo" Type="bit" Nullable="false" />
           <Property Name="ProveedorPredefinido" Type="varchar" MaxLength="50" />
           <Property Name="CuentaContrapartida" Type="varchar" MaxLength="50" />
-          <Property Name="GrupoImpuestos" Type="varchar" MaxLength="50" />
-          <Property Name="GrupoImpuestosArticulo" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ClienteContado">
           <Key>
@@ -706,6 +704,16 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="serie" Type="varchar" MaxLength="50" />
           <Property Name="importeExento" Type="float" />
           <Property Name="importeGravado" Type="float" />
+        </EntityType>
+        <EntityType Name="GastoViajeGrupoImpuesto">
+          <Key>
+            <PropertyRef Name="empresaID" />
+          </Key>
+          <Property Name="empresaID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="grupoImpuestoGravado" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="grupoImpuestoArticuloGravado" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="grupoImpuestoExento" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="grupoImpuestoArticuloExento" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="GrupoImpuestoArticulo">
           <Key>
@@ -4353,6 +4361,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="Funciones" EntityType="Self.Funciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Funciones_Roles" EntityType="Self.Funciones_Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GastosViajeDetalle" EntityType="Self.GastosViajeDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GastoViajeGrupoImpuesto" EntityType="Self.GastoViajeGrupoImpuesto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoImpuestoArticulo" EntityType="Self.GrupoImpuestoArticulo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoImpuestoCliente" EntityType="Self.GrupoImpuestoCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoOpciones" EntityType="Self.GrupoOpciones" Schema="dbo" store:Type="Tables" />
@@ -7722,20 +7731,21 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="BitacoraNoVentaEnVisitas" EntitySet="BitacoraNoVentaEnVisitas" />
           </AssociationSet>
-          <EntitySet Name="CategoriaTipoGastoViaje" EntityType="AventasModel.CategoriaTipoGastoViaje" />
           <EntitySet Name="Estado" EntityType="AventasModel.Estado" />
           <EntitySet Name="GastosViajeDetalle" EntityType="AventasModel.GastosViajeDetalle" />
           <EntitySet Name="TipoGastoViaje" EntityType="AventasModel.TipoGastoViaje" />
+          <AssociationSet Name="fkGastosViajeDetalleEstado" Association="AventasModel.fkGastosViajeDetalleEstado">
+            <End Role="Estado" EntitySet="Estado" />
+            <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
+          </AssociationSet>
+          <EntitySet Name="GastoViajeGrupoImpuesto" EntityType="AventasModel.GastoViajeGrupoImpuesto" />
+          <EntitySet Name="CategoriaTipoGastoViaje" EntityType="AventasModel.CategoriaTipoGastoViaje" />
           <AssociationSet Name="fkCategoriaTipoGastoViaje" Association="AventasModel.fkCategoriaTipoGastoViaje">
             <End Role="TipoGastoViaje" EntitySet="TipoGastoViaje" />
             <End Role="CategoriaTipoGastoViaje" EntitySet="CategoriaTipoGastoViaje" />
           </AssociationSet>
           <AssociationSet Name="fkGastosViajeDetalleCategoriaTipoGastoViaje" Association="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje">
             <End Role="CategoriaTipoGastoViaje" EntitySet="CategoriaTipoGastoViaje" />
-            <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
-          </AssociationSet>
-          <AssociationSet Name="fkGastosViajeDetalleEstado" Association="AventasModel.fkGastosViajeDetalleEstado">
-            <End Role="Estado" EntitySet="Estado" />
             <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
           </AssociationSet>
           </EntityContainer>
@@ -11038,24 +11048,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="CategoriaTipoGastoViaje">
-          <Key>
-            <PropertyRef Name="IdCategoriaTipoGastoViaje" />
-          </Key>
-          <Property Name="IdCategoriaTipoGastoViaje" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="IdTipoGastoViaje" Type="Int32" Nullable="false" />
-          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="FacturaObligatoria" Type="Boolean" Nullable="false" />
-          <Property Name="Descripcion" Type="Boolean" Nullable="false" />
-          <Property Name="ImagenObligatoria" Type="Boolean" Nullable="false" />
-          <Property Name="Activo" Type="Boolean" Nullable="false" />
-          <Property Name="ProveedorPredefinido" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="CuentaContrapartida" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="TipoGastoViaje" Relationship="AventasModel.fkCategoriaTipoGastoViaje" FromRole="CategoriaTipoGastoViaje" ToRole="TipoGastoViaje" />
-          <NavigationProperty Name="GastosViajeDetalle" Relationship="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" FromRole="CategoriaTipoGastoViaje" ToRole="GastosViajeDetalle" />
-          <Property Name="GrupoImpuestos" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="GrupoImpuestosArticulo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
         <EntityType Name="Estado">
           <Key>
             <PropertyRef Name="IdEstado" />
@@ -11084,10 +11076,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="DescripcionGasto" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
           <Property Name="Administrador" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="serie" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="CategoriaTipoGastoViaje" Relationship="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" FromRole="GastosViajeDetalle" ToRole="CategoriaTipoGastoViaje" />
           <NavigationProperty Name="Estado" Relationship="AventasModel.fkGastosViajeDetalleEstado" FromRole="GastosViajeDetalle" ToRole="Estado" />
           <Property Name="importeExento" Type="Double" />
           <Property Name="importeGravado" Type="Double" />
+          <NavigationProperty Name="CategoriaTipoGastoViaje" Relationship="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" FromRole="GastosViajeDetalle" ToRole="CategoriaTipoGastoViaje" />
         </EntityType>
         <EntityType Name="TipoGastoViaje">
           <Key>
@@ -11099,6 +11091,44 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Empresa" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Activo" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="CategoriaTipoGastoViaje" Relationship="AventasModel.fkCategoriaTipoGastoViaje" FromRole="TipoGastoViaje" ToRole="CategoriaTipoGastoViaje" />
+        </EntityType>
+        <Association Name="fkGastosViajeDetalleEstado">
+          <End Type="AventasModel.Estado" Role="Estado" Multiplicity="0..1" />
+          <End Type="AventasModel.GastosViajeDetalle" Role="GastosViajeDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Estado">
+              <PropertyRef Name="IdEstado" />
+            </Principal>
+            <Dependent Role="GastosViajeDetalle">
+              <PropertyRef Name="IdEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="GastoViajeGrupoImpuesto">
+          <Key>
+            <PropertyRef Name="empresaID" />
+          </Key>
+          <Property Name="empresaID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="grupoImpuestoGravado" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="grupoImpuestoArticuloGravado" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="grupoImpuestoExento" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="grupoImpuestoArticuloExento" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="CategoriaTipoGastoViaje">
+          <Key>
+            <PropertyRef Name="IdCategoriaTipoGastoViaje" />
+          </Key>
+          <Property Name="IdCategoriaTipoGastoViaje" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdTipoGastoViaje" Type="Int32" Nullable="false" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FacturaObligatoria" Type="Boolean" Nullable="false" />
+          <Property Name="Descripcion" Type="Boolean" Nullable="false" />
+          <Property Name="ImagenObligatoria" Type="Boolean" Nullable="false" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <Property Name="ProveedorPredefinido" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CuentaContrapartida" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TipoGastoViaje" Relationship="AventasModel.fkCategoriaTipoGastoViaje" FromRole="CategoriaTipoGastoViaje" ToRole="TipoGastoViaje" />
+          <NavigationProperty Name="GastosViajeDetalle" Relationship="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" FromRole="CategoriaTipoGastoViaje" ToRole="GastosViajeDetalle" />
         </EntityType>
         <Association Name="fkCategoriaTipoGastoViaje">
           <End Type="AventasModel.TipoGastoViaje" Role="TipoGastoViaje" Multiplicity="1" />
@@ -11121,18 +11151,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="GastosViajeDetalle">
               <PropertyRef Name="IdCategoriaTipoGastoViaje" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="fkGastosViajeDetalleEstado">
-          <End Type="AventasModel.Estado" Role="Estado" Multiplicity="0..1" />
-          <End Type="AventasModel.GastosViajeDetalle" Role="GastosViajeDetalle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Estado">
-              <PropertyRef Name="IdEstado" />
-            </Principal>
-            <Dependent Role="GastosViajeDetalle">
-              <PropertyRef Name="IdEstado" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -13193,23 +13211,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="CategoriaTipoGastoViaje">
-            <EntityTypeMapping TypeName="AventasModel.CategoriaTipoGastoViaje">
-              <MappingFragment StoreEntitySet="CategoriaTipoGastoViaje">
-                <ScalarProperty Name="GrupoImpuestosArticulo" ColumnName="GrupoImpuestosArticulo" />
-                <ScalarProperty Name="GrupoImpuestos" ColumnName="GrupoImpuestos" />
-                <ScalarProperty Name="CuentaContrapartida" ColumnName="CuentaContrapartida" />
-                <ScalarProperty Name="ProveedorPredefinido" ColumnName="ProveedorPredefinido" />
-                <ScalarProperty Name="Activo" ColumnName="Activo" />
-                <ScalarProperty Name="ImagenObligatoria" ColumnName="ImagenObligatoria" />
-                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
-                <ScalarProperty Name="FacturaObligatoria" ColumnName="FacturaObligatoria" />
-                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
-                <ScalarProperty Name="IdTipoGastoViaje" ColumnName="IdTipoGastoViaje" />
-                <ScalarProperty Name="IdCategoriaTipoGastoViaje" ColumnName="IdCategoriaTipoGastoViaje" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Estado">
             <EntityTypeMapping TypeName="AventasModel.Estado">
               <MappingFragment StoreEntitySet="Estado">
@@ -13250,6 +13251,32 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="Diario" ColumnName="Diario" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="IdTipoGastoViaje" ColumnName="IdTipoGastoViaje" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GastoViajeGrupoImpuesto">
+            <EntityTypeMapping TypeName="AventasModel.GastoViajeGrupoImpuesto">
+              <MappingFragment StoreEntitySet="GastoViajeGrupoImpuesto">
+                <ScalarProperty Name="grupoImpuestoArticuloExento" ColumnName="grupoImpuestoArticuloExento" />
+                <ScalarProperty Name="grupoImpuestoExento" ColumnName="grupoImpuestoExento" />
+                <ScalarProperty Name="grupoImpuestoArticuloGravado" ColumnName="grupoImpuestoArticuloGravado" />
+                <ScalarProperty Name="grupoImpuestoGravado" ColumnName="grupoImpuestoGravado" />
+                <ScalarProperty Name="empresaID" ColumnName="empresaID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CategoriaTipoGastoViaje">
+            <EntityTypeMapping TypeName="AventasModel.CategoriaTipoGastoViaje">
+              <MappingFragment StoreEntitySet="CategoriaTipoGastoViaje">
+                <ScalarProperty Name="CuentaContrapartida" ColumnName="CuentaContrapartida" />
+                <ScalarProperty Name="ProveedorPredefinido" ColumnName="ProveedorPredefinido" />
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="ImagenObligatoria" ColumnName="ImagenObligatoria" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="FacturaObligatoria" ColumnName="FacturaObligatoria" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="IdTipoGastoViaje" ColumnName="IdTipoGastoViaje" />
+                <ScalarProperty Name="IdCategoriaTipoGastoViaje" ColumnName="IdCategoriaTipoGastoViaje" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

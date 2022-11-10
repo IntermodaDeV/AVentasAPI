@@ -246,6 +246,9 @@
     <Compile Include="Database\GastosViajeDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\GastoViajeGrupoImpuesto.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\GESTORES.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>

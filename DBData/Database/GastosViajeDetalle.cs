@@ -33,7 +33,7 @@ namespace DBData.Database
         public Nullable<double> importeExento { get; set; }
         public Nullable<double> importeGravado { get; set; }
     
-        public virtual CategoriaTipoGastoViaje CategoriaTipoGastoViaje { get; set; }
         public virtual Estado Estado { get; set; }
+        public virtual CategoriaTipoGastoViaje CategoriaTipoGastoViaje { get; set; }
     }
 }

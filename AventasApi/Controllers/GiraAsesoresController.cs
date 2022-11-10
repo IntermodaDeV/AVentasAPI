@@ -229,11 +229,11 @@ namespace AventasApi.Controllers
                     var num = 0; ;
                     if (serie == "-")
                     {
-                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor && x.serie == serie);
+                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor );
                     }
                     else
                     {
-                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor);
+                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor && x.serie == serie);
                     }
                     if (num == 0)
                     {
@@ -289,6 +289,52 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("~/api/GastosAprobados/{empresa}/{inicio}/{fin}")]
+        public async Task<IHttpActionResult> ObtenerGastosAprobados(string empresa, DateTime inicio, DateTime fin)
+        {
+            fin = fin.AddHours(23);
+            fin = fin.AddMinutes(59);
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var pendientes = await ctx.GastosViajeDetalle
+                        .Join(ctx.CategoriaTipoGastoViaje,
+                            gasto => gasto.IdCategoriaTipoGastoViaje,
+                            categoria => categoria.IdCategoriaTipoGastoViaje,
+                            (gasto, categoria) => new { Gasto = gasto, Categoria = categoria })
+                        .Join(ctx.TipoGastoViaje,
+                            gastocategoria => gastocategoria.Categoria.IdTipoGastoViaje,
+                            tipo => tipo.IdTipoGastoViaje,
+                            (gastocategoria, tipo) => new { GastoCategoria = gastocategoria, Tipo = tipo }
+                        )
+                        .Where(x => x.GastoCategoria.Gasto.IdEstado == 2 && x.GastoCategoria.Categoria.TipoGastoViaje.Empresa == empresa &&
+                                x.GastoCategoria.Gasto.FechaCreacion <= fin && x.GastoCategoria.Gasto.FechaCreacion>= inicio)
+                        .Select(x => new GastoPendienteViewModel
+                        {
+                            IdGastoViajeDetalle = x.GastoCategoria.Gasto.IdGastoViajeDetalle,
+                            tipo = x.Tipo.Nombre,
+                            categoria = x.GastoCategoria.Categoria.Nombre,
+                            UsuarioAsesor = x.GastoCategoria.Gasto.UsuarioAsesor,
+                            NoFactura = x.GastoCategoria.Gasto.NoFactura,
+                            Descripcion = x.GastoCategoria.Gasto.Descripcion,
+                            importeExento = x.GastoCategoria.Gasto.importeExento != null ? x.GastoCategoria.Gasto.importeExento : 0,
+                            importeGravado = x.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoria.Gasto.importeGravado : 0,
+                            ValorFactura = x.GastoCategoria.Gasto.ValorFactura,
+                            FechaFactura = x.GastoCategoria.Gasto.FechaFactura,
+                            FechaCreacion = x.GastoCategoria.Gasto.FechaCreacion,
+                            serie = x.GastoCategoria.Gasto.serie
+                        })
+                        .OrderBy(x => x.FechaCreacion).ToListAsync();
+                    return Ok(pendientes);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
         [HttpGet]
         [Route("~/api/GastosPendientes/{empresa}")]
         public async Task<IHttpActionResult> ObtenerGastosPendientes(string empresa)
@@ -439,8 +485,8 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/GastosPDF/{usuario}/{dateIni}/{dateFin}")]
-        public async Task<IHttpActionResult> ObtenerGastosExcel(string usuario, DateTime dateIni, DateTime dateFin)
+        [Route("~/api/GastosPDF/{usuario}/{dateIni}/{dateFin}/{tipoGasto}")]
+        public async Task<IHttpActionResult> ObtenerGastosExcel(string usuario, DateTime dateIni, DateTime dateFin, int tipoGasto)
         {
             dateFin = dateFin.AddHours(23);
             dateFin = dateFin.AddMinutes(59);
@@ -467,7 +513,8 @@ namespace AventasApi.Controllers
                             )
                         .Where(x => x.GastoEstado.GastoCategoria.Gasto.UsuarioAsesor == usuario &&
                           x.GastoEstado.GastoCategoria.Gasto.FechaCreacion <= dateFin &&
-                        x.GastoEstado.GastoCategoria.Gasto.FechaCreacion >= dateIni
+                        x.GastoEstado.GastoCategoria.Gasto.FechaCreacion >= dateIni &&
+                        x.GastoEstado.GastoCategoria.Categoria.IdTipoGastoViaje == tipoGasto
                         && x.GastoEstado.GastoCategoria.Gasto.IdEstado == 2)
                         .Select(x => new GastosExcelViewModel
                         {
@@ -517,9 +564,11 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
+                   
                     var tmp = ctx.GastosViajeDetalle.FirstOrDefault(x => x.IdGastoViajeDetalle == id);
-                    
-                    if(tmp.IdEstado == 2)
+                    var usuario = ctx.Usuarios.FirstOrDefault(x => x.usuario == tmp.UsuarioAsesor);
+                    var grupoimpuestos = ctx.GastoViajeGrupoImpuesto.FirstOrDefault( x => x.empresaID == usuario.EmpresaId);
+                    if (tmp.IdEstado == 2)
                     {
                         var p = new { Content = "OK" };
                         
@@ -546,16 +595,18 @@ namespace AventasApi.Controllers
                         {
                             COMPANY = x.GastoCategoriaTipo.Tipo.Empresa,
                             CURRENCYCODE = x.Moneda.IdMoneda,
-                            TRANSDATE = x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(8, 2) + "/" + x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(5, 2) +"/"+ x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(0,4),
+                            TRANSDATE = x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(8, 2) + "/" + x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(5, 2) + "/" + x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(0, 4),
                             NUMBERINVOCEID = x.GastoCategoriaTipo.GastoCategoria.Gasto.NoFactura.Replace("-", "").Replace("-", "").Replace("-", ""),
                             DESCRIPTION = x.GastoCategoriaTipo.GastoCategoria.Gasto.DescripcionGasto,
-                            EXENTO = x.GastoCategoriaTipo.GastoCategoria.Gasto.importeExento!=null? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeExento:0,
-                            GRAVADO = x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado:0,
+                            EXENTO = x.GastoCategoriaTipo.GastoCategoria.Gasto.importeExento != null ? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeExento : 0,
+                            GRAVADO = x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado : 0,
                             VENDACCOUNT = x.GastoCategoriaTipo.GastoCategoria.Gasto.Proveedor,
                             USERID = x.GastoCategoriaTipo.GastoCategoria.Gasto.UsuarioAsesor,
                             JOURNALNAME = x.GastoCategoriaTipo.Tipo.Diario,
                             OFFSETACCOUNT = x.GastoCategoriaTipo.GastoCategoria.Categoria.CuentaContrapartida,
-                            SERIE = x.GastoCategoriaTipo.GastoCategoria.Gasto.serie
+                            SERIE = x.GastoCategoriaTipo.GastoCategoria.Gasto.serie,
+                            TAXGROUPEXENTO = grupoimpuestos.grupoImpuestoExento ,
+                            TAXITEMGROUPEXENTO = grupoimpuestos.grupoImpuestoArticuloExento
                         })
                         .Take(1).ToListAsync();
 
@@ -574,6 +625,8 @@ namespace AventasApi.Controllers
                         datosAX.JOURNALNAME = dato.JOURNALNAME;
                         datosAX.OFFSETACCOUNT = dato.OFFSETACCOUNT;
                         datosAX.SERIE = dato.SERIE;
+                        datosAX.TAXGROUPEXENTO = dato.TAXGROUPEXENTO;
+                        datosAX.TAXITEMGROUPEXENTO = dato.TAXITEMGROUPEXENTO;
 
                     }
                     var client = new RestClient();
@@ -693,6 +746,54 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+        
+        [HttpGet]
+        [Route("~/api/GrupoImpuesto")]
+        public async Task<IHttpActionResult> obtenerGrupoImpuestos()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var grupoimpuetsos = await ctx.GastoViajeGrupoImpuesto
+                        .Select(x => new {
+                            empresaID = x.empresaID,
+                            grupoImpuestoGravado = x.grupoImpuestoGravado,
+                            grupoImpuestoArticuloGravado = x.grupoImpuestoArticuloGravado,
+                            grupoImpuestoExento=x.grupoImpuestoExento,
+                            grupoImpuestoArticuloExento = x.grupoImpuestoArticuloExento
+                        }
+                            )
+                        .ToListAsync();
+                    return Ok(grupoimpuetsos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/GrupoImpuesto/{empresa}")]
+        public async Task<IHttpActionResult> obtenerGrupoImpuestosEmpresa(string empresa)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var grupoimpuestos = await ctx.GastoViajeGrupoImpuesto.FirstOrDefaultAsync(x => x.empresaID == empresa);
+                    var client = new RestClient();
+                    var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}proveedores/{grupoimpuestos.grupoImpuestoGravado}/{grupoimpuestos.grupoImpuestoArticuloGravado}/{empresa}", Method.GET);
+                    var respuesta = client.Execute(request);
+                    return Ok(respuesta);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
 
         [HttpPost]
         [Route("~/api/GastoViajeDetalle")]
@@ -779,6 +880,35 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("~/api/ActualizarGrupoImpuesto")]
+        public async Task<IHttpActionResult> ActualizarGrupoImpuesto([FromBody] GastoViajeGrupoImpuesto grupo)
+        {
+            try
+            {
+
+                using(var ctx = new AVentasEntities())
+                {
+                    var grupoImpuesto = await ctx.GastoViajeGrupoImpuesto.FirstOrDefaultAsync(x => x.empresaID == grupo.empresaID);
+                    if(grupoImpuesto == null)
+                    {
+                        return BadRequest("No se encontro el grupo de impuestos");
+                    }
+
+                    grupoImpuesto.grupoImpuestoGravado = grupo.grupoImpuestoGravado;
+                    grupoImpuesto.grupoImpuestoArticuloGravado = grupo.grupoImpuestoArticuloGravado;
+                    grupoImpuesto.grupoImpuestoExento = grupo.grupoImpuestoExento;
+                    grupoImpuesto.grupoImpuestoArticuloExento = grupo.grupoImpuestoArticuloExento;
+
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
+                }
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
 
         [HttpPost]
         [Route("~/api/ActualizarEstadoGasto/{id}/{estado}/{mensaje}/{admin}/{mensajeAX}")]
