@@ -104,7 +104,8 @@ namespace AventasApi.Controllers
 
                     if (devolucion.Count == 0)
                     {
-                        return BadRequest($"No se encuentras devoluviones aprobadas entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
+                        var estado = Enum.GetName(typeof(EstadoBodega), bodegaEstado); ;
+                        return BadRequest($"No se encuentras devoluviones {estado} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
                     }
 
                     return Ok(devolucion);
