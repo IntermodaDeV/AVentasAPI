@@ -1,22 +1,14 @@
-﻿using AventasApi.Models.ViewModels;
-using AventasApi.Services.AsyncJobs;
+﻿using AventasApi.enums;
+using AventasApi.Models;
+using AventasApi.Models.ViewModels;
 using AventasApi.Services.Authentication;
 using DBData.Database;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Linq;
-using ExternalApiData.ApiModels;
-using RestSharp;
-using ExternalApiData.Enviroments;
-using ExternalApiData.Models.ApiModels;
-using Newtonsoft.Json;
-using AventasApi.Models;
-using AventasApi.Utils;
-using System.IO;
-using System.Web.Script.Serialization;
 
 namespace AventasApi.Controllers
 {
@@ -64,7 +56,9 @@ namespace AventasApi.Controllers
 
                     if(devolucion.Count == 0)
                     {
-                      return  BadRequest($"No se encuentras devoluviones aprobadas entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
+                        var estado =  Enum.GetName(typeof(EstadoBodega), bodegaEstado); ;
+
+                      return  BadRequest($"No se encuentras devoluviones {estado} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
                     }
 
                     return Ok(devolucion);
