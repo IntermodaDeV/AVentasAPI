@@ -5,8 +5,8 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="AventasModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="Acciones">
           <Key>
             <PropertyRef Name="IdAccion" />
@@ -213,6 +213,20 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
           <Property Name="IdAsignacionxAsesor" Type="int" />
           <Property Name="Observacion" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="CategoriaTipoGastoViaje">
+          <Key>
+            <PropertyRef Name="IdCategoriaTipoGastoViaje" />
+          </Key>
+          <Property Name="IdCategoriaTipoGastoViaje" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdTipoGastoViaje" Type="int" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="FacturaObligatoria" Type="bit" Nullable="false" />
+          <Property Name="Descripcion" Type="bit" Nullable="false" />
+          <Property Name="ImagenObligatoria" Type="bit" Nullable="false" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
+          <Property Name="ProveedorPredefinido" Type="varchar" MaxLength="50" />
+          <Property Name="CuentaContrapartida" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ClienteContado">
           <Key>
@@ -515,6 +529,13 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Error" Type="varchar(max)" />
           <Property Name="timeStamp" Type="datetime" />
         </EntityType>
+        <EntityType Name="Estado">
+          <Key>
+            <PropertyRef Name="IdEstado" />
+          </Key>
+          <Property Name="IdEstado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="30" Nullable="false" />
+        </EntityType>
         <EntityType Name="EstadosPedido">
           <Key>
             <PropertyRef Name="IdEstado" />
@@ -660,6 +681,39 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="createddate" Type="datetime" />
           <Property Name="modifiedby" Type="varchar" MaxLength="50" />
           <Property Name="modifieddate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="GastosViajeDetalle">
+          <Key>
+            <PropertyRef Name="IdGastoViajeDetalle" />
+          </Key>
+          <Property Name="IdGastoViajeDetalle" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdCategoriaTipoGastoViaje" Type="int" Nullable="false" />
+          <Property Name="UsuarioAsesor" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Proveedor" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="NoFactura" Type="varchar" MaxLength="50" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="300" />
+          <Property Name="ValorFactura" Type="float" Nullable="false" />
+          <Property Name="FechaFactura" Type="date" Nullable="false" />
+          <Property Name="FechaCreacion" Type="datetime" Nullable="false" />
+          <Property Name="Imagen" Type="varbinary(max)" />
+          <Property Name="IdEstado" Type="int" />
+          <Property Name="DescripcionAdmin" Type="varchar" MaxLength="100" />
+          <Property Name="MensajeAX" Type="varchar" MaxLength="150" />
+          <Property Name="DescripcionGasto" Type="varchar" MaxLength="300" />
+          <Property Name="Administrador" Type="varchar" MaxLength="100" />
+          <Property Name="serie" Type="varchar" MaxLength="50" />
+          <Property Name="importeExento" Type="float" />
+          <Property Name="importeGravado" Type="float" />
+        </EntityType>
+        <EntityType Name="GastoViajeGrupoImpuesto">
+          <Key>
+            <PropertyRef Name="empresaID" />
+          </Key>
+          <Property Name="empresaID" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="grupoImpuestoGravado" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="grupoImpuestoArticuloGravado" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="grupoImpuestoExento" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="grupoImpuestoArticuloExento" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="GrupoImpuestoArticulo">
           <Key>
@@ -1513,6 +1567,16 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IdProducto" Type="int" />
           <Property Name="IdTallaxGrupo" Type="int" />
         </EntityType>
+        <EntityType Name="TipoGastoViaje">
+          <Key>
+            <PropertyRef Name="IdTipoGastoViaje" />
+          </Key>
+          <Property Name="IdTipoGastoViaje" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Diario" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Empresa" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="TiposdeColeccion">
           <Key>
             <PropertyRef Name="ColeccionTipo" />
@@ -1662,8 +1726,8 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
           <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_AtributosxColeccion">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -1675,8 +1739,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have 
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
           <Property Name="CodigoAtributo" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_ClientesxRuta">
           <Key>
             <PropertyRef Name="CodigoCliente" />
@@ -1696,8 +1760,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a prim
           <Property Name="Longitud" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Ruta" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_ColeccionesBodegaEspecifico">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -1721,8 +1785,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' does n
           <Property Name="Sitio" Type="varchar" MaxLength="50" />
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_ColoresxProducto">
           <Key>
             <PropertyRef Name="IdColorxProducto" />
@@ -1733,8 +1797,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a p
           <Property Name="Rgb" Type="varchar" MaxLength="250" />
           <Property Name="IdProducto" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_FisicoDisponible">
           <Key>
             <PropertyRef Name="IdFisicoDisponible" />
@@ -1746,8 +1810,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a p
           <Property Name="Disponible" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="vw_TallasxProducto">
           <Key>
             <PropertyRef Name="IdProducto" />
@@ -4114,6 +4178,42 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fkCategoriaTipoGastoViaje">
+          <End Role="TipoGastoViaje" Type="Self.TipoGastoViaje" Multiplicity="1" />
+          <End Role="CategoriaTipoGastoViaje" Type="Self.CategoriaTipoGastoViaje" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TipoGastoViaje">
+              <PropertyRef Name="IdTipoGastoViaje" />
+            </Principal>
+            <Dependent Role="CategoriaTipoGastoViaje">
+              <PropertyRef Name="IdTipoGastoViaje" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fkGastosViajeDetalleCategoriaTipoGastoViaje">
+          <End Role="CategoriaTipoGastoViaje" Type="Self.CategoriaTipoGastoViaje" Multiplicity="1" />
+          <End Role="GastosViajeDetalle" Type="Self.GastosViajeDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CategoriaTipoGastoViaje">
+              <PropertyRef Name="IdCategoriaTipoGastoViaje" />
+            </Principal>
+            <Dependent Role="GastosViajeDetalle">
+              <PropertyRef Name="IdCategoriaTipoGastoViaje" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fkGastosViajeDetalleEstado">
+          <End Role="Estado" Type="Self.Estado" Multiplicity="0..1" />
+          <End Role="GastosViajeDetalle" Type="Self.GastosViajeDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Estado">
+              <PropertyRef Name="IdEstado" />
+            </Principal>
+            <Dependent Role="GastosViajeDetalle">
+              <PropertyRef Name="IdEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="GrupoImpuestoArticulo_Empresa">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="1" />
           <End Role="GrupoImpuestoArticulo" Type="Self.GrupoImpuestoArticulo" Multiplicity="*" />
@@ -4225,6 +4325,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="BitacoraGeoposicion" EntityType="Self.BitacoraGeoposicion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BitacoraNoVentaEnVisitas" EntityType="Self.BitacoraNoVentaEnVisitas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BitacoraVisitasCliente" EntityType="Self.BitacoraVisitasCliente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CategoriaTipoGastoViaje" EntityType="Self.CategoriaTipoGastoViaje" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClienteContado" EntityType="Self.ClienteContado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Clientes" EntityType="Self.Clientes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientesxRuta" EntityType="Self.ClientesxRuta" Schema="dbo" store:Type="Tables" />
@@ -4247,6 +4348,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="EmpresaTransporte" EntityType="Self.EmpresaTransporte" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Encuesta" EntityType="Self.Encuesta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Errores" EntityType="Self.Errores" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Estado" EntityType="Self.Estado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EstadosPedido" EntityType="Self.EstadosPedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FacturasEnCuotasAcuerdos" EntityType="Self.FacturasEnCuotasAcuerdos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FacturasxCliente" EntityType="Self.FacturasxCliente" Schema="dbo" store:Type="Tables" />
@@ -4258,6 +4360,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="FotografiasXProducto" EntityType="Self.FotografiasXProducto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Funciones" EntityType="Self.Funciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Funciones_Roles" EntityType="Self.Funciones_Roles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GastosViajeDetalle" EntityType="Self.GastosViajeDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GastoViajeGrupoImpuesto" EntityType="Self.GastoViajeGrupoImpuesto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoImpuestoArticulo" EntityType="Self.GrupoImpuestoArticulo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoImpuestoCliente" EntityType="Self.GrupoImpuestoCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoOpciones" EntityType="Self.GrupoOpciones" Schema="dbo" store:Type="Tables" />
@@ -4319,6 +4423,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TallasXGrupo" EntityType="Self.TallasXGrupo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TallasxProducto" EntityType="Self.TallasxProducto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TipoGastoViaje" EntityType="Self.TipoGastoViaje" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdeColeccion" EntityType="Self.TiposdeColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdePago" EntityType="Self.TiposdePago" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdePagoDetalle" EntityType="Self.TiposdePagoDetalle" Schema="dbo" store:Type="Tables" />
@@ -5203,6 +5308,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK_Usuarios_Usuar_37311087" Association="Self.FK_Usuarios_Usuar_37311087">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="Usuarios_Asesores" EntitySet="Usuarios_Asesores" />
+          </AssociationSet>
+          <AssociationSet Name="fkCategoriaTipoGastoViaje" Association="Self.fkCategoriaTipoGastoViaje">
+            <End Role="TipoGastoViaje" EntitySet="TipoGastoViaje" />
+            <End Role="CategoriaTipoGastoViaje" EntitySet="CategoriaTipoGastoViaje" />
+          </AssociationSet>
+          <AssociationSet Name="fkGastosViajeDetalleCategoriaTipoGastoViaje" Association="Self.fkGastosViajeDetalleCategoriaTipoGastoViaje">
+            <End Role="CategoriaTipoGastoViaje" EntitySet="CategoriaTipoGastoViaje" />
+            <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="fkGastosViajeDetalleEstado" Association="Self.fkGastosViajeDetalleEstado">
+            <End Role="Estado" EntitySet="Estado" />
+            <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
           </AssociationSet>
           <AssociationSet Name="GrupoImpuestoArticulo_Empresa" Association="Self.GrupoImpuestoArticulo_Empresa">
             <End Role="Empresa" EntitySet="Empresa" />
@@ -7613,6 +7730,23 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK_Usuario_UsuarioCrea" Association="AventasModel.FK_Usuario_UsuarioCrea">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="BitacoraNoVentaEnVisitas" EntitySet="BitacoraNoVentaEnVisitas" />
+          </AssociationSet>
+          <EntitySet Name="Estado" EntityType="AventasModel.Estado" />
+          <EntitySet Name="GastosViajeDetalle" EntityType="AventasModel.GastosViajeDetalle" />
+          <EntitySet Name="TipoGastoViaje" EntityType="AventasModel.TipoGastoViaje" />
+          <AssociationSet Name="fkGastosViajeDetalleEstado" Association="AventasModel.fkGastosViajeDetalleEstado">
+            <End Role="Estado" EntitySet="Estado" />
+            <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
+          </AssociationSet>
+          <EntitySet Name="GastoViajeGrupoImpuesto" EntityType="AventasModel.GastoViajeGrupoImpuesto" />
+          <EntitySet Name="CategoriaTipoGastoViaje" EntityType="AventasModel.CategoriaTipoGastoViaje" />
+          <AssociationSet Name="fkCategoriaTipoGastoViaje" Association="AventasModel.fkCategoriaTipoGastoViaje">
+            <End Role="TipoGastoViaje" EntitySet="TipoGastoViaje" />
+            <End Role="CategoriaTipoGastoViaje" EntitySet="CategoriaTipoGastoViaje" />
+          </AssociationSet>
+          <AssociationSet Name="fkGastosViajeDetalleCategoriaTipoGastoViaje" Association="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje">
+            <End Role="CategoriaTipoGastoViaje" EntitySet="CategoriaTipoGastoViaje" />
+            <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
           </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -10914,6 +11048,112 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Estado">
+          <Key>
+            <PropertyRef Name="IdEstado" />
+          </Key>
+          <Property Name="IdEstado" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="GastosViajeDetalle" Relationship="AventasModel.fkGastosViajeDetalleEstado" FromRole="Estado" ToRole="GastosViajeDetalle" />
+        </EntityType>
+        <EntityType Name="GastosViajeDetalle">
+          <Key>
+            <PropertyRef Name="IdGastoViajeDetalle" />
+          </Key>
+          <Property Name="IdGastoViajeDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdCategoriaTipoGastoViaje" Type="Int32" Nullable="false" />
+          <Property Name="UsuarioAsesor" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Proveedor" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="NoFactura" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="ValorFactura" Type="Double" Nullable="false" />
+          <Property Name="FechaFactura" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="FechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Imagen" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="IdEstado" Type="Int32" />
+          <Property Name="DescripcionAdmin" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="MensajeAX" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="DescripcionGasto" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="Administrador" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="serie" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Estado" Relationship="AventasModel.fkGastosViajeDetalleEstado" FromRole="GastosViajeDetalle" ToRole="Estado" />
+          <Property Name="importeExento" Type="Double" />
+          <Property Name="importeGravado" Type="Double" />
+          <NavigationProperty Name="CategoriaTipoGastoViaje" Relationship="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" FromRole="GastosViajeDetalle" ToRole="CategoriaTipoGastoViaje" />
+        </EntityType>
+        <EntityType Name="TipoGastoViaje">
+          <Key>
+            <PropertyRef Name="IdTipoGastoViaje" />
+          </Key>
+          <Property Name="IdTipoGastoViaje" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Diario" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Empresa" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="CategoriaTipoGastoViaje" Relationship="AventasModel.fkCategoriaTipoGastoViaje" FromRole="TipoGastoViaje" ToRole="CategoriaTipoGastoViaje" />
+        </EntityType>
+        <Association Name="fkGastosViajeDetalleEstado">
+          <End Type="AventasModel.Estado" Role="Estado" Multiplicity="0..1" />
+          <End Type="AventasModel.GastosViajeDetalle" Role="GastosViajeDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Estado">
+              <PropertyRef Name="IdEstado" />
+            </Principal>
+            <Dependent Role="GastosViajeDetalle">
+              <PropertyRef Name="IdEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="GastoViajeGrupoImpuesto">
+          <Key>
+            <PropertyRef Name="empresaID" />
+          </Key>
+          <Property Name="empresaID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="grupoImpuestoGravado" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="grupoImpuestoArticuloGravado" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="grupoImpuestoExento" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="grupoImpuestoArticuloExento" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="CategoriaTipoGastoViaje">
+          <Key>
+            <PropertyRef Name="IdCategoriaTipoGastoViaje" />
+          </Key>
+          <Property Name="IdCategoriaTipoGastoViaje" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdTipoGastoViaje" Type="Int32" Nullable="false" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FacturaObligatoria" Type="Boolean" Nullable="false" />
+          <Property Name="Descripcion" Type="Boolean" Nullable="false" />
+          <Property Name="ImagenObligatoria" Type="Boolean" Nullable="false" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <Property Name="ProveedorPredefinido" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CuentaContrapartida" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TipoGastoViaje" Relationship="AventasModel.fkCategoriaTipoGastoViaje" FromRole="CategoriaTipoGastoViaje" ToRole="TipoGastoViaje" />
+          <NavigationProperty Name="GastosViajeDetalle" Relationship="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" FromRole="CategoriaTipoGastoViaje" ToRole="GastosViajeDetalle" />
+        </EntityType>
+        <Association Name="fkCategoriaTipoGastoViaje">
+          <End Type="AventasModel.TipoGastoViaje" Role="TipoGastoViaje" Multiplicity="1" />
+          <End Type="AventasModel.CategoriaTipoGastoViaje" Role="CategoriaTipoGastoViaje" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TipoGastoViaje">
+              <PropertyRef Name="IdTipoGastoViaje" />
+            </Principal>
+            <Dependent Role="CategoriaTipoGastoViaje">
+              <PropertyRef Name="IdTipoGastoViaje" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fkGastosViajeDetalleCategoriaTipoGastoViaje">
+          <End Type="AventasModel.CategoriaTipoGastoViaje" Role="CategoriaTipoGastoViaje" Multiplicity="1" />
+          <End Type="AventasModel.GastosViajeDetalle" Role="GastosViajeDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CategoriaTipoGastoViaje">
+              <PropertyRef Name="IdCategoriaTipoGastoViaje" />
+            </Principal>
+            <Dependent Role="GastosViajeDetalle">
+              <PropertyRef Name="IdCategoriaTipoGastoViaje" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12968,6 +13208,75 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="Activo" ColumnName="Activo" />
                 <ScalarProperty Name="RazonNoVenta" ColumnName="RazonNoVenta" />
                 <ScalarProperty Name="IdRazonNoVenta" ColumnName="IdRazonNoVenta" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Estado">
+            <EntityTypeMapping TypeName="AventasModel.Estado">
+              <MappingFragment StoreEntitySet="Estado">
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="IdEstado" ColumnName="IdEstado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GastosViajeDetalle">
+            <EntityTypeMapping TypeName="AventasModel.GastosViajeDetalle">
+              <MappingFragment StoreEntitySet="GastosViajeDetalle">
+                <ScalarProperty Name="importeGravado" ColumnName="importeGravado" />
+                <ScalarProperty Name="importeExento" ColumnName="importeExento" />
+                <ScalarProperty Name="serie" ColumnName="serie" />
+                <ScalarProperty Name="Administrador" ColumnName="Administrador" />
+                <ScalarProperty Name="DescripcionGasto" ColumnName="DescripcionGasto" />
+                <ScalarProperty Name="MensajeAX" ColumnName="MensajeAX" />
+                <ScalarProperty Name="DescripcionAdmin" ColumnName="DescripcionAdmin" />
+                <ScalarProperty Name="IdEstado" ColumnName="IdEstado" />
+                <ScalarProperty Name="Imagen" ColumnName="Imagen" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="FechaFactura" ColumnName="FechaFactura" />
+                <ScalarProperty Name="ValorFactura" ColumnName="ValorFactura" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="NoFactura" ColumnName="NoFactura" />
+                <ScalarProperty Name="Proveedor" ColumnName="Proveedor" />
+                <ScalarProperty Name="UsuarioAsesor" ColumnName="UsuarioAsesor" />
+                <ScalarProperty Name="IdCategoriaTipoGastoViaje" ColumnName="IdCategoriaTipoGastoViaje" />
+                <ScalarProperty Name="IdGastoViajeDetalle" ColumnName="IdGastoViajeDetalle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TipoGastoViaje">
+            <EntityTypeMapping TypeName="AventasModel.TipoGastoViaje">
+              <MappingFragment StoreEntitySet="TipoGastoViaje">
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="Empresa" ColumnName="Empresa" />
+                <ScalarProperty Name="Diario" ColumnName="Diario" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="IdTipoGastoViaje" ColumnName="IdTipoGastoViaje" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GastoViajeGrupoImpuesto">
+            <EntityTypeMapping TypeName="AventasModel.GastoViajeGrupoImpuesto">
+              <MappingFragment StoreEntitySet="GastoViajeGrupoImpuesto">
+                <ScalarProperty Name="grupoImpuestoArticuloExento" ColumnName="grupoImpuestoArticuloExento" />
+                <ScalarProperty Name="grupoImpuestoExento" ColumnName="grupoImpuestoExento" />
+                <ScalarProperty Name="grupoImpuestoArticuloGravado" ColumnName="grupoImpuestoArticuloGravado" />
+                <ScalarProperty Name="grupoImpuestoGravado" ColumnName="grupoImpuestoGravado" />
+                <ScalarProperty Name="empresaID" ColumnName="empresaID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CategoriaTipoGastoViaje">
+            <EntityTypeMapping TypeName="AventasModel.CategoriaTipoGastoViaje">
+              <MappingFragment StoreEntitySet="CategoriaTipoGastoViaje">
+                <ScalarProperty Name="CuentaContrapartida" ColumnName="CuentaContrapartida" />
+                <ScalarProperty Name="ProveedorPredefinido" ColumnName="ProveedorPredefinido" />
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="ImagenObligatoria" ColumnName="ImagenObligatoria" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="FacturaObligatoria" ColumnName="FacturaObligatoria" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="IdTipoGastoViaje" ColumnName="IdTipoGastoViaje" />
+                <ScalarProperty Name="IdCategoriaTipoGastoViaje" ColumnName="IdCategoriaTipoGastoViaje" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
