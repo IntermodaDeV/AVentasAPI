@@ -8,7 +8,7 @@ namespace AventasApi.enums
     public enum EstadoBodega 
     {
        SinRecibir,
-       Procesando,
+       Procesandas,
        Tranferidas,
        aprobadas,
        rechazadas
