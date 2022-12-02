@@ -31,34 +31,63 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-
-                    List<DevolucionesViewModel> devolucion = await ctx.Devolucion.Where(x => x.EstadoBodega == bodegaEstado && x.NumeroRMA != null  && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFin && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
+                    List<DevolucionesViewModel> devolucion = null;
+                    var devolucionesAprovadas = ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true).Select(x => x.NumDevolucion).ToList();
+                    if (bodegaEstado == 5)
                     {
-                        NumDevolucion = x.NumDevolucion,
-                        NumeroRMA = x.NumeroRMA,
-                        PedidoDevolucion = x.PedidoDevolucion,
-                        CodigoCliente = x.CodigoCliente,
-                        NombreCliente = x.Clientes.Nombre,
-                        motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
-                        TotalUnidades = x.TotalUnidades,
-                        Estado = x.Estado,
-                        FechaCreacion = x.FechaCrea.Value,
-                        SubTotal = x.Subtotal,
-                        Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
-                        EstadoBodega = x.EstadoBodega,
-                        Cliente = new ClienteViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == null && x.NumeroRMA != null && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFin && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
                         {
-                            Direccion = x.Clientes.Direccion,
-                            Moneda = x.Clientes.IdMoneda,
-                            EmpresaId = x.Clientes.EmpresaId
-                        }
-                    }).ToListAsync();
+                            NumDevolucion = x.NumDevolucion,
+                            NumeroRMA = x.NumeroRMA,
+                            PedidoDevolucion = x.PedidoDevolucion,
+                            CodigoCliente = x.CodigoCliente,
+                            NombreCliente = x.Clientes.Nombre,
+                            motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                            TotalUnidades = x.TotalUnidades,
+                            Estado = x.Estado,
+                            FechaCreacion = x.FechaCrea.Value,
+                            SubTotal = x.Subtotal,
+                            Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
+                            EstadoBodega = x.EstadoBodega,
+                            Cliente = new ClienteViewModel
+                            {
+                                Direccion = x.Clientes.Direccion,
+                                Moneda = x.Clientes.IdMoneda,
+                                EmpresaId = x.Clientes.EmpresaId
+                            }
+                        }).ToListAsync();
 
-                    if(devolucion.Count == 0)
+                    }
+                    else {                  
+                                                              
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado && x.NumeroRMA != null  && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFin && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
+                        {                        
+                            NumDevolucion = x.NumDevolucion,
+                            NumeroRMA = x.NumeroRMA,
+                            PedidoDevolucion = x.PedidoDevolucion,
+                            CodigoCliente = x.CodigoCliente,
+                            NombreCliente = x.Clientes.Nombre,
+                            motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                            TotalUnidades = x.TotalUnidades,
+                            Estado = x.Estado,
+                            FechaCreacion = x.FechaCrea.Value,
+                            SubTotal = x.Subtotal,
+                            Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
+                            EstadoBodega = x.EstadoBodega,
+                            Cliente = new ClienteViewModel
+                            {
+                                Direccion = x.Clientes.Direccion,
+                                Moneda = x.Clientes.IdMoneda,
+                                EmpresaId = x.Clientes.EmpresaId
+                            }
+                        }).ToListAsync();
+                    }
+
+                    if (devolucion.Count == 0)
                     {
                         var estado =  Enum.GetName(typeof(EstadoBodega), bodegaEstado); ;
 
-                      return  BadRequest($"No se encuentran devoluciones {estado} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
+                      return  BadRequest($"No se encuentran devoluciones {estado.Replace("_", " ") } entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
                     }
 
                     return Ok(devolucion);
@@ -79,33 +108,63 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
+                    List<DevolucionesViewModel> devolucion = null;
+                    var devolucionesAprovadas = ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true).Select(x => x.NumDevolucion).ToList();
 
-                    List<DevolucionesViewModel> devolucion = await ctx.Devolucion.Where(x => x.EstadoBodega == bodegaEstado && x.NumeroRMA != null && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFin).Select(x => new DevolucionesViewModel
+                    if(bodegaEstado == 5) 
                     {
-                        NumDevolucion = x.NumDevolucion,
-                        NumeroRMA = x.NumeroRMA,
-                        PedidoDevolucion = x.PedidoDevolucion,
-                        CodigoCliente = x.CodigoCliente,
-                        NombreCliente = x.Clientes.Nombre,
-                        motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
-                        TotalUnidades = x.TotalUnidades,
-                        Estado = x.Estado,
-                        FechaCreacion = x.FechaCrea.Value,
-                        SubTotal = x.Subtotal,
-                        Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
-                        EstadoBodega = x.EstadoBodega,
-                        Cliente = new ClienteViewModel
-                        {                            
-                            Direccion = x.Clientes.Direccion,
-                            Moneda = x.Clientes.IdMoneda,
-                            EmpresaId = x.Clientes.EmpresaId
-                        }
-                    }).ToListAsync();
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == null && x.NumeroRMA != null && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFin).Select(x => new DevolucionesViewModel
+                        {
+                            NumDevolucion = x.NumDevolucion,
+                            NumeroRMA = x.NumeroRMA,
+                            PedidoDevolucion = x.PedidoDevolucion,
+                            CodigoCliente = x.CodigoCliente,
+                            NombreCliente = x.Clientes.Nombre,
+                            motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                            TotalUnidades = x.TotalUnidades,
+                            Estado = x.Estado,
+                            FechaCreacion = x.FechaCrea.Value,
+                            SubTotal = x.Subtotal,
+                            Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
+                            EstadoBodega = x.EstadoBodega,
+                            Cliente = new ClienteViewModel
+                            {
+                                Direccion = x.Clientes.Direccion,
+                                Moneda = x.Clientes.IdMoneda,
+                                EmpresaId = x.Clientes.EmpresaId
+                            }
+                        }).ToListAsync();
+                    }
+                    else
+                    {
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado && x.NumeroRMA != null && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFin).Select(x => new DevolucionesViewModel
+                        {
+                            NumDevolucion = x.NumDevolucion,
+                            NumeroRMA = x.NumeroRMA,
+                            PedidoDevolucion = x.PedidoDevolucion,
+                            CodigoCliente = x.CodigoCliente,
+                            NombreCliente = x.Clientes.Nombre,
+                            motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                            TotalUnidades = x.TotalUnidades,
+                            Estado = x.Estado,
+                            FechaCreacion = x.FechaCrea.Value,
+                            SubTotal = x.Subtotal,
+                            Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
+                            EstadoBodega = x.EstadoBodega,
+                            Cliente = new ClienteViewModel
+                            {
+                                Direccion = x.Clientes.Direccion,
+                                Moneda = x.Clientes.IdMoneda,
+                                EmpresaId = x.Clientes.EmpresaId
+                            }
+                        }).ToListAsync();
+
+                    }
 
                     if (devolucion.Count == 0)
                     {
                         var estado = Enum.GetName(typeof(EstadoBodega), bodegaEstado); ;
-                        return BadRequest($"No se encuentran devoluciones {estado} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
+                        return BadRequest($"No se encuentran devoluciones {estado.Replace("_", " ")} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
                     }
 
                     return Ok(devolucion);
