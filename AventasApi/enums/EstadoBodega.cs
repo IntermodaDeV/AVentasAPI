@@ -13,4 +13,13 @@ namespace AventasApi.enums
         Aprobadas_en_calidad,
         Rechazadas_en_calidad
     }
+
+    public enum EstadoBodegaEmail
+    {
+        Sin_Recibir_en_calidad,
+        Recepcionada_en_calidad,
+        Transferida_a_bodega,
+        Aprobada_en_calidad,
+        Rechazada_en_calidad
+    }
 }
