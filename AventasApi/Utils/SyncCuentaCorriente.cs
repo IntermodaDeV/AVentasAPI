@@ -124,7 +124,7 @@ namespace AventasApi.Utils
                             newEntity.AcuerdosxCliente = context.AcuerdosxCliente.FirstOrDefault(p => p.IdAcuerdoxCliente == subFactura.AGREEMENT_NAME);
                             newEntity.FechaVencimiento = DateTime.TryParseExact(subFactura.DUE_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DUE_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             newEntity.FechaMaxDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
-                            newEntity.FechaVencimientoDescuento = DateTime.TryParseExact(subFactura.LIMIT_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.LIMIT_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
+                            newEntity.FechaVencimientoDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             newEntity.Saldo = Decimal.TryParse(subFactura.AMOUNT_CUR, out ssFactura) ? ssFactura : 0;
                             fFactura.IdAcuerdoxCliente = String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? null : subFactura.AGREEMENT_NAME;
                             if (fFactura.Saldo == 0)
@@ -158,7 +158,7 @@ namespace AventasApi.Utils
                             entityFound.AcuerdosxCliente = context.AcuerdosxCliente.FirstOrDefault(p => p.IdAcuerdoxCliente == subFactura.AGREEMENT_NAME);
                             entityFound.FechaVencimiento = DateTime.TryParseExact(subFactura.DUE_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DUE_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             entityFound.FechaMaxDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
-                            entityFound.FechaVencimientoDescuento = DateTime.TryParseExact(subFactura.LIMIT_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.LIMIT_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
+                            entityFound.FechaVencimientoDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             entityFound.Saldo = Decimal.TryParse(subFactura.AMOUNT_CUR, out ssFactura) ? ssFactura : 0;
                             if (fFactura.Saldo == 0)
                             {

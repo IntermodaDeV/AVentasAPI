@@ -927,7 +927,7 @@ namespace AventasApi.Controllers
 
                         foreach (var cliente in clientes)
                         {
-                            cliente.AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
+                            cliente.AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0.1M).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                             {
                                 IdTipoPedido = asa.Key.IdTipoPedido,
                                 TipoPedido = asa.Key.TipoPedido,
@@ -937,7 +937,7 @@ namespace AventasApi.Controllers
                                     Acuerdo = acu.Key == null ? "" : acu.Key.IdAcuerdoxCliente,
                                     Valor = acu.Key == null ? "0" : (acu.Key.Total ?? 0).ToString(),
                                     Disponible = acu.Key == null ? "0" : (acu.Key.Saldo ?? 0).ToString(),
-                                    Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
+                                    Facturas = acu.Where(fac => fac.Saldo > 0.1M).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                                     {
                                         IdFactura = facCli.IdFactura,
                                         Factura = facCli.Factura,
@@ -974,7 +974,7 @@ namespace AventasApi.Controllers
                                             IdAcuerdoxCliente = subFac.IdAcuerdoxCliente,
                                             FechaVencimiento = subFac.FechaVencimiento,
                                             FechaMaxDescuento = subFac.AcuerdosxCliente != null ? subFac.FechaMaxDescuento : subFac.FacturasxCliente.FechaMaxDescuento,
-                                            FechaVencimientoDescuento = subFac.FechaVencimientoDescuento,
+                                            FechaVencimientoDescuento = subFac.FechaMaxDescuento,
                                             Saldo = subFac.Saldo,
                                             SaldoDivisa = subFac.SaldoDivisa,
                                             Descuento = subFac.Descuento,
@@ -1079,7 +1079,7 @@ namespace AventasApi.Controllers
                     }).ToListAsync();
 
 
-                    clientes[0].AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
+                    clientes[0].AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente && x.Saldo > 0.1M).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                     {
                         IdTipoPedido = asa.Key.IdTipoPedido,
                         TipoPedido = asa.Key.TipoPedido,
@@ -1089,7 +1089,7 @@ namespace AventasApi.Controllers
                             Acuerdo = acu.Key == null ? "" : acu.Key.IdAcuerdoxCliente,
                             Valor = acu.Key == null ? "0" : (acu.Key.Total ?? 0).ToString(),
                             Disponible = acu.Key == null ? "0" : (acu.Key.Saldo ?? 0).ToString(),
-                            Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
+                            Facturas = acu.Where(fac => fac.Saldo > 0.1M).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                             {
                                 IdFactura = facCli.IdFactura,
                                 Factura = facCli.Factura,
@@ -1126,7 +1126,7 @@ namespace AventasApi.Controllers
                                     IdAcuerdoxCliente = subFac.IdAcuerdoxCliente,
                                     FechaVencimiento = subFac.FechaVencimiento,
                                     FechaMaxDescuento = subFac.AcuerdosxCliente != null ? subFac.FechaMaxDescuento : subFac.FacturasxCliente.FechaMaxDescuento,
-                                    FechaVencimientoDescuento = subFac.FechaVencimientoDescuento,
+                                    FechaVencimientoDescuento = subFac.FechaMaxDescuento,
                                     Saldo = subFac.Saldo,
                                     SaldoDivisa = subFac.SaldoDivisa,
                                     Descuento = subFac.Descuento,
