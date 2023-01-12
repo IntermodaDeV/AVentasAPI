@@ -20,6 +20,7 @@ namespace DBData.Database
         public string CodigoDescuento { get; set; }
         public Nullable<int> DiasDescuento { get; set; }
         public Nullable<decimal> Porcentaje { get; set; }
+        public bool activo { get; set; }
     
         public virtual Descuento Descuento { get; set; }
         public virtual MaestroLinea MaestroLinea { get; set; }

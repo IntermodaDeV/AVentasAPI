@@ -38,6 +38,7 @@ namespace DBData.Database
         public string IdLinea { get; set; }
         public Nullable<System.DateTime> Desde { get; set; }
         public Nullable<System.DateTime> Hasta { get; set; }
+        public string GrupoDescuento { get; set; }
     
         public virtual Empresa Empresa { get; set; }
         public virtual MaestroLinea MaestroLinea { get; set; }
