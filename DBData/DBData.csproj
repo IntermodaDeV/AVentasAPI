@@ -456,8 +456,14 @@
     <Compile Include="Database\SP_ObtencionFacturas_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\SP_ObtenerProductosRMA_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\SP_POST_LISTA_EJECUCION_MANUAL_Result.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\SP_PRODUCTOSENBASEAL_MRA_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\SP_VISITASPORMES_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
