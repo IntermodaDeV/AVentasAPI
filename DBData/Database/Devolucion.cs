@@ -42,6 +42,7 @@ namespace DBData.Database
         public Nullable<decimal> Subtotal { get; set; }
         public string almacen { get; set; }
         public Nullable<int> IdUbicacion { get; set; }
+        public Nullable<int> EstadoBodega { get; set; }
     
         public virtual Clientes Clientes { get; set; }
         public virtual Empresa Empresa { get; set; }

@@ -413,6 +413,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Subtotal" Type="decimal" Precision="10" Scale="2" />
           <Property Name="almacen" Type="varchar" MaxLength="10" />
           <Property Name="IdUbicacion" Type="int" />
+          <Property Name="EstadoBodega" Type="int" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -10648,6 +10649,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="almacen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="IdUbicacion" Type="Int32" />
           <NavigationProperty Name="UbicacionesXAlmacen" Relationship="AventasModel.FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion" FromRole="Devolucion" ToRole="UbicacionesXAlmacen" />
+          <Property Name="EstadoBodega" Type="Int32" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -13022,6 +13024,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Devolucion">
             <EntityTypeMapping TypeName="AventasModel.Devolucion">
               <MappingFragment StoreEntitySet="Devolucion">
+                <ScalarProperty Name="EstadoBodega" ColumnName="EstadoBodega" />
                 <ScalarProperty Name="IdUbicacion" ColumnName="IdUbicacion" />
                 <ScalarProperty Name="almacen" ColumnName="almacen" />
                 <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />

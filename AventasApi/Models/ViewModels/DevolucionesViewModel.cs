@@ -42,5 +42,7 @@ namespace AventasApi.Models.ViewModels
         public ClienteViewModel Cliente { get; set; }
         public int? TotalUnidades { get;  set; }
         public decimal? SubTotal { get;  set; }
+
+        public int? EstadoBodega { get; set; }
     }
 }
