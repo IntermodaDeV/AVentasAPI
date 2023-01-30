@@ -39,10 +39,13 @@ namespace AventasApi.Controllers
                     DateTime fechaFinHora = fechaFin.AddHours(24);
 
                     List<DevolucionesViewModel> devolucion = null;
-                    var devolucionesAprovadas = ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true &&  x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora  ).Select(x => x.NumDevolucion).ToList();
+                    var devolucionesAprovadas = (bodegaEstado == 4) ? ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true &&  x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora  ).Select(x => x.NumDevolucion).ToList() :
+                                                 (bodegaEstado == 3) ? ctx.AprobacionDevoluciones.Where(x => x.Aprobado == false && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList() :
+                                                 (bodegaEstado == 5) ? ctx.AprobacionDevoluciones.Where(x =>  x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList():
+                                                  ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList();
                     if (bodegaEstado == 5)
                     {
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.NumeroRMA != null && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion)  && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
                         {
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
@@ -62,11 +65,7 @@ namespace AventasApi.Controllers
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
                             },
-                            //DevolucionesEstatus = new AprobacionDevolucionesViewModel
-                            //{
-                            //    Estado = true,
-                            //}
-
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()                           
 
                         }).ToListAsync();
 
@@ -101,12 +100,13 @@ namespace AventasApi.Controllers
                                 Direccion = x.Clientes.Direccion,
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
-                            }
+                            },
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
                         }).ToListAsync();
                     }
                     else {                  
                                                               
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado && x.NumeroRMA != null && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado  && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
                         {                        
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
@@ -125,7 +125,8 @@ namespace AventasApi.Controllers
                                 Direccion = x.Clientes.Direccion,
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
-                            }
+                            },
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
                         }).ToListAsync();
                     }
 
@@ -157,11 +158,14 @@ namespace AventasApi.Controllers
                 {
                     DateTime fechaFinHora = fechaFin.AddHours(24);
                     List<DevolucionesViewModel> devolucion = null;
-                    var devolucionesAprovadas = ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList();
+                    var devolucionesAprovadas = (bodegaEstado == 4) ? ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList() :
+                                                 (bodegaEstado == 3) ? ctx.AprobacionDevoluciones.Where(x => x.Aprobado == false && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList() :
+                                                 (bodegaEstado == 5) ? ctx.AprobacionDevoluciones.Where(x => x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList() :
+                                                  ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList();
 
                     if (bodegaEstado == 5) 
                     {
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion)  && x.NumeroRMA != null).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) ).Select(x => new DevolucionesViewModel
                         {
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
@@ -180,12 +184,13 @@ namespace AventasApi.Controllers
                                 Direccion = x.Clientes.Direccion,
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
-                            }
+                            },
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
                         }).ToListAsync();
                     }
                     else
                     {
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.NumeroRMA != null ).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) ).Select(x => new DevolucionesViewModel
                         {
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
@@ -204,7 +209,8 @@ namespace AventasApi.Controllers
                                 Direccion = x.Clientes.Direccion,
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
-                            }
+                            },
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
                         }).ToListAsync();
 
                     }
@@ -243,7 +249,7 @@ namespace AventasApi.Controllers
 
 
 
-                    if (result > 0 && usuarioData != null)
+                    if (result > 0 && usuarioData.Correo != null)
                     {
                         var correoPrincipal = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "CorreoPrincipal").FirstOrDefault();
                         var usuario = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "UsuarioCorreo").FirstOrDefault();

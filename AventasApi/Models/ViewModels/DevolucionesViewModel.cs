@@ -46,7 +46,7 @@ namespace AventasApi.Models.ViewModels
 
         public int? EstadoBodega { get; set; }
 
-        public virtual AprobacionDevolucionesViewModel DevolucionesEstatus { get; set; }
+        public bool? Aprobado { get; set; }
 
     }
 }
