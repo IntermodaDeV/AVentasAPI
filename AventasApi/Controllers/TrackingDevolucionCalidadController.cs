@@ -1,9 +1,11 @@
 ﻿using AventasApi.enums;
 using AventasApi.Models;
+using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
 using AventasApi.Services.Authentication;
 using DBData.Database;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -33,12 +35,55 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
+
+                    DateTime fechaFinHora = fechaFin.AddHours(24);
+
                     List<DevolucionesViewModel> devolucion = null;
-                    var devolucionesAprovadas = ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true).Select(x => x.NumDevolucion).ToList();
+                    var devolucionesAprovadas = ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true &&  x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora  ).Select(x => x.NumDevolucion).ToList();
                     if (bodegaEstado == 5)
                     {
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == null && x.NumeroRMA != null && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFin && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.NumeroRMA != null && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
                         {
+                            NumDevolucion = x.NumDevolucion,
+                            NumeroRMA = x.NumeroRMA,
+                            PedidoDevolucion = x.PedidoDevolucion,
+                            CodigoCliente = x.CodigoCliente,
+                            NombreCliente = x.Clientes.Nombre,
+                            motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                            TotalUnidades = x.TotalUnidades,
+                            Estado = x.Estado,
+                            FechaCreacion = x.FechaCrea.Value,
+                            SubTotal = x.Subtotal,
+                            Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
+                            EstadoBodega = x.EstadoBodega,
+                            Cliente = new ClienteViewModel
+                            {
+                                Direccion = x.Clientes.Direccion,
+                                Moneda = x.Clientes.IdMoneda,
+                                EmpresaId = x.Clientes.EmpresaId
+                            },
+                            //DevolucionesEstatus = new AprobacionDevolucionesViewModel
+                            //{
+                            //    Estado = true,
+                            //}
+
+
+                        }).ToListAsync();
+
+                    }
+                    else if(bodegaEstado ==3 ||bodegaEstado ==4) {
+
+                        String estado = "";
+
+                        if (bodegaEstado == 3) {
+                            estado = "Pendiente Aprobacion";
+                        } else
+                        {
+                            estado = "Aprobado";
+                        }
+                                                              
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.Estado == estado  && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
+                        {                        
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
                             PedidoDevolucion = x.PedidoDevolucion,
@@ -58,11 +103,10 @@ namespace AventasApi.Controllers
                                 EmpresaId = x.Clientes.EmpresaId
                             }
                         }).ToListAsync();
-
                     }
                     else {                  
                                                               
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado && x.NumeroRMA != null  && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFin && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado && x.NumeroRMA != null && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
                         {                        
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
@@ -85,11 +129,12 @@ namespace AventasApi.Controllers
                         }).ToListAsync();
                     }
 
-                    if (devolucion.Count == 0)
+                    if (devolucion.Count == 0 && bodegaEstado != 3)
                     {
                         var estado =  Enum.GetName(typeof(EstadoBodega), bodegaEstado); ;
 
-                      return  BadRequest($"No se encuentran devoluciones {estado.Replace("_", " ") } entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
+                      return estado != "Todo" ? BadRequest($"No se encuentran devoluciones entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}") :
+                            BadRequest($"No se encuentran devoluciones {estado.Replace("_", " ")} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
                     }
 
                     return Ok(devolucion);
@@ -110,12 +155,13 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
+                    DateTime fechaFinHora = fechaFin.AddHours(24);
                     List<DevolucionesViewModel> devolucion = null;
-                    var devolucionesAprovadas = ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true).Select(x => x.NumDevolucion).ToList();
+                    var devolucionesAprovadas = ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList();
 
-                    if(bodegaEstado == 5) 
+                    if (bodegaEstado == 5) 
                     {
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == null && x.NumeroRMA != null && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFin).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion)  && x.NumeroRMA != null).Select(x => new DevolucionesViewModel
                         {
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
@@ -139,7 +185,7 @@ namespace AventasApi.Controllers
                     }
                     else
                     {
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado && x.NumeroRMA != null && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFin).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.NumeroRMA != null ).Select(x => new DevolucionesViewModel
                         {
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
@@ -166,7 +212,8 @@ namespace AventasApi.Controllers
                     if (devolucion.Count == 0)
                     {
                         var estado = Enum.GetName(typeof(EstadoBodega), bodegaEstado); 
-                        return BadRequest($"No se encuentran devoluciones {estado.Replace("_", " ")} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
+                        return estado != "Todo" ? BadRequest($"No se encuentran devoluciones entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}") : 
+                            BadRequest($"No se encuentran devoluciones {estado.Replace("_", " ")} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
                     }
 
                     return Ok(devolucion);
@@ -192,19 +239,23 @@ namespace AventasApi.Controllers
                     oldData.EstadoBodega = estadoBodega;
                     result = await ctx.SaveChangesAsync();
 
-                    if (result > 0)
+                    var usuarioData = await ctx.Usuarios.FirstOrDefaultAsync(x => x.usuario == oldData.CodigoAsesor);
+
+
+
+                    if (result > 0 && usuarioData != null)
                     {
                         var correoPrincipal = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "CorreoPrincipal").FirstOrDefault();
                         var usuario = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "UsuarioCorreo").FirstOrDefault();
                         var password = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "CredencialCorreo").FirstOrDefault();
                         var port = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "MailPort").FirstOrDefault();
                         var host = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "Host").FirstOrDefault();
-                        var estado = Enum.GetName(typeof(EstadoBodegaEmail), estadoBodega);
+                        var estado = Enum.GetName(typeof(EstadoBodega), estadoBodega);
                                               
                         MailMessage mail = new MailMessage();
                         mail.IsBodyHtml = true;
                         mail.From = new MailAddress(correoPrincipal.Valor, usuario.Valor);
-                        mail.To.Add(new MailAddress("cbueso@intermoda.com.hn", "Cabo"));
+                        mail.To.Add(new MailAddress(usuarioData.Correo, usuarioData.usuario));
                         mail.Subject = $"Seguimiento de calidad devolucion {numDevolucion}";
                         mail.Body = $"<h1>Se cambio es estado de la devolucion {numDevolucion} a {estado.Replace("_", " ")} <h1>";
 

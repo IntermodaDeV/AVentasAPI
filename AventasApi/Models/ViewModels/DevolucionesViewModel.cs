@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DBData.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -44,5 +45,8 @@ namespace AventasApi.Models.ViewModels
         public decimal? SubTotal { get;  set; }
 
         public int? EstadoBodega { get; set; }
+
+        public virtual AprobacionDevolucionesViewModel DevolucionesEstatus { get; set; }
+
     }
 }
