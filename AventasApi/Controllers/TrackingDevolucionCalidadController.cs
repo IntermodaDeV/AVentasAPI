@@ -43,7 +43,7 @@ namespace AventasApi.Controllers
                                                  (bodegaEstado == 3) ? ctx.AprobacionDevoluciones.Where(x => x.Aprobado == false && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList() :
                                                  (bodegaEstado == 5) ? ctx.AprobacionDevoluciones.Where(x =>  x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList():
                                                   ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList();
-                    if (bodegaEstado == 5)
+                    if (bodegaEstado == 5 || bodegaEstado == 3 || bodegaEstado == 4)
                     {
                         devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion)  && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
                         {
@@ -70,40 +70,7 @@ namespace AventasApi.Controllers
                         }).ToListAsync();
 
                     }
-                    else if(bodegaEstado ==3 ||bodegaEstado ==4) {
-
-                        String estado = "";
-
-                        if (bodegaEstado == 3) {
-                            estado = "Pendiente Aprobacion";
-                        } else
-                        {
-                            estado = "Aprobado";
-                        }
-                                                              
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.Estado == estado  && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
-                        {                        
-                            NumDevolucion = x.NumDevolucion,
-                            NumeroRMA = x.NumeroRMA,
-                            PedidoDevolucion = x.PedidoDevolucion,
-                            CodigoCliente = x.CodigoCliente,
-                            NombreCliente = x.Clientes.Nombre,
-                            motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
-                            TotalUnidades = x.TotalUnidades,
-                            Estado = x.Estado,
-                            FechaCreacion = x.FechaCrea.Value,
-                            SubTotal = x.Subtotal,
-                            Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
-                            EstadoBodega = x.EstadoBodega,
-                            Cliente = new ClienteViewModel
-                            {
-                                Direccion = x.Clientes.Direccion,
-                                Moneda = x.Clientes.IdMoneda,
-                                EmpresaId = x.Clientes.EmpresaId
-                            },
-                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
-                        }).ToListAsync();
-                    }
+                    
                     else {                  
                                                               
                         devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado  && x.CodigoAsesor == asesor).Select(x => new DevolucionesViewModel
@@ -134,8 +101,8 @@ namespace AventasApi.Controllers
                     {
                         var estado =  Enum.GetName(typeof(EstadoBodega), bodegaEstado); ;
 
-                      return estado != "Todo" ? BadRequest($"No se encuentran devoluciones entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}") :
-                            BadRequest($"No se encuentran devoluciones {estado.Replace("_", " ")} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
+                      return estado == "Todo" ? BadRequest($"No se encuentran devoluciones entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}") :
+                            BadRequest($"No se encuentran devoluciones en estado {estado.Replace("_", " ")} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
                     }
 
                     return Ok(devolucion);
@@ -218,8 +185,8 @@ namespace AventasApi.Controllers
                     if (devolucion.Count == 0)
                     {
                         var estado = Enum.GetName(typeof(EstadoBodega), bodegaEstado); 
-                        return estado != "Todo" ? BadRequest($"No se encuentran devoluciones entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}") : 
-                            BadRequest($"No se encuentran devoluciones {estado.Replace("_", " ")} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
+                        return estado == "Todo" ? BadRequest($"No se encuentran devoluciones entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}") : 
+                            BadRequest($"No se encuentran devoluciones en estado {estado.Replace("_", " ")} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
                     }
 
                     return Ok(devolucion);
