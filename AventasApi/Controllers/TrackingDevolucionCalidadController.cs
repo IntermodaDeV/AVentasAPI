@@ -101,7 +101,7 @@ namespace AventasApi.Controllers
                     {
                         var estado =  Enum.GetName(typeof(EstadoBodega), bodegaEstado); ;
 
-                      return estado == "Todo" ? BadRequest($"No se encuentran devoluciones entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}") :
+                      return estado == "Todos" ? BadRequest($"No se encuentran devoluciones entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}") :
                             BadRequest($"No se encuentran devoluciones en estado {estado.Replace("_", " ")} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
                     }
 
@@ -185,7 +185,7 @@ namespace AventasApi.Controllers
                     if (devolucion.Count == 0)
                     {
                         var estado = Enum.GetName(typeof(EstadoBodega), bodegaEstado); 
-                        return estado == "Todo" ? BadRequest($"No se encuentran devoluciones entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}") : 
+                        return estado == "Todos" ? BadRequest($"No se encuentran devoluciones entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}") : 
                             BadRequest($"No se encuentran devoluciones en estado {estado.Replace("_", " ")} entre {fechaInicio.ToString("yyyy/MM/dd")} y {fechaFin.ToString("yyyy/MM/dd")}");
                     }
 
