@@ -130,7 +130,7 @@ namespace AventasApi.Controllers
                                                  (bodegaEstado == 5) ? ctx.AprobacionDevoluciones.Where(x => x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList() :
                                                   ctx.AprobacionDevoluciones.Where(x => x.Aprobado == true && x.FechaCrea >= fechaInicio && x.FechaCrea <= fechaFinHora).Select(x => x.NumDevolucion).ToList();
 
-                    if (bodegaEstado == 5) 
+                    if (bodegaEstado == 5 || bodegaEstado == 3 || bodegaEstado == 4) 
                     {
                         devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) ).Select(x => new DevolucionesViewModel
                         {
