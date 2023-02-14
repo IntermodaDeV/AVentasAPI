@@ -57,6 +57,8 @@ namespace DBData.Database
         public string Sitio { get; set; }
         public string Almacen { get; set; }
         public string Ubicacion { get; set; }
+        public Nullable<System.DateTime> FechaSincronizacion { get; set; }
+        public Nullable<int> APSALESSTATUS { get; set; }
     
         public virtual Clientes Clientes { get; set; }
         public virtual Colecciones Colecciones { get; set; }

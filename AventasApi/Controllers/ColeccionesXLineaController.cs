@@ -377,6 +377,8 @@ namespace AventasApi.Controllers
                                        NombreProducto = pxc.NombreProducto,
                                        StockVisible = pxc.StockVisible,
                                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
+                                       InOut = pxc.InOut,
+                                       Deshabilitado = pxc.Deshabilitado,
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
                                            GrupoPrecio = precio.GrupoPrecio,
@@ -494,6 +496,8 @@ namespace AventasApi.Controllers
                         CodigoProducto = pxc.IdProducto,
                         NombreProducto = pxc.NombreProducto,
                         StockVisible = pxc.StockVisible,
+                        InOut = pxc.InOut,
+                        Deshabilitado = pxc.Deshabilitado,
                         GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
                         Precio = pxc.PreciosxProducto.Where(preEsp => preEsp.GrupoPrecio == grupoPrecio).Select(precio => new PrecioXProductoViewModel
                         {
@@ -587,6 +591,8 @@ namespace AventasApi.Controllers
                                        NombreProducto = pxc.NombreProducto,
                                        StockVisible = pxc.StockVisible,
                                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
+                                       InOut = pxc.InOut,
+                                       Deshabilitado = pxc.Deshabilitado,
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
                                            GrupoPrecio = precio.GrupoPrecio,

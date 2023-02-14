@@ -20,6 +20,9 @@ namespace AventasApi.Models.ViewModels
         public List<ColorSinStock> ListaColoresSinStock { get; internal set; }
         public bool StockVisible { get; set; }
 
+        public bool InOut { get; set; }
+        public bool Deshabilitado { get; set; }
+
         public List<TallaViewModel> ListaTalla;
         public List<ColorViewModel> ListaColores;
         public List<FisicoDisponibleViewModel> fisicaDisponible;

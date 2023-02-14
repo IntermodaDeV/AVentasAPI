@@ -43,6 +43,8 @@ namespace DBData.Database
         public bool VisibleParaVentas { get; set; }
         public Nullable<decimal> CantidadMinima { get; set; }
         public bool StockVisible { get; set; }
+        public bool InOut { get; set; }
+        public bool Deshabilitado { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AtributosxProducto> AtributosxProducto { get; set; }

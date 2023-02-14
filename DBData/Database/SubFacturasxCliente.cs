@@ -45,6 +45,9 @@ namespace DBData.Database
         public string ReferenciaCuotas { get; set; }
         public Nullable<int> IdFactura { get; set; }
         public string NumeroFEL { get; set; }
+        public Nullable<bool> completaCuota { get; set; }
+        public Nullable<decimal> Flete { get; set; }
+        public Nullable<decimal> Valor { get; set; }
     
         public virtual AcuerdosxCliente AcuerdosxCliente { get; set; }
         public virtual Clientes Clientes { get; set; }
