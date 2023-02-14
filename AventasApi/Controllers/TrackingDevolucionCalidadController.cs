@@ -157,7 +157,7 @@ namespace AventasApi.Controllers
                     }
                     else
                     {
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) ).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado).Select(x => new DevolucionesViewModel
                         {
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
