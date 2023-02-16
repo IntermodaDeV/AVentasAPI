@@ -321,6 +321,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="CodigoColor" Type="varchar" MaxLength="50" />
           <Property Name="IdProducto" Type="int" />
           <Property Name="Disponible" Type="bit" />
+          <Property Name="Prioridad" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="ComunidadAutonoma">
           <Key>
@@ -1251,8 +1252,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="VisibleParaVentas" Type="bit" Nullable="false" />
           <Property Name="CantidadMinima" Type="decimal" Precision="18" Scale="2" />
           <Property Name="StockVisible" Type="bit" Nullable="false" />
-          <Property Name="InOut" Type="bit" Nullable="false" />
           <Property Name="Deshabilitado" Type="bit" Nullable="false" />
+          <Property Name="InOut" Type="bit" Nullable="false" />
+          <Property Name="Prioridad" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="PromesaPago">
           <Key>
@@ -5516,6 +5518,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Disponible" Type="Boolean" />
           <NavigationProperty Name="Colores" Relationship="Self.FK__ColoresxP__Codig__52793849" FromRole="ColoresxProducto" ToRole="Colores" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__ColoresxP__IdPro__536D5C82" FromRole="ColoresxProducto" ToRole="ProductosxColeccion" />
+          <Property Name="Prioridad" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Configuraciones">
           <Key>
@@ -5872,6 +5875,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="ProductosxColeccion" ToRole="DevolucionDetalle" />
           <Property Name="InOut" Type="Boolean" Nullable="false" />
           <Property Name="Deshabilitado" Type="Boolean" Nullable="false" />
+          <Property Name="Prioridad" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -11319,6 +11323,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="ColoresxProducto">
             <EntityTypeMapping TypeName="AventasModel.ColoresxProducto">
               <MappingFragment StoreEntitySet="ColoresxProducto">
+                <ScalarProperty Name="Prioridad" ColumnName="Prioridad" />
                 <ScalarProperty Name="IdColorxProducto" ColumnName="IdColorxProducto" />
                 <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
                 <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
@@ -11582,6 +11587,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="ProductosxColeccion">
             <EntityTypeMapping TypeName="AventasModel.ProductosxColeccion">
               <MappingFragment StoreEntitySet="ProductosxColeccion">
+                <ScalarProperty Name="Prioridad" ColumnName="Prioridad" />
                 <ScalarProperty Name="Deshabilitado" ColumnName="Deshabilitado" />
                 <ScalarProperty Name="InOut" ColumnName="InOut" />
                 <ScalarProperty Name="StockVisible" ColumnName="StockVisible" />

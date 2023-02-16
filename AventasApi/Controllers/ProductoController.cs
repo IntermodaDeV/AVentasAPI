@@ -77,5 +77,67 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("actualizarPrioridadProducto/{codigo}/{coleccion}/{prioridad}")]
+        public async Task<IHttpActionResult> actualizarPrioridadProducto(string codigo, string coleccion, int prioridad)
+        {
+            try
+            {
+
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    var productosBD = await context.ProductosxColeccion
+                    .Include(x => x.Colecciones)
+                        .Where(x => x.CodigoProducto == codigo && x.Colecciones.CodigoColeccion == coleccion)
+                        .ToListAsync();
+
+                    foreach (var producto in productosBD)
+                    {
+                        producto.Prioridad = prioridad;
+                    }
+
+                    if (productosBD.Count > 0)
+                    {
+                        await context.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("actualizarPrioridadColorProducto/{IdColorxProducto}/{prioridad}")]
+        public async Task<IHttpActionResult> ActualizarPrioridadColorProducto(int IdColorxProducto, int prioridad)
+        {
+            try
+            {
+
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    ColoresxProducto productosBD = await context.ColoresxProducto.Where(x => x.IdColorxProducto == IdColorxProducto)
+                        .FirstOrDefaultAsync();
+
+                    if(productosBD != null)
+                    {
+                        productosBD.Prioridad = prioridad;
+                    }
+
+                     await context.SaveChangesAsync();
+                   
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }
