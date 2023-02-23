@@ -59,6 +59,7 @@ namespace DBData.Database
         public Nullable<long> VersionRegistroBINT { get; set; }
         public Nullable<bool> IgnorarSeqFact { get; set; }
         public Nullable<bool> IncluyeImpuesto { get; set; }
+        public bool FlagClienteEspecial { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AcuerdosxCliente> AcuerdosxCliente { get; set; }

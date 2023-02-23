@@ -191,6 +191,7 @@
     <Compile Include="Controllers\LogsImpresionesController.cs" />
     <Compile Include="Controllers\MaestroBodegaAlmacenesController.cs" />
     <Compile Include="Controllers\MotivosDevolucionController.cs" />
+    <Compile Include="Controllers\ProductoController.cs" />
     <Compile Include="Controllers\ProductosDevolucionController.cs" />
     <Compile Include="Controllers\ProformaController.cs" />
     <Compile Include="Controllers\PromesaPagoController.cs" />

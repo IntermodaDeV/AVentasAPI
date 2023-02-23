@@ -24,6 +24,7 @@ namespace DBData.Database
         public string Codigo { get; set; }
         public string Descripcion { get; set; }
         public string EmpresaId { get; set; }
+        public bool activo { get; set; }
     
         public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
