@@ -4302,6 +4302,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="codigoProducto" Type="varchar" Mode="In" />
           <Parameter Name="cliente" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="SP_ObtenerProductosRMA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="rma" Type="varchar" Mode="In" />
+          <Parameter Name="pais" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
@@ -5875,8 +5879,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" FromRole="ProductosxColeccion" ToRole="PedidosDetalleFlotante" />
           <Property Name="StockVisible" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="ProductosxColeccion" ToRole="DevolucionDetalle" />
-          <Property Name="InOut" Type="Boolean" Nullable="false" />
           <Property Name="Deshabilitado" Type="Boolean" Nullable="false" />
+          <Property Name="InOut" Type="Boolean" Nullable="false" />
           <Property Name="Prioridad" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
@@ -5959,8 +5963,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="DocumentosTransitoxFactura" Relationship="AventasModel.FK__Documento__IdSub__10373EF7" FromRole="SubFacturasxCliente" ToRole="DocumentosTransitoxFactura" />
           <NavigationProperty Name="RecibosProformaDetalle" Relationship="AventasModel.FK__RecibosProformaDetalle__IdSubFactura" FromRole="SubFacturasxCliente" ToRole="RecibosProformaDetalle" />
           <Property Name="completaCuota" Type="Boolean" />
-          <Property Name="Flete" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="Valor" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Flete" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -7775,6 +7779,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="CategoriaTipoGastoViaje" EntitySet="CategoriaTipoGastoViaje" />
             <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
           </AssociationSet>
+          <FunctionImport Name="SP_ObtenerProductosRMA" ReturnType="Collection(AventasModel.SP_ObtenerProductosRMA_Result)">
+            <Parameter Name="rma" Mode="In" Type="String" />
+            <Parameter Name="pais" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -11186,6 +11194,13 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="SP_ObtenerProductosRMA_Result">
+          <Property Type="String" Name="codigoProducto" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="grupoTalla" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="talla" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="color" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="cantidad" Nullable="true" Precision="18" Scale="2" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11591,8 +11606,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <EntityTypeMapping TypeName="AventasModel.ProductosxColeccion">
               <MappingFragment StoreEntitySet="ProductosxColeccion">
                 <ScalarProperty Name="Prioridad" ColumnName="Prioridad" />
-                <ScalarProperty Name="Deshabilitado" ColumnName="Deshabilitado" />
                 <ScalarProperty Name="InOut" ColumnName="InOut" />
+                <ScalarProperty Name="Deshabilitado" ColumnName="Deshabilitado" />
                 <ScalarProperty Name="StockVisible" ColumnName="StockVisible" />
                 <ScalarProperty Name="CantidadMinima" ColumnName="CantidadMinima" />
                 <ScalarProperty Name="VisibleParaVentas" ColumnName="VisibleParaVentas" />
@@ -11653,8 +11668,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="SubFacturasxCliente">
             <EntityTypeMapping TypeName="AventasModel.SubFacturasxCliente">
               <MappingFragment StoreEntitySet="SubFacturasxCliente">
-                <ScalarProperty Name="Valor" ColumnName="Valor" />
                 <ScalarProperty Name="Flete" ColumnName="Flete" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
                 <ScalarProperty Name="completaCuota" ColumnName="completaCuota" />
                 <ScalarProperty Name="NumeroFEL" ColumnName="NumeroFEL" />
                 <ScalarProperty Name="IdSubFactura" ColumnName="IdSubFactura" />
@@ -13328,6 +13343,17 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_ObtenerProductosRMA" FunctionName="AventasModel.Store.SP_ObtenerProductosRMA">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerProductosRMA_Result">
+                <ScalarProperty Name="codigoProducto" ColumnName="codigoProducto" />
+                <ScalarProperty Name="grupoTalla" ColumnName="grupoTalla" />
+                <ScalarProperty Name="talla" ColumnName="talla" />
+                <ScalarProperty Name="color" ColumnName="color" />
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
