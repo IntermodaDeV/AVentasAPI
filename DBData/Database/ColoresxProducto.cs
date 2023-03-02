@@ -19,6 +19,7 @@ namespace DBData.Database
         public Nullable<int> IdProducto { get; set; }
         public Nullable<bool> Disponible { get; set; }
         public int Prioridad { get; set; }
+        public bool Deshabilitado { get; set; }
     
         public virtual Colores Colores { get; set; }
         public virtual ProductosxColeccion ProductosxColeccion { get; set; }

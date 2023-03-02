@@ -139,5 +139,34 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+
+        [HttpPost]
+        [Route("activasDeshabilitarColorPrducto/{IdColorxProducto}")]
+        public async Task<IHttpActionResult> ActivasDeshabilitarColorPrducto(int IdColorxProducto)
+        {
+            try
+            {
+
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    var colorBD = await context.ColoresxProducto.FirstOrDefaultAsync(a => a.IdColorxProducto == IdColorxProducto);
+
+                    if(colorBD != null)
+                    {
+                        colorBD.Deshabilitado = !colorBD.Deshabilitado;
+                        await context.SaveChangesAsync();
+                    }
+
+                    
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }

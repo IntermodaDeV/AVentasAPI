@@ -12,6 +12,7 @@ namespace AventasApi.Models.ViewModels
         public string Color { get; set; }
         public string NombreColor { get; set; }
         public int Prioridad { get; set; }
+        public bool Deshabilitado { get; set; }
         public List<FotografiasXProductoViewModel> ListaImagenes;
         public ColorViewModel()
         {
