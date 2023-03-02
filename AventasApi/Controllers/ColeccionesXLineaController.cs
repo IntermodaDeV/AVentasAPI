@@ -377,6 +377,9 @@ namespace AventasApi.Controllers
                                        NombreProducto = pxc.NombreProducto,
                                        StockVisible = pxc.StockVisible,
                                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
+                                       InOut = pxc.InOut,
+                                       Deshabilitado = pxc.Deshabilitado,
+                                       Prioridad = pxc.Prioridad,
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
                                            GrupoPrecio = precio.GrupoPrecio,
@@ -428,6 +431,8 @@ namespace AventasApi.Controllers
                                            CodigoColor = cpp.Colores.CodigoColor,
                                            NombreColor = cpp.Colores.Color,
                                            Color = cpp.Colores.Rgb,
+                                           Prioridad = cpp.Prioridad,
+                                           IdColorxProducto = cpp.IdColorxProducto,
                                            ListaImagenes = pxc.FotografiasXProducto.Where(txp => txp.FotografiaProducto != null && txp.CodigoColor == cpp.Colores.CodigoColor).Select(foto => new FotografiasXProductoViewModel
                                            {
                                                IdFotografia = foto.IdFotografia,
@@ -494,6 +499,9 @@ namespace AventasApi.Controllers
                         CodigoProducto = pxc.IdProducto,
                         NombreProducto = pxc.NombreProducto,
                         StockVisible = pxc.StockVisible,
+                        InOut = pxc.InOut,
+                        Deshabilitado = pxc.Deshabilitado,
+                        Prioridad = pxc.Prioridad,
                         GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
                         Precio = pxc.PreciosxProducto.Where(preEsp => preEsp.GrupoPrecio == grupoPrecio).Select(precio => new PrecioXProductoViewModel
                         {
@@ -528,7 +536,7 @@ namespace AventasApi.Controllers
                         {
                             CodigoColor = cpp.CodigoColor,
                             NombreColor = cpp.Color,
-                            Color = cpp.Rgb,
+                            Color = cpp.Rgb
                         }).ToList(),
                         fisicaDisponible = pxc.FisicoDisponible
                                               .Select(f => new FisicoDisponibleViewModel
@@ -587,6 +595,9 @@ namespace AventasApi.Controllers
                                        NombreProducto = pxc.NombreProducto,
                                        StockVisible = pxc.StockVisible,
                                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
+                                       InOut = pxc.InOut,
+                                       Deshabilitado = pxc.Deshabilitado,
+                                       Prioridad = pxc.Prioridad,
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
                                            GrupoPrecio = precio.GrupoPrecio,
@@ -638,6 +649,8 @@ namespace AventasApi.Controllers
                                            CodigoColor = cpp.Colores.CodigoColor,
                                            NombreColor = cpp.Colores.Color,
                                            Color = cpp.Colores.Rgb,
+                                           Prioridad = cpp.Prioridad,
+                                           IdColorxProducto = cpp.IdColorxProducto,
                                            ListaImagenes = pxc.FotografiasXProducto.Where(txp => txp.FotografiaProducto != null && txp.CodigoColor == cpp.Colores.CodigoColor).Select(foto => new FotografiasXProductoViewModel
                                            {
                                                IdFotografia = foto.IdFotografia,

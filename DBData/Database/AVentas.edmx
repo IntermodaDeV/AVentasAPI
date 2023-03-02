@@ -273,6 +273,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="VersionRegistroBINT" Type="bigint" StoreGeneratedPattern="Computed" />
           <Property Name="IgnorarSeqFact" Type="bit" />
           <Property Name="IncluyeImpuesto" Type="bit" />
+          <Property Name="FlagClienteEspecial" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -320,6 +321,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="CodigoColor" Type="varchar" MaxLength="50" />
           <Property Name="IdProducto" Type="int" />
           <Property Name="Disponible" Type="bit" />
+          <Property Name="Prioridad" Type="int" Nullable="false" />
+          <Property Name="Deshabilitado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ComunidadAutonoma">
           <Key>
@@ -584,6 +587,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="IdAcuerdoxCliente" Type="varchar" MaxLength="250" />
           <Property Name="Actualizado" Type="bit" Nullable="false" />
           <Property Name="NumeroPedido" Type="varchar" MaxLength="100" />
+          <Property Name="ExcepcionDescuento" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -1249,6 +1253,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="VisibleParaVentas" Type="bit" Nullable="false" />
           <Property Name="CantidadMinima" Type="decimal" Precision="18" Scale="2" />
           <Property Name="StockVisible" Type="bit" Nullable="false" />
+          <Property Name="Deshabilitado" Type="bit" Nullable="false" />
+          <Property Name="InOut" Type="bit" Nullable="false" />
+          <Property Name="Prioridad" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="PromesaPago">
           <Key>
@@ -1546,8 +1553,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ReferenciaCuotas" Type="varchar(max)" />
           <Property Name="IdFactura" Type="int" />
           <Property Name="completaCuota" Type="bit" />
-          <Property Name="Valor" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Flete" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Valor" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -5483,6 +5490,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__Codig__0F1832351" FromRole="Clientes" ToRole="PedidosxClienteFlotante" />
           <Property Name="IncluyeImpuesto" Type="Boolean" />
           <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucion_Clientes_CodigoCliente" FromRole="Clientes" ToRole="Devolucion" />
+          <Property Name="FlagClienteEspecial" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -5515,6 +5523,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Disponible" Type="Boolean" />
           <NavigationProperty Name="Colores" Relationship="Self.FK__ColoresxP__Codig__52793849" FromRole="ColoresxProducto" ToRole="Colores" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="Self.FK__ColoresxP__IdPro__536D5C82" FromRole="ColoresxProducto" ToRole="ProductosxColeccion" />
+          <Property Name="Prioridad" Type="Int32" Nullable="false" />
+          <Property Name="Deshabilitado" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Configuraciones">
           <Key>
@@ -5666,6 +5676,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="RecibosProforma" Relationship="AventasModel.FK__RecibosProforma__IdFactura" FromRole="FacturasxCliente" ToRole="RecibosProforma" />
           <Property Name="NumeroPedido" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Actualizado" Type="Boolean" Nullable="false" />
+          <Property Name="ExcepcionDescuento" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -5868,6 +5879,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" FromRole="ProductosxColeccion" ToRole="PedidosDetalleFlotante" />
           <Property Name="StockVisible" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="ProductosxColeccion" ToRole="DevolucionDetalle" />
+          <Property Name="Deshabilitado" Type="Boolean" Nullable="false" />
+          <Property Name="InOut" Type="Boolean" Nullable="false" />
+          <Property Name="Prioridad" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -11274,6 +11288,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Clientes">
             <EntityTypeMapping TypeName="AventasModel.Clientes">
               <MappingFragment StoreEntitySet="Clientes">
+                <ScalarProperty Name="FlagClienteEspecial" ColumnName="FlagClienteEspecial" />
                 <ScalarProperty Name="IncluyeImpuesto" ColumnName="IncluyeImpuesto" />
                 <ScalarProperty Name="IgnorarSeqFact" ColumnName="IgnorarSeqFact" />
                 <ScalarProperty Name="VersionRegistroBINT" ColumnName="VersionRegistroBINT" />
@@ -11325,6 +11340,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="ColoresxProducto">
             <EntityTypeMapping TypeName="AventasModel.ColoresxProducto">
               <MappingFragment StoreEntitySet="ColoresxProducto">
+                <ScalarProperty Name="Deshabilitado" ColumnName="Deshabilitado" />
+                <ScalarProperty Name="Prioridad" ColumnName="Prioridad" />
                 <ScalarProperty Name="IdColorxProducto" ColumnName="IdColorxProducto" />
                 <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
                 <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
@@ -11419,6 +11436,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="FacturasxCliente">
             <EntityTypeMapping TypeName="AventasModel.FacturasxCliente">
               <MappingFragment StoreEntitySet="FacturasxCliente">
+                <ScalarProperty Name="ExcepcionDescuento" ColumnName="ExcepcionDescuento" />
                 <ScalarProperty Name="Actualizado" ColumnName="Actualizado" />
                 <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
                 <ScalarProperty Name="NumeroFEL" ColumnName="NumeroFEL" />
@@ -11587,6 +11605,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="ProductosxColeccion">
             <EntityTypeMapping TypeName="AventasModel.ProductosxColeccion">
               <MappingFragment StoreEntitySet="ProductosxColeccion">
+                <ScalarProperty Name="Prioridad" ColumnName="Prioridad" />
+                <ScalarProperty Name="InOut" ColumnName="InOut" />
+                <ScalarProperty Name="Deshabilitado" ColumnName="Deshabilitado" />
                 <ScalarProperty Name="StockVisible" ColumnName="StockVisible" />
                 <ScalarProperty Name="CantidadMinima" ColumnName="CantidadMinima" />
                 <ScalarProperty Name="VisibleParaVentas" ColumnName="VisibleParaVentas" />

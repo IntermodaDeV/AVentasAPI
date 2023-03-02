@@ -361,6 +361,7 @@ namespace AventasApi.Controllers
                         Observacion = x.Observacion,
                         UsuarioModifica = x.AprobacionDevoluciones.FirstOrDefault().Usuarios1.nombre,
                         EstadoBodega = x.EstadoBodega,
+                        IdLinea = x.IdLinea,
                         Cliente = new ClienteViewModel
                         {
                             Codigo = x.Clientes.CodigoCliente,

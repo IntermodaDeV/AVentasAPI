@@ -46,6 +46,7 @@ namespace DBData.Database
         public string NumeroFEL { get; set; }
         public string NumeroPedido { get; set; }
         public bool Actualizado { get; set; }
+        public bool ExcepcionDescuento { get; set; }
     
         public virtual AcuerdosxCliente AcuerdosxCliente { get; set; }
         public virtual Clientes Clientes { get; set; }
