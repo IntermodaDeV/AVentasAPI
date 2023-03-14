@@ -1327,7 +1327,8 @@ namespace AventasApi.Controllers
                         BodegaEspecifica=pedido.BodegaEspecifica,
                         Sitio=pedido.Sitio,
                         Almacen=pedido.Almacen,
-                        Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : ""
+                        Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
+                        SalesStatusId = 1
                     };
 
                     foreach (var detalle in pedido.PedidosDetalleFlotante)
