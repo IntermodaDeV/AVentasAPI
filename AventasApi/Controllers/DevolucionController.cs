@@ -360,6 +360,7 @@ namespace AventasApi.Controllers
                         Usuario = ctx.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == x.CodigoAsesor).Nombre,
                         Observacion = x.Observacion,
                         UsuarioModifica = x.AprobacionDevoluciones.FirstOrDefault().Usuarios1.nombre,
+                        EstadoBodega = x.EstadoBodega,
                         IdLinea = x.IdLinea,
                         Cliente = new ClienteViewModel
                         {
@@ -903,6 +904,6 @@ namespace AventasApi.Controllers
             {
 
             }
-        }
+        }      
     }
 }

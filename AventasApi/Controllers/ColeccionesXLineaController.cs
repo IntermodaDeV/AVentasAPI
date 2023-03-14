@@ -432,6 +432,7 @@ namespace AventasApi.Controllers
                                            NombreColor = cpp.Colores.Color,
                                            Color = cpp.Colores.Rgb,
                                            Prioridad = cpp.Prioridad,
+                                           Deshabilitado = cpp.Deshabilitado,
                                            IdColorxProducto = cpp.IdColorxProducto,
                                            ListaImagenes = pxc.FotografiasXProducto.Where(txp => txp.FotografiaProducto != null && txp.CodigoColor == cpp.Colores.CodigoColor).Select(foto => new FotografiasXProductoViewModel
                                            {
@@ -650,6 +651,7 @@ namespace AventasApi.Controllers
                                            NombreColor = cpp.Colores.Color,
                                            Color = cpp.Colores.Rgb,
                                            Prioridad = cpp.Prioridad,
+                                           Deshabilitado = cpp.Deshabilitado,
                                            IdColorxProducto = cpp.IdColorxProducto,
                                            ListaImagenes = pxc.FotografiasXProducto.Where(txp => txp.FotografiaProducto != null && txp.CodigoColor == cpp.Colores.CodigoColor).Select(foto => new FotografiasXProductoViewModel
                                            {

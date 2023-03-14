@@ -10,18 +10,13 @@
 namespace DBData.Database
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class ColoresxProducto
+    public partial class SP_ObtenerProductosRMA_Result
     {
-        public int IdColorxProducto { get; set; }
-        public string CodigoColor { get; set; }
-        public Nullable<int> IdProducto { get; set; }
-        public Nullable<bool> Disponible { get; set; }
-        public int Prioridad { get; set; }
-        public bool Deshabilitado { get; set; }
-    
-        public virtual Colores Colores { get; set; }
-        public virtual ProductosxColeccion ProductosxColeccion { get; set; }
+        public string codigoProducto { get; set; }
+        public string grupoTalla { get; set; }
+        public string talla { get; set; }
+        public string color { get; set; }
+        public Nullable<decimal> cantidad { get; set; }
     }
 }

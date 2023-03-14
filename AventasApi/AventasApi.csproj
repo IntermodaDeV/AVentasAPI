@@ -184,6 +184,7 @@
     <Compile Include="Controllers\ConfiguracionesController.cs" />
     <Compile Include="Controllers\CoordenadasXClienteController.cs" />
     <Compile Include="Controllers\CorreoController.cs" />
+    <Compile Include="Controllers\TrackingDevolucionCalidadController.cs" />
     <Compile Include="Controllers\DevolucionController.cs" />
     <Compile Include="Controllers\DocumentosPendientesController.cs" />
     <Compile Include="Controllers\EmpresaController.cs" />
@@ -223,8 +224,10 @@
     <Compile Include="Controllers\TiposColeccionController.cs" />
     <Compile Include="Controllers\TipoVisitaClienteController.cs" />
     <Compile Include="Controllers\TransporteController.cs" />
+    <Compile Include="Controllers\TrasladoPedidoController.cs" />
     <Compile Include="Controllers\UbicacionController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
+    <Compile Include="enums\EstadoBodega.cs" />
     <Compile Include="Filters\Auth.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
