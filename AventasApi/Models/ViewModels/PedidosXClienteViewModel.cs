@@ -117,6 +117,7 @@ namespace AventasApi.Models.ViewModels
         public string PedidoGenerado { get; internal set; }
         public int Estado { get; internal set; }
         public bool? BodegaEspecifica { get; internal set; }
+        public string SaleStatus { get; set; }
 
         public PedidosXClienteViewModel()
         {

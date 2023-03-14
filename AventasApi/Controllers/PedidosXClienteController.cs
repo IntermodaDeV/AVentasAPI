@@ -528,6 +528,7 @@ namespace AventasApi.Controllers
                         ClienteContadoId = ped.ClienteContadoId,
                         ModoVenta = ped.ModoVenta,
                         Flete = ped.Flete,
+                        SaleStatus = ped.SaleStatus.estado,
                         Cliente = new ClienteViewModel
                         {
                             Codigo = ped.Clientes.CodigoCliente,

@@ -340,6 +340,8 @@
         <EntityTypeShape EntityType="AventasModel.CategoriaTipoGastoViaje" Width="1.5" PointX="22.625" PointY="1.75" />
         <AssociationConnector Association="AventasModel.fkCategoriaTipoGastoViaje" />
         <AssociationConnector Association="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" />
+        <EntityTypeShape EntityType="AventasModel.SaleStatus" Width="1.5" PointX="15.375" PointY="13.875" />
+        <AssociationConnector Association="AventasModel.FK__PedidosxC__Sales__008BB26A" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

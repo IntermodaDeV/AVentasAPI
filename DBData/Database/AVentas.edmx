@@ -1092,6 +1092,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Ubicacion" Type="varchar" MaxLength="100" />
           <Property Name="FechaSincronizacion" Type="datetime" />
           <Property Name="APSALESSTATUS" Type="int" />
+          <Property Name="SalesStatusId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -1484,6 +1485,13 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="IdRutasxAsesor" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CodigoRuta" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SaleStatus">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="estado" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Secciones">
           <Key>
@@ -2943,6 +2951,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="PedidosxClienteFlotante">
               <PropertyRef Name="IdTipoPedido" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PedidosxC__Sales__008BB26A">
+          <End Role="SaleStatus" Type="Self.SaleStatus" Multiplicity="1" />
+          <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SaleStatus">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="SalesStatusId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4436,6 +4456,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="Roles" EntityType="Self.Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Rutas" EntityType="Self.Rutas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RutasxAsesor" EntityType="Self.RutasxAsesor" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SaleStatus" EntityType="Self.SaleStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Secciones" EntityType="Self.Secciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Secciones_Encuesta" EntityType="Self.Secciones_Encuesta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Secciones_Usuarios" EntityType="Self.Secciones_Usuarios" Schema="dbo" store:Type="Tables" />
@@ -4912,6 +4933,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK__PedidosxC__IdTip__6A50C1DA1" Association="Self.FK__PedidosxC__IdTip__6A50C1DA1">
             <End Role="TiposdePedido" EntitySet="TiposdePedido" />
             <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PedidosxC__Sales__008BB26A" Association="Self.FK__PedidosxC__Sales__008BB26A">
+            <End Role="SaleStatus" EntitySet="SaleStatus" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
           <AssociationSet Name="FK__PrecioEsp__Grupo__386F4D83" Association="Self.FK__PrecioEsp__Grupo__386F4D83">
             <End Role="MaestroGrupoPrecio" EntitySet="MaestroGrupoPrecio" />
@@ -7783,6 +7808,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <Parameter Name="rma" Mode="In" Type="String" />
             <Parameter Name="pais" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="SaleStatus" EntityType="AventasModel.SaleStatus" />
+          <AssociationSet Name="FK__PedidosxC__Sales__008BB26A" Association="AventasModel.FK__PedidosxC__Sales__008BB26A">
+            <End Role="SaleStatus" EntitySet="SaleStatus" />
+            <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -9954,6 +9984,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Ubicacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="FechaSincronizacion" Type="DateTime" Precision="3" />
           <Property Name="APSALESSTATUS" Type="Int32" />
+          <Property Name="SalesStatusId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="SaleStatus" Relationship="AventasModel.FK__PedidosxC__Sales__008BB26A" FromRole="PedidosxCliente" ToRole="SaleStatus" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -11201,6 +11233,26 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="String" Name="color" Nullable="true" MaxLength="50" />
           <Property Type="Decimal" Name="cantidad" Nullable="true" Precision="18" Scale="2" />
         </ComplexType>
+        <EntityType Name="SaleStatus">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="estado" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__Sales__008BB26A" FromRole="SaleStatus" ToRole="PedidosxCliente" />
+        </EntityType>
+        <Association Name="FK__PedidosxC__Sales__008BB26A">
+          <End Type="AventasModel.SaleStatus" Role="SaleStatus" Multiplicity="1" />
+          <End Type="AventasModel.PedidosxCliente" Role="PedidosxCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SaleStatus">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="PedidosxCliente">
+              <PropertyRef Name="SalesStatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12843,6 +12895,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="SalesStatusId" ColumnName="SalesStatusId" />
                 <ScalarProperty Name="APSALESSTATUS" ColumnName="APSALESSTATUS" />
                 <ScalarProperty Name="FechaSincronizacion" ColumnName="FechaSincronizacion" />
                 <ScalarProperty Name="Ubicacion" ColumnName="Ubicacion" />
@@ -13354,6 +13407,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="SaleStatus">
+            <EntityTypeMapping TypeName="AventasModel.SaleStatus">
+              <MappingFragment StoreEntitySet="SaleStatus">
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

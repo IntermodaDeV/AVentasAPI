@@ -438,6 +438,9 @@
     <Compile Include="Database\RutasxAsesor.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\SaleStatus.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Secciones.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
