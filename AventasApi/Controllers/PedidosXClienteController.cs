@@ -170,7 +170,8 @@ namespace AventasApi.Controllers
                         BodegaEspecifica=Pedido.BodegaEspecifica,
                         Sitio=Pedido.Sitio,
                         Almacen=Pedido.Almacen,
-                        Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : ""
+                        Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : "",
+                        SalesStatusId = 1
                     };
 
                     foreach (var detalle in Pedido.DetallePedido)
@@ -528,6 +529,7 @@ namespace AventasApi.Controllers
                         ClienteContadoId = ped.ClienteContadoId,
                         ModoVenta = ped.ModoVenta,
                         Flete = ped.Flete,
+                        SaleStatus = ped.SaleStatus.estado,
                         Cliente = new ClienteViewModel
                         {
                             Codigo = ped.Clientes.CodigoCliente,
@@ -1326,7 +1328,8 @@ namespace AventasApi.Controllers
                         BodegaEspecifica=pedido.BodegaEspecifica,
                         Sitio=pedido.Sitio,
                         Almacen=pedido.Almacen,
-                        Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : ""
+                        Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
+                        SalesStatusId = 1
                     };
 
                     foreach (var detalle in pedido.PedidosDetalleFlotante)
