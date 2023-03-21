@@ -21,7 +21,7 @@ namespace AventasApi.Models.ViewModels
         public string IdLinea { get; set; }
 
         public string motivoDevolucion { get; set; }
-
+        
         public string EmpresaId { get; set; }
 
         public string Observacion { get; set; }
@@ -48,5 +48,17 @@ namespace AventasApi.Models.ViewModels
 
         public bool? Aprobado { get; set; }
 
+        public int? IdDevAprobacion { get; set; }
+        public string FacturaOrigen { get; set; }
+        public string PedidoOrigen { get; set; }
+
+        public DevolucionMotivoReport MotivoDevolucionDetalle { get; set; }
+
     }
+}
+
+public class DevolucionMotivoReport
+{
+    public string CodigoMotivoDevolucion { get; set; }
+    public string Descripcion { get; set; }
 }

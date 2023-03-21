@@ -56,6 +56,12 @@ namespace AventasApi.Controllers
                         CodigoCliente = x.CodigoCliente,
                         NombreCliente = x.Clientes.Nombre,
                         motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        MotivoDevolucionDetalle = ctx.MotivosDevolucion.Where(a => a.IdMotivoDevolucion == x.MotivosDevolucionDetalle.idMotivoDevolucion).Select(r => new DevolucionMotivoReport
+                        {
+                            CodigoMotivoDevolucion = r.CodigoMotivoDevolucion,
+                            Descripcion = r.Descripcion
+
+                        }).FirstOrDefault(),
                         TotalUnidades = x.TotalUnidades,
                         Estado = x.Estado,
                         FechaCreacion = x.FechaCrea.Value,
@@ -88,7 +94,7 @@ namespace AventasApi.Controllers
                 using (AVentasEntities db = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var listaDevoluciones = db.AprobacionDevoluciones.Where(x => x.IdUsuario == user.Id && x.Aprobado == false && x.Estado == true).Select(x => new 
+                    var listaDevoluciones = db.AprobacionDevoluciones.Where(x => x.IdUsuario == user.Id && x.Aprobado == false && x.Estado == true).Select(x => new DevolucionesViewModel
                     {
                         IdDevAprobacion = x.IdDevAprobacion,
                         NumDevolucion = x.NumDevolucion,
@@ -97,7 +103,13 @@ namespace AventasApi.Controllers
                         CodigoCliente = x.Devolucion.CodigoCliente,
                         NombreCliente = x.Devolucion.Clientes.Nombre,
                         Linea = x.Devolucion.IdLinea,
-                        MotivoDevolucion = x.Devolucion.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        motivoDevolucion = x.Devolucion.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        MotivoDevolucionDetalle = db.MotivosDevolucion.Where(a => a.IdMotivoDevolucion == x.Devolucion.MotivosDevolucionDetalle.idMotivoDevolucion).Select(r => new DevolucionMotivoReport
+                        {
+                            CodigoMotivoDevolucion = r.CodigoMotivoDevolucion,
+                            Descripcion = r.Descripcion
+
+                        }).FirstOrDefault(),
                         TotalUnidades = x.Devolucion.TotalUnidades,
                         Estado = x.Devolucion.Estado,
                         FacturaOrigen = x.Devolucion.FacturaOrigen,
@@ -353,6 +365,12 @@ namespace AventasApi.Controllers
                         CodigoCliente = x.CodigoCliente,
                         NombreCliente = x.Clientes.Nombre,
                         motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
+                        MotivoDevolucionDetalle = ctx.MotivosDevolucion.Where(a => a.IdMotivoDevolucion == x.MotivosDevolucionDetalle.idMotivoDevolucion).Select(r => new DevolucionMotivoReport
+                        {
+                            CodigoMotivoDevolucion = r.CodigoMotivoDevolucion,
+                            Descripcion = r.Descripcion
+
+                        }).FirstOrDefault(),
                         TotalUnidades = x.TotalUnidades,
                         Estado = x.Estado,
                         FechaCreacion = x.FechaCrea.Value,
