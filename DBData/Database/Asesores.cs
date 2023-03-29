@@ -26,5 +26,7 @@ namespace DBData.Database
         public Nullable<bool> Activo { get; set; }
         public int AsesorId { get; set; }
         public Nullable<int> CorrelativoDevolucion { get; set; }
+        public string ConstanteGira { get; set; }
+        public Nullable<int> CorrelativoGira { get; set; }
     }
 }
