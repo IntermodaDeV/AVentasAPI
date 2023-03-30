@@ -231,11 +231,11 @@ namespace AventasApi.Controllers
                     var num = 0; ;
                     if (serie == "-")
                     {
-                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor);
+                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor && x.IdEstado !=3);
                     }
                     else
                     {
-                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor && x.serie == serie);
+                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor && x.serie == serie && x.IdEstado != 3);
                     }
                     if (num == 0)
                     {
@@ -807,7 +807,7 @@ namespace AventasApi.Controllers
             try
             {
                 using (var ctx = new AVentasEntities())
-                {
+                {     
                     var estado = ctx.Estado.FirstOrDefault(x => x.Nombre == "Pendiente");
                     gasto.IdEstado = estado.IdEstado;
                     if (gasto.Imagen != null)
@@ -815,6 +815,21 @@ namespace AventasApi.Controllers
                         string s = Convert.ToBase64String(gasto.Imagen);
                         gasto.Imagen = Convert.FromBase64String(s);
                     }
+
+                    //Gasto sin cai, generar numero de factura
+                    using (var ctx2 = new AVentasEntities())
+                    {
+                        var asesor =  ctx2.Asesores.FirstOrDefault(x=> x.CodigoAsesor == gasto.UsuarioAsesor);
+                        if (gasto.NoFactura == "")
+                        {
+                            asesor.CorrelativoGira = asesor.CorrelativoGira + 1;
+                            gasto.NoFactura = asesor.ConstanteGira + asesor.InicialesNombre + asesor.CorrelativoGira;
+                            //gasto.NoFactura = "G-1";
+                            var resul = await ctx2.SaveChangesAsync();
+
+                        }
+                    }
+                       
                     ctx.GastosViajeDetalle.Add(gasto);
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);

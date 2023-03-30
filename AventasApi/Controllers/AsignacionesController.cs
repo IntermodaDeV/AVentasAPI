@@ -618,11 +618,11 @@ namespace AventasApi.Controllers
             {
                 Fecha = DateTime.ParseExact(x.FechaAsignacion, "dd/MM/yyyy", CultureInfo.InvariantCulture),
                 FechaAsignacion = DateTime.ParseExact(x.FechaAsignacion, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                CodigoAsesor = x.CodigoAsesor,
+                CodigoAsesor = x.CodigoAsesor.ToLower().Trim(),
                 idPrioridad = x.idPrioridad,
                 HoraInicio = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraInicio}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
                 HoraFinal = DateTime.ParseExact($"{x.FechaAsignacion} {x.HoraFinal}", "dd/MM/yyyy hh:mm tt", CultureInfo.InvariantCulture),
-                CodigoCliente = x.CodigoCliente,
+                CodigoCliente = x.CodigoCliente.Trim(),
                 BloqueoCheckin = false,
                 BloqueoCheckout = true,
                 Deshabilitada=false
