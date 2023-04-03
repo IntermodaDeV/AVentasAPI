@@ -391,9 +391,11 @@
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
     <Compile Include="Utils\Email.cs" />
     <Compile Include="Utils\logicValidation.cs" />
+    <Compile Include="Utils\SendEmail.cs" />
     <Compile Include="Utils\SyncAcuerdosVentas.cs" />
     <Compile Include="Utils\SyncClientes.cs" />
     <Compile Include="Utils\SyncCuentaCorriente.cs" />
+    <Compile Include="Wrappers\Response.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
