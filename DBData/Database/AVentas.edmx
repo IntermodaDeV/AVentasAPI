@@ -136,6 +136,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="BloqueoCheckout" Type="bit" Nullable="false" />
           <Property Name="Cancelada" Type="bit" Nullable="false" />
           <Property Name="Deshabilitada" Type="bit" />
+          <Property Name="EsPromesaPago" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="AsignacionxAsesorDetalle">
           <Key>
@@ -4320,6 +4321,12 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
         </Function>
+        <Function Name="SP_InventarioXColeccion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="idColeccion" Type="int" Mode="In" />
+        </Function>
+        <Function Name="SP_LimpiarAsignacionesAsesor" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="asesor" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SP_ObtencionFacturas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="codigoProducto" Type="varchar" Mode="In" />
           <Parameter Name="cliente" Type="varchar" Mode="In" />
@@ -7815,6 +7822,12 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="SaleStatus" EntitySet="SaleStatus" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
+          <FunctionImport Name="SP_InventarioXColeccion" ReturnType="Collection(AventasModel.SP_InventarioXColeccion_Result)">
+            <Parameter Name="idColeccion" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="SP_LimpiarAsignacionesAsesor">
+            <Parameter Name="asesor" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -9901,6 +9914,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Deshabilitada" Type="Boolean" />
           <NavigationProperty Name="PromesaPago" Relationship="AventasModel.FK_AsignacionesXAsesor_IdAsignacionxAsesor" FromRole="AsignacionxAsesor" ToRole="PromesaPago" />
           <NavigationProperty Name="BitacoraNoVentaEnVisitas" Relationship="AventasModel.FK_AsignacionXAsesor_IdAsignacionXAsesor" FromRole="AsignacionxAsesor" ToRole="BitacoraNoVentaEnVisitas" />
+          <Property Name="EsPromesaPago" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="BitacoraGeoposicion">
           <Key>
@@ -11257,6 +11271,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="SP_InventarioXColeccion_Result">
+          <Property Type="String" Name="Producto" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="Nombre_Producto" Nullable="true" />
+          <Property Type="String" Name="Color" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Nombre_Color" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="Talla" Nullable="true" MaxLength="250" />
+          <Property Type="Decimal" Name="Inventario" Nullable="true" Precision="18" Scale="2" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12841,6 +12863,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="AsignacionxAsesor">
             <EntityTypeMapping TypeName="AventasModel.AsignacionxAsesor">
               <MappingFragment StoreEntitySet="AsignacionxAsesor">
+                <ScalarProperty Name="EsPromesaPago" ColumnName="EsPromesaPago" />
                 <ScalarProperty Name="Deshabilitada" ColumnName="Deshabilitada" />
                 <ScalarProperty Name="Cancelada" ColumnName="Cancelada" />
                 <ScalarProperty Name="BloqueoCheckout" ColumnName="BloqueoCheckout" />
@@ -13421,6 +13444,19 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_InventarioXColeccion" FunctionName="AventasModel.Store.SP_InventarioXColeccion">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_InventarioXColeccion_Result">
+                <ScalarProperty Name="Producto" ColumnName="Producto" />
+                <ScalarProperty Name="Nombre_Producto" ColumnName="Nombre_Producto" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+                <ScalarProperty Name="Nombre_Color" ColumnName="Nombre_Color" />
+                <ScalarProperty Name="Talla" ColumnName="Talla" />
+                <ScalarProperty Name="Inventario" ColumnName="Inventario" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_LimpiarAsignacionesAsesor" FunctionName="AventasModel.Store.SP_LimpiarAsignacionesAsesor" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
