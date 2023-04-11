@@ -107,8 +107,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Activo" Type="bit" />
           <Property Name="AsesorId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="CorrelativoDevolucion" Type="int" />
-          <Property Name="ConstanteGira" Type="varchar" MaxLength="20" />
-          <Property Name="CorrelativoGira" Type="int" />
+          <Property Name="ConstanteGira" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CorrelativoGira" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="AsignacionxAsesor">
           <Key>
@@ -7823,10 +7823,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
           <FunctionImport Name="SP_InventarioXColeccion" ReturnType="Collection(AventasModel.SP_InventarioXColeccion_Result)">
-            <Parameter Name="idColeccion" Mode="In" Type="Int32" />
+          <Parameter Name="idColeccion" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="SP_LimpiarAsignacionesAsesor">
-            <Parameter Name="asesor" Mode="In" Type="String" />
+          <Parameter Name="asesor" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -10432,8 +10432,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Activo" Type="Boolean" />
           <Property Name="AsesorId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CorrelativoDevolucion" Type="Int32" />
-          <Property Name="ConstanteGira" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="CorrelativoGira" Type="Int32" />
+          <Property Name="ConstanteGira" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CorrelativoGira" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="UbicacionesXAlmacen">
           <Key>
