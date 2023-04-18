@@ -27,6 +27,6 @@ namespace DBData.Database
         public int AsesorId { get; set; }
         public Nullable<int> CorrelativoDevolucion { get; set; }
         public string ConstanteGira { get; set; }
-        public Nullable<int> CorrelativoGira { get; set; }
+        public int CorrelativoGira { get; set; }
     }
 }

@@ -59,6 +59,7 @@
     <Compile Include="ApiModels\AcuerdoVentaDetalleApiModel.cs" />
     <Compile Include="ApiModels\ApiException.cs" />
     <Compile Include="ApiModels\AsesorApiModel.cs" />
+    <Compile Include="ApiModels\AsesoresCRMApiModel.cs" />
     <Compile Include="ApiModels\AtributosApiModel.cs" />
     <Compile Include="ApiModels\AtributosXProductoCRMApiModel.cs" />
     <Compile Include="ApiModels\BancoApiModel.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="ApiModels\PreciosCRMApiModel.cs" />
     <Compile Include="ApiModels\ProductoXColeccionApiModel.cs" />
     <Compile Include="ApiModels\ReciboApiModel.cs" />
+    <Compile Include="ApiModels\RutasCRMApiModel.cs" />
     <Compile Include="ApiModels\RutasXAsesorApiModel.cs" />
     <Compile Include="ApiModels\SubFacturasXClienteApiModel.cs" />
     <Compile Include="ApiModels\TallaPorGrupoTalla.cs" />

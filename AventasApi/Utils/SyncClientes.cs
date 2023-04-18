@@ -1,12 +1,18 @@
-﻿using DBData.Database;
+﻿using AventasApi.Models.Authentication;
+using DBData.Database;
+using ExternalApiData.ApiModels;
 using ExternalApiData.Enviroments;
 using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.SqlTypes;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Http.Results;
 
 namespace AventasApi.Utils
 {
@@ -85,6 +91,248 @@ namespace AventasApi.Utils
             }
             catch (Exception e)
             {
+            }
+        }
+
+
+
+        public async Task SincronizacionClientes(string codigoAsesor)
+        {
+            try
+            {
+                var asesor = await VerificarAsesor(codigoAsesor);
+
+                if(asesor != null)
+                {
+                    var clientes = new List<ClientesCRMApiModel>();
+                    var restClient = new RestClient(Enviroment.CRMWebServiceURLApi);
+                    var request = new RestRequest($"clientes/{asesor.EmpresaId}/{asesor.Usuario}", Method.GET);
+                    request.Timeout = 5 * 60000;
+                    request.AddHeader("Accept", "application/json");
+                    IRestResponse response = restClient.Execute(request);
+
+                    if (response.IsSuccessful && response.Content != "null")
+                    {
+                        clientes = JsonConvert.DeserializeObject<List<ClientesCRMApiModel>>(response.Content);
+
+                        if (clientes.Count > 0)
+                        {
+                            await limpiarClientes(asesor.CodigoAsesor, asesor.EmpresaId);
+
+                            await NewAndUdateCliente(clientes, asesor.EmpresaId);
+                        }
+                    }
+                }                    
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private async Task NewAndUdateCliente(List<ClientesCRMApiModel> clientes, string EmpresaId)
+        {
+            try
+            {
+                foreach (var cliente in clientes)
+                {                    
+                    MaestroGrupoPrecio maestroGrupoPrecio = new MaestroGrupoPrecio
+                    {
+                        EmpresaId = cliente.ENTITY,
+                        GrupoPrecio = cliente.PRICE,
+                        Descripcion = cliente.PRICE_NAME
+                    };
+                     await SincronizarMaestroGrupoPrecio(maestroGrupoPrecio);
+
+                    decimal cLimite = 0, cDisponible = 0;
+                    Clientes clientesModel = new Clientes
+                    {
+                        CodigoCliente = cliente.ACCOUNT,
+                        EmpresaId = cliente.ENTITY,
+                        Nombre = cliente.NAME,
+                        Zona = cliente.SALES_AREA,
+                        ComunidadAutonoma = cliente.AUTONOMOUS_COMMUNITY,
+                        GrupoPrecio = cliente.PRICE,
+                        GrupoCliente = cliente.CUSTOMER_GROUP,
+                        Descuento = cliente.DISCOUNT_GROUP == null ? " " : cliente.DISCOUNT_GROUP,
+                        Direccion = cliente.ADDRESS,
+                        IdMoneda = cliente.CURRENCY,
+                        FacturacionEntrega = cliente.BLOCKED,
+                        IncluyeImpuesto = cliente.INCLUDE_TAX == "Sí",                        
+                        Provincias = null,
+                        Region = null,
+                        Revision = null,
+                        LimiteCredito = Decimal.TryParse(cliente.CREDIT_LIMIT, out cLimite) ? cLimite : 0,
+                        CreditoDisponible = Decimal.TryParse(cliente.CREDIT_LIMIT, out cDisponible) ? cDisponible : 0,
+                        ModoEntrega = cliente.DLVMODE,
+                        Telefono = cliente.PHONE,
+                        GrupoImpuesto = cliente.TAX_GROUP,
+                        CodigoAsesor = cliente.VENDOR,
+                        Habilitado = true,
+                        IgnorarSeqFact = cliente.FLAG_SEQFACT == "Sí" ? true : false,
+                        FlagClienteEspecial = cliente.SPECIALCUSTOMER == "Sí" ? true : false
+                    };
+                     await SincronizarClientes(clientesModel);
+
+                    ClientesxRuta clientesRutas = new ClientesxRuta
+                    {
+                        CodigoCliente = cliente.ACCOUNT,
+                        CodigoRuta = EmpresaId + '-' + cliente.SALES_AREA,
+                    };
+                     await SyncClientesxRutas(clientesRutas);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        private async Task SyncClientesxRutas(ClientesxRuta ruta)
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+            {
+                var entity = await db.ClientesxRuta.FirstOrDefaultAsync(p => p.Rutas.CodigoRuta == ruta.CodigoRuta && p.Clientes.CodigoCliente == ruta.CodigoCliente);
+                if(entity == null)
+                {
+                        var rutaDB = await db.Rutas.FirstOrDefaultAsync(x => x.CodigoRuta == ruta.CodigoRuta);
+                        var clienteDB = await db.Clientes.FirstOrDefaultAsync(x => x.CodigoCliente == ruta.CodigoCliente);
+
+                        if(rutaDB!=null && clienteDB != null)
+                        {
+                            ruta.Rutas = rutaDB;
+                            ruta.Clientes = clienteDB;
+                            db.ClientesxRuta.Add(ruta);
+                            await db.SaveChangesAsync();
+                        }                        
+                }
+                
+            }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
+        }
+
+        private async Task SincronizarClientes(Clientes cliente)
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+                {
+                    var entity = await db.Clientes.FirstOrDefaultAsync(p => p.CodigoCliente == cliente.CodigoCliente);
+                    bool cambioAsesor = false;
+                    string asesorPrevio = string.Empty;
+
+                    if (entity == null)
+                    {
+                        cliente.Empresa = await db.Empresa.FirstOrDefaultAsync(p => p.EmpresaId == cliente.EmpresaId);
+                        cliente.MaestroMoneda = await db.MaestroMoneda.FirstOrDefaultAsync(p => p.IdMoneda == cliente.IdMoneda);
+                        cliente.MaestroGrupoPrecio = await db.MaestroGrupoPrecio.FirstOrDefaultAsync(p => p.GrupoPrecio == cliente.GrupoPrecio);
+                        db.Clientes.Add(cliente);
+                    }
+                    else
+                    {
+                        cambioAsesor = entity.CodigoAsesor != cliente.CodigoAsesor;
+                        asesorPrevio = entity.CodigoAsesor;
+                        entity.CodigoCliente = cliente.CodigoCliente;
+                        cliente.Empresa = await db.Empresa.FirstOrDefaultAsync(p => p.EmpresaId == cliente.EmpresaId);
+                        cliente.MaestroMoneda = await db.MaestroMoneda.FirstOrDefaultAsync(p => p.IdMoneda == cliente.IdMoneda);
+                        cliente.MaestroGrupoPrecio = await db.MaestroGrupoPrecio.FirstOrDefaultAsync(p => p.GrupoPrecio == cliente.GrupoPrecio);
+                        entity.Nombre = cliente.Nombre;
+                        entity.Zona = cliente.Zona;
+                        entity.ComunidadAutonoma = cliente.ComunidadAutonoma;
+                        entity.GrupoCliente = cliente.GrupoCliente;
+                        entity.Descuento = cliente.Descuento;
+                        entity.Direccion = cliente.Direccion;
+                        entity.FacturacionEntrega = cliente.FacturacionEntrega;
+                        entity.Provincias = cliente.Provincias;
+                        entity.Region = cliente.Region;
+                        entity.Revision = cliente.Revision;
+                        entity.LimiteCredito = cliente.LimiteCredito;
+                        entity.CreditoDisponible = cliente.CreditoDisponible;
+                        entity.ModoEntrega = cliente.ModoEntrega;
+                        entity.Telefono = cliente.Telefono;
+                        entity.GrupoImpuesto = cliente.GrupoImpuesto;
+                        entity.CodigoAsesor = cliente.CodigoAsesor;
+                        entity.Habilitado = cliente.Habilitado;
+                        entity.IgnorarSeqFact = cliente.IgnorarSeqFact;
+                        entity.IncluyeImpuesto = cliente.IncluyeImpuesto;
+                    }
+                    await db.SaveChangesAsync();
+
+                    if (cambioAsesor)
+                    {
+                        db.SP_TrasladoPedidos(entity.CodigoCliente, cliente.CodigoAsesor);
+                        db.SP_TrasladoRecibos(entity.CodigoCliente, cliente.CodigoAsesor);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            
+        }
+
+        private async Task SincronizarMaestroGrupoPrecio(MaestroGrupoPrecio maestroGrupoPrecio)
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+                {
+                    var entity = await db.MaestroGrupoPrecio.FirstOrDefaultAsync(p => p.EmpresaId == maestroGrupoPrecio.EmpresaId && p.GrupoPrecio == maestroGrupoPrecio.GrupoPrecio);
+
+                    if (entity == null)
+                    {
+                        db.MaestroGrupoPrecio.Add(maestroGrupoPrecio);
+                    }
+                    else
+                    {
+                        entity.Descripcion = maestroGrupoPrecio.Descripcion;
+                    }
+                    await db.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }                     
+        }
+
+        private async Task<int> limpiarClientes(string codigoAsesor, string empresa )
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+                {
+                    return  db.SP_Clientes_UpdateHabilitado(codigoAsesor, empresa);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }           
+        }
+
+        private async Task<Asesores> VerificarAsesor(string codigoAsesor)
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+                {                    
+                   return await db.Asesores.FirstOrDefaultAsync(x => x.Activo == true && x.CodigoAsesor == codigoAsesor);                                  
+                }
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }
