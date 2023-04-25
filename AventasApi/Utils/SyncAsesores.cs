@@ -37,9 +37,9 @@ namespace AventasApi.Utils
                     }   
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                
             }
         }
 
@@ -92,9 +92,9 @@ namespace AventasApi.Utils
                     }
                 } 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+               
             }
         }
     }

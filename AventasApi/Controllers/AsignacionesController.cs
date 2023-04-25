@@ -818,5 +818,29 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("~/api/asignaciones/limpiarAsignaciones/{codigoAsesor}")]
+        public  IHttpActionResult LimpiarAsignaciones(string codigoAsesor)
+        {
+
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var asignaciones =  ctx.SP_LimpiarAsignacionesAsesor(codigoAsesor);                   
+
+                    return Ok(asignaciones);
+                }
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
+
+           
+        }
+    
     }
 }

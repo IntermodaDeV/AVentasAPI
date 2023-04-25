@@ -451,5 +451,23 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TrasladoRecibos", origenParameter, destinoParameter);
         }
+    
+        public virtual ObjectResult<SP_InventarioXColeccion_Result> SP_InventarioXColeccion(Nullable<int> idColeccion)
+        {
+            var idColeccionParameter = idColeccion.HasValue ?
+                new ObjectParameter("idColeccion", idColeccion) :
+                new ObjectParameter("idColeccion", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_InventarioXColeccion_Result>("SP_InventarioXColeccion", idColeccionParameter);
+        }
+    
+        public virtual int SP_LimpiarAsignacionesAsesor(string asesor)
+        {
+            var asesorParameter = asesor != null ?
+                new ObjectParameter("asesor", asesor) :
+                new ObjectParameter("asesor", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_LimpiarAsignacionesAsesor", asesorParameter);
+        }
     }
 }

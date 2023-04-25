@@ -1,6 +1,4 @@
-﻿using AventasApi.Models.Authentication;
-using DBData.Database;
-using ExternalApiData.ApiModels;
+﻿using DBData.Database;
 using ExternalApiData.Enviroments;
 using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
@@ -8,11 +6,8 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.SqlTypes;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Http.Results;
 
 namespace AventasApi.Utils
 {
@@ -117,20 +112,20 @@ namespace AventasApi.Utils
 
                         if (clientes.Count > 0)
                         {
-                            await limpiarClientes(asesor.CodigoAsesor, asesor.EmpresaId);
+                            await LimpiarClientes(asesor.CodigoAsesor, asesor.EmpresaId);
 
-                            await NewAndUdateCliente(clientes, asesor.EmpresaId);
+                            await NewAndUpdateCliente(clientes, asesor.EmpresaId);
                         }
                     }
                 }                    
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                
             }
         }
 
-        private async Task NewAndUdateCliente(List<ClientesCRMApiModel> clientes, string EmpresaId)
+        private async Task NewAndUpdateCliente(List<ClientesCRMApiModel> clientes, string EmpresaId)
         {
             try
             {
@@ -182,10 +177,10 @@ namespace AventasApi.Utils
                      await SyncClientesxRutas(clientesRutas);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
-                throw;
+               
             }
         }
 
@@ -212,9 +207,9 @@ namespace AventasApi.Utils
                 
             }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+               
             }
             
         }
@@ -273,9 +268,9 @@ namespace AventasApi.Utils
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                
             }
 
             
@@ -300,13 +295,13 @@ namespace AventasApi.Utils
                     await db.SaveChangesAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                
             }                     
         }
 
-        private async Task<int> limpiarClientes(string codigoAsesor, string empresa )
+        private async Task<int> LimpiarClientes(string codigoAsesor, string empresa )
         {
             try
             {
@@ -315,9 +310,9 @@ namespace AventasApi.Utils
                     return  db.SP_Clientes_UpdateHabilitado(codigoAsesor, empresa);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                return 0;
             }           
         }
 
@@ -330,9 +325,9 @@ namespace AventasApi.Utils
                    return await db.Asesores.FirstOrDefaultAsync(x => x.Activo == true && x.CodigoAsesor == codigoAsesor);                                  
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                return null;
             }
         }
     }

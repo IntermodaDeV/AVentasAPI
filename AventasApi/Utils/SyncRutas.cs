@@ -1,17 +1,13 @@
-﻿using AventasApi.Models.Authentication;
-using DBData.Database;
+﻿using DBData.Database;
 using ExternalApiData.ApiModels;
 using ExternalApiData.Enviroments;
-using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace AventasApi.Utils
 {
@@ -42,9 +38,9 @@ namespace AventasApi.Utils
                     }
                 }
             }
-            catch (Exception )
+            catch (Exception e)
             {
-                throw;
+                
             }
         }
 
@@ -75,9 +71,9 @@ namespace AventasApi.Utils
 
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                
             }
         }
 
@@ -103,10 +99,10 @@ namespace AventasApi.Utils
 
                 }
              }
-            catch (Exception)
+            catch (Exception e)
             {
 
-                throw;
+                
             }
         }
 
@@ -127,10 +123,10 @@ namespace AventasApi.Utils
 
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
-                throw;
+                
             }
         }
 
@@ -146,9 +142,9 @@ namespace AventasApi.Utils
                    
                 }               
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                return new List<Asesores>();
             }           
         }
     }
