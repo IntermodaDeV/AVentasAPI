@@ -112,8 +112,7 @@ namespace AventasApi.Utils
 
                         if (clientes.Count > 0)
                         {
-                            await LimpiarClientes(asesor.CodigoAsesor, asesor.EmpresaId);
-
+                            LimpiarClientes(asesor.CodigoAsesor, asesor.EmpresaId);
                             await NewAndUpdateCliente(clientes, asesor.EmpresaId);
                         }
                     }
@@ -301,7 +300,7 @@ namespace AventasApi.Utils
             }                     
         }
 
-        private async Task<int> LimpiarClientes(string codigoAsesor, string empresa )
+        private int LimpiarClientes(string codigoAsesor, string empresa )
         {
             try
             {

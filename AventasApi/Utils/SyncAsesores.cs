@@ -53,18 +53,18 @@ namespace AventasApi.Utils
                     {
                         var entity = await db.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == asesor.CODE && x.EmpresaId == asesor.ENTITY);
 
-                        var fullName = asesor.NAME.Split(' ');
-                        var iniciales = string.Empty;
-                        foreach (var caracter in fullName)
-                        {
-                            if (caracter != string.Empty)
-                            {
-                                iniciales += caracter.Substring(0, 1).ToUpper();
-                            }
-                        }
-
                         if (entity == null)
                         {
+                            var fullName = asesor.NAME.Split(' ');
+                            var iniciales = string.Empty;
+                            foreach (var caracter in fullName)
+                            {
+                                if (caracter != string.Empty)
+                                {
+                                    iniciales += caracter.Substring(0, 1).ToUpper();
+                                }
+                            }
+
                             Asesores newAsesor = new Asesores
                             {
                                 CodigoAsesor = asesor.CODE,
@@ -72,21 +72,23 @@ namespace AventasApi.Utils
                                 Usuario = asesor.CODE,
                                 Nombre = asesor.NAME,
                                 Diario = asesor.JOURNAL,
-                                InicialesNombre = iniciales
-
+                                InicialesNombre = iniciales,
+                                ConstanteGira = "G",
+                                CorrelativoGira = 0,
+                                CorrelativoPedidos = 0,
+                                CorrelativoDevolucion = 0,
+                                CorrelativoRecibos = 0,
+                                Activo=true
                             };
                             db.Asesores.Add(newAsesor);
                         }
                         else
                         {
-                            entity.CodigoAsesor = asesor.CODE;
                             entity.EmpresaId = asesor.ENTITY;
                             entity.Usuario = asesor.CODE;
                             entity.Nombre = asesor.NAME;
                             entity.Diario = asesor.JOURNAL;
-                            entity.InicialesNombre = iniciales;
                         }
-
                        await db.SaveChangesAsync();
 
                     }
@@ -94,7 +96,7 @@ namespace AventasApi.Utils
             }
             catch (Exception e)
             {
-               
+
             }
         }
     }
