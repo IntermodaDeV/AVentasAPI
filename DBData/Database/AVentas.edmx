@@ -4299,6 +4299,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="version" Type="int" Mode="In" />
           <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
         </Function>
+        <Function Name="SP_Clientes_UpdateHabilitado" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CodigoAsesor" Type="varchar" Mode="In" />
+          <Parameter Name="Empresa" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="sp_creatediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
@@ -4343,6 +4347,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <Function Name="SP_SubFacturasxCliente_UpdateSaldoXCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
           <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_TrasladoPedidos" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="origen" Type="varchar" Mode="In" />
+          <Parameter Name="destino" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_TrasladoRecibos" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="origen" Type="varchar" Mode="In" />
+          <Parameter Name="destino" Type="varchar" Mode="In" />
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="SP_VISITASPORMES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -7822,11 +7834,23 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="SaleStatus" EntitySet="SaleStatus" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
+          <FunctionImport Name="SP_Clientes_UpdateHabilitado">
+            <Parameter Name="CodigoAsesor" Mode="In" Type="String" />
+            <Parameter Name="Empresa" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_TrasladoPedidos">
+            <Parameter Name="origen" Mode="In" Type="String" />
+            <Parameter Name="destino" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_TrasladoRecibos">
+            <Parameter Name="origen" Mode="In" Type="String" />
+            <Parameter Name="destino" Mode="In" Type="String" />
+          </FunctionImport>
           <FunctionImport Name="SP_InventarioXColeccion" ReturnType="Collection(AventasModel.SP_InventarioXColeccion_Result)">
-          <Parameter Name="idColeccion" Mode="In" Type="Int32" />
+            <Parameter Name="idColeccion" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="SP_LimpiarAsignacionesAsesor">
-          <Parameter Name="asesor" Mode="In" Type="String" />
+            <Parameter Name="asesor" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -13444,6 +13468,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_Clientes_UpdateHabilitado" FunctionName="AventasModel.Store.SP_Clientes_UpdateHabilitado" />
+          <FunctionImportMapping FunctionImportName="SP_TrasladoPedidos" FunctionName="AventasModel.Store.SP_TrasladoPedidos" />
+          <FunctionImportMapping FunctionImportName="SP_TrasladoRecibos" FunctionName="AventasModel.Store.SP_TrasladoRecibos" />
           <FunctionImportMapping FunctionImportName="SP_InventarioXColeccion" FunctionName="AventasModel.Store.SP_InventarioXColeccion">
             <ResultMapping>
               <ComplexTypeMapping TypeName="AventasModel.SP_InventarioXColeccion_Result">

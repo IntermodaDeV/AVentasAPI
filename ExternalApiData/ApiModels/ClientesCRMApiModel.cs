@@ -30,5 +30,6 @@ namespace ExternalApiData.Models.ApiModels
         public string DLVMODE { get; set; }
         public string DISCOUNT_GROUP { get; set; }
         public string INCLUDE_TAX { get; set; }
+        public string SPECIALCUSTOMER { get; set; }
     }
 }

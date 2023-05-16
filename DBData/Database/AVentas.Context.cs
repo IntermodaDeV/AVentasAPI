@@ -413,6 +413,45 @@ namespace DBData.Database
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerProductosRMA_Result>("SP_ObtenerProductosRMA", rmaParameter, paisParameter);
         }
     
+        public virtual int SP_Clientes_UpdateHabilitado(string codigoAsesor, string empresa)
+        {
+            var codigoAsesorParameter = codigoAsesor != null ?
+                new ObjectParameter("CodigoAsesor", codigoAsesor) :
+                new ObjectParameter("CodigoAsesor", typeof(string));
+    
+            var empresaParameter = empresa != null ?
+                new ObjectParameter("Empresa", empresa) :
+                new ObjectParameter("Empresa", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_Clientes_UpdateHabilitado", codigoAsesorParameter, empresaParameter);
+        }
+    
+        public virtual int SP_TrasladoPedidos(string origen, string destino)
+        {
+            var origenParameter = origen != null ?
+                new ObjectParameter("origen", origen) :
+                new ObjectParameter("origen", typeof(string));
+    
+            var destinoParameter = destino != null ?
+                new ObjectParameter("destino", destino) :
+                new ObjectParameter("destino", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TrasladoPedidos", origenParameter, destinoParameter);
+        }
+    
+        public virtual int SP_TrasladoRecibos(string origen, string destino)
+        {
+            var origenParameter = origen != null ?
+                new ObjectParameter("origen", origen) :
+                new ObjectParameter("origen", typeof(string));
+    
+            var destinoParameter = destino != null ?
+                new ObjectParameter("destino", destino) :
+                new ObjectParameter("destino", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TrasladoRecibos", origenParameter, destinoParameter);
+        }
+    
         public virtual ObjectResult<SP_InventarioXColeccion_Result> SP_InventarioXColeccion(Nullable<int> idColeccion)
         {
             var idColeccionParameter = idColeccion.HasValue ?
