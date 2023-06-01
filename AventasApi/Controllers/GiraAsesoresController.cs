@@ -645,7 +645,7 @@ namespace AventasApi.Controllers
                     if(respuesta.Content == "\"No se encontro un Cai Disponible\"" && datosAX.COMPANY == "IMHN")
                     {
                         var resp = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(respuesta.Content);
-                        ActualizacionCai(id);
+                         await ActualizacionCai(id);
                     }
                     else
                     {
@@ -1086,7 +1086,7 @@ namespace AventasApi.Controllers
             }
         }
 
-        public async void ActualizacionCai(int id)
+        public async Task<int> ActualizacionCai(int id)
         {
             using(var ctx = new AVentasEntities())
             {
@@ -1201,7 +1201,7 @@ namespace AventasApi.Controllers
                 {
                     if (x.correo != null && x.correo != "")
                     {
-                        correos += (correos.Length> 0 ? correos + ",": "") + x.correo;
+                        correos = (correos.Length> 0 ? correos + ",": "") + x.correo;
                     }
                 });
 
@@ -1212,7 +1212,7 @@ namespace AventasApi.Controllers
                    
                 });
 
-                MailMessage OMailMessage = new MailMessage(emailOrigen, correos, "Solicitud Nuevo Proveedor", htmlBody);
+                MailMessage OMailMessage = new MailMessage(emailOrigen, correos, "Solicitud Actualizacion Proveedor", htmlBody);
                 OMailMessage.IsBodyHtml = true;
                 if (imagen.Imagen != null)
                 {
@@ -1231,6 +1231,7 @@ namespace AventasApi.Controllers
 
                 oSmtpClient.Send(OMailMessage);
                 oSmtpClient.Dispose();
+                return 1;
 
             }
 
@@ -1363,7 +1364,7 @@ namespace AventasApi.Controllers
                 {                    
                     if (x.correo != null && x.correo != "")
                     {
-                        correos += correos + "," + x.correo;
+                        correos = correos + "," + x.correo;
                     }                    
                 });
 
