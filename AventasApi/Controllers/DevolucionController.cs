@@ -506,11 +506,7 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
-                    int numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
-                    string inicialesAsesor = asesor.InicialesNombre;
-                    string numeroReferencia = $"{inicialesAsesor}DEV-1{numeroCorelativo.ToString("D5")}";
-
+                    var numeroReferencia = await GenerarCorrelativoDevolucion(user.UserAccount,empresa);
                     return Ok(numeroReferencia);
                 }
             }
@@ -923,5 +919,27 @@ namespace AventasApi.Controllers
 
             }
         }      
+
+        private async Task<string> GenerarCorrelativoDevolucion(string usuario,string empresa)
+        {
+            using(var ctx = new AVentasEntities())
+            {
+                var asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == usuario && ase.EmpresaId == empresa);
+                int numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
+                string inicialesAsesor = asesor.InicialesNombre;
+                string numeroReferencia = $"{inicialesAsesor}DEV-1{numeroCorelativo.ToString("D5")}";
+
+                var devolucionBD = await ctx.Devolucion.FirstOrDefaultAsync(x => x.NumDevolucion == numeroReferencia);
+                if(devolucionBD == null)
+                {
+                    return numeroReferencia;
+                }
+
+                asesor.CorrelativoDevolucion = asesor.CorrelativoDevolucion + 1;
+                await ctx.SaveChangesAsync();
+
+                return await GenerarCorrelativoDevolucion(usuario, empresa);
+            }
+        }
     }
 }
