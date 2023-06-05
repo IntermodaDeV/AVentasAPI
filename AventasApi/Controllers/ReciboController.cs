@@ -672,7 +672,8 @@ namespace AventasApi.Controllers
                                     EsContado = anticipoPost.EsContado == "1" ? true : false,
                                     UsuarioCreacion = user.UserAccount,
                                     FechaCreacion = DateTime.Now,
-                                    Descuento = 0
+                                    Descuento = 0,
+                                    Origen="Web"
                                 };
                                 context.AnticiposxCliente.Add(anticipo);
                             }
