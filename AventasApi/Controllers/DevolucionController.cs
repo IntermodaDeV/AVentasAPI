@@ -592,7 +592,8 @@ namespace AventasApi.Controllers
                             Subtotal = devolucion.SubTotal,
                             TotalUnidades = 0,
                             almacen = devolucion.Almacen,
-                            IdUbicacion = ubicacion.UbicacionId
+                            IdUbicacion = ubicacion.UbicacionId,
+                            Origen = "Web"
                         };
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
