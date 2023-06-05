@@ -23,6 +23,7 @@ namespace AventasApi.Models.ViewModels
         public bool InOut { get; set; }
         public bool Deshabilitado { get; set; }
         public int Prioridad { get; set; }
+        public bool Nuevo { get; set; }
 
         public List<TallaViewModel> ListaTalla;
         public List<ColorViewModel> ListaColores;

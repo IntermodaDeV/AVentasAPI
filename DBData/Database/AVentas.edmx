@@ -612,6 +612,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Sitio" Type="varchar" MaxLength="50" />
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
+          <Property Name="VentaMaxima" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="FormularioIntroDetalle">
           <Key>
@@ -1260,6 +1261,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Deshabilitado" Type="bit" Nullable="false" />
           <Property Name="InOut" Type="bit" Nullable="false" />
           <Property Name="Prioridad" Type="int" Nullable="false" />
+          <Property Name="TieneVentaMaxima" Type="bit" Nullable="false" />
+          <Property Name="Nuevo" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="PromesaPago">
           <Key>
@@ -5928,6 +5931,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Deshabilitado" Type="Boolean" Nullable="false" />
           <Property Name="InOut" Type="Boolean" Nullable="false" />
           <Property Name="Prioridad" Type="Int32" Nullable="false" />
+          <Property Name="TieneVentaMaxima" Type="Boolean" Nullable="false" />
+          <Property Name="Nuevo" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -7847,10 +7852,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <Parameter Name="destino" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_InventarioXColeccion" ReturnType="Collection(AventasModel.SP_InventarioXColeccion_Result)">
-            <Parameter Name="idColeccion" Mode="In" Type="Int32" />
+          <Parameter Name="idColeccion" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="SP_LimpiarAsignacionesAsesor">
-            <Parameter Name="asesor" Mode="In" Type="String" />
+          <Parameter Name="asesor" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -8151,6 +8156,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdFis__396371BC" FromRole="FisicoDisponible" ToRole="PrecioEspecifico" />
           <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VentaMaxima" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK__FisicoDis__Codig__7B7B4DDC">
           <End Type="AventasModel.Colores" Role="Colores" Multiplicity="0..1" />
@@ -11707,6 +11713,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="ProductosxColeccion">
             <EntityTypeMapping TypeName="AventasModel.ProductosxColeccion">
               <MappingFragment StoreEntitySet="ProductosxColeccion">
+                <ScalarProperty Name="Nuevo" ColumnName="Nuevo" />
+                <ScalarProperty Name="TieneVentaMaxima" ColumnName="TieneVentaMaxima" />
                 <ScalarProperty Name="Prioridad" ColumnName="Prioridad" />
                 <ScalarProperty Name="InOut" ColumnName="InOut" />
                 <ScalarProperty Name="Deshabilitado" ColumnName="Deshabilitado" />
@@ -12194,6 +12202,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="FisicoDisponible">
             <EntityTypeMapping TypeName="AventasModel.FisicoDisponible">
               <MappingFragment StoreEntitySet="FisicoDisponible">
+                <ScalarProperty Name="VentaMaxima" ColumnName="VentaMaxima" />
                 <ScalarProperty Name="Almacen" ColumnName="Almacen" />
                 <ScalarProperty Name="Sitio" ColumnName="Sitio" />
                 <ScalarProperty Name="MinStock" ColumnName="MinStock" />

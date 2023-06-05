@@ -380,6 +380,7 @@ namespace AventasApi.Controllers
                                        InOut = pxc.InOut,
                                        Deshabilitado = pxc.Deshabilitado,
                                        Prioridad = pxc.Prioridad,
+                                       Nuevo = pxc.Nuevo,
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
                                            GrupoPrecio = precio.GrupoPrecio,
@@ -503,6 +504,7 @@ namespace AventasApi.Controllers
                         InOut = pxc.InOut,
                         Deshabilitado = pxc.Deshabilitado,
                         Prioridad = pxc.Prioridad,
+                        Nuevo = pxc.Nuevo,
                         GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
                         Precio = pxc.PreciosxProducto.Where(preEsp => preEsp.GrupoPrecio == grupoPrecio).Select(precio => new PrecioXProductoViewModel
                         {
@@ -599,6 +601,7 @@ namespace AventasApi.Controllers
                                        InOut = pxc.InOut,
                                        Deshabilitado = pxc.Deshabilitado,
                                        Prioridad = pxc.Prioridad,
+                                       Nuevo = pxc.Nuevo,
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
                                            GrupoPrecio = precio.GrupoPrecio,

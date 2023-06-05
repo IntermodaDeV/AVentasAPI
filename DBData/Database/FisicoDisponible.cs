@@ -28,6 +28,7 @@ namespace DBData.Database
         public Nullable<decimal> MinStock { get; set; }
         public string Sitio { get; set; }
         public string Almacen { get; set; }
+        public int VentaMaxima { get; set; }
     
         public virtual Colores Colores { get; set; }
         public virtual ProductosxColeccion ProductosxColeccion { get; set; }
