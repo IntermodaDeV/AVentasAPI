@@ -64,11 +64,6 @@ namespace AventasApi.Services.Authentication
                         return new AuthenticationResponse { Message = "Usuario se encuentra deshabilitado para el sistema.", Data = null };
                     }
 
-                    if (userBD.SesionActiva == true)
-                    {
-                        return new AuthenticationResponse { Message = "Usuario cuenta con una sesión activa, acceso denegado.", Data = null };
-                    }
-
                     var user = new Usuario { IdUsuario = userBD.usuario, Pin = null };
 
                     if (EnLinea(userBD.EmpresaId, userBD.usuario))

@@ -171,7 +171,8 @@ namespace AventasApi.Controllers
                         Sitio=Pedido.Sitio,
                         Almacen=Pedido.Almacen,
                         Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : "",
-                        SalesStatusId = 1
+                        SalesStatusId = 1,
+                        Origen = "Web"
                     };
 
                     foreach (var detalle in Pedido.DetallePedido)

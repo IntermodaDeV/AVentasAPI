@@ -76,6 +76,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="NumPedido" Type="varchar" MaxLength="150" />
           <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="Origen" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="AprobacionDevoluciones">
           <Key>
@@ -423,6 +424,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="almacen" Type="varchar" MaxLength="10" />
           <Property Name="IdUbicacion" Type="int" />
           <Property Name="EstadoBodega" Type="int" />
+          <Property Name="Origen" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -612,6 +614,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Sitio" Type="varchar" MaxLength="50" />
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
+          <Property Name="VentaMaxima" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="FormularioIntroDetalle">
           <Key>
@@ -1096,6 +1099,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="FechaSincronizacion" Type="datetime" />
           <Property Name="APSALESSTATUS" Type="int" />
           <Property Name="SalesStatusId" Type="int" Nullable="false" />
+          <Property Name="Origen" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -1260,6 +1264,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Deshabilitado" Type="bit" Nullable="false" />
           <Property Name="InOut" Type="bit" Nullable="false" />
           <Property Name="Prioridad" Type="int" Nullable="false" />
+          <Property Name="TieneVentaMaxima" Type="bit" Nullable="false" />
+          <Property Name="Nuevo" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="PromesaPago">
           <Key>
@@ -1384,6 +1390,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="proformaId" Type="int" />
+          <Property Name="Origen" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="RecibosxClienteFlotante">
           <Key>
@@ -5928,6 +5935,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Deshabilitado" Type="Boolean" Nullable="false" />
           <Property Name="InOut" Type="Boolean" Nullable="false" />
           <Property Name="Prioridad" Type="Int32" Nullable="false" />
+          <Property Name="TieneVentaMaxima" Type="Boolean" Nullable="false" />
+          <Property Name="Nuevo" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -7107,7 +7116,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <Parameter Name="new_diagramname" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
-          <EntitySet Name="AnticiposxCliente" EntityType="AventasModel.AnticiposxCliente" />
           <EntitySet Name="RecibosxCliente" EntityType="AventasModel.RecibosxCliente" />
           <AssociationSet Name="FK__RecibosxC__IdFac__00EA0E6F" Association="AventasModel.FK__RecibosxC__IdFac__00EA0E6F">
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
@@ -7847,11 +7855,12 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <Parameter Name="destino" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_InventarioXColeccion" ReturnType="Collection(AventasModel.SP_InventarioXColeccion_Result)">
-            <Parameter Name="idColeccion" Mode="In" Type="Int32" />
+          <Parameter Name="idColeccion" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="SP_LimpiarAsignacionesAsesor">
-            <Parameter Name="asesor" Mode="In" Type="String" />
+          <Parameter Name="asesor" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="AnticiposxCliente" EntityType="AventasModel.AnticiposxCliente" />
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -7924,35 +7933,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
           <Property Type="Int32" Name="OwnerID" Nullable="false" />
         </ComplexType>
-        <EntityType Name="AnticiposxCliente">
-          <Key>
-            <PropertyRef Name="AnticipoId" />
-          </Key>
-          <Property Name="AnticipoId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="NumeroRecibo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Fecha" Type="DateTime" Precision="3" />
-          <Property Name="IdTipoPago" Type="Int32" />
-          <Property Name="Referencia" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="FechaCheque" Type="DateTime" Precision="3" />
-          <Property Name="IdBanco" Type="Int32" />
-          <Property Name="IdCuentaBancaria" Type="Int32" />
-          <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
-          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
-          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
-          <Property Name="UsuarioCreacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
-          <Property Name="UsuarioModificacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
-          <Property Name="Tipo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="NumPedido" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
-          <Property Name="SpecPago" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="EsContado" Type="Boolean" Nullable="false" />
-        </EntityType>
         <EntityType Name="RecibosxCliente">
           <Key>
             <PropertyRef Name="ReciboId" />
@@ -7984,6 +7964,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="proformaId" Type="Int32" />
           <NavigationProperty Name="RecibosProforma" Relationship="AventasModel.FK__RecibosXCliente__ReciboProformaId" FromRole="RecibosxCliente" ToRole="RecibosProforma" />
           <NavigationProperty Name="LogRecibo" Relationship="AventasModel.FK__LogRecibo__Recib__7365F61F" FromRole="RecibosxCliente" ToRole="LogRecibo" />
+          <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
           <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
@@ -8151,6 +8132,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PrecioEspecifico" Relationship="AventasModel.FK__PrecioEsp__IdFis__396371BC" FromRole="FisicoDisponible" ToRole="PrecioEspecifico" />
           <Property Name="Sitio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Almacen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VentaMaxima" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK__FisicoDis__Codig__7B7B4DDC">
           <End Type="AventasModel.Colores" Role="Colores" Multiplicity="0..1" />
@@ -10026,6 +10008,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="APSALESSTATUS" Type="Int32" />
           <Property Name="SalesStatusId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="SaleStatus" Relationship="AventasModel.FK__PedidosxC__Sales__008BB26A" FromRole="PedidosxCliente" ToRole="SaleStatus" />
+          <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -10762,6 +10745,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="IdUbicacion" Type="Int32" />
           <NavigationProperty Name="UbicacionesXAlmacen" Relationship="AventasModel.FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion" FromRole="Devolucion" ToRole="UbicacionesXAlmacen" />
           <Property Name="EstadoBodega" Type="Int32" />
+          <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -11303,6 +11287,36 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="String" Name="Talla" Nullable="true" MaxLength="250" />
           <Property Type="Decimal" Name="Inventario" Nullable="true" Precision="18" Scale="2" />
         </ComplexType>
+        <EntityType Name="AnticiposxCliente">
+          <Key>
+            <PropertyRef Name="AnticipoId" />
+          </Key>
+          <Property Name="AnticipoId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NumeroRecibo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="IdTipoPago" Type="Int32" />
+          <Property Name="SpecPago" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Referencia" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCheque" Type="DateTime" Precision="3" />
+          <Property Name="IdBanco" Type="Int32" />
+          <Property Name="IdCuentaBancaria" Type="Int32" />
+          <Property Name="Valor" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="IdMoneda" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
+          <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioCreacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioModificacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Descuento" Type="Decimal" Precision="15" Scale="4" />
+          <Property Name="Tipo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="EsContado" Type="Boolean" Nullable="false" />
+          <Property Name="NumPedido" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11707,6 +11721,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="ProductosxColeccion">
             <EntityTypeMapping TypeName="AventasModel.ProductosxColeccion">
               <MappingFragment StoreEntitySet="ProductosxColeccion">
+                <ScalarProperty Name="Nuevo" ColumnName="Nuevo" />
+                <ScalarProperty Name="TieneVentaMaxima" ColumnName="TieneVentaMaxima" />
                 <ScalarProperty Name="Prioridad" ColumnName="Prioridad" />
                 <ScalarProperty Name="InOut" ColumnName="InOut" />
                 <ScalarProperty Name="Deshabilitado" ColumnName="Deshabilitado" />
@@ -12063,39 +12079,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="AventasModel.Store.sp_renamediagram" />
           <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="AventasModel.Store.sp_upgraddiagrams" />
-          <EntitySetMapping Name="AnticiposxCliente">
-            <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
-              <MappingFragment StoreEntitySet="AnticiposxCliente">
-                <ScalarProperty Name="EsContado" ColumnName="EsContado" />
-                <ScalarProperty Name="SpecPago" ColumnName="SpecPago" />
-                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
-                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
-                <ScalarProperty Name="NumPedido" ColumnName="NumPedido" />
-                <ScalarProperty Name="Tipo" ColumnName="Tipo" />
-                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
-                <ScalarProperty Name="UsuarioModificacion" ColumnName="UsuarioModificacion" />
-                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
-                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
-                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
-                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
-                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
-                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
-                <ScalarProperty Name="Valor" ColumnName="Valor" />
-                <ScalarProperty Name="IdCuentaBancaria" ColumnName="IdCuentaBancaria" />
-                <ScalarProperty Name="IdBanco" ColumnName="IdBanco" />
-                <ScalarProperty Name="FechaCheque" ColumnName="FechaCheque" />
-                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
-                <ScalarProperty Name="IdTipoPago" ColumnName="IdTipoPago" />
-                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
-                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
-                <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
-                <ScalarProperty Name="AnticipoId" ColumnName="AnticipoId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="RecibosxCliente">
             <EntityTypeMapping TypeName="AventasModel.RecibosxCliente">
               <MappingFragment StoreEntitySet="RecibosxCliente">
+                <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="proformaId" ColumnName="proformaId" />
                 <ScalarProperty Name="SpecPago" ColumnName="SpecPago" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
@@ -12194,6 +12181,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="FisicoDisponible">
             <EntityTypeMapping TypeName="AventasModel.FisicoDisponible">
               <MappingFragment StoreEntitySet="FisicoDisponible">
+                <ScalarProperty Name="VentaMaxima" ColumnName="VentaMaxima" />
                 <ScalarProperty Name="Almacen" ColumnName="Almacen" />
                 <ScalarProperty Name="Sitio" ColumnName="Sitio" />
                 <ScalarProperty Name="MinStock" ColumnName="MinStock" />
@@ -12946,6 +12934,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="SalesStatusId" ColumnName="SalesStatusId" />
                 <ScalarProperty Name="APSALESSTATUS" ColumnName="APSALESSTATUS" />
                 <ScalarProperty Name="FechaSincronizacion" ColumnName="FechaSincronizacion" />
@@ -13190,6 +13179,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Devolucion">
             <EntityTypeMapping TypeName="AventasModel.Devolucion">
               <MappingFragment StoreEntitySet="Devolucion">
+                <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="EstadoBodega" ColumnName="EstadoBodega" />
                 <ScalarProperty Name="IdUbicacion" ColumnName="IdUbicacion" />
                 <ScalarProperty Name="almacen" ColumnName="almacen" />
@@ -13484,6 +13474,37 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="SP_LimpiarAsignacionesAsesor" FunctionName="AventasModel.Store.SP_LimpiarAsignacionesAsesor" />
+          <EntitySetMapping Name="AnticiposxCliente">
+            <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
+              <MappingFragment StoreEntitySet="AnticiposxCliente">
+                <ScalarProperty Name="Origen" ColumnName="Origen" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="NumPedido" ColumnName="NumPedido" />
+                <ScalarProperty Name="EsContado" ColumnName="EsContado" />
+                <ScalarProperty Name="Tipo" ColumnName="Tipo" />
+                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
+                <ScalarProperty Name="UsuarioModificacion" ColumnName="UsuarioModificacion" />
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
+                <ScalarProperty Name="Sincronizado" ColumnName="Sincronizado" />
+                <ScalarProperty Name="IdMoneda" ColumnName="IdMoneda" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="IdCuentaBancaria" ColumnName="IdCuentaBancaria" />
+                <ScalarProperty Name="IdBanco" ColumnName="IdBanco" />
+                <ScalarProperty Name="FechaCheque" ColumnName="FechaCheque" />
+                <ScalarProperty Name="Referencia" ColumnName="Referencia" />
+                <ScalarProperty Name="SpecPago" ColumnName="SpecPago" />
+                <ScalarProperty Name="IdTipoPago" ColumnName="IdTipoPago" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
+                <ScalarProperty Name="AnticipoId" ColumnName="AnticipoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -79,7 +79,6 @@ namespace DBData.Database
         public virtual DbSet<vw_ColoresxProducto> vw_ColoresxProducto { get; set; }
         public virtual DbSet<vw_FisicoDisponible> vw_FisicoDisponible { get; set; }
         public virtual DbSet<vw_TallasxProducto> vw_TallasxProducto { get; set; }
-        public virtual DbSet<AnticiposxCliente> AnticiposxCliente { get; set; }
         public virtual DbSet<RecibosxCliente> RecibosxCliente { get; set; }
         public virtual DbSet<GrupoImpuestoArticulo> GrupoImpuestoArticulo { get; set; }
         public virtual DbSet<GrupoImpuestoCliente> GrupoImpuestoCliente { get; set; }
@@ -160,6 +159,7 @@ namespace DBData.Database
         public virtual DbSet<GastoViajeGrupoImpuesto> GastoViajeGrupoImpuesto { get; set; }
         public virtual DbSet<CategoriaTipoGastoViaje> CategoriaTipoGastoViaje { get; set; }
         public virtual DbSet<SaleStatus> SaleStatus { get; set; }
+        public virtual DbSet<AnticiposxCliente> AnticiposxCliente { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
