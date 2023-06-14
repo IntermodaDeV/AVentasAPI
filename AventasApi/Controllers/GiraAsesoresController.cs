@@ -3,6 +3,7 @@ using DBData.Database;
 using ExternalApiData.Enviroments;
 using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -275,6 +276,7 @@ namespace AventasApi.Controllers
                             Empresa = x.Tipo.Empresa,
                             CategoriaNombre = x.Categoria.Nombre,
                             ProveedorPredefinido = x.Categoria.ProveedorPredefinido,
+                            GrupoImpuesto = x.Categoria.GrupoImpuesto,
                             CuentaContrapartida = x.Categoria.CuentaContrapartida,
                             FacturaObligatoria = x.Categoria.FacturaObligatoria,
                             Descripcion = x.Categoria.Descripcion,
@@ -572,6 +574,44 @@ namespace AventasApi.Controllers
                     var tmp = ctx.GastosViajeDetalle.FirstOrDefault(x => x.IdGastoViajeDetalle == id);
                     var usuario = ctx.Usuarios.FirstOrDefault(x => x.usuario == tmp.UsuarioAsesor);
                     var grupoimpuestos = ctx.GastoViajeGrupoImpuesto.FirstOrDefault(x => x.empresaID == usuario.EmpresaId);
+                    var combustible = ctx.Combustibles.FirstOrDefault(x => x.ID == tmp.CombustibleID);
+                    var fecha = new DateTime(tmp.FechaFactura.Year, tmp.FechaFactura.Month, tmp.FechaFactura.Day, 0, 0, 0);
+
+                    var clientes = ctx.AsignacionxAsesor.Where(x => x.CodigoAsesor == tmp.UsuarioAsesor && x.Fecha == fecha);
+                    var rutas = new List<string>();
+                    string textoRutas = "";
+
+                    foreach (var cliente in clientes) 
+                    {
+                        var ruta = ctx.Clientes.FirstOrDefault(x => x.CodigoCliente == cliente.CodigoCliente);
+                        var buscar = rutas.Find(x => x == ruta.Zona);
+                        if (buscar == null)
+                        {
+                            if (rutas.Count() > 0)
+                            {
+                                rutas.Add(ruta.Zona);
+                                textoRutas += ", " + ruta.Zona;
+                                 
+                            }
+                            else
+                            {
+                                rutas.Add(ruta.Zona);
+                                textoRutas = ruta.Zona;
+
+                            }
+                        }
+
+                    }
+
+                    if (combustible == null)
+                    {
+                        combustible = new Combustibles();
+                        combustible.ID = 1;
+                        combustible.MarkupCode = "";
+
+
+
+                    }
                     if (tmp.IdEstado == 2)
                     {
                         var p = new { Content = "OK" };
@@ -601,16 +641,16 @@ namespace AventasApi.Controllers
                             CURRENCYCODE = x.Moneda.IdMoneda,
                             TRANSDATE = x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(8, 2) + "/" + x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(5, 2) + "/" + x.GastoCategoriaTipo.GastoCategoria.Gasto.FechaFactura.ToString().Substring(0, 4),
                             NUMBERINVOCEID = x.GastoCategoriaTipo.GastoCategoria.Gasto.NoFactura.Replace("-", "").Replace("-", "").Replace("-", ""),
-                            DESCRIPTION = x.GastoCategoriaTipo.GastoCategoria.Gasto.DescripcionGasto,
+                            DESCRIPTION = x.GastoCategoriaTipo.GastoCategoria.Gasto.DescripcionGasto + " " + textoRutas,
                             EXENTO = x.GastoCategoriaTipo.GastoCategoria.Gasto.importeExento != null ? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeExento : 0,
-                            GRAVADO = x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado : 0,
+                            GRAVADO = (usuario.EmpresaId == "IMHN") ? (x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado : 0): x.GastoCategoriaTipo.GastoCategoria.Gasto.ValorFactura,
                             VENDACCOUNT = x.GastoCategoriaTipo.GastoCategoria.Gasto.Proveedor,
                             USERID = x.GastoCategoriaTipo.GastoCategoria.Gasto.UsuarioAsesor,
                             JOURNALNAME = x.GastoCategoriaTipo.Tipo.Diario,
                             OFFSETACCOUNT = x.GastoCategoriaTipo.GastoCategoria.Categoria.CuentaContrapartida,
                             SERIE = x.GastoCategoriaTipo.GastoCategoria.Gasto.serie,
-                            TAXGROUPEXENTO = grupoimpuestos.grupoImpuestoExento,
-                            TAXITEMGROUPEXENTO = grupoimpuestos.grupoImpuestoArticuloExento
+                            TAXGROUPEXENTO = (usuario.EmpresaId == "IMHN") ? grupoimpuestos.grupoImpuestoExento : (combustible.MarkupCode.Length> 0 ? combustible.MarkupCode: ""),
+                            TAXITEMGROUPEXENTO = (usuario.EmpresaId == "IMHN") ? grupoimpuestos.grupoImpuestoArticuloExento : x.GastoCategoriaTipo.GastoCategoria.Categoria.GrupoImpuesto
                         })
                         .Take(1).ToListAsync();
 
@@ -642,10 +682,10 @@ namespace AventasApi.Controllers
                     request.Parameters.Clear();
                     request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(datosAX), ParameterType.RequestBody);
                     var respuesta = client.Execute(request);
-                    if(respuesta.Content == "\"No se encontro un Cai Disponible\"" && datosAX.COMPANY == "IMHN")
+                    if(respuesta.Content != "\"OK\"" && datosAX.COMPANY == "IMHN")
                     {
                         var resp = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(respuesta.Content);
-                         await ActualizacionCai(id);
+                        await ActualizacionCai(id, respuesta.Content);
                     }
                     else
                     {
@@ -811,6 +851,28 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
+        [HttpGet]
+        [Route("Combustibles")]
+        public async Task<IHttpActionResult> obtenerCombustibles()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var combustibles = await ctx.Combustibles.Select(x => new
+                    {
+                        Id = x.ID,
+                        Nombre = x.Nombre,
+                        MarkupCode = x.MarkupCode
+                    }).ToListAsync();
+                    return Ok(combustibles);
+                }
+            }catch(Exception e)
+            {
+                return BadRequest(e.ToString());
+
+            }
+        }
 
         [HttpPost]
         [Route("GastoViajeDetalle")]
@@ -896,6 +958,7 @@ namespace AventasApi.Controllers
                         CuentaContrapartida = categoria.CuentaContrapartida,
                         FacturaObligatoria = categoria.FacturaObligatoria,
                         Descripcion = categoria.Descripcion,
+                        GrupoImpuesto = categoria.GrupoImpuesto,
                         ImagenObligatoria = categoria.ImagenObligatoria,
                         Activo = true
                     };
@@ -1076,6 +1139,7 @@ namespace AventasApi.Controllers
                     Categoria.FacturaObligatoria = categoria.FacturaObligatoria;
                     Categoria.Descripcion = categoria.Descripcion;
                     Categoria.ImagenObligatoria = categoria.ImagenObligatoria;
+                    Categoria.GrupoImpuesto = categoria.GrupoImpuesto;
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
                 }
@@ -1086,7 +1150,7 @@ namespace AventasApi.Controllers
             }
         }
 
-        public async Task<int> ActualizacionCai(int id)
+        public async Task<int> ActualizacionCai(int id, string texto)
         {
             using(var ctx = new AVentasEntities())
             {
@@ -1145,10 +1209,16 @@ namespace AventasApi.Controllers
                                     <td><b> Codigo Proveedor:</b> " + imagen.Proveedor + @" </td>                                        
                                 </tr>
                                 <tr>                                   
+                                    <td><b> NO. Serie:</b> " + imagen.serie + @" </td>                                        
+                                </tr>
+                                <tr>                                   
                                     <td><b> NO. Factura:</b> " + imagen.NoFactura + @" </td>                                        
                                 </tr>
                                 <tr>                                   
                                     <td><b> Fecha Documento:</b> " + imagen.FechaFactura + @" </td>                                        
+                                </tr>
+                                <tr>
+                                    <td><b> Descripcion:</b> " + texto + @" </td>                                   
                                 </tr>
                             </tbody>                                               
                         </table>
@@ -1201,7 +1271,7 @@ namespace AventasApi.Controllers
                 {
                     if (x.correo != null && x.correo != "")
                     {
-                        correos = (correos.Length> 0 ? correos + ",": "") + x.correo;
+                        correos += (correos.Length> 0 ? correos + ",": "") + x.correo;
                     }
                 });
 
@@ -1212,7 +1282,7 @@ namespace AventasApi.Controllers
                    
                 });
 
-                MailMessage OMailMessage = new MailMessage(emailOrigen, correos, "Solicitud Actualizacion Proveedor", htmlBody);
+                MailMessage OMailMessage = new MailMessage(emailOrigen, correos, "Solicitud Nuevo Proveedor", htmlBody);
                 OMailMessage.IsBodyHtml = true;
                 if (imagen.Imagen != null)
                 {
@@ -1231,9 +1301,9 @@ namespace AventasApi.Controllers
 
                 oSmtpClient.Send(OMailMessage);
                 oSmtpClient.Dispose();
-                return 1;
-
             }
+            return 1;
+
 
         }
 
@@ -1288,37 +1358,37 @@ namespace AventasApi.Controllers
     
 
                         <table style='width: 500px; margin: auto; '>
-                            < thead >  
-                                < tr >
-                                    < th colspan = '2' style = 'text-align: center;' >"+ usuario.nombre+ @"</ th >         
-                                </ tr >         
-                                < tr >         
-                                    < th colspan = '2' style = 'text-align: center;' >" + usuario.Correo + @"</ th >                
-                                </ tr >                
-                            </ thead >                
-                            < tbody >                
-                                < tr >                
-                                    < td >< b > Proveedor:</ b > " + datos.nombre + @" </ td >                       
-                                </ tr >                       
-                                < tr >                       
-                                    < td >< b > Grupo:</ b > Comercio Nacional </ td >
-                                </ tr >                              
-                                < tr >
-                                    < td >< b > Divisa:</ b > " + moneda.IdMoneda + @" </ td >                                   
-                                </ tr >                                   
-                                < tr >                                   
-                                    < td >< b > " + documento.DocumentoFiscal + @":</ b > " + datos.rtn + @" </ td >                                        
-                                </ tr >                                        
-                                < tr >                                        
-                                    < td >< b > Detalles:</ b ></ td >                                             
-                                </ tr >                                             
-                                < tr >                                             
-                                    < td > " + datos.detalle + @"</ td >                                               
-                                </ tr >                                               
-                            </ tbody >                                               
-                        </ table >
-                    </ body >
-                </ html >
+                            <thead>  
+                                <tr>
+                                    <th colspan = '2' style = 'text-align: center;' >"+ usuario.nombre+ @"</th>         
+                                </tr>         
+                                <tr>         
+                                    <th colspan = '2' style = 'text-align: center;' >" + usuario.Correo + @"</th>                
+                                </tr>                
+                            </thead>                
+                            <tbody>                
+                                <tr>                
+                                    <td><b> Proveedor:</b> " + datos.nombre + @" </td>                       
+                                </tr>                       
+                                <tr>                       
+                                    <td><b> Grupo:</b> Comercio Nacional </td>
+                                </tr>                              
+                                <tr>
+                                    <td><b> Divisa:</b> " + moneda.IdMoneda + @" </td>                                   
+                                </tr>                                   
+                                <tr>                                   
+                                    <td><b> " + documento.DocumentoFiscal + @":</b> " + datos.rtn + @" </td>                                        
+                                </tr>                                        
+                                <tr>                                        
+                                    <td><b> Detalles:</b></td>                                             
+                                </tr>                                             
+                                <tr>                                             
+                                    <td> " + datos.detalle + @"</td>                                               
+                                </tr>                                               
+                            </tbody>                                               
+                        </table>
+                    </body>
+                </html>
              ";
 
 
@@ -1358,7 +1428,7 @@ namespace AventasApi.Controllers
                         })
                         .ToListAsync();
 
-                string correos = usuario.Correo.Length > 0 ? usuario.Correo + ",": "";
+                string correos = usuario.Correo.Length > 0 ? usuario.Correo: "";
 
                 correoSolicitud.ForEach(x =>
                 {                    

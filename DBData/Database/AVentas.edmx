@@ -232,6 +232,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Activo" Type="bit" Nullable="false" />
           <Property Name="ProveedorPredefinido" Type="varchar" MaxLength="50" />
           <Property Name="CuentaContrapartida" Type="varchar" MaxLength="50" />
+          <Property Name="GrupoImpuesto" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="ClienteContado">
           <Key>
@@ -327,6 +328,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Disponible" Type="bit" />
           <Property Name="Prioridad" Type="int" Nullable="false" />
           <Property Name="Deshabilitado" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Combustibles">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="MarkupCode" Type="varchar" MaxLength="100" Nullable="false" />
         </EntityType>
         <EntityType Name="ComunidadAutonoma">
           <Key>
@@ -718,6 +727,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="serie" Type="varchar" MaxLength="50" />
           <Property Name="importeExento" Type="float" />
           <Property Name="importeGravado" Type="float" />
+          <Property Name="CombustibleID" Type="int" />
         </EntityType>
         <EntityType Name="GastoViajeGrupoImpuesto">
           <Key>
@@ -3660,6 +3670,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_GastosViajeDetalle_Combustibles">
+          <End Role="Combustibles" Type="Self.Combustibles" Multiplicity="0..1" />
+          <End Role="GastosViajeDetalle" Type="Self.GastosViajeDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Combustibles">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GastosViajeDetalle">
+              <PropertyRef Name="CombustibleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Linea">
           <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="0..1" />
           <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="*" />
@@ -4400,6 +4422,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="Colecciones" EntityType="Self.Colecciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Colores" EntityType="Self.Colores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ColoresxProducto" EntityType="Self.ColoresxProducto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Combustibles" EntityType="Self.Combustibles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ComunidadAutonoma" EntityType="Self.ComunidadAutonoma" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Configuraciones" EntityType="Self.Configuraciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CuentasBancarias" EntityType="Self.CuentasBancarias" Schema="dbo" store:Type="Tables" />
@@ -5193,6 +5216,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK_Funciones_Roles_Funciones_Roles" Association="Self.FK_Funciones_Roles_Funciones_Roles">
             <End Role="Funciones_Roles" EntitySet="Funciones_Roles" />
             <End Role="Funciones_Roles1" EntitySet="Funciones_Roles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GastosViajeDetalle_Combustibles" Association="Self.FK_GastosViajeDetalle_Combustibles">
+            <End Role="Combustibles" EntitySet="Combustibles" />
+            <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
           </AssociationSet>
           <AssociationSet Name="FK_Linea" Association="Self.FK_Linea">
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
@@ -7861,6 +7888,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="asesor" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="AnticiposxCliente" EntityType="AventasModel.AnticiposxCliente" />
+          <EntitySet Name="Combustibles" EntityType="AventasModel.Combustibles" />
+          <AssociationSet Name="FK_GastosViajeDetalle_Combustibles" Association="AventasModel.FK_GastosViajeDetalle_Combustibles">
+            <End Role="Combustibles" EntitySet="Combustibles" />
+            <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -11178,6 +11210,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="importeExento" Type="Double" />
           <Property Name="importeGravado" Type="Double" />
           <NavigationProperty Name="CategoriaTipoGastoViaje" Relationship="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" FromRole="GastosViajeDetalle" ToRole="CategoriaTipoGastoViaje" />
+          <Property Name="CombustibleID" Type="Int32" />
+          <NavigationProperty Name="Combustibles" Relationship="AventasModel.FK_GastosViajeDetalle_Combustibles" FromRole="GastosViajeDetalle" ToRole="Combustibles" />
         </EntityType>
         <EntityType Name="TipoGastoViaje">
           <Key>
@@ -11227,6 +11261,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="CuentaContrapartida" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="TipoGastoViaje" Relationship="AventasModel.fkCategoriaTipoGastoViaje" FromRole="CategoriaTipoGastoViaje" ToRole="TipoGastoViaje" />
           <NavigationProperty Name="GastosViajeDetalle" Relationship="AventasModel.fkGastosViajeDetalleCategoriaTipoGastoViaje" FromRole="CategoriaTipoGastoViaje" ToRole="GastosViajeDetalle" />
+          <Property Name="GrupoImpuesto" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="fkCategoriaTipoGastoViaje">
           <End Type="AventasModel.TipoGastoViaje" Role="TipoGastoViaje" Multiplicity="1" />
@@ -11317,6 +11352,27 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="Combustibles">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="MarkupCode" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="GastosViajeDetalle" Relationship="AventasModel.FK_GastosViajeDetalle_Combustibles" FromRole="Combustibles" ToRole="GastosViajeDetalle" />
+        </EntityType>
+        <Association Name="FK_GastosViajeDetalle_Combustibles">
+          <End Type="AventasModel.Combustibles" Role="Combustibles" Multiplicity="0..1" />
+          <End Type="AventasModel.GastosViajeDetalle" Role="GastosViajeDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Combustibles">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="GastosViajeDetalle">
+              <PropertyRef Name="CombustibleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -13381,6 +13437,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="GastosViajeDetalle">
             <EntityTypeMapping TypeName="AventasModel.GastosViajeDetalle">
               <MappingFragment StoreEntitySet="GastosViajeDetalle">
+                <ScalarProperty Name="CombustibleID" ColumnName="CombustibleID" />
                 <ScalarProperty Name="importeGravado" ColumnName="importeGravado" />
                 <ScalarProperty Name="importeExento" ColumnName="importeExento" />
                 <ScalarProperty Name="serie" ColumnName="serie" />
@@ -13427,6 +13484,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="CategoriaTipoGastoViaje">
             <EntityTypeMapping TypeName="AventasModel.CategoriaTipoGastoViaje">
               <MappingFragment StoreEntitySet="CategoriaTipoGastoViaje">
+                <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />
                 <ScalarProperty Name="CuentaContrapartida" ColumnName="CuentaContrapartida" />
                 <ScalarProperty Name="ProveedorPredefinido" ColumnName="ProveedorPredefinido" />
                 <ScalarProperty Name="Activo" ColumnName="Activo" />
@@ -13502,6 +13560,15 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
                 <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
                 <ScalarProperty Name="AnticipoId" ColumnName="AnticipoId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Combustibles">
+            <EntityTypeMapping TypeName="AventasModel.Combustibles">
+              <MappingFragment StoreEntitySet="Combustibles">
+                <ScalarProperty Name="MarkupCode" ColumnName="MarkupCode" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
