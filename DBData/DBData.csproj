@@ -147,6 +147,9 @@
     <Compile Include="Database\ColoresxProducto.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Combustibles.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\ComunidadAutonoma.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

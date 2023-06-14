@@ -12,21 +12,19 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class TipoGastoViaje
+    public partial class Combustibles
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TipoGastoViaje()
+        public Combustibles()
         {
-            this.CategoriaTipoGastoViaje = new HashSet<CategoriaTipoGastoViaje>();
+            this.GastosViajeDetalle = new HashSet<GastosViajeDetalle>();
         }
     
-        public int IdTipoGastoViaje { get; set; }
+        public int ID { get; set; }
         public string Nombre { get; set; }
-        public string Diario { get; set; }
-        public string Empresa { get; set; }
-        public bool Activo { get; set; }
+        public string MarkupCode { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CategoriaTipoGastoViaje> CategoriaTipoGastoViaje { get; set; }
+        public virtual ICollection<GastosViajeDetalle> GastosViajeDetalle { get; set; }
     }
 }

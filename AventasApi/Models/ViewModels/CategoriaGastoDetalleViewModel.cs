@@ -13,6 +13,7 @@ namespace AventasApi.Models.ViewModels
         public string Empresa { get; set; }
         public string CategoriaNombre { get; set; }
         public string ProveedorPredefinido { get; set; }
+        public string GrupoImpuesto { get; set; }
         public string CuentaContrapartida { get; set; }
         public bool FacturaObligatoria { get; set; }
         public bool Descripcion { get; set; }

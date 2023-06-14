@@ -11,6 +11,8 @@ namespace AventasApi.Models.ViewModels
         public int idTipoGastoViaje { get; set; }
         public string Nombre { get; set; }
         public string ProveedorPredefinido { get; set; }
+        public string GrupoImpuesto { get; set; }
+
         public string CuentaContrapartida { get; set; }
         public bool FacturaObligatoria { get; set; }
         public bool Descripcion { get; set; }
