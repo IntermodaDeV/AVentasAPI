@@ -516,6 +516,9 @@
     <Compile Include="Database\UbicacionesXAlmacen.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\UsuarioLinea.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Usuarios.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
