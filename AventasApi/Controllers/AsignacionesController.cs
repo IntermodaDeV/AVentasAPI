@@ -89,6 +89,7 @@ namespace AventasApi.Controllers
                             Deshabilitada = axa.Deshabilitada,
                             Latitud = axa.Clientes.Latitud,
                             Longitud = axa.Clientes.Longitud,
+                            EsPromesaPago = axa.EsPromesaPago,
                         }).OrderBy(axa => axa.HoraInicio).ToList();
 
 
@@ -122,6 +123,7 @@ namespace AventasApi.Controllers
                                     Deshabilitada = asignacion.Deshabilitada.Value,
                                     Latitud = asignacion.Latitud,
                                     Longitud = asignacion.Longitud,
+                                    EsPromesaPago = asignacion.EsPromesaPago,
                                 });
                                 asignacionesXFecha.Add(nuevaAsignacionXFecha);
                             }
@@ -145,6 +147,7 @@ namespace AventasApi.Controllers
                                     Deshabilitada = asignacion.Deshabilitada.Value,
                                     Latitud = asignacion.Latitud,
                                     Longitud = asignacion.Longitud,
+                                    EsPromesaPago = asignacion.EsPromesaPago,
                                 });
                             }
                         }

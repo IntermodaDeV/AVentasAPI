@@ -24,5 +24,6 @@ namespace AventasApi.Models.ViewModels
         public string Asesor { get; set; }
         public Decimal? Latitud { get; set; }
         public Decimal? Longitud { get; set; }
+        public bool EsPromesaPago { get; set; }
     }
 }

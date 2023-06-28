@@ -1263,23 +1263,28 @@ namespace AventasApi.Controllers
                         })
                         .ToListAsync();
 
-                string correos = "";
-                if (usuario.Correo != null)
-                    correos = usuario.Correo.Length > 0 ? usuario.Correo: "";
+                string correos = usuario.Correo.Length > 0 ? usuario.Correo : "";
 
                 correoSolicitud.ForEach(x =>
                 {
                     if (x.correo != null && x.correo != "")
                     {
-                        correos += (correos.Length> 0 ? correos + ",": "") + x.correo;
+                        correos = correos + "," + x.correo;
                     }
                 });
 
                 correoSupervisor.ForEach(x =>
-                {                    
+                {
+                    if (correos == "")
+                    {
                         if (x.correo != null && x.correo != "")
-                            correos = (correos.Length > 0 ? correos + "," : "") + x.correo;
-                   
+                            correos = x.correo;
+                    }
+                    else
+                    {
+                        if (x.correo != null && x.correo != "")
+                            correos = correos + "," + x.correo;
+                    }
                 });
 
                 MailMessage OMailMessage = new MailMessage(emailOrigen, correos, "Solicitud Nuevo Proveedor", htmlBody);
