@@ -11,6 +11,8 @@ namespace AventasApi.Models
         public string NAME { get; set; }
         public string COMPANY { get; set; }
         public string ADVISER { get; set; }
+        public string CREDITSTATUS { get; set; }
+        public string ADVISERNAME { get; set; }
         public decimal LATITUDE { get; set; }
         public decimal LONGITUD { get; set; }
     }
