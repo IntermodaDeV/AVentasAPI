@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Web.Http;
-using AventasApi.Models;
+﻿using AventasApi.Models;
 //using AventasApi.GestorData;
 //using AventasApi.Models.ApiModels;
 using AventasApi.Models.CustomerLocationApp;
 using DBData.Database;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
 
 namespace AventasApi.Controllers
 {
@@ -44,7 +43,7 @@ namespace AventasApi.Controllers
         {
             try
             {
-                var result = context.Clientes.Where(x => x.Longitud != null && x.Latitud != null && x.FacturacionEntrega.ToUpper() != "TODO" && x.Habilitado == true).ToList();
+                var result = context.Clientes.Where(x => x.Longitud != null && x.Latitud != null && x.Habilitado == true).ToList();
                 if (result.Count > 0)
                 {
                     var clientes = result.Select(x => new Coordenada()
@@ -54,14 +53,16 @@ namespace AventasApi.Controllers
                         LATITUDE = x.Latitud.Value,
                         LONGITUD = x.Longitud.Value,
                         COMPANY = x.EmpresaId,
-                        ADVISER = x.CodigoAsesor
+                        ADVISER = x.CodigoAsesor,
+                        CREDITSTATUS = x.FacturacionEntrega,
+                        ADVISERNAME = context.Asesores.First(a => a.CodigoAsesor == x.CodigoAsesor).Nombre,
                     }).ToList();
 
                     return clientes;
                 }
                 return new List<Coordenada>();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return new List<Coordenada>();
             }
