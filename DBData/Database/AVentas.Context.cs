@@ -161,6 +161,8 @@ namespace DBData.Database
         public virtual DbSet<SaleStatus> SaleStatus { get; set; }
         public virtual DbSet<AnticiposxCliente> AnticiposxCliente { get; set; }
         public virtual DbSet<Combustibles> Combustibles { get; set; }
+        public virtual DbSet<DescuentoEnAcuerdo> DescuentoEnAcuerdo { get; set; }
+        public virtual DbSet<DocumentosAplicadosAFacturas> DocumentosAplicadosAFacturas { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -469,6 +471,15 @@ namespace DBData.Database
                 new ObjectParameter("asesor", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_LimpiarAsignacionesAsesor", asesorParameter);
+        }
+    
+        public virtual ObjectResult<SP_DocumentosAplicadosXCuotas_Result> SP_DocumentosAplicadosXCuotas(string codigoAsesor)
+        {
+            var codigoAsesorParameter = codigoAsesor != null ?
+                new ObjectParameter("CodigoAsesor", codigoAsesor) :
+                new ObjectParameter("CodigoAsesor", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_DocumentosAplicadosXCuotas_Result>("SP_DocumentosAplicadosXCuotas", codigoAsesorParameter);
         }
     }
 }

@@ -44,6 +44,7 @@ namespace DBData.Database
         public Nullable<int> IdUbicacion { get; set; }
         public Nullable<int> EstadoBodega { get; set; }
         public string Origen { get; set; }
+        public Nullable<System.DateTime> FechaProcesado { get; set; }
     
         public virtual Clientes Clientes { get; set; }
         public virtual Empresa Empresa { get; set; }

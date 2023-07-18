@@ -835,6 +835,77 @@ namespace AventasApi.Controllers
             return !(numeroString.Contains('E') || numeroString.Contains('e'));
         }
 
+        private decimal TotalDocumentosAplicados(string factura, string codigoCliente)
+        {
+            var valor = 0m;
+            using(var ctx = new AVentasEntities())
+            {
+                IQueryable<DocumentosAplicadosAFacturas> documentos = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == factura && x.CodigoCliente == codigoCliente);
+                foreach (DocumentosAplicadosAFacturas documento in documentos)
+                {
+                    valor += documento.Valor ?? 0;
+                }
+                return valor;
+            }
+        }
+
+        private bool EsFacturaConMayorSaldoCuota(List<SubFacturasxCliente> facturas, SubFacturasxCliente factura)
+        {
+            List<SubFacturasxCliente> nuevasFacturas = facturas.Where(x => x.NumeroCuota == factura.NumeroCuota).OrderByDescending(x => x.Saldo.Value).ToList();
+            return nuevasFacturas[0].Factura == factura.Factura;
+        }
+
+        private bool ExisteFacturaCubreDescuento(List<SubFacturasxCliente> facturas, int numeroCuota, double descuentoCuota){
+            IEnumerable<SubFacturasxCliente> nuevasFacturas = facturas.Where(x => x.NumeroCuota == numeroCuota);
+
+            foreach (SubFacturasxCliente factura in nuevasFacturas)
+            {
+                if (decimal.ToDouble(factura.Saldo ?? 0) >= descuentoCuota)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private double CalcularDescuentoAplicar (List<SubFacturasxCliente> facturas, SubFacturasxCliente factura, double descuentoCuota){
+
+            bool saldoCubreDescuento = decimal.ToDouble(factura.Saldo.Value) >= descuentoCuota;
+
+            if (EsFacturaConMayorSaldoCuota(facturas, factura) && saldoCubreDescuento)
+            {
+                return descuentoCuota;
+            }
+
+            if (ExisteFacturaCubreDescuento(facturas, factura.NumeroCuota.Value, descuentoCuota))
+            {
+                return 0;
+            }
+
+            List<SubFacturasxCliente> nuevasFacturas = facturas.Where(x => x.NumeroCuota == factura.NumeroCuota).ToList();
+            double descuento = descuentoCuota;
+
+            foreach(SubFacturasxCliente e in nuevasFacturas)
+            {
+                SubFacturasxCliente subfactura = context.SubFacturasxCliente.FirstOrDefault(x=>x.IdFactura == e.IdFactura);
+                //Si es la ultima factura de la cuota devolvemos el descuento sobrante
+                if (subfactura.Factura == nuevasFacturas[nuevasFacturas.Count - 1].Factura)
+                {
+                    return descuento;
+                }
+
+                if (subfactura.Factura == factura.Factura)
+                {
+                    return descuento > decimal.ToDouble(subfactura.Saldo ?? 0) ? decimal.ToDouble(subfactura.Saldo ?? 0) : descuento;
+                }
+
+                descuento -= decimal.ToDouble(subfactura.Saldo ?? 0);
+            }
+
+            return 0;
+        }
+
         [HttpPost]
         public IHttpActionResult PostRecibo(ReciboPostViewModel reciboPost)
         {
@@ -863,12 +934,12 @@ namespace AventasApi.Controllers
                 var PagosBD = context.TiposdePago.AsNoTracking().ToList();
                 var BancosBD = context.Bancos.AsNoTracking().ToList();
                 var codigoCliente = "";
-                var Descuento = 0m;
                 int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
                 string inicialesAsesor = asesor.InicialesNombre;
-                var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(x=>x.NumeroCuota).ThenBy(subFac => subFac.FechaVencimiento).ThenBy(x=>x.Factura).ToList();
-                List <ReciboApiModel> recibos = new List<ReciboApiModel>();
+                var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(x => x.NumeroCuota).ThenBy(subFac => subFac.FechaVencimiento).ThenBy(x => x.Factura).ToList();
+                List<ReciboApiModel> recibos = new List<ReciboApiModel>();
                 var isOnline = EnLinea(asesor.EmpresaId, asesor.CodigoAsesor);
+
                 foreach (PagosReciboPostViewModel pago in reciboPost.Pagos.OrderBy(pag => pag.Orden))
                 {
                     var pagoBD = PagosBD.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
@@ -891,6 +962,7 @@ namespace AventasApi.Controllers
                     double valor = pago.Valor;
                     foreach (SubFacturasxCliente subfactura in subFacturas)
                     {
+                        double Descuento = 0;
                         if (valor > 0 && noEsExponencial(valor))
                         {
                             double montoAplicado = 0;
@@ -901,24 +973,90 @@ namespace AventasApi.Controllers
                             if ((valor > 0) && (valorCuota > 0))
                             {
                                 bool aplicaDescuento = false;
-                                aplicaDescuento = /*(pagoDetalleBD.CodigoDetalle != "CH_PSF" &&*/ (subfactura.FechaMaxDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
-                                    (subfactura.FechaVencimientoDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaVencimientoDescuento.Value.Date)
-                                    //reciboPost.FechaPago.Date <= subfactura.FacturasxCliente.FechaMaxDescuento
-                                    /*)*/;
-                                if (aplicaDescuento)
+
+                                if (reciboPost.Pagos[0].TipoPagoDetalle == "CH_PSF")
                                 {
-                                    /*if((subfactura.Descuento ?? 0) == 0)
-                                     {
-                                         var cliente = context.Clientes.Where(x => x.CodigoCliente == subfactura.CodigoCliente && x.EmpresaId == subfactura.EmpresaId).FirstOrDefault();
-                                         var descuento = context.Descuento.Where(x => x.Codigo == cliente.Descuento && x.EmpresaId == cliente.EmpresaId).FirstOrDefault();
-                                         var descuentoDetalle = context.DescuentoDetalle.Where(x => x.IdDescuento == descuento.IdDescuento && x.IdLinea == subfactura.FacturasxCliente.IdLinea).FirstOrDefault();
-                                         Descuento = descuentoDetalle != null ? subfactura.FacturasxCliente.TotalFactura.Value * (descuentoDetalle.Porcentaje.Value/100) : 0m;                                  
-                                         valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - Descuento);
-                                     }
-                                   {*/
-                                    valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
-                                    //}
+                                    Descuento = 0;
                                 }
+                                else if ((subfactura.Descuento ?? 0) == 0)
+                                {
+                                    DateTime FechaFact = Convert.ToDateTime(Factura.FechaFactura);
+
+                                    if (!String.IsNullOrEmpty(subfactura.ReferenciaAcuerdo) && !subfactura.ReferenciaAcuerdo.Equals("0"))
+                                    {
+                                        var acuerdo = context.AcuerdosxCliente.FirstOrDefault(a => a.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente && a.EmpresaId == subfactura.EmpresaId);
+                                        if (acuerdo != null)
+                                        {
+                                            var GrupoDescuentoAcuerdo = context.DescuentoEnAcuerdo.FirstOrDefault(x => x.CodigoDescuento == acuerdo.GrupoDescuento && x.empresaId == acuerdo.EmpresaId);
+
+                                            if (GrupoDescuentoAcuerdo != null)
+                                            {
+                                                var FechaMaxDescuento = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota).FechaVencimiento;
+                                                if (FechaMaxDescuento >= reciboPost.FechaPago)
+                                                {
+                                                    var DocumentosAplicadosXAcuerdo = context.SP_DocumentosAplicadosXCuotas(asesor.CodigoAsesor).ToList();
+                                                    var DocumentosAplicadosXCuota = 0m;
+                                                    var FletePorCuota = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente).Sum(x => x.Flete);
+                                                    if (DocumentosAplicadosXAcuerdo.Count > 0)
+                                                    {
+                                                        DocumentosAplicadosXCuota = DocumentosAplicadosXAcuerdo.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente).Select(x => x.Valor).FirstOrDefault() ?? 0;
+                                                    }
+                                                    CuotasXAcuerdo cuotaAcuerdo = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota);
+                                                    decimal? consumidoCuota = cuotaAcuerdo.ValorCuota - cuotaAcuerdo.SaldoDiponible;
+
+                                                    var valoCuota = consumidoCuota - DocumentosAplicadosXCuota - FletePorCuota ?? 0;
+
+                                                    var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
+                                                    Descuento = CalcularDescuentoAplicar(subFacturas, subfactura, DescuentoCuota);
+                                                    aplicaDescuento = true;
+
+                                                    valorCuota = Decimal.ToDouble(subfactura.Saldo.Value) - Descuento;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var cliente = context.Clientes.Where(x => x.CodigoCliente == subfactura.CodigoCliente && x.EmpresaId == subfactura.EmpresaId).FirstOrDefault();
+                                        var descuento = context.Descuento.Where(x => x.Codigo == cliente.Descuento && x.EmpresaId == cliente.EmpresaId).FirstOrDefault();
+                                        if (descuento != null)
+                                        {
+                                            var descuentoDetalle = context.DescuentoDetalle.Where(x => x.IdDescuento == descuento.IdDescuento && x.IdLinea == subfactura.FacturasxCliente.IdLinea && x.activo == true).FirstOrDefault();
+                                            if (descuentoDetalle != null)
+                                            {
+                                                var FechaMaxDescuento = FechaFact.AddDays(descuentoDetalle.DiasDescuento + 1 ?? 0);
+                                                if ((FechaMaxDescuento >= reciboPost.FechaPago) || subfactura.FacturasxCliente.ExcepcionDescuento)
+                                                {
+                                                    var documentosAplicadosFactura = TotalDocumentosAplicados(Factura.Factura, Factura.CodigoCliente);
+                                                    var valorFact = subfactura.FacturasxCliente.TotalFactura.Value - documentosAplicadosFactura - subfactura.Flete.Value;
+                                                    Descuento = descuentoDetalle != null ? Math.Round(Decimal.ToDouble(valorFact) * Decimal.ToDouble(descuentoDetalle.Porcentaje.Value / 100), 2, MidpointRounding.AwayFromZero) : 0;
+                                                    valorCuota = Decimal.ToDouble(subfactura.Saldo.Value) - Descuento;
+                                                    aplicaDescuento = true;
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (reciboPost.Pagos[0].TipoPagoDetalle == "CH_PSF")
+                                    {
+                                        Descuento = 0;
+                                    }
+                                    else
+                                    {
+                                        aplicaDescuento = ((subfactura.FechaMaxDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
+                                         (subfactura.FechaVencimientoDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaVencimientoDescuento.Value.Date));
+                                        if (aplicaDescuento)
+                                        {
+                                            valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
+                                            Descuento = Decimal.ToDouble(subfactura.Descuento.Value);
+                                        }
+                                    }                                    
+
+                                }
+
                                 var pagoValor = Decimal.Parse((valor).ToString());
                                 var minutosConf = context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotanteRecibo");
                                 double minutosValue = 1;
@@ -1053,14 +1191,14 @@ namespace AventasApi.Controllers
                                 else
                                 {
                                     detalleReciboXCliente.Valor = Decimal.Parse((valorCuota).ToString());
-                                    var aplicado = detalleReciboXCliente.Valor.Value /*+ Descuento*/;
+                                    var aplicado = detalleReciboXCliente.Valor.Value;
                                     recibo.APLICADO = aplicado.ToString();
                                     valor -= valorCuota;
                                     montoAplicado = valorCuota;
                                     if (aplicaDescuento)
                                     {
-                                        detalleReciboXCliente.Descuento = subfactura.Descuento;
-                                        recibo.DESCUENTO = (decimal.Parse(recibo.DESCUENTO) + subfactura.Descuento).ToString();
+                                        detalleReciboXCliente.Descuento = Convert.ToDecimal(Descuento);
+                                        recibo.DESCUENTO = (double.Parse(recibo.DESCUENTO) + Descuento).ToString();
                                     }
                                     subfactura.Saldo = 0;
                                     detalleReciboXCliente.EsAbono = false;
@@ -1142,7 +1280,7 @@ namespace AventasApi.Controllers
                     };
                     respuestaPagoRecibo.Facturas.Add(pagoAplicado);
                     respuestaPagoRecibo.Total += reciboPost.SaldoFavor;
-                    if(existeRecibo == 0)
+                    if (existeRecibo == 0)
                     {
                         var primerRecibo = recibosxCliente.FirstOrDefault();
                         primerRecibo.Valor += decimal.Parse(reciboPost.SaldoFavor.ToString());
@@ -1162,50 +1300,50 @@ namespace AventasApi.Controllers
                             ValorSinDescuento = decimal.Parse(reciboPost.SaldoFavor.ToString())
                         });
                     }
-                   
+
                 }
-               
+
                 if (isOnline && existeRecibo == 0)
                 {
                     try
                     {
-                            var Esduplicado = AsyncSqlInsert.IngresarRecibos(recibosxCliente, true);
+                        var Esduplicado = AsyncSqlInsert.IngresarRecibos(recibosxCliente, true);
 
-                            if (Esduplicado)
+                        if (Esduplicado)
+                        {
+                            foreach (var recibo in recibosxCliente)
                             {
-                                foreach (var recibo in recibosxCliente)
+                                reciboXClienteFlotante = new RecibosxClienteFlotanteViewModel
                                 {
-                                    reciboXClienteFlotante = new RecibosxClienteFlotanteViewModel
-                                    {
-                                        NumeroRecibo = recibo.NumeroRecibo,
-                                        CodigoCliente = recibo.CodigoCliente,
-                                        Fecha = DateTime.Now,
-                                        IdTipoPago = recibo.IdTipoPago,
-                                        Referencia = recibo.Referencia,
-                                        FechaPago = recibo.FechaPago,
-                                        IdBanco = recibo.IdBanco,
-                                        Valor = recibo.Valor,
-                                        IdMoneda = recibo.IdMoneda,
-                                        Sincronizado = false,
-                                        CodigoAsesor = asesor.CodigoAsesor,
-                                        IdFactura = recibo.IdFactura,
-                                        Descuento = recibo.Descuento,
-                                        Latitude = recibo.Latitude,
-                                        Longitude = recibo.Longitude,
-                                        SpecPago = recibo.SpecPago,
-                                        UsuarioCreacion = recibo.UsuarioCreacion,
-                                        FechaCreacion = DateTime.Now,
-                                        Estado = 0, ///0: Pendiente, 1: Sincronizado, 2:Cancelado
-                                        DetalleRecibo = recibo.DetalleRecibo
-                                    };
-                                    recibosxClienteFlotante.Add(reciboXClienteFlotante);
-                                }
-                                AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
-                                respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
-                                return Ok(respuestaPagoRecibo);
+                                    NumeroRecibo = recibo.NumeroRecibo,
+                                    CodigoCliente = recibo.CodigoCliente,
+                                    Fecha = DateTime.Now,
+                                    IdTipoPago = recibo.IdTipoPago,
+                                    Referencia = recibo.Referencia,
+                                    FechaPago = recibo.FechaPago,
+                                    IdBanco = recibo.IdBanco,
+                                    Valor = recibo.Valor,
+                                    IdMoneda = recibo.IdMoneda,
+                                    Sincronizado = false,
+                                    CodigoAsesor = asesor.CodigoAsesor,
+                                    IdFactura = recibo.IdFactura,
+                                    Descuento = recibo.Descuento,
+                                    Latitude = recibo.Latitude,
+                                    Longitude = recibo.Longitude,
+                                    SpecPago = recibo.SpecPago,
+                                    UsuarioCreacion = recibo.UsuarioCreacion,
+                                    FechaCreacion = DateTime.Now,
+                                    Estado = 0, ///0: Pendiente, 1: Sincronizado, 2:Cancelado
+                                    DetalleRecibo = recibo.DetalleRecibo
+                                };
+                                recibosxClienteFlotante.Add(reciboXClienteFlotante);
                             }
-                            else
-                            {
+                            AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
+                            respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
+                            return Ok(respuestaPagoRecibo);
+                        }
+                        else
+                        {
 
                             if (reciboPost.SaldoFavor > 0)
                             {
@@ -1215,17 +1353,18 @@ namespace AventasApi.Controllers
                                 recibos[recibos.Count() - 1].APLICADO = valorConSaldoFavor.ToString();
                             }
                             var reciboHeaders = new List<ReciboApiModel>();
-                                var client = new RestClient();
-                                var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
-                                {
-                                    RequestFormat = DataFormat.Json
-                                };
-                                request.AddHeader("Content-type", "application/json; charset=utf-8");
-                                request.Parameters.Clear();
-                                request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
-                                var respuesta = client.Execute(request);
-                                if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
-                                {
+                            var client = new RestClient();
+                            client.Timeout = 4000;
+                            var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
+                            {
+                                RequestFormat = DataFormat.Json
+                            };
+                            request.AddHeader("Content-type", "application/json; charset=utf-8");
+                            request.Parameters.Clear();
+                            request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
+                            var respuesta = client.Execute(request);
+                            if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
+                            {
                                 //using (AVentasEntities context = new AVentasEntities())
                                 //{
                                 //    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
@@ -1266,8 +1405,8 @@ namespace AventasApi.Controllers
 
                             }
                             string empresa = codigoCliente.Substring(0, 4);
-                            syncCuentaCorriente.SyncFacturas(empresa, codigoCliente);
-                            syncCuentaCorriente.SyncSubFacturas(empresa, codigoCliente, asesor.CodigoAsesor);
+                            // syncCuentaCorriente.SyncFacturas(empresa, codigoCliente);
+                            // syncCuentaCorriente.SyncSubFacturas(empresa, codigoCliente, asesor.CodigoAsesor);
 
                             respuestaPagoRecibo.Mensaje = "El recibo ha sido sincronizado exitosamente.";
                             return Ok(respuestaPagoRecibo);
@@ -1281,7 +1420,7 @@ namespace AventasApi.Controllers
                 }
                 else
                 {
-                    if(existeRecibo > 0)
+                    if (existeRecibo > 0)
                     {
                         AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
                         respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
@@ -1292,7 +1431,7 @@ namespace AventasApi.Controllers
 
                     if (Esduplicado)
                     {
-                        foreach(var recibo in recibosxCliente)
+                        foreach (var recibo in recibosxCliente)
                         {
                             reciboXClienteFlotante = new RecibosxClienteFlotanteViewModel
                             {
@@ -1314,7 +1453,7 @@ namespace AventasApi.Controllers
                                 SpecPago = recibo.SpecPago,
                                 UsuarioCreacion = recibo.UsuarioCreacion,
                                 FechaCreacion = DateTime.Now,
-                                Estado = 0 , ///0: Pendiente, 1: Sincronizado, 2:Cancelado
+                                Estado = 0, ///0: Pendiente, 1: Sincronizado, 2:Cancelado
                                 DetalleRecibo = recibo.DetalleRecibo
                             };
                             recibosxClienteFlotante.Add(reciboXClienteFlotante);
@@ -1342,7 +1481,7 @@ namespace AventasApi.Controllers
                         {
                             using (AVentasEntities ctx = new AVentasEntities())
                             {
-                                
+
                                 var factura = ctx.FacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA && x.EmpresaId == iter.COMPANY);
 
                                 if (factura != null)

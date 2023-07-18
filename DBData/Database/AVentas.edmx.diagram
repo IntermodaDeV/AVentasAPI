@@ -344,6 +344,10 @@
         <EntityTypeShape EntityType="AventasModel.AnticiposxCliente" Width="1.5" PointX="0.75" PointY="12.75" />
         <EntityTypeShape EntityType="AventasModel.Combustibles" Width="1.5" PointX="15.375" PointY="20.875" />
         <AssociationConnector Association="AventasModel.FK_GastosViajeDetalle_Combustibles" />
+        <EntityTypeShape EntityType="AventasModel.DescuentoEnAcuerdo" Width="1.5" PointX="3" PointY="61.125" />
+        <EntityTypeShape EntityType="AventasModel.DocumentosAplicadosAFacturas" Width="1.5" PointX="17.75" PointY="22.5" />
+        <AssociationConnector Association="AventasModel.FK_tbDescuentoEnAcuerdo_tbEmpresa_empresaId" />
+        <AssociationConnector Association="AventasModel.FK_Documentos_IdSubFactura" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

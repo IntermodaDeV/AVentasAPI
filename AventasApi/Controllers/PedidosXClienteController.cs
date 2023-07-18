@@ -888,6 +888,9 @@ namespace AventasApi.Controllers
                                 var pedidoAX = response.Content.Substring(9, 11);
                                 pedidoDB.NumeroPedido = pedidoAX;
                                 pedidoDB.Sincronizado = true;
+                                pedidoDB.FechaSincronizacion = DateTime.Now;
+                                int estadoPedido = SyncPedido.ObtenerEstadoPedido(pedidoAX, Pedido.COMPANY);
+                                pedidoDB.APSALESSTATUS = estadoPedido;
                                 respuesta = $"Pedido {Pedido.REFERENCE} sincronizado exitosamente con AX.";
                                 syncAcuerdosVentas.SyncAcuerdoVenta(Pedido.COMPANY, Pedido.CUSTOMER_ACCOUNT, Pedido.USER);
                             }

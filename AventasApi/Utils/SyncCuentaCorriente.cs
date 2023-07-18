@@ -142,7 +142,33 @@ namespace AventasApi.Utils
                             newEntity.ValorCuota = Decimal.TryParse(subFactura.PA_PAYM_AMOUNT, out svCuota) ? svCuota : 0;
                             newEntity.ValorVencidoCuota = Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out svVencidoCuota) ? svVencidoCuota : 0;
                             newEntity.ReferenciaCuotas = subFactura.PA_REF_APSA;
-                           
+                            newEntity.Valor = !String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out ssFactura) ? ssFactura : 0 : fFactura.TotalFactura;
+                            newEntity.Flete = Decimal.TryParse(subFactura.FREIGHT, out ssFactura) ? ssFactura : 0;
+                            newEntity.completaCuota = false;
+
+                            if (!String.IsNullOrEmpty(subFactura.AGREEMENT_NAME))
+                            {
+                                var FacturasDeCuotas = context.SubFacturasxCliente.Where(x => x.IdAcuerdoxCliente == subFactura.AGREEMENT_NAME && x.NumeroCuota == newEntity.NumeroCuota).OrderByDescending(x => x.Factura);
+                                if ((FacturasDeCuotas.Sum(x => x.Valor) + newEntity.Valor) >= newEntity.ValorCuota)
+                                {
+                                    var Acuerdo = context.AcuerdosxCliente.FirstOrDefault(x => x.IdAcuerdoxCliente == subFactura.AGREEMENT_NAME);
+                                    var descuento = context.DescuentoEnAcuerdo.FirstOrDefault(a => a.CodigoDescuento == Acuerdo.GrupoDescuento);
+
+                                    var montoDescuento = descuento != null ? Math.Round(Convert.ToDecimal(newEntity.ValorCuota * (descuento.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero) : 0;
+                                    if (montoDescuento < newEntity.Valor)
+                                    {
+                                        newEntity.completaCuota = true;
+                                    }
+                                    else
+                                    {
+                                        var facturaDesc = FacturasDeCuotas.FirstOrDefault();
+                                        facturaDesc.completaCuota = true;
+                                    }
+
+                                }
+
+                            }
+
                             context.SubFacturasxCliente.Add(newEntity);
                         }
                         else
@@ -176,7 +202,49 @@ namespace AventasApi.Utils
                             entityFound.ValorCuota = Decimal.TryParse(subFactura.PA_PAYM_AMOUNT, out svCuota) ? svCuota : 0;
                             entityFound.ValorVencidoCuota = Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out svVencidoCuota) ? svVencidoCuota : 0;
                             entityFound.ReferenciaCuotas = subFactura.PA_REF_APSA;
-                          
+                            entityFound.Flete = Decimal.TryParse(subFactura.FREIGHT, out ssFactura) ? ssFactura : 0;
+                            entityFound.completaCuota = false;
+                            entityFound.Valor = !String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out ssFactura) ? ssFactura : 0 : fFactura.TotalFactura;
+                            if (!String.IsNullOrEmpty(entityFound.IdAcuerdoxCliente))
+                            {
+                                var FacturasDeCuotas = context.SubFacturasxCliente.Where(x => x.IdAcuerdoxCliente == entityFound.IdAcuerdoxCliente && x.NumeroCuota == entityFound.NumeroCuota).ToList();
+                                var sumaCuotas = FacturasDeCuotas.Sum(x => x.Valor);
+                                if (sumaCuotas >= entityFound.ValorCuota)
+                                {
+                                    var facturaDescuento = FacturasDeCuotas.Where(x => x.Saldo > 0).LastOrDefault();
+                                    if (facturaDescuento == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    var Acuerdo = context.AcuerdosxCliente.FirstOrDefault(x => x.IdAcuerdoxCliente == subFactura.AGREEMENT_NAME);
+                                    var descuento = context.DescuentoEnAcuerdo.FirstOrDefault(a => a.CodigoDescuento == Acuerdo.GrupoDescuento);
+                                    var montoDescuento = 0m;
+                                    if (descuento != null)
+                                    {
+                                        montoDescuento = Math.Round(Convert.ToDecimal(entityFound.ValorCuota * (descuento.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
+                                    }
+                                    if (FacturasDeCuotas.Where(x => x.Saldo > 0).Count() > 1)
+                                    {
+                                        if (montoDescuento < FacturasDeCuotas.LastOrDefault().Valor)
+                                        {
+                                            facturaDescuento.completaCuota = true;
+                                        }
+                                        else
+                                        {
+                                            var NuevaFacturaDescuento = context.SubFacturasxCliente.Where(x => x.IdAcuerdoxCliente == subFactura.AGREEMENT_NAME && x.NumeroCuota == entityFound.NumeroCuota && x.Factura != facturaDescuento.Factura).OrderByDescending(x => x.Factura).FirstOrDefault();
+                                            NuevaFacturaDescuento.completaCuota = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        facturaDescuento.completaCuota = true;
+                                    }
+                                }
+
+                            }
+
+
                             context.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
                         }
                         context.SaveChanges();

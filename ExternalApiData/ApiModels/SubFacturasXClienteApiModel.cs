@@ -27,5 +27,6 @@ namespace ExternalApiData.Models.ApiModels
         public string CURRENCY_CODE { get; set; }
         public string AGREEMENT_NAME { get; set; }
         public string FACTURACION_FEL { get; set; }
+        public string FREIGHT { get; set; }
     }
 }

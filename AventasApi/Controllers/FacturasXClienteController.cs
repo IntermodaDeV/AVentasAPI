@@ -1,116 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DBData.Database;
+using System;
+using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using DBData.Database;
-using AventasApi.Models;
-using AventasApi.Models.ViewModels;
-using System.Data.Entity;
 
 namespace AventasApi.Controllers
 {
+    [RoutePrefix("api/factura")]
     public class FacturasXClienteController : ApiController
     {
-        AVentasEntities context = new AVentasEntities();
-        [Route("api/FacturasXCliente/facturasXVencer{id}")]
-        [HttpGet]
-        public async Task<IHttpActionResult> GetFacturasXVencer(string id)
-        {
-
-            try
-            {
-                //var user = TokenService.Validate<UserAuthenticated>(Request.Headers.Authorization.Parameter);
-                var user = new { UserAccount = "gmonrroy" };
-
-                var facturas = context.FacturasxCliente.Where(facCli => facCli.CodigoCliente == id).ToList();
-                var FechaLimite = DateTime.Today;
-                FechaLimite.AddDays(1);
-                var FechaLimiteFuturo = FechaLimite.AddDays(30);
-                var facturasVencidas = facturas.Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite);
-                var facturasXVencer = facturas.Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo);
-                var estado = new
-                {
-                    NumeroFacturasVencidas = facturasVencidas.Count(),
-                    MontoFacturasVencidas = facturasVencidas.Sum(faccli => faccli.Saldo),
-                    NumeroFacturasXVencer = facturasXVencer.Count(),
-                    MontoFacturasXVencer = facturasXVencer.Sum(faccli => faccli.Saldo)
-                };
-
-                return Ok(estado);
-            }catch(Exception e)
-            {
-                return BadRequest(e.ToString());
-            }
-
-        }
-        [Route("api/FacturasXCliente/{id}")]
-        [HttpGet]
-        public async Task<IHttpActionResult> GetFacturas(string id)
-        {
-
-            try
-            {
-                //var user = TokenService.Validate<UserAuthenticated>(Request.Headers.Authorization.Parameter);
-                var user = new { UserAccount = "gmonrroy" };
-
-                var facturas = context.FacturasxCliente.Where(facCli => facCli.CodigoCliente == id).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
-                {
-                    IdFactura = facCli.IdFactura,
-                    Factura = facCli.Factura,
-                    NumeroFEL = facCli.NumeroFEL,
-                    CodigoCliente = facCli.CodigoCliente,
-                    EmpresaId = facCli.EmpresaId,
-                    IdMoneda = facCli.IdMoneda,
-                    Tipo = facCli.Tipo,
-                    FechaFactura = facCli.FechaFactura,
-                    FechaVencimiento = facCli.FechaVencimiento,
-                    FechaMaxDescuento = facCli.FechaMaxDescuento,
-                    TotalFactura = facCli.TotalFactura,
-                    Saldo = facCli.Saldo,
-                    PendienteFactura = facCli.PendienteFactura,
-                    Descuento = facCli.Descuento,
-                    FacturaStatus = facCli.FacturaStatus,
-                    NumeroPagos = facCli.NumeroPagos,
-                    Referencia = facCli.Referencia,
-                    IdLinea = facCli.IdLinea,
-                    LineaString = facCli.MaestroLinea.Linea,
-                    IdTipoPedido = facCli.IdTipoPedido,
-                    TipoPedidoString = facCli.TiposdePedido.TipoPedido
-                }).ToList();
-
-                return Ok(facturas);
-            }catch(Exception e)
-            {
-                return BadRequest(e.ToString());
-            }
-
-        }
-
-        [HttpGet]
-        [Route("api/factura/{cliente}")]
-        public async Task<IHttpActionResult> GetFacturaCliente(string cliente)
+        [HttpPut]
+        [Route("excepciondescuento/{cliente}/{factura}")]
+        public async Task<IHttpActionResult> ActualizarExcepcionFactura(string cliente,string factura)
         {
             try
             {
                 using(AVentasEntities ctx = new AVentasEntities())
                 {
-                    var facturas = await ctx.FacturasxCliente
-                        .Where(x => x.CodigoCliente == cliente && x.Tipo.Contains("Factura") && x.NumeroPedido!=null)
-                        .OrderByDescending(x => x.FechaFactura)
-                        .Select(x => new { factura = x.Factura, pedido = x.NumeroPedido,linea=x.IdLinea })                       
+                    FacturasxCliente facturaBD = await ctx.FacturasxCliente.FirstOrDefaultAsync(x=>x.CodigoCliente == cliente && x.Factura == factura);
+                    if (facturaBD == null)
+                    {
+                        return NotFound();
+                    }
+
+                    facturaBD.ExcepcionDescuento = !facturaBD.ExcepcionDescuento;
+                    await ctx.SaveChangesAsync();
+
+                    return Ok();
+                }
+            }catch(Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("descuentovencido/{cliente}")]
+        public async Task<IHttpActionResult> ObtenerFacturasDescuentoVencido(string cliente)
+        {
+            try
+            {
+                using(AVentasEntities ctx = new AVentasEntities())
+                {
+                    var facturasDescuentoVencido = await ctx.FacturasxCliente
+                        .Where(x=>x.CodigoCliente == cliente && x.Saldo>0 && x.FechaMaxDescuento < DateTime.Now)
+                        .Select(x => new { documento=x.Tipo ,numero = x.Factura,fecha=x.FechaFactura,vencimiento=x.FechaVencimiento ,valor=x.TotalFactura,saldo=x.Saldo,excepcionDescuento = x.ExcepcionDescuento })
                         .ToListAsync();
 
-                    return Ok(facturas);
+                    return Ok(facturasDescuentoVencido);
                 }
-            }
-            catch (Exception e)
+            }catch(Exception ex)
             {
-                return BadRequest(e.ToString());
+                return InternalServerError(ex);
             }
-
         }
     }
 }
