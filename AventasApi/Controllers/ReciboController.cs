@@ -994,28 +994,20 @@ namespace AventasApi.Controllers
                                                 var FechaMaxDescuento = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota).FechaVencimiento;
                                                 if (FechaMaxDescuento >= reciboPost.FechaPago)
                                                 {
-                                                    var DocumentosAplicadosXAcuerdo = context.SP_DocumentosAplicadosXCuotas(asesor.CodigoAsesor).ToList();
-                                                    var DocumentosAplicadosXCuota = 0m;
                                                     var FletePorCuota = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente).Sum(x => x.Flete);
-                                                    if (DocumentosAplicadosXAcuerdo.Count > 0)
-                                                    {
-                                                        DocumentosAplicadosXCuota = DocumentosAplicadosXAcuerdo.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente).Select(x => x.Valor).FirstOrDefault() ?? 0;
-                                                    }
+
                                                     CuotasXAcuerdo cuotaAcuerdo = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota);
                                                     decimal? consumidoCuota = cuotaAcuerdo.ValorCuota - cuotaAcuerdo.SaldoDiponible;
 
-                                                    var valoCuota = consumidoCuota - DocumentosAplicadosXCuota - FletePorCuota ?? 0;
+                                                    var valoCuota = consumidoCuota - FletePorCuota ?? 0;
+                                                    var pagosAplicados = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente).ToList();
+                                                    var pagadoCuota = pagosAplicados.Sum(x => x.SaldoDivisa - x.Saldo) ?? 0;
 
                                                     var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
                                                     Descuento = CalcularDescuentoAplicar(subFacturas, subfactura, DescuentoCuota);
-                                                    aplicaDescuento = valor == 0 ? true : valor >= (Decimal.ToDouble(valoCuota)-Descuento);
+                                                    aplicaDescuento = valor == 0 ? true : valor >= (Decimal.ToDouble(valoCuota - pagadoCuota) - Descuento);
 
-                                                    valorCuota = Decimal.ToDouble(subfactura.Saldo.Value);
-
-                                                    if (aplicaDescuento)
-                                                    {
-                                                        valorCuota = Decimal.ToDouble(subfactura.Saldo.Value) - Descuento;
-                                                    }
+                                                    valorCuota = aplicaDescuento ? (Decimal.ToDouble(subfactura.Saldo.Value) - Descuento) : Decimal.ToDouble(subfactura.Saldo.Value);
                                                 }
                                             }
                                         }
