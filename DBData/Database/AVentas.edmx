@@ -1721,6 +1721,19 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="editedBy" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="editedDate" Type="datetime" Nullable="false" />
         </EntityType>
+        <EntityType Name="UsuarioLinea">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdLinea" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="UsuarioId" Type="int" Nullable="false" />
+          <Property Name="Asignada" Type="bit" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar" MaxLength="75" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="Usuarios">
           <Key>
             <PropertyRef Name="Id" />
@@ -3526,6 +3539,30 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__UsuarioLi__IdLin__21B79C0B">
+          <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="1" />
+          <End Role="UsuarioLinea" Type="Self.UsuarioLinea" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroLinea">
+              <PropertyRef Name="IdLinea" />
+            </Principal>
+            <Dependent Role="UsuarioLinea">
+              <PropertyRef Name="IdLinea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UsuarioLi__Usuar__22ABC044">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="UsuarioLinea" Type="Self.UsuarioLinea" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UsuarioLinea">
+              <PropertyRef Name="UsuarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Usuarios___Empre__0781FD65">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="1" />
           <End Role="Usuarios_Empresas" Type="Self.Usuarios_Empresas" Multiplicity="*" />
@@ -4525,6 +4562,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="TransportePrecioCaja" EntityType="Self.TransportePrecioCaja" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UbicacionesXAlmacen" EntityType="Self.UbicacionesXAlmacen" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuario_Rol" EntityType="Self.Usuario_Rol" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UsuarioLinea" EntityType="Self.UsuarioLinea" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios_Asesores" EntityType="Self.Usuarios_Asesores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Usuarios_Empresas" EntityType="Self.Usuarios_Empresas" Schema="dbo" store:Type="Tables" />
@@ -5168,6 +5206,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK__Ubicacion__Almac__3A978D17" Association="Self.FK__Ubicacion__Almac__3A978D17">
             <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
             <End Role="UbicacionesXAlmacen" EntitySet="UbicacionesXAlmacen" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UsuarioLi__IdLin__21B79C0B" Association="Self.FK__UsuarioLi__IdLin__21B79C0B">
+            <End Role="MaestroLinea" EntitySet="MaestroLinea" />
+            <End Role="UsuarioLinea" EntitySet="UsuarioLinea" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UsuarioLi__Usuar__22ABC044" Association="Self.FK__UsuarioLi__Usuar__22ABC044">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="UsuarioLinea" EntitySet="UsuarioLinea" />
           </AssociationSet>
           <AssociationSet Name="FK__Usuarios___Empre__0781FD65" Association="Self.FK__Usuarios___Empre__0781FD65">
             <End Role="Empresa" EntitySet="Empresa" />
@@ -5885,6 +5931,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK_Linea1" FromRole="MaestroLinea" ToRole="PedidosxClienteFlotante" />
           <NavigationProperty Name="DescuentoDetalle" Relationship="AventasModel.FK_tbDescuentoDetalle_tbLinea_idLinea" FromRole="MaestroLinea" ToRole="DescuentoDetalle" />
           <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucion_Linea_IdLinea" FromRole="MaestroLinea" ToRole="Devolucion" />
+          <NavigationProperty Name="UsuarioLinea" Relationship="AventasModel.FK__UsuarioLi__IdLin__21B79C0B" FromRole="MaestroLinea" ToRole="UsuarioLinea" />
         </EntityType>
         <EntityType Name="MaestroMoneda">
           <Key>
@@ -7893,6 +7940,15 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Combustibles" EntitySet="Combustibles" />
             <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
           </AssociationSet>
+          <EntitySet Name="UsuarioLinea" EntityType="AventasModel.UsuarioLinea" />
+          <AssociationSet Name="FK__UsuarioLi__IdLin__21B79C0B" Association="AventasModel.FK__UsuarioLi__IdLin__21B79C0B">
+            <End Role="MaestroLinea" EntitySet="MaestroLinea" />
+            <End Role="UsuarioLinea" EntitySet="UsuarioLinea" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UsuarioLi__Usuar__22ABC044" Association="AventasModel.FK__UsuarioLi__Usuar__22ABC044">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="UsuarioLinea" EntitySet="UsuarioLinea" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -8565,6 +8621,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Correo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PromesaPago" Relationship="AventasModel.FK_Usuarios_IdUsuario" FromRole="Usuarios" ToRole="PromesaPago" />
           <NavigationProperty Name="BitacoraNoVentaEnVisitas" Relationship="AventasModel.FK_Usuario_UsuarioCrea" FromRole="Usuarios" ToRole="BitacoraNoVentaEnVisitas" />
+          <NavigationProperty Name="UsuarioLinea" Relationship="AventasModel.FK__UsuarioLi__Usuar__22ABC044" FromRole="Usuarios" ToRole="UsuarioLinea" />
         </EntityType>
         <Association Name="FK__Usuarios__Empres__28E2F130">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -11373,6 +11430,45 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="UsuarioLinea">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdLinea" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="UsuarioId" Type="Int32" Nullable="false" />
+          <Property Name="Asignada" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK__UsuarioLi__IdLin__21B79C0B" FromRole="UsuarioLinea" ToRole="MaestroLinea" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK__UsuarioLi__Usuar__22ABC044" FromRole="UsuarioLinea" ToRole="Usuarios" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="75" FixedLength="false" Unicode="true" />
+          <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <Association Name="FK__UsuarioLi__IdLin__21B79C0B">
+          <End Type="AventasModel.MaestroLinea" Role="MaestroLinea" Multiplicity="1" />
+          <End Type="AventasModel.UsuarioLinea" Role="UsuarioLinea" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MaestroLinea">
+              <PropertyRef Name="IdLinea" />
+            </Principal>
+            <Dependent Role="UsuarioLinea">
+              <PropertyRef Name="IdLinea" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UsuarioLi__Usuar__22ABC044">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="1" />
+          <End Type="AventasModel.UsuarioLinea" Role="UsuarioLinea" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UsuarioLinea">
+              <PropertyRef Name="UsuarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -13569,6 +13665,20 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="MarkupCode" ColumnName="MarkupCode" />
                 <ScalarProperty Name="Nombre" ColumnName="Nombre" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UsuarioLinea">
+            <EntityTypeMapping TypeName="AventasModel.UsuarioLinea">
+              <MappingFragment StoreEntitySet="UsuarioLinea">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Asignada" ColumnName="Asignada" />
+                <ScalarProperty Name="UsuarioId" ColumnName="UsuarioId" />
+                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

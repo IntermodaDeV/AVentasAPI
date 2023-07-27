@@ -161,6 +161,7 @@ namespace DBData.Database
         public virtual DbSet<SaleStatus> SaleStatus { get; set; }
         public virtual DbSet<AnticiposxCliente> AnticiposxCliente { get; set; }
         public virtual DbSet<Combustibles> Combustibles { get; set; }
+        public virtual DbSet<UsuarioLinea> UsuarioLinea { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

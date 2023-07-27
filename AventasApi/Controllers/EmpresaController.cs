@@ -24,7 +24,7 @@ namespace AventasApi.Controllers
             {
                 var empresas = context.Empresa.ToList();
 
-                if(empresas.Count <= 0)
+                if (empresas.Count <= 0)
                 {
                     return new List<EmpresaModel>();
                 }
@@ -43,7 +43,7 @@ namespace AventasApi.Controllers
             {
                 return new List<EmpresaModel>();
             }
-          
+
         }
 
         [HttpGet]
