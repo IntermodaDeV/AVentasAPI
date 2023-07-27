@@ -163,6 +163,7 @@ namespace DBData.Database
         public virtual DbSet<Combustibles> Combustibles { get; set; }
         public virtual DbSet<DescuentoEnAcuerdo> DescuentoEnAcuerdo { get; set; }
         public virtual DbSet<DocumentosAplicadosAFacturas> DocumentosAplicadosAFacturas { get; set; }
+        public virtual DbSet<UsuarioLinea> UsuarioLinea { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

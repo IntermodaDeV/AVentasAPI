@@ -12,4 +12,13 @@ namespace AventasApi.Models.ViewModels
         public int UsuarioId { get; set; }
         public bool Status { get; set; }
     }
+
+
+    public class UsuariosEmpresasParamViewmodel
+    {
+        public string EmpresaId { get; set; }
+        public int UsuarioId { get; set; }
+        public string usuario { get; set; }
+    }
+
 }

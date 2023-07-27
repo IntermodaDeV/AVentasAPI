@@ -348,6 +348,9 @@
         <EntityTypeShape EntityType="AventasModel.DocumentosAplicadosAFacturas" Width="1.5" PointX="17.75" PointY="22.5" />
         <AssociationConnector Association="AventasModel.FK_tbDescuentoEnAcuerdo_tbEmpresa_empresaId" />
         <AssociationConnector Association="AventasModel.FK_Documentos_IdSubFactura" />
+        <EntityTypeShape EntityType="AventasModel.UsuarioLinea" Width="1.5" PointX="20.25" PointY="23.75" />
+        <AssociationConnector Association="AventasModel.FK__UsuarioLi__IdLin__21B79C0B" />
+        <AssociationConnector Association="AventasModel.FK__UsuarioLi__Usuar__22ABC044" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
