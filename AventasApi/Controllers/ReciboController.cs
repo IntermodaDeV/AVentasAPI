@@ -43,6 +43,33 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/recibos/firma/{empresa}")]
+        public async Task<IHttpActionResult> GetFirmaAsesor(string empresa)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
+
+                    if (asesor.firma == null)
+                    {
+                        return Ok("");
+                    }
+
+                    string firma = "";
+                    firma = "data:image/png;base64," + Convert.ToBase64String(asesor.firma);
+                    return Ok(firma);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet]
         [Route("~/api/recibos/correlativo/{empresa}")]
         public async Task<IHttpActionResult> GetCorrelativo(string empresa)
         {
@@ -103,11 +130,14 @@ namespace AventasApi.Controllers
                     List<RecibosxClienteViewModel> ListaRecibos = new List<RecibosxClienteViewModel>();
                     foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
+
+                    var asesorBD = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == asesor);
+
                     var Recibos = context.RecibosxCliente.Where(r => r.CodigoAsesor == asesor && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
                         NumeroCopia=context.LogRecibo.Where(x=>x.ReciboId==rec.ReciboId).Count()+1,
                         Anticipo=false,
-                        NombreAsesor = context.Asesores.FirstOrDefault(x=>x.CodigoAsesor==rec.CodigoAsesor).Nombre,
+                        NombreAsesor = asesorBD.Nombre,
                         Asesor = rec.CodigoAsesor,
                         NumeroRecibo = rec.NumeroRecibo,
                         CodigoCliente = rec.CodigoCliente,
@@ -123,6 +153,7 @@ namespace AventasApi.Controllers
                         IdFactura = rec.IdFactura,
                         Longitude = rec.Longitude,
                         Latitude = rec.Latitude,
+                        firmaByte = rec.firma,
                         locationCliente = new LocationCliente
                         {
                             latitude = context.Clientes.FirstOrDefault(x => x.CodigoCliente == rec.CodigoCliente).Latitud,
@@ -210,6 +241,7 @@ namespace AventasApi.Controllers
                         Longitude = ant.Longitude,
                         DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == ant.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
                         Descuento = 0,
+                        firmaByte = ant.firma,
                         Cliente = context.Clientes.Where(cli => cli.CodigoCliente == ant.CodigoCliente).Select(cli => new ClienteViewModel
                         {
                             Codigo = cli.CodigoCliente,
@@ -250,6 +282,23 @@ namespace AventasApi.Controllers
                         ListaRecibos.AddRange(anticiposXAsesor);
 
                 }
+
+                    foreach (var recibo in ListaRecibos)
+                    {
+                        if (recibo.firmaByte != null)
+                        {
+                            string firma = "";
+                            firma = "data:image/png;base64," + Convert.ToBase64String(recibo.firmaByte);
+                            recibo.firma = firma;
+                            recibo.firmaByte = null;
+                        }
+                        else
+                        {
+                            recibo.firma = "";
+                            recibo.firmaByte = null;
+                        }
+                    }
+
                     return Ok(ListaRecibos);
                 }
             }catch(Exception e)
@@ -627,7 +676,8 @@ namespace AventasApi.Controllers
                                     UsuarioCreacion = user.UserAccount,
                                     FechaCreacion = DateTime.Now,
                                     Descuento = 0,
-                                    Origen = "Web"
+                                    Origen = "Web",
+                                    firma = asesor.firma
                                 };
                                 context.AnticiposxCliente.Add(anticipo);
                             }
@@ -673,7 +723,8 @@ namespace AventasApi.Controllers
                                     UsuarioCreacion = user.UserAccount,
                                     FechaCreacion = DateTime.Now,
                                     Descuento = 0,
-                                    Origen="Web"
+                                    Origen="Web",
+                                    firma = asesor.firma
                                 };
                                 context.AnticiposxCliente.Add(anticipo);
                             }
@@ -1138,7 +1189,8 @@ namespace AventasApi.Controllers
                                         SpecPago = pago.TipoPagoDetalle,
                                         UsuarioCreacion = user.UserAccount,
                                         FechaCreacion = DateTime.Now,
-                                        EmpresaUsuario = reciboPost.EmpresaUsuario
+                                        EmpresaUsuario = reciboPost.EmpresaUsuario,
+                                        firmaByte = asesor.firma,
                                     };
                                     recibosxCliente.Add(reciboXCliente);
                                 }

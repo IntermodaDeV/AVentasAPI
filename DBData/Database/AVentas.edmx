@@ -77,6 +77,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Origen" Type="varchar" MaxLength="10" />
+          <Property Name="firma" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="AprobacionDevoluciones">
           <Key>
@@ -111,6 +112,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="CorrelativoDevolucion" Type="int" />
           <Property Name="ConstanteGira" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="CorrelativoGira" Type="int" Nullable="false" />
+          <Property Name="firma" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="AsignacionxAsesor">
           <Key>
@@ -1433,6 +1435,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="proformaId" Type="int" />
           <Property Name="Origen" Type="varchar" MaxLength="10" />
+          <Property Name="firma" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="RecibosxClienteFlotante">
           <Key>
@@ -8137,6 +8140,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="RecibosProforma" Relationship="AventasModel.FK__RecibosXCliente__ReciboProformaId" FromRole="RecibosxCliente" ToRole="RecibosProforma" />
           <NavigationProperty Name="LogRecibo" Relationship="AventasModel.FK__LogRecibo__Recib__7365F61F" FromRole="RecibosxCliente" ToRole="LogRecibo" />
           <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
           <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
@@ -10614,6 +10618,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="CorrelativoDevolucion" Type="Int32" />
           <Property Name="ConstanteGira" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="CorrelativoGira" Type="Int32" Nullable="false" />
+          <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <EntityType Name="UbicacionesXAlmacen">
           <Key>
@@ -11495,6 +11500,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <EntityType Name="Combustibles">
           <Key>
@@ -12383,6 +12389,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="RecibosxCliente">
             <EntityTypeMapping TypeName="AventasModel.RecibosxCliente">
               <MappingFragment StoreEntitySet="RecibosxCliente">
+                <ScalarProperty Name="firma" ColumnName="firma" />
                 <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="proformaId" ColumnName="proformaId" />
                 <ScalarProperty Name="SpecPago" ColumnName="SpecPago" />
@@ -13351,6 +13358,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Asesores">
             <EntityTypeMapping TypeName="AventasModel.Asesores">
               <MappingFragment StoreEntitySet="Asesores">
+                <ScalarProperty Name="firma" ColumnName="firma" />
                 <ScalarProperty Name="CorrelativoGira" ColumnName="CorrelativoGira" />
                 <ScalarProperty Name="ConstanteGira" ColumnName="ConstanteGira" />
                 <ScalarProperty Name="CorrelativoDevolucion" ColumnName="CorrelativoDevolucion" />
@@ -13783,6 +13791,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="AnticiposxCliente">
             <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
               <MappingFragment StoreEntitySet="AnticiposxCliente">
+                <ScalarProperty Name="firma" ColumnName="firma" />
                 <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />
