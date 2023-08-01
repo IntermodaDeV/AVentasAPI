@@ -1953,12 +1953,12 @@ namespace AventasApi.Controllers
 
                     if (recibo.Tipo != null || recibo.IdFactura == null)
                     {
-                        anticipoBD = GenerarAnticipo(recibo, numeroReferencia);
+                        anticipoBD = GenerarAnticipo(recibo, numeroReferencia,asesor);
                         ctx.AnticiposxCliente.Add(anticipoBD);
                     }
                     else
                     {
-                        reciboBD = GenerarRecibo(recibo, numeroReferencia);
+                        reciboBD = GenerarRecibo(recibo, numeroReferencia,asesor);
                         ctx.RecibosxCliente.Add(reciboBD);
                     }
 
@@ -2040,7 +2040,7 @@ namespace AventasApi.Controllers
             }
         }
 
-        private RecibosxCliente GenerarRecibo(RecibosxClienteFlotante reciboFlotante, string numeroReferencia)
+        private RecibosxCliente GenerarRecibo(RecibosxClienteFlotante reciboFlotante, string numeroReferencia,Asesores asesor)
         {
             RecibosxCliente reciboBD = new RecibosxCliente()
             {
@@ -2065,6 +2065,7 @@ namespace AventasApi.Controllers
                 Latitude = reciboFlotante.Latitude,
                 Longitude = reciboFlotante.Longitude,
                 Sincronizado = false,
+                firma=asesor.firma,
                 RecibosDetalle = reciboFlotante.RecibosDetalleFlotante.Select(d => new RecibosDetalle()
                 {
                     IdReciboDetalle = d.IdReciboDetalle,
@@ -2078,7 +2079,7 @@ namespace AventasApi.Controllers
 
             return reciboBD;
         }
-        private AnticiposxCliente GenerarAnticipo(RecibosxClienteFlotante reciboFlotante, string numeroReferencia)
+        private AnticiposxCliente GenerarAnticipo(RecibosxClienteFlotante reciboFlotante, string numeroReferencia,Asesores asesor)
         {
             AnticiposxCliente reciboBD = new AnticiposxCliente()
             {
@@ -2104,7 +2105,8 @@ namespace AventasApi.Controllers
                 Sincronizado = false,
                 Tipo = reciboFlotante.Tipo,
                 EsContado = reciboFlotante.EsContado.Value,
-                NumPedido = reciboFlotante.NumPedido
+                NumPedido = reciboFlotante.NumPedido,
+                firma=asesor.firma
             };
 
             return reciboBD;
