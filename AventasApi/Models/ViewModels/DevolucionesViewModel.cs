@@ -51,6 +51,9 @@ namespace AventasApi.Models.ViewModels
         public int? IdDevAprobacion { get; set; }
         public string FacturaOrigen { get; set; }
         public string PedidoOrigen { get; set; }
+        public string NotaCredito { get; set; }
+        public Nullable<System.DateTime> FechaNotaCredito { get; set; }
+        public Nullable<System.DateTime> FechaCreacionAx { get; set; }
 
         public DevolucionMotivoReport MotivoDevolucionDetalle { get; set; }
 
