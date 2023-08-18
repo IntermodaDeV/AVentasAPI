@@ -104,9 +104,9 @@ namespace AventasApi.Controllers
                         NombreCliente = x.Devolucion.Clientes.Nombre,
                         Linea = x.Devolucion.IdLinea,
                         motivoDevolucion = x.Devolucion.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
-                        MotivoDevolucionDetalle = db.MotivosDevolucion.Where(a => a.IdMotivoDevolucion == x.Devolucion.MotivosDevolucionDetalle.idMotivoDevolucion).Select(r => new DevolucionMotivoReport
+                        MotivoDevolucionDetalle = db.MotivosDevolucionDetalle.Where(a => a.idMotivoDevDetalle == x.Devolucion.MotivosDevolucionDetalle.idMotivoDevDetalle).Select(r => new DevolucionMotivoReport
                         {
-                            CodigoMotivoDevolucion = r.CodigoMotivoDevolucion,
+                            CodigoMotivoDevolucion = r.CodigoMotivoDevDetalle,
                             Descripcion = r.Descripcion
 
                         }).FirstOrDefault(),
@@ -381,9 +381,9 @@ namespace AventasApi.Controllers
                             CodigoCliente = x.CodigoCliente,
                             NombreCliente = x.Clientes.Nombre,
                             motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
-                            MotivoDevolucionDetalle = ctx.MotivosDevolucion.Where(a => a.IdMotivoDevolucion == x.MotivosDevolucionDetalle.idMotivoDevolucion).Select(r => new DevolucionMotivoReport
+                            MotivoDevolucionDetalle = ctx.MotivosDevolucionDetalle.Where(a => a.idMotivoDevDetalle == x.IdMotivoDevDetalle).Select(r => new DevolucionMotivoReport
                             {
-                                CodigoMotivoDevolucion = r.CodigoMotivoDevolucion,
+                                CodigoMotivoDevolucion = r.CodigoMotivoDevDetalle,
                                 Descripcion = r.Descripcion
 
                             }).FirstOrDefault(),
@@ -421,9 +421,9 @@ namespace AventasApi.Controllers
                             CodigoCliente = x.CodigoCliente,
                             NombreCliente = x.Clientes.Nombre,
                             motivoDevolucion = x.MotivosDevolucionDetalle.CodigoMotivoDevDetalle,
-                            MotivoDevolucionDetalle = ctx.MotivosDevolucion.Where(a => a.IdMotivoDevolucion == x.MotivosDevolucionDetalle.idMotivoDevolucion).Select(r => new DevolucionMotivoReport
+                            MotivoDevolucionDetalle = ctx.MotivosDevolucionDetalle.Where(a => a.idMotivoDevDetalle == x.IdMotivoDevDetalle).Select(r => new DevolucionMotivoReport
                             {
-                                CodigoMotivoDevolucion = r.CodigoMotivoDevolucion,
+                                CodigoMotivoDevolucion = r.CodigoMotivoDevDetalle,
                                 Descripcion = r.Descripcion
 
                             }).FirstOrDefault(),
