@@ -12,13 +12,13 @@ namespace AventasApi.Utils
 {
     public class SyncCuentaCorriente
     {
-        private void UpdateFacturas(List<FacturasXClienteApiModel> facturas)
+        private void UpdateFacturas(string codigoCliente,string empresa,List<FacturasXClienteApiModel> facturas)
         {
             try
             {
                 using (AVentasEntities context = new AVentasEntities())
                 {
-                    _= context.SP_FacturasxCliente_UpdateSaldoXCliente(facturas[0].ACCOUNT_NUM, facturas[0].ENTITY);
+                   context.SP_FacturasxCliente_UpdateSaldoXCliente(codigoCliente, empresa);
                    foreach(var factura in facturas)
                     {
                         var entityFound = context.FacturasxCliente.FirstOrDefault(x => x.Factura == factura.INVOICE);
@@ -96,16 +96,22 @@ namespace AventasApi.Utils
 
             }
         }
-        private void UpdateSubFacturas(List<SubFacturasXClienteApiModel> subFacturas)
+        private void UpdateSubFacturas(string codigoCliente,string empresa,List<SubFacturasXClienteApiModel> subFacturas)
         {
             try
             {
                 using(AVentasEntities context = new AVentasEntities())
                 {
-                    _ = context.SP_SubFacturasxCliente_UpdateSaldoXCliente(subFacturas[0].ACCOUNT_NUM, subFacturas[0].ENTITY);
+                    context.SP_SubFacturasxCliente_UpdateSaldoXCliente(codigoCliente, empresa);
                     foreach (var subFactura in subFacturas)
                     {
                         var fFactura = context.FacturasxCliente.FirstOrDefault(x => x.Referencia == subFactura.REF_CUSTTRANS);
+
+                        if (fFactura == null)
+                        {
+                            continue;
+                        }
+
                         var entityFound = context.SubFacturasxCliente.FirstOrDefault(p => p.Factura == fFactura.Factura && p.Referencia == subFactura.REF_TRANSOPEN);
 
                         if (entityFound == null)
@@ -206,15 +212,11 @@ namespace AventasApi.Utils
                 if (response.IsSuccessful && response.Content != "null")
                 {
                     facturas = JsonConvert.DeserializeObject<List<FacturasXClienteApiModel>>(response.Content);
-                }
-
-                if(facturas.Count>0)
-                {
-                    UpdateFacturas(facturas);
+                    UpdateFacturas(codigoCliente, empresa, facturas);
                 }
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
 
             }
@@ -232,11 +234,7 @@ namespace AventasApi.Utils
                 if (response.IsSuccessful && response.Content != "null")
                 {
                     facturas = JsonConvert.DeserializeObject<List<SubFacturasXClienteApiModel>>(response.Content);
-                }
-
-                if (facturas.Count > 0)
-                {
-                    UpdateSubFacturas(facturas);
+                    UpdateSubFacturas(codigoCliente, empresa, facturas);
                 }
 
             }

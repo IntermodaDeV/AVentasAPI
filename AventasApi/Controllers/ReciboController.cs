@@ -1045,7 +1045,7 @@ namespace AventasApi.Controllers
                                                 var FechaMaxDescuento = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota).FechaVencimiento;
                                                 if (FechaMaxDescuento >= reciboPost.FechaPago)
                                                 {
-                                                    var FletePorCuota = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente).Sum(x => x.Flete);
+                                                    var FletePorCuota = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente).Sum(x => x.Flete);
 
                                                     CuotasXAcuerdo cuotaAcuerdo = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota);
                                                     decimal? consumidoCuota = cuotaAcuerdo.ValorCuota - cuotaAcuerdo.SaldoDiponible;
@@ -1434,14 +1434,18 @@ namespace AventasApi.Controllers
 
                                         if (factura != null)
                                         {
-                                            factura.Saldo -= iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
+                                            var pagoAplicado = iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
+                                            var descuentoAplicado = iter.DESCUENTO != null ? Convert.ToDecimal(iter.DESCUENTO) : 0;
+                                            factura.Saldo -= (pagoAplicado + descuentoAplicado);
                                         }
 
                                         var subfactura = ctx.SubFacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA & x.EmpresaId == iter.COMPANY & x.Referencia == iter.REF_TRANSOPEN);
 
                                         if (subfactura != null)
                                         {
-                                            subfactura.Saldo -= iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
+                                            var pagoAplicado = iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
+                                            var descuentoAplicado = iter.DESCUENTO != null ? Convert.ToDecimal(iter.DESCUENTO) : 0;
+                                            subfactura.Saldo -= (pagoAplicado + descuentoAplicado);
                                         }
 
                                         ctx.SaveChanges();

@@ -285,7 +285,7 @@ namespace AventasApi.Controllers
                         GrupoPrecio = cli.GrupoPrecio,
                         GrupoCliente = cli.GrupoCliente,
                         Descuento = cli.Descuento,
-                        MaestroDescuento = context.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
+                        MaestroDescuento = context.Descuento.Where(x => x.Codigo.ToUpper() == cli.Descuento.ToUpper() && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
                         {
                             Codigo = x.Codigo,
                             Descripcion = x.Descripcion,
@@ -902,7 +902,7 @@ namespace AventasApi.Controllers
                             GrupoPrecio = cli.GrupoPrecio,
                             GrupoCliente = cli.GrupoCliente,
                             Descuento = cli.Descuento,
-                            MaestroDescuento = ctx.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
+                            MaestroDescuento = ctx.Descuento.Where(x => x.Codigo.ToUpper() == cli.Descuento.ToUpper() && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
                             {
                                 Codigo = x.Codigo,
                                 Descripcion = x.Descripcion,
@@ -1081,7 +1081,7 @@ namespace AventasApi.Controllers
                         GrupoPrecio = cli.GrupoPrecio,
                         GrupoCliente = cli.GrupoCliente,
                         Descuento = cli.Descuento,
-                        MaestroDescuento = ctx.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
+                        MaestroDescuento = ctx.Descuento.Where(x => x.Codigo.ToUpper() == cli.Descuento.ToUpper() && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
                         {
                             Codigo = x.Codigo,
                             Descripcion = x.Descripcion,
