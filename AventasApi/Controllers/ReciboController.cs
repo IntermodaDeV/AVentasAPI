@@ -1045,12 +1045,14 @@ namespace AventasApi.Controllers
                                                 var FechaMaxDescuento = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota).FechaVencimiento;
                                                 if (FechaMaxDescuento >= reciboPost.FechaPago)
                                                 {
-                                                    var FletePorCuota = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente).Sum(x => x.Flete);
+                                                    var documentosAplicados = context.SP_DocumentosAplicadosXCuotas(asesor.CodigoAsesor).FirstOrDefault(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente);
+                                                    var FletePorCuota = documentosAplicados == null ? 0 : documentosAplicados.Flete;
+                                                    var NotasAplicadasCuota = documentosAplicados == null ? 0 : documentosAplicados.Valor;
 
                                                     CuotasXAcuerdo cuotaAcuerdo = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota);
                                                     decimal? consumidoCuota = cuotaAcuerdo.ValorCuota - cuotaAcuerdo.SaldoDiponible;
 
-                                                    var valoCuota = consumidoCuota - FletePorCuota ?? 0;
+                                                    var valoCuota = consumidoCuota - FletePorCuota - NotasAplicadasCuota ?? 0;
                                                     var pagosAplicados = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente).ToList();
                                                     var pagadoCuota = pagosAplicados.Sum(x => x.SaldoDivisa - x.Saldo) ?? 0;
 
