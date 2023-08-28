@@ -482,5 +482,14 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_DocumentosAplicadosXCuotas_Result>("SP_DocumentosAplicadosXCuotas", codigoAsesorParameter);
         }
+    
+        public virtual int SP_ActualizarFleteFacturasAcuerdo(string cLIENTE)
+        {
+            var cLIENTEParameter = cLIENTE != null ?
+                new ObjectParameter("CLIENTE", cLIENTE) :
+                new ObjectParameter("CLIENTE", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ActualizarFleteFacturasAcuerdo", cLIENTEParameter);
+        }
     }
 }

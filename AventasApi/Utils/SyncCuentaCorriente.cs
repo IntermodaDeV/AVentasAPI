@@ -199,6 +199,21 @@ namespace AventasApi.Utils
 
             }
         }
+
+        private void UpdateFleteSubfacturasAcuerdo(string codigoCliente)
+        {
+            try
+            {
+                using(var context = new AVentasEntities())
+                {
+                    context.SP_ActualizarFleteFacturasAcuerdo(codigoCliente);
+                }
+            }catch(Exception e)
+            {
+
+            }
+        }
+
         public void SyncFacturas(string empresa,string codigoCliente)
         {
             try
@@ -235,6 +250,11 @@ namespace AventasApi.Utils
                 {
                     facturas = JsonConvert.DeserializeObject<List<SubFacturasXClienteApiModel>>(response.Content);
                     UpdateSubFacturas(codigoCliente, empresa, facturas);
+
+                    if (facturas.Count() > 0)
+                    {
+                        UpdateFleteSubfacturasAcuerdo(codigoCliente);
+                    }
                 }
 
             }

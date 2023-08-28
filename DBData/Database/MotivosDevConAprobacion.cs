@@ -22,7 +22,7 @@ namespace DBData.Database
         public System.DateTime FechaCrea { get; set; }
         public Nullable<int> UsuarioModifica { get; set; }
         public Nullable<System.DateTime> FechaModifica { get; set; }
-        public Nullable<int> Nivel { get; set; }
+        public int Nivel { get; set; }
     
         public virtual MotivosDevolucion MotivosDevolucion { get; set; }
         public virtual Usuarios Usuarios { get; set; }

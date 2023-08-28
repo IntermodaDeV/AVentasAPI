@@ -689,7 +689,8 @@ namespace AventasApi.Controllers
                                     NumDevolucion = devolucion.Correlativo,
                                     Estado = true,
                                     UsuarioCrea = user.Id,
-                                    FechaCrea = DateTime.Now
+                                    FechaCrea = DateTime.Now,
+                                    Visible = false,
                                 };
                                 ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
                                 var result = await ctx.SaveChangesAsync();
@@ -837,7 +838,8 @@ namespace AventasApi.Controllers
                                             NumDevolucion = devolucion.Correlativo,
                                             Estado = true,
                                             UsuarioCrea = user.Id,
-                                            FechaCrea = DateTime.Now
+                                            FechaCrea = DateTime.Now,
+                                            Visible = false
                                         };
                                         ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
                                         var result = await ctx.SaveChangesAsync();
@@ -853,7 +855,8 @@ namespace AventasApi.Controllers
                                             NumDevolucion = devolucion.Correlativo,
                                             Estado = true,
                                             UsuarioCrea = user.Id,
-                                            FechaCrea = DateTime.Now
+                                            FechaCrea = DateTime.Now,
+                                            Visible = false
                                         };
                                         ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
                                         var result = await ctx.SaveChangesAsync();

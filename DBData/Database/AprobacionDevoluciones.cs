@@ -23,7 +23,7 @@ namespace DBData.Database
         public System.DateTime FechaCrea { get; set; }
         public Nullable<int> UsuarioModifica { get; set; }
         public Nullable<System.DateTime> FechaModifica { get; set; }
-        public Nullable<bool> Visible { get; set; }
+        public bool Visible { get; set; }
     
         public virtual Devolucion Devolucion { get; set; }
         public virtual Usuarios Usuarios { get; set; }
