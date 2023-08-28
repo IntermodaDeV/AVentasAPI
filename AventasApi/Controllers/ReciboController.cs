@@ -1097,7 +1097,7 @@ namespace AventasApi.Controllers
                                     else
                                     {
                                         aplicaDescuento = ((subfactura.FechaMaxDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
-                                         (subfactura.FechaVencimientoDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaVencimientoDescuento.Value.Date));
+                                         (subfactura.FechaVencimientoDescuento.HasValue && reciboPost.FechaPago.Date <= subfactura.FechaVencimientoDescuento.Value.Date) || subfactura.FacturasxCliente.ExcepcionDescuento);
                                         if (aplicaDescuento)
                                         {
                                             valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
