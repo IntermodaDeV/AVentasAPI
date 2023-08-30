@@ -14,6 +14,7 @@ namespace AventasApi.Models.ViewModels
 
         public List<FacturasXClienteViewModel> Facturas;
         public List<DocumentosAplicadosAFacturasViewModel> DocumentosAplicadosxCuotas;
+        public DescuentoEnAcuerdosViewModel DescuentoEnAcuerdos;
         public FacturasXAcuerdosViewModel()
         {
             this.Facturas = new List<FacturasXClienteViewModel>();

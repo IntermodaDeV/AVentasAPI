@@ -48,6 +48,7 @@ namespace AventasApi.Models
         public Nullable<decimal> CreditoDisponible { get; set; }
         public List<PResumenCredito_Result> Credito { get; set; }
         public bool? IgnorarSecuenciaFactura { get; internal set; }
+        public List<SP_DocumentosAplicadosXCuotas_Result> DocumentosAplicadosxCuotas { get; set; }
 
         public ClienteViewModel()
         {
@@ -59,6 +60,7 @@ namespace AventasApi.Models
             this.Facturas = new List<FacturasXClienteViewModel>();
             this.AcuerdosXTipoPedido = new List<AcuerdosXTipoPedidoViewModel>();
             this.Credito = new List<PResumenCredito_Result>();
+            this.DocumentosAplicadosxCuotas = new List<SP_DocumentosAplicadosXCuotas_Result>();
         }
     }
 

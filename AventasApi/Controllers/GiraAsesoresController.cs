@@ -232,7 +232,7 @@ namespace AventasApi.Controllers
                     var num = 0; ;
                     if (serie == "-")
                     {
-                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor && x.IdEstado !=3);
+                        num = ctx.GastosViajeDetalle.Count(x => x.NoFactura == noFactura && x.Proveedor == proveedor && x.IdEstado != 3);
                     }
                     else
                     {
@@ -581,7 +581,7 @@ namespace AventasApi.Controllers
                     var rutas = new List<string>();
                     string textoRutas = "";
 
-                    foreach (var cliente in clientes) 
+                    foreach (var cliente in clientes)
                     {
                         var ruta = ctx.Clientes.FirstOrDefault(x => x.CodigoCliente == cliente.CodigoCliente);
                         var buscar = rutas.Find(x => x == ruta.Zona);
@@ -591,7 +591,7 @@ namespace AventasApi.Controllers
                             {
                                 rutas.Add(ruta.Zona);
                                 textoRutas += ", " + ruta.Zona;
-                                 
+
                             }
                             else
                             {
@@ -643,13 +643,13 @@ namespace AventasApi.Controllers
                             NUMBERINVOCEID = x.GastoCategoriaTipo.GastoCategoria.Gasto.NoFactura.Replace("-", "").Replace("-", "").Replace("-", ""),
                             DESCRIPTION = x.GastoCategoriaTipo.GastoCategoria.Gasto.DescripcionGasto + " " + textoRutas,
                             EXENTO = x.GastoCategoriaTipo.GastoCategoria.Gasto.importeExento != null ? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeExento : 0,
-                            GRAVADO = (usuario.EmpresaId == "IMHN") ? (x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado : 0): x.GastoCategoriaTipo.GastoCategoria.Gasto.ValorFactura,
+                            GRAVADO = (usuario.EmpresaId == "IMHN") ? (x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado != null ? x.GastoCategoriaTipo.GastoCategoria.Gasto.importeGravado : 0) : x.GastoCategoriaTipo.GastoCategoria.Gasto.ValorFactura,
                             VENDACCOUNT = x.GastoCategoriaTipo.GastoCategoria.Gasto.Proveedor,
                             USERID = x.GastoCategoriaTipo.GastoCategoria.Gasto.UsuarioAsesor,
                             JOURNALNAME = x.GastoCategoriaTipo.Tipo.Diario,
                             OFFSETACCOUNT = x.GastoCategoriaTipo.GastoCategoria.Categoria.CuentaContrapartida,
                             SERIE = x.GastoCategoriaTipo.GastoCategoria.Gasto.serie,
-                            TAXGROUPEXENTO = (usuario.EmpresaId == "IMHN") ? grupoimpuestos.grupoImpuestoExento : (combustible.MarkupCode.Length> 0 ? combustible.MarkupCode: ""),
+                            TAXGROUPEXENTO = (usuario.EmpresaId == "IMHN") ? grupoimpuestos.grupoImpuestoExento : (combustible.MarkupCode.Length > 0 ? combustible.MarkupCode : ""),
                             TAXITEMGROUPEXENTO = (usuario.EmpresaId == "IMHN") ? grupoimpuestos.grupoImpuestoArticuloExento : x.GastoCategoriaTipo.GastoCategoria.Categoria.GrupoImpuesto
                         })
                         .Take(1).ToListAsync();
@@ -682,7 +682,7 @@ namespace AventasApi.Controllers
                     request.Parameters.Clear();
                     request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(datosAX), ParameterType.RequestBody);
                     var respuesta = client.Execute(request);
-                    if(respuesta.Content != "\"OK\"" && datosAX.COMPANY == "IMHN")
+                    if (respuesta.Content != "\"OK\"")
                     {
                         var resp = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(respuesta.Content);
                         await ActualizacionCai(id, respuesta.Content);
@@ -867,7 +867,8 @@ namespace AventasApi.Controllers
                     }).ToListAsync();
                     return Ok(combustibles);
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
 
@@ -881,7 +882,7 @@ namespace AventasApi.Controllers
             try
             {
                 using (var ctx = new AVentasEntities())
-                {     
+                {
                     var estado = ctx.Estado.FirstOrDefault(x => x.Nombre == "Pendiente");
                     gasto.IdEstado = estado.IdEstado;
                     if (gasto.Imagen != null)
@@ -893,7 +894,7 @@ namespace AventasApi.Controllers
                     //Gasto sin cai, generar numero de factura
                     using (var ctx2 = new AVentasEntities())
                     {
-                        var asesor =  ctx2.Asesores.FirstOrDefault(x=> x.CodigoAsesor == gasto.UsuarioAsesor);
+                        var asesor = ctx2.Asesores.FirstOrDefault(x => x.CodigoAsesor == gasto.UsuarioAsesor);
                         if (gasto.NoFactura == "")
                         {
                             asesor.CorrelativoGira = asesor.CorrelativoGira + 1;
@@ -903,7 +904,7 @@ namespace AventasApi.Controllers
 
                         }
                     }
-                       
+
                     ctx.GastosViajeDetalle.Add(gasto);
                     var result = await ctx.SaveChangesAsync();
                     return Ok(result);
@@ -1152,7 +1153,7 @@ namespace AventasApi.Controllers
 
         public async Task<int> ActualizacionCai(int id, string texto)
         {
-            using(var ctx = new AVentasEntities())
+            using (var ctx = new AVentasEntities())
             {
                 var imagen = await ctx.GastosViajeDetalle.FirstOrDefaultAsync(x => x.IdGastoViajeDetalle == id);
                 var usuario = ctx.Usuarios.FirstOrDefault(x => x.usuario == imagen.UsuarioAsesor);
@@ -1265,13 +1266,23 @@ namespace AventasApi.Controllers
 
                 string correos = usuario.Correo.Length > 0 ? usuario.Correo : "";
 
-                correoSolicitud.ForEach(x =>
+                if (usuario.EmpresaId == "IMGT")
                 {
-                    if (x.correo != null && x.correo != "")
+                    correos = correos + ",rhsanchez@pepe.com.hn";
+                }
+                else
+                {
+                    correoSolicitud.ForEach(x =>
                     {
-                        correos = correos + "," + x.correo;
-                    }
-                });
+                        if (x.correo != null && x.correo != "")
+                        {
+                            correos = correos + "," + x.correo;
+                        }
+                    });
+                }
+
+
+
 
                 correoSupervisor.ForEach(x =>
                 {
@@ -1365,7 +1376,7 @@ namespace AventasApi.Controllers
                         <table style='width: 500px; margin: auto; '>
                             <thead>  
                                 <tr>
-                                    <th colspan = '2' style = 'text-align: center;' >"+ usuario.nombre+ @"</th>         
+                                    <th colspan = '2' style = 'text-align: center;' >" + usuario.nombre + @"</th>         
                                 </tr>         
                                 <tr>         
                                     <th colspan = '2' style = 'text-align: center;' >" + usuario.Correo + @"</th>                
@@ -1433,15 +1444,22 @@ namespace AventasApi.Controllers
                         })
                         .ToListAsync();
 
-                string correos = usuario.Correo.Length > 0 ? usuario.Correo: "";
+                string correos = usuario.Correo.Length > 0 ? usuario.Correo : "";
 
-                correoSolicitud.ForEach(x =>
-                {                    
-                    if (x.correo != null && x.correo != "")
+                if (usuario.EmpresaId == "IMGT")
+                {
+                    correos = correos + ",rhsanchez@pepe.com.hn";
+                }
+                else
+                {
+                    correoSolicitud.ForEach(x =>
                     {
-                        correos = correos + "," + x.correo;
-                    }                    
-                });
+                        if (x.correo != null && x.correo != "")
+                        {
+                            correos = correos + "," + x.correo;
+                        }
+                    });
+                }
 
                 correoSupervisor.ForEach(x =>
                 {

@@ -399,6 +399,7 @@
     <Compile Include="Utils\SyncAsesores.cs" />
     <Compile Include="Utils\SyncClientes.cs" />
     <Compile Include="Utils\SyncCuentaCorriente.cs" />
+    <Compile Include="Utils\SyncPedido.cs" />
     <Compile Include="Utils\SyncRutas.cs" />
     <Compile Include="Wrappers\Response.cs" />
   </ItemGroup>

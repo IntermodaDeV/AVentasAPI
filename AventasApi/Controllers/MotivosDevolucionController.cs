@@ -177,7 +177,8 @@ namespace AventasApi.Controllers
                             IdUsuario = usuarioId,
                             Estado = true,
                             UsuarioCrea = user.Id,
-                            FechaCrea = DateTime.Now
+                            FechaCrea = DateTime.Now,
+                            Nivel = 0,
                         };
                         db.MotivosDevConAprobacion.Add(MotivosDevConApro);
                     }

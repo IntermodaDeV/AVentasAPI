@@ -12,13 +12,13 @@ namespace AventasApi.Utils
 {
     public class SyncCuentaCorriente
     {
-        private void UpdateFacturas(List<FacturasXClienteApiModel> facturas)
+        private void UpdateFacturas(string codigoCliente,string empresa,List<FacturasXClienteApiModel> facturas)
         {
             try
             {
                 using (AVentasEntities context = new AVentasEntities())
                 {
-                    _= context.SP_FacturasxCliente_UpdateSaldoXCliente(facturas[0].ACCOUNT_NUM, facturas[0].ENTITY);
+                   context.SP_FacturasxCliente_UpdateSaldoXCliente(codigoCliente, empresa);
                    foreach(var factura in facturas)
                     {
                         var entityFound = context.FacturasxCliente.FirstOrDefault(x => x.Factura == factura.INVOICE);
@@ -96,16 +96,22 @@ namespace AventasApi.Utils
 
             }
         }
-        private void UpdateSubFacturas(List<SubFacturasXClienteApiModel> subFacturas)
+        private void UpdateSubFacturas(string codigoCliente,string empresa,List<SubFacturasXClienteApiModel> subFacturas)
         {
             try
             {
                 using(AVentasEntities context = new AVentasEntities())
                 {
-                    _ = context.SP_SubFacturasxCliente_UpdateSaldoXCliente(subFacturas[0].ACCOUNT_NUM, subFacturas[0].ENTITY);
+                    context.SP_SubFacturasxCliente_UpdateSaldoXCliente(codigoCliente, empresa);
                     foreach (var subFactura in subFacturas)
                     {
                         var fFactura = context.FacturasxCliente.FirstOrDefault(x => x.Referencia == subFactura.REF_CUSTTRANS);
+
+                        if (fFactura == null)
+                        {
+                            continue;
+                        }
+
                         var entityFound = context.SubFacturasxCliente.FirstOrDefault(p => p.Factura == fFactura.Factura && p.Referencia == subFactura.REF_TRANSOPEN);
 
                         if (entityFound == null)
@@ -142,7 +148,10 @@ namespace AventasApi.Utils
                             newEntity.ValorCuota = Decimal.TryParse(subFactura.PA_PAYM_AMOUNT, out svCuota) ? svCuota : 0;
                             newEntity.ValorVencidoCuota = Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out svVencidoCuota) ? svVencidoCuota : 0;
                             newEntity.ReferenciaCuotas = subFactura.PA_REF_APSA;
-                           
+                            newEntity.Valor = !String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out ssFactura) ? ssFactura : 0 : fFactura.TotalFactura;
+                            newEntity.Flete = Decimal.TryParse(subFactura.FREIGHT, out ssFactura) ? ssFactura : 0;
+                            newEntity.completaCuota = false;           
+
                             context.SubFacturasxCliente.Add(newEntity);
                         }
                         else
@@ -176,7 +185,10 @@ namespace AventasApi.Utils
                             entityFound.ValorCuota = Decimal.TryParse(subFactura.PA_PAYM_AMOUNT, out svCuota) ? svCuota : 0;
                             entityFound.ValorVencidoCuota = Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out svVencidoCuota) ? svVencidoCuota : 0;
                             entityFound.ReferenciaCuotas = subFactura.PA_REF_APSA;
-                          
+                            entityFound.Flete = Decimal.TryParse(subFactura.FREIGHT, out ssFactura) ? ssFactura : 0;
+                            entityFound.completaCuota = false;
+                            entityFound.Valor = !String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out ssFactura) ? ssFactura : 0 : fFactura.TotalFactura;
+
                             context.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
                         }
                         context.SaveChanges();
@@ -187,6 +199,21 @@ namespace AventasApi.Utils
 
             }
         }
+
+        private void UpdateFleteSubfacturasAcuerdo(string codigoCliente)
+        {
+            try
+            {
+                using(var context = new AVentasEntities())
+                {
+                    context.SP_ActualizarFleteFacturasAcuerdo(codigoCliente);
+                }
+            }catch(Exception e)
+            {
+
+            }
+        }
+
         public void SyncFacturas(string empresa,string codigoCliente)
         {
             try
@@ -200,15 +227,11 @@ namespace AventasApi.Utils
                 if (response.IsSuccessful && response.Content != "null")
                 {
                     facturas = JsonConvert.DeserializeObject<List<FacturasXClienteApiModel>>(response.Content);
-                }
-
-                if(facturas.Count>0)
-                {
-                    UpdateFacturas(facturas);
+                    UpdateFacturas(codigoCliente, empresa, facturas);
                 }
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
 
             }
@@ -226,11 +249,12 @@ namespace AventasApi.Utils
                 if (response.IsSuccessful && response.Content != "null")
                 {
                     facturas = JsonConvert.DeserializeObject<List<SubFacturasXClienteApiModel>>(response.Content);
-                }
+                    UpdateSubFacturas(codigoCliente, empresa, facturas);
 
-                if (facturas.Count > 0)
-                {
-                    UpdateSubFacturas(facturas);
+                    if (facturas.Count() > 0)
+                    {
+                        UpdateFleteSubfacturasAcuerdo(codigoCliente);
+                    }
                 }
 
             }

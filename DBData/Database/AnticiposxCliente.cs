@@ -39,5 +39,6 @@ namespace DBData.Database
         public Nullable<decimal> Latitude { get; set; }
         public Nullable<decimal> Longitude { get; set; }
         public string Origen { get; set; }
+        public byte[] firma { get; set; }
     }
 }

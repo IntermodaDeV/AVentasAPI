@@ -210,6 +210,10 @@ namespace AventasApi.Controllers
                                         ValorCuota = (subFac.ValorCuota > 0) ? subFac.ValorCuota : facCli.TotalFactura,
                                         ValorVencidoCuota = subFac.ValorVencidoCuota,
                                         ReferenciaCuotas = subFac.ReferenciaCuotas,
+                                        Flete=subFac.Flete??0,
+                                        ExcepcionDescuento = facCli.ExcepcionDescuento,
+                                        SaldoCuota = subFac.AcuerdosxCliente != null ? context.CuotasXAcuerdo.FirstOrDefault(x => x.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && x.NumCuota == subFac.NumeroCuota).ValorCuota : 0,
+                                        DisponibleCuota = subFac.AcuerdosxCliente != null ? context.CuotasXAcuerdo.FirstOrDefault(x => x.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && x.NumCuota == subFac.NumeroCuota).SaldoDiponible : 0,
                                     }).ToList()
                                 }).ToList()
 
@@ -281,12 +285,12 @@ namespace AventasApi.Controllers
                         GrupoPrecio = cli.GrupoPrecio,
                         GrupoCliente = cli.GrupoCliente,
                         Descuento = cli.Descuento,
-                        MaestroDescuento = context.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper()).Select(x => new DescuentoViewModel
+                        MaestroDescuento = context.Descuento.Where(x => x.Codigo.ToUpper() == cli.Descuento.ToUpper() && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
                         {
                             Codigo = x.Codigo,
                             Descripcion = x.Descripcion,
                             Empresa = x.EmpresaId,
-                            DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
+                            DescuentoDetalle = x.DescuentoDetalle.Where(d=>d.activo==true).Select(d => new DescuentoDetalleViewModel
                             {
                                 Linea = d.IdLinea,
                                 CodigoDescuento = d.CodigoDescuento,
@@ -370,6 +374,13 @@ namespace AventasApi.Controllers
                             Valor = acu.Key == null ? "0" : (acu.Key.Total ?? 0).ToString(),
                             Disponible = acu.Key == null ? "0" : (acu.Key.Saldo ?? 0).ToString(),
                             //SaldoTotal = acu.Key == null ? "0" :  acu.Key.Saldo.Value.ToString(),
+                            DescuentoEnAcuerdos = context.DescuentoEnAcuerdo.Where(x => x.CodigoDescuento == acu.Key.GrupoDescuento).Select(d => new DescuentoEnAcuerdosViewModel
+                            {
+                                CodigoDescuento = d.CodigoDescuento,
+                                Porcentaje = d.Porcentaje,
+                                Dias = d.Dias,
+                                Empresa = d.empresaId
+                            }).FirstOrDefault(),
                             Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                             {
                                 IdFactura = facCli.IdFactura,
@@ -393,6 +404,17 @@ namespace AventasApi.Controllers
                                 LineaString = facCli.MaestroLinea.Linea,
                                 IdTipoPedido = facCli.IdTipoPedido,
                                 TipoPedidoString = facCli.TiposdePedido.TipoPedido,
+                                ExcepcionDescuento = facCli.ExcepcionDescuento,
+                                DocumentosAplicadosAFacturas = context.DocumentosAplicadosAFacturas.Where(x => x.Factura == facCli.Factura).Select(x => new DocumentosAplicadosAFacturasViewModel
+                                {
+                                    Factura = x.Factura,
+                                    Voucher = x.Voucher,
+                                    TipoDocumento = x.TipoDocumento,
+                                    FacturaDocumento = x.FacturaDocumento,
+                                    SecuenciaNumerica = x.SecuenciaNumerica,
+                                    Valor = x.Valor,
+                                    MontoPorAplicar = x.MontoPorAplicar
+                                }).ToList(),
                                 Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.FechaMaxDescuento >= DateTime.Today ? (subFac.Saldo - subFac.Descuento) > 0 : subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                                 {
                                     FechaFactura = subFac.FacturasxCliente.FechaFactura,
@@ -406,7 +428,7 @@ namespace AventasApi.Controllers
                                     IdMoneda = context.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == subFac.IdMoneda).Moneda,
                                     IdAcuerdoxCliente = subFac.IdAcuerdoxCliente,
                                     FechaVencimiento = subFac.FechaVencimiento,
-                                    FechaMaxDescuento = subFac.AcuerdosxCliente != null ? subFac.FechaMaxDescuento : subFac.FacturasxCliente.FechaMaxDescuento,
+                                    FechaMaxDescuento = subFac.AcuerdosxCliente != null ? context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && c.NumCuota == subFac.NumeroCuota).FechaVencimiento : subFac.FacturasxCliente.FechaMaxDescuento,
                                     FechaVencimientoDescuento = subFac.FechaVencimientoDescuento,
                                     Saldo = subFac.Saldo,
                                     SaldoDivisa = subFac.SaldoDivisa,
@@ -419,6 +441,10 @@ namespace AventasApi.Controllers
                                     ValorCuota = (subFac.ValorCuota > 0) ? subFac.ValorCuota : facCli.TotalFactura,
                                     ValorVencidoCuota = subFac.ValorVencidoCuota,
                                     ReferenciaCuotas = subFac.ReferenciaCuotas,
+                                    Valor = subFac.Valor,
+                                    completaCuota = subFac.completaCuota,
+                                    Flete = subFac.Flete ?? 0,
+                                    ExcepcionDescuento=facCli.ExcepcionDescuento
                                 }).ToList()
                             }).ToList()
 
@@ -864,7 +890,7 @@ namespace AventasApi.Controllers
 
                     foreach (var asesor in asesoresHabilitados.Distinct().ToList())
                     {
-
+                        var documentoXCuota = ctx.SP_DocumentosAplicadosXCuotas(asesor).ToList();
                         List<ClienteViewModel> clientes = await ctx.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoAsesor == asesor).Select(cli => new ClienteViewModel
                         {
                             EmpresaId = cli.EmpresaId,
@@ -876,12 +902,12 @@ namespace AventasApi.Controllers
                             GrupoPrecio = cli.GrupoPrecio,
                             GrupoCliente = cli.GrupoCliente,
                             Descuento = cli.Descuento,
-                            MaestroDescuento = ctx.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper()).Select(x => new DescuentoViewModel
+                            MaestroDescuento = ctx.Descuento.Where(x => x.Codigo.ToUpper() == cli.Descuento.ToUpper() && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
                             {
                                 Codigo = x.Codigo,
                                 Descripcion = x.Descripcion,
                                 Empresa = x.EmpresaId,
-                                DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
+                                DescuentoDetalle = x.DescuentoDetalle.Where(d => d.activo == true).Select(d => new DescuentoDetalleViewModel
                                 {
                                     Linea = d.IdLinea,
                                     CodigoDescuento = d.CodigoDescuento,
@@ -937,6 +963,13 @@ namespace AventasApi.Controllers
                                     Acuerdo = acu.Key == null ? "" : acu.Key.IdAcuerdoxCliente,
                                     Valor = acu.Key == null ? "0" : (acu.Key.Total ?? 0).ToString(),
                                     Disponible = acu.Key == null ? "0" : (acu.Key.Saldo ?? 0).ToString(),
+                                    DescuentoEnAcuerdos = ctx.DescuentoEnAcuerdo.Where(x => x.CodigoDescuento == acu.Key.GrupoDescuento).Select(d => new DescuentoEnAcuerdosViewModel
+                                    {
+                                        CodigoDescuento = d.CodigoDescuento,
+                                        Porcentaje = d.Porcentaje,
+                                        Dias = d.Dias,
+                                        Empresa = d.empresaId
+                                    }).FirstOrDefault(),
                                     Facturas = acu.Where(fac => fac.Saldo > 0.1M).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                                     {
                                         IdFactura = facCli.IdFactura,
@@ -960,6 +993,19 @@ namespace AventasApi.Controllers
                                         LineaString = facCli.MaestroLinea.Linea,
                                         IdTipoPedido = facCli.IdTipoPedido,
                                         TipoPedidoString = facCli.TiposdePedido.TipoPedido,
+                                        ExcepcionDescuento=facCli.ExcepcionDescuento,
+                                        DocumentosAplicadosAFacturas = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == facCli.Factura).Select(x => new DocumentosAplicadosAFacturasViewModel
+                                        {
+                                            Factura = x.Factura,
+                                            CodigoCliente = x.CodigoCliente,
+                                            Empresa = x.Empresa,
+                                            Voucher = x.Voucher,
+                                            TipoDocumento = x.TipoDocumento,
+                                            FacturaDocumento = x.FacturaDocumento,
+                                            SecuenciaNumerica = x.SecuenciaNumerica,
+                                            MontoPorAplicar = x.MontoPorAplicar,
+                                            Valor = x.Valor
+                                        }).ToList(),
                                         Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.FechaMaxDescuento >= DateTime.Today ? (subFac.Saldo - subFac.Descuento) > 0 : subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                                         {
                                             FechaFactura = subFac.FacturasxCliente.FechaFactura,
@@ -973,8 +1019,7 @@ namespace AventasApi.Controllers
                                             IdMoneda = ctx.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == subFac.IdMoneda).Moneda,
                                             IdAcuerdoxCliente = subFac.IdAcuerdoxCliente,
                                             FechaVencimiento = subFac.FechaVencimiento,
-                                            FechaMaxDescuento = subFac.AcuerdosxCliente != null ? subFac.FechaMaxDescuento : subFac.FacturasxCliente.FechaMaxDescuento,
-                                            FechaVencimientoDescuento = subFac.FechaMaxDescuento,
+                                            FechaMaxDescuento = subFac.AcuerdosxCliente != null ? ctx.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && c.NumCuota == subFac.NumeroCuota).FechaVencimiento : subFac.FacturasxCliente.FechaMaxDescuento,
                                             Saldo = subFac.Saldo,
                                             SaldoDivisa = subFac.SaldoDivisa,
                                             Descuento = subFac.Descuento,
@@ -986,11 +1031,18 @@ namespace AventasApi.Controllers
                                             ValorCuota = (subFac.ValorCuota > 0) ? subFac.ValorCuota : facCli.TotalFactura,
                                             ValorVencidoCuota = subFac.ValorVencidoCuota,
                                             ReferenciaCuotas = subFac.ReferenciaCuotas,
+                                            Valor = subFac.Valor,
+                                            completaCuota = subFac.completaCuota,
+                                            Flete = subFac.Flete ?? 0,
+                                            ExcepcionDescuento=facCli.ExcepcionDescuento,
+                                            SaldoCuota = subFac.AcuerdosxCliente != null ? ctx.CuotasXAcuerdo.FirstOrDefault(x=>x.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && x.NumCuota == subFac.NumeroCuota).ValorCuota : 0,
+                                            DisponibleCuota = subFac.AcuerdosxCliente != null ? ctx.CuotasXAcuerdo.FirstOrDefault(x => x.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && x.NumCuota == subFac.NumeroCuota).SaldoDiponible : 0,
                                         }).ToList()
                                     }).ToList()
 
                                 }).ToList()
                             }).ToList();
+                            cliente.DocumentosAplicadosxCuotas = documentoXCuota.Where(x => x.CodigoCliente == cliente.Codigo).ToList();
                         }
 
                         listaClientes.AddRange(clientes);
@@ -1017,7 +1069,7 @@ namespace AventasApi.Controllers
                     var FechaLimite = DateTime.Today;
                     var FechaLimiteFuturo = FechaLimite.AddDays(15);
                     var Recibos = ctx.AnticiposxCliente.Where(r => r.NumPedido != null).Select(a => a.NumPedido).ToList();
-
+                    var documentoXCuota = ctx.SP_DocumentosAplicadosXCuotas(user.UserAccount).ToList();
 
                     List<ClienteViewModel> clientes = await ctx.Clientes.Where(cli => cli.Habilitado == true && cli.CodigoCliente == cliente).Select(cli => new ClienteViewModel
                     {
@@ -1029,12 +1081,12 @@ namespace AventasApi.Controllers
                         GrupoPrecio = cli.GrupoPrecio,
                         GrupoCliente = cli.GrupoCliente,
                         Descuento = cli.Descuento,
-                        MaestroDescuento = ctx.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper()).Select(x => new DescuentoViewModel
+                        MaestroDescuento = ctx.Descuento.Where(x => x.Codigo.ToUpper() == cli.Descuento.ToUpper() && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
                         {
                             Codigo = x.Codigo,
                             Descripcion = x.Descripcion,
                             Empresa = x.EmpresaId,
-                            DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
+                            DescuentoDetalle = x.DescuentoDetalle.Where(d => d.activo == true).Select(d => new DescuentoDetalleViewModel
                             {
                                 Linea = d.IdLinea,
                                 CodigoDescuento = d.CodigoDescuento,
@@ -1089,6 +1141,13 @@ namespace AventasApi.Controllers
                             Acuerdo = acu.Key == null ? "" : acu.Key.IdAcuerdoxCliente,
                             Valor = acu.Key == null ? "0" : (acu.Key.Total ?? 0).ToString(),
                             Disponible = acu.Key == null ? "0" : (acu.Key.Saldo ?? 0).ToString(),
+                            DescuentoEnAcuerdos = ctx.DescuentoEnAcuerdo.Where(x => x.CodigoDescuento == acu.Key.GrupoDescuento).Select(d => new DescuentoEnAcuerdosViewModel
+                            {
+                                CodigoDescuento = d.CodigoDescuento,
+                                Porcentaje = d.Porcentaje,
+                                Dias = d.Dias,
+                                Empresa = d.empresaId
+                            }).FirstOrDefault(),
                             Facturas = acu.Where(fac => fac.Saldo > 0.1M).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                             {
                                 IdFactura = facCli.IdFactura,
@@ -1112,6 +1171,7 @@ namespace AventasApi.Controllers
                                 LineaString = facCli.MaestroLinea.Linea,
                                 IdTipoPedido = facCli.IdTipoPedido,
                                 TipoPedidoString = facCli.TiposdePedido.TipoPedido,
+                                ExcepcionDescuento=facCli.ExcepcionDescuento,
                                 Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.FechaMaxDescuento >= DateTime.Today ? (subFac.Saldo - subFac.Descuento) > 0 : subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                                 {
                                     FechaFactura = subFac.FacturasxCliente.FechaFactura,
@@ -1125,7 +1185,7 @@ namespace AventasApi.Controllers
                                     IdMoneda = ctx.MaestroMoneda.FirstOrDefault(x => x.IdMoneda == subFac.IdMoneda).Moneda,
                                     IdAcuerdoxCliente = subFac.IdAcuerdoxCliente,
                                     FechaVencimiento = subFac.FechaVencimiento,
-                                    FechaMaxDescuento = subFac.AcuerdosxCliente != null ? subFac.FechaMaxDescuento : subFac.FacturasxCliente.FechaMaxDescuento,
+                                    FechaMaxDescuento = subFac.AcuerdosxCliente != null ? ctx.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && c.NumCuota == subFac.NumeroCuota).FechaVencimiento : subFac.FacturasxCliente.FechaMaxDescuento,
                                     FechaVencimientoDescuento = subFac.FechaMaxDescuento,
                                     Saldo = subFac.Saldo,
                                     SaldoDivisa = subFac.SaldoDivisa,
@@ -1138,11 +1198,19 @@ namespace AventasApi.Controllers
                                     ValorCuota = (subFac.ValorCuota > 0) ? subFac.ValorCuota : facCli.TotalFactura,
                                     ValorVencidoCuota = subFac.ValorVencidoCuota,
                                     ReferenciaCuotas = subFac.ReferenciaCuotas,
+                                    Valor = subFac.Valor,
+                                    completaCuota = subFac.completaCuota,
+                                    Flete = subFac.Flete ?? 0,
+                                    ExcepcionDescuento=facCli.ExcepcionDescuento,
+                                    SaldoCuota = subFac.AcuerdosxCliente != null ? ctx.CuotasXAcuerdo.FirstOrDefault(x => x.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && x.NumCuota == subFac.NumeroCuota).ValorCuota : 0,
+                                    DisponibleCuota = subFac.AcuerdosxCliente != null ? ctx.CuotasXAcuerdo.FirstOrDefault(x => x.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && x.NumCuota == subFac.NumeroCuota).SaldoDiponible : 0,
                                 }).ToList()
                             }).ToList()
 
                         }).ToList()
                     }).ToList();
+
+                    clientes[0].DocumentosAplicadosxCuotas = documentoXCuota.Where(x => x.CodigoCliente == cliente).ToList();
 
                     return Ok(clientes[0]);
                 }
@@ -1252,12 +1320,12 @@ namespace AventasApi.Controllers
                         GrupoPrecio = cli.GrupoPrecio,
                         GrupoCliente = cli.GrupoCliente,
                         Descuento = cli.Descuento,
-                        MaestroDescuento = ctx.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper()).Select(x => new DescuentoViewModel
+                        MaestroDescuento = ctx.Descuento.Where(x => x.Codigo == cli.Descuento && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
                         {
                             Codigo = x.Codigo,
                             Descripcion = x.Descripcion,
                             Empresa = x.EmpresaId,
-                            DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
+                            DescuentoDetalle = x.DescuentoDetalle.Where(d => d.activo == true).Select(d => new DescuentoDetalleViewModel
                             {
                                 Linea = d.IdLinea,
                                 CodigoDescuento = d.CodigoDescuento,

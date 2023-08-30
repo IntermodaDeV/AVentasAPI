@@ -12,6 +12,7 @@ using System.Web.Http;
 //using DBData.Database;
 using AventasApi.Models.ViewModels;
 using System.Data.Entity;
+using AventasApi.ImageManager;
 
 public class AsesorController : ApiController
 {
@@ -143,6 +144,51 @@ public class AsesorController : ApiController
             return BadRequest();
         }
     }
+
+    [HttpGet]
+    [Route("api/asesor/activos")]
+    public async Task<IHttpActionResult> ObtenerAsesoresActivos()
+    {
+        try
+        {
+            using (var ctx = new AVentasEntities())
+            {
+                var asesoresActivos = await ctx.Asesores.Where(x => x.Activo.Value).Select(x => new { id = x.AsesorId, codigo = x.CodigoAsesor, nombre = x.Nombre, empresa = x.EmpresaId, firma = x.firma }).ToListAsync();
+                return Ok(asesoresActivos);
+            }
+        }
+        catch (Exception e)
+        {
+            return InternalServerError(e);
+        }
+    }
+
+    [HttpPost]
+    [Route("api/asesor/firma")]
+    public async Task<IHttpActionResult> CambiarFirmaAsesor([FromBody] CambiarFirma body)
+    {
+        try
+        {
+            using (var ctx = new AVentasEntities())
+            {
+                var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.AsesorId == body.Id);
+                if (asesor == null)
+                {
+                    return NotFound();
+                }
+
+                ByteArrayImageConversion firmaConversion = new ByteArrayImageConversion(body.Firma);
+
+                asesor.firma = firmaConversion.ContentByteArray;
+                await ctx.SaveChangesAsync();
+                return Ok();
+            }
+        }
+        catch (Exception e)
+        {
+            return InternalServerError(e);
+        }
+    }
 }
 public class AsesorViewModel
 {
@@ -154,4 +200,10 @@ public class AsesoresViewModel
 {
     public string Id { get; set; }
     public string Nombre { get; set; }
+}
+
+public class CambiarFirma
+{
+    public int Id { get; set; }
+    public string Firma { get; set; }
 }

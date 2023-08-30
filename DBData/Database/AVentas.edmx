@@ -77,6 +77,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Latitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Origen" Type="varchar" MaxLength="10" />
+          <Property Name="firma" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="AprobacionDevoluciones">
           <Key>
@@ -91,6 +92,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="FechaCrea" Type="datetime" Nullable="false" />
           <Property Name="UsuarioModifica" Type="int" />
           <Property Name="FechaModifica" Type="datetime" />
+          <Property Name="Visible" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Asesores">
           <Key>
@@ -110,6 +112,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="CorrelativoDevolucion" Type="int" />
           <Property Name="ConstanteGira" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="CorrelativoGira" Type="int" Nullable="false" />
+          <Property Name="firma" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="AsignacionxAsesor">
           <Key>
@@ -407,6 +410,17 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Porcentaje" Type="decimal" Precision="10" Scale="2" />
           <Property Name="activo" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="DescuentoEnAcuerdo">
+          <Key>
+            <PropertyRef Name="IdDescuentoAcuerdo" />
+          </Key>
+          <Property Name="IdDescuentoAcuerdo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodigoDescuento" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Porcentaje" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Dias" Type="int" Nullable="false" />
+          <Property Name="empresaId" Type="varchar" MaxLength="250" Nullable="false" />
+        </EntityType>
         <EntityType Name="Devolucion">
           <Key>
             <PropertyRef Name="NumDevolucion" />
@@ -434,6 +448,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="IdUbicacion" Type="int" />
           <Property Name="EstadoBodega" Type="int" />
           <Property Name="Origen" Type="varchar" MaxLength="10" />
+          <Property Name="FechaProcesado" Type="datetime" />
+          <Property Name="NotaCredito" Type="nvarchar" MaxLength="30" />
+          <Property Name="FechaNotaCredito" Type="datetime" />
+          <Property Name="FechaCreacionAx" Type="datetime" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -458,6 +476,24 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="NombreTalla" Type="varchar" MaxLength="250" />
           <Property Name="Cantidad" Type="varchar" MaxLength="250" />
           <Property Name="Orden" Type="decimal" Precision="18" Scale="2" />
+        </EntityType>
+        <EntityType Name="DocumentosAplicadosAFacturas">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodigoCliente" Type="varchar" MaxLength="50" />
+          <Property Name="Factura" Type="varchar" MaxLength="50" />
+          <Property Name="Voucher" Type="varchar" MaxLength="50" />
+          <Property Name="TipoDocumento" Type="varchar" MaxLength="50" />
+          <Property Name="FacturaDocumento" Type="varchar" MaxLength="50" />
+          <Property Name="Valor" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="MontoPorAplicar" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="SecuenciaNumerica" Type="varchar" MaxLength="50" />
+          <Property Name="Moneda" Type="varchar" MaxLength="20" />
+          <Property Name="Empresa" Type="varchar" MaxLength="10" />
+          <Property Name="FechaCrea" Type="datetime" />
+          <Property Name="IdSubFactura" Type="int" />
         </EntityType>
         <EntityType Name="DocumentosTransitoxFactura">
           <Key>
@@ -935,6 +971,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="FechaCrea" Type="datetime" Nullable="false" />
           <Property Name="UsuarioModifica" Type="int" />
           <Property Name="FechaModifica" Type="datetime" />
+          <Property Name="Nivel" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="MotivosDevolucion">
           <Key>
@@ -1401,6 +1438,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="proformaId" Type="int" />
           <Property Name="Origen" Type="varchar" MaxLength="10" />
+          <Property Name="firma" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="RecibosxClienteFlotante">
           <Key>
@@ -3659,6 +3697,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Documentos_IdSubFactura">
+          <End Role="SubFacturasxCliente" Type="Self.SubFacturasxCliente" Multiplicity="0..1" />
+          <End Role="DocumentosAplicadosAFacturas" Type="Self.DocumentosAplicadosAFacturas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubFacturasxCliente">
+              <PropertyRef Name="IdSubFactura" />
+            </Principal>
+            <Dependent Role="DocumentosAplicadosAFacturas">
+              <PropertyRef Name="IdSubFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ENCUESTA_ID_RESPUESTA_ENCUESTAID">
           <End Role="Encuesta" Type="Self.Encuesta" Multiplicity="0..1" />
           <End Role="Respuestas" Type="Self.Respuestas" Multiplicity="*" />
@@ -4115,6 +4165,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_tbDescuentoEnAcuerdo_tbEmpresa_empresaId">
+          <End Role="Empresa" Type="Self.Empresa" Multiplicity="1" />
+          <End Role="DescuentoEnAcuerdo" Type="Self.DescuentoEnAcuerdo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="DescuentoEnAcuerdo">
+              <PropertyRef Name="empresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_tbDevolucion_Clientes_CodigoCliente">
           <End Role="Clientes" Type="Self.Clientes" Multiplicity="0..1" />
           <End Role="Devolucion" Type="Self.Devolucion" Multiplicity="*" />
@@ -4359,6 +4421,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <Function Name="PRODUCTOSDEFACTURA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="numFactura" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="SP_ActualizarFleteFacturasAcuerdo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
@@ -4374,6 +4439,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="owner_id" Type="int" Mode="In" />
           <Parameter Name="version" Type="int" Mode="In" />
           <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="SP_DocumentosAplicadosXCuotas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CodigoAsesor" Type="varchar" Mode="In" />
         </Function>
         <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
@@ -4466,9 +4534,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="CuotasXAcuerdo" EntityType="Self.CuotasXAcuerdo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Descuento" EntityType="Self.Descuento" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DescuentoDetalle" EntityType="Self.DescuentoDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DescuentoEnAcuerdo" EntityType="Self.DescuentoEnAcuerdo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Devolucion" EntityType="Self.Devolucion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DevolucionDetalle" EntityType="Self.DevolucionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DistribucionxTalla" EntityType="Self.DistribucionxTalla" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DocumentosAplicadosAFacturas" EntityType="Self.DocumentosAplicadosAFacturas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DocumentosTransitoxFactura" EntityType="Self.DocumentosTransitoxFactura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EdadesxColeccion" EntityType="Self.EdadesxColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Empresa" EntityType="Self.Empresa" Schema="dbo" store:Type="Tables" />
@@ -5247,6 +5317,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="Clientes" EntitySet="Clientes" />
           </AssociationSet>
+          <AssociationSet Name="FK_Documentos_IdSubFactura" Association="Self.FK_Documentos_IdSubFactura">
+            <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
+            <End Role="DocumentosAplicadosAFacturas" EntitySet="DocumentosAplicadosAFacturas" />
+          </AssociationSet>
           <AssociationSet Name="FK_ENCUESTA_ID_RESPUESTA_ENCUESTAID" Association="Self.FK_ENCUESTA_ID_RESPUESTA_ENCUESTAID">
             <End Role="Encuesta" EntitySet="Encuesta" />
             <End Role="Respuestas" EntitySet="Respuestas" />
@@ -5398,6 +5472,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK_tbDescuentoDetalle_tbLinea_idLinea" Association="Self.FK_tbDescuentoDetalle_tbLinea_idLinea">
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="DescuentoDetalle" EntitySet="DescuentoDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbDescuentoEnAcuerdo_tbEmpresa_empresaId" Association="Self.FK_tbDescuentoEnAcuerdo_tbEmpresa_empresaId">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="DescuentoEnAcuerdo" EntitySet="DescuentoEnAcuerdo" />
           </AssociationSet>
           <AssociationSet Name="FK_tbDevolucion_Clientes_CodigoCliente" Association="Self.FK_tbDevolucion_Clientes_CodigoCliente">
             <End Role="Clientes" EntitySet="Clientes" />
@@ -5747,6 +5825,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="MotivosDevolucion" Relationship="AventasModel.FK_MOTIVOSDEVOLUCION_EMPRESAID" FromRole="Empresa" ToRole="MotivosDevolucion" />
           <NavigationProperty Name="MotivosDevolucionDetalle" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONDETALLE_EMPRESA" FromRole="Empresa" ToRole="MotivosDevolucionDetalle" />
           <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucion_Empresa_EmpresaId" FromRole="Empresa" ToRole="Devolucion" />
+          <NavigationProperty Name="DescuentoEnAcuerdo" Relationship="AventasModel.FK_tbDescuentoEnAcuerdo_tbEmpresa_empresaId" FromRole="Empresa" ToRole="DescuentoEnAcuerdo" />
         </EntityType>
         <EntityType Name="Errores">
           <Key>
@@ -6094,6 +6173,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="completaCuota" Type="Boolean" />
           <Property Name="Valor" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="Flete" Type="Decimal" Precision="18" Scale="2" />
+          <NavigationProperty Name="DocumentosAplicadosAFacturas" Relationship="AventasModel.FK_Documentos_IdSubFactura" FromRole="SubFacturasxCliente" ToRole="DocumentosAplicadosAFacturas" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -7940,6 +8020,19 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Combustibles" EntitySet="Combustibles" />
             <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
           </AssociationSet>
+          <EntitySet Name="DescuentoEnAcuerdo" EntityType="AventasModel.DescuentoEnAcuerdo" />
+          <EntitySet Name="DocumentosAplicadosAFacturas" EntityType="AventasModel.DocumentosAplicadosAFacturas" />
+          <AssociationSet Name="FK_tbDescuentoEnAcuerdo_tbEmpresa_empresaId" Association="AventasModel.FK_tbDescuentoEnAcuerdo_tbEmpresa_empresaId">
+            <End Role="Empresa" EntitySet="Empresa" />
+            <End Role="DescuentoEnAcuerdo" EntitySet="DescuentoEnAcuerdo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Documentos_IdSubFactura" Association="AventasModel.FK_Documentos_IdSubFactura">
+            <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
+            <End Role="DocumentosAplicadosAFacturas" EntitySet="DocumentosAplicadosAFacturas" />
+          </AssociationSet>
+          <FunctionImport Name="SP_DocumentosAplicadosXCuotas" ReturnType="Collection(AventasModel.SP_DocumentosAplicadosXCuotas_Result)">
+          <Parameter Name="CodigoAsesor" Mode="In" Type="String" />
+          </FunctionImport>
           <EntitySet Name="UsuarioLinea" EntityType="AventasModel.UsuarioLinea" />
           <AssociationSet Name="FK__UsuarioLi__IdLin__21B79C0B" Association="AventasModel.FK__UsuarioLi__IdLin__21B79C0B">
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
@@ -7949,6 +8042,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="UsuarioLinea" EntitySet="UsuarioLinea" />
           </AssociationSet>
+          <FunctionImport Name="SP_ActualizarFleteFacturasAcuerdo">
+            <Parameter Name="CLIENTE" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -8053,6 +8149,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="RecibosProforma" Relationship="AventasModel.FK__RecibosXCliente__ReciboProformaId" FromRole="RecibosxCliente" ToRole="RecibosProforma" />
           <NavigationProperty Name="LogRecibo" Relationship="AventasModel.FK__LogRecibo__Recib__7365F61F" FromRole="RecibosxCliente" ToRole="LogRecibo" />
           <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
           <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
@@ -10530,6 +10627,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="CorrelativoDevolucion" Type="Int32" />
           <Property Name="ConstanteGira" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="CorrelativoGira" Type="Int32" Nullable="false" />
+          <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <EntityType Name="UbicacionesXAlmacen">
           <Key>
@@ -10729,6 +10827,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO" FromRole="MotivosDevConAprobacion" ToRole="Usuarios" />
           <NavigationProperty Name="Usuarios1" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA" FromRole="MotivosDevConAprobacion" ToRole="Usuarios" />
           <NavigationProperty Name="Usuarios2" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS" FromRole="MotivosDevConAprobacion" ToRole="Usuarios" />
+          <Property Name="Nivel" Type="Int32" Nullable="false" />
         </EntityType>
         <Association Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION">
           <End Type="AventasModel.MotivosDevolucion" Role="MotivosDevolucion" Multiplicity="1" />
@@ -10835,6 +10934,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="UbicacionesXAlmacen" Relationship="AventasModel.FK_tbDevolucion_UbicacionesXAlmacen_IdUbicacion" FromRole="Devolucion" ToRole="UbicacionesXAlmacen" />
           <Property Name="EstadoBodega" Type="Int32" />
           <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="FechaProcesado" Type="DateTime" Precision="3" />
+          <Property Name="NotaCredito" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="FechaNotaCredito" Type="DateTime" Precision="3" />
+          <Property Name="FechaCreacionAx" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -10963,6 +11066,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_AprobacionDevolucion_usuario" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
           <NavigationProperty Name="Usuarios1" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_IdUsuario" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
           <NavigationProperty Name="Usuarios2" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
+          <Property Name="Visible" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_AprobacionDevolucion_Devolucion_NumeroDevolucion">
           <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="1" />
@@ -11408,6 +11512,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Latitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <EntityType Name="Combustibles">
           <Key>
@@ -11430,6 +11535,68 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="DescuentoEnAcuerdo">
+          <Key>
+            <PropertyRef Name="IdDescuentoAcuerdo" />
+          </Key>
+          <Property Name="IdDescuentoAcuerdo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodigoDescuento" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Porcentaje" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="Dias" Type="Int32" Nullable="false" />
+          <Property Name="empresaId" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Empresa" Relationship="AventasModel.FK_tbDescuentoEnAcuerdo_tbEmpresa_empresaId" FromRole="DescuentoEnAcuerdo" ToRole="Empresa" />
+        </EntityType>
+        <EntityType Name="DocumentosAplicadosAFacturas">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodigoCliente" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Factura" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Voucher" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TipoDocumento" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FacturaDocumento" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Valor" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="MontoPorAplicar" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="SecuenciaNumerica" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Moneda" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Empresa" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCrea" Type="DateTime" Precision="3" />
+          <Property Name="IdSubFactura" Type="Int32" />
+          <NavigationProperty Name="SubFacturasxCliente" Relationship="AventasModel.FK_Documentos_IdSubFactura" FromRole="DocumentosAplicadosAFacturas" ToRole="SubFacturasxCliente" />
+        </EntityType>
+        <Association Name="FK_tbDescuentoEnAcuerdo_tbEmpresa_empresaId">
+          <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
+          <End Type="AventasModel.DescuentoEnAcuerdo" Role="DescuentoEnAcuerdo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Empresa">
+              <PropertyRef Name="EmpresaId" />
+            </Principal>
+            <Dependent Role="DescuentoEnAcuerdo">
+              <PropertyRef Name="empresaId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Documentos_IdSubFactura">
+          <End Type="AventasModel.SubFacturasxCliente" Role="SubFacturasxCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.DocumentosAplicadosAFacturas" Role="DocumentosAplicadosAFacturas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SubFacturasxCliente">
+              <PropertyRef Name="IdSubFactura" />
+            </Principal>
+            <Dependent Role="DocumentosAplicadosAFacturas">
+              <PropertyRef Name="IdSubFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="SP_DocumentosAplicadosXCuotas_Result">
+          <Property Type="String" Name="IdAcuerdoxCliente" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="CodigoCliente" Nullable="true" MaxLength="250" />
+          <Property Type="Decimal" Name="Valor" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="Decimal" Name="Flete" Nullable="false" Precision="38" Scale="2" />
+          <Property Type="Int32" Name="NumeroCuota" Nullable="true" />
+        </ComplexType>
         <EntityType Name="UsuarioLinea">
           <Key>
             <PropertyRef Name="Id" />
@@ -11438,12 +11605,12 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="IdLinea" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="UsuarioId" Type="Int32" Nullable="false" />
           <Property Name="Asignada" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK__UsuarioLi__IdLin__21B79C0B" FromRole="UsuarioLinea" ToRole="MaestroLinea" />
-          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK__UsuarioLi__Usuar__22ABC044" FromRole="UsuarioLinea" ToRole="Usuarios" />
           <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="75" FixedLength="false" Unicode="true" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ModifiedBy" Type="String" MaxLength="75" FixedLength="false" Unicode="true" />
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK__UsuarioLi__IdLin__21B79C0B" FromRole="UsuarioLinea" ToRole="MaestroLinea" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK__UsuarioLi__Usuar__22ABC044" FromRole="UsuarioLinea" ToRole="Usuarios" />
         </EntityType>
         <Association Name="FK__UsuarioLi__IdLin__21B79C0B">
           <End Type="AventasModel.MaestroLinea" Role="MaestroLinea" Multiplicity="1" />
@@ -12234,6 +12401,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="RecibosxCliente">
             <EntityTypeMapping TypeName="AventasModel.RecibosxCliente">
               <MappingFragment StoreEntitySet="RecibosxCliente">
+                <ScalarProperty Name="firma" ColumnName="firma" />
                 <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="proformaId" ColumnName="proformaId" />
                 <ScalarProperty Name="SpecPago" ColumnName="SpecPago" />
@@ -13202,6 +13370,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Asesores">
             <EntityTypeMapping TypeName="AventasModel.Asesores">
               <MappingFragment StoreEntitySet="Asesores">
+                <ScalarProperty Name="firma" ColumnName="firma" />
                 <ScalarProperty Name="CorrelativoGira" ColumnName="CorrelativoGira" />
                 <ScalarProperty Name="ConstanteGira" ColumnName="ConstanteGira" />
                 <ScalarProperty Name="CorrelativoDevolucion" ColumnName="CorrelativoDevolucion" />
@@ -13287,6 +13456,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="MotivosDevConAprobacion">
             <EntityTypeMapping TypeName="AventasModel.MotivosDevConAprobacion">
               <MappingFragment StoreEntitySet="MotivosDevConAprobacion">
+                <ScalarProperty Name="Nivel" ColumnName="Nivel" />
                 <ScalarProperty Name="FechaModifica" ColumnName="FechaModifica" />
                 <ScalarProperty Name="UsuarioModifica" ColumnName="UsuarioModifica" />
                 <ScalarProperty Name="FechaCrea" ColumnName="FechaCrea" />
@@ -13331,6 +13501,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Devolucion">
             <EntityTypeMapping TypeName="AventasModel.Devolucion">
               <MappingFragment StoreEntitySet="Devolucion">
+                <ScalarProperty Name="FechaCreacionAx" ColumnName="FechaCreacionAx" />
+                <ScalarProperty Name="FechaNotaCredito" ColumnName="FechaNotaCredito" />
+                <ScalarProperty Name="NotaCredito" ColumnName="NotaCredito" />
+                <ScalarProperty Name="FechaProcesado" ColumnName="FechaProcesado" />
                 <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="EstadoBodega" ColumnName="EstadoBodega" />
                 <ScalarProperty Name="IdUbicacion" ColumnName="IdUbicacion" />
@@ -13405,6 +13579,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="AprobacionDevoluciones">
             <EntityTypeMapping TypeName="AventasModel.AprobacionDevoluciones">
               <MappingFragment StoreEntitySet="AprobacionDevoluciones">
+                <ScalarProperty Name="Visible" ColumnName="Visible" />
                 <ScalarProperty Name="FechaModifica" ColumnName="FechaModifica" />
                 <ScalarProperty Name="UsuarioModifica" ColumnName="UsuarioModifica" />
                 <ScalarProperty Name="FechaCrea" ColumnName="FechaCrea" />
@@ -13631,6 +13806,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="AnticiposxCliente">
             <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
               <MappingFragment StoreEntitySet="AnticiposxCliente">
+                <ScalarProperty Name="firma" ColumnName="firma" />
                 <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />
@@ -13668,6 +13844,48 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="DescuentoEnAcuerdo">
+            <EntityTypeMapping TypeName="AventasModel.DescuentoEnAcuerdo">
+              <MappingFragment StoreEntitySet="DescuentoEnAcuerdo">
+                <ScalarProperty Name="empresaId" ColumnName="empresaId" />
+                <ScalarProperty Name="Dias" ColumnName="Dias" />
+                <ScalarProperty Name="Porcentaje" ColumnName="Porcentaje" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="CodigoDescuento" ColumnName="CodigoDescuento" />
+                <ScalarProperty Name="IdDescuentoAcuerdo" ColumnName="IdDescuentoAcuerdo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DocumentosAplicadosAFacturas">
+            <EntityTypeMapping TypeName="AventasModel.DocumentosAplicadosAFacturas">
+              <MappingFragment StoreEntitySet="DocumentosAplicadosAFacturas">
+                <ScalarProperty Name="IdSubFactura" ColumnName="IdSubFactura" />
+                <ScalarProperty Name="FechaCrea" ColumnName="FechaCrea" />
+                <ScalarProperty Name="Empresa" ColumnName="Empresa" />
+                <ScalarProperty Name="Moneda" ColumnName="Moneda" />
+                <ScalarProperty Name="SecuenciaNumerica" ColumnName="SecuenciaNumerica" />
+                <ScalarProperty Name="MontoPorAplicar" ColumnName="MontoPorAplicar" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="FacturaDocumento" ColumnName="FacturaDocumento" />
+                <ScalarProperty Name="TipoDocumento" ColumnName="TipoDocumento" />
+                <ScalarProperty Name="Voucher" ColumnName="Voucher" />
+                <ScalarProperty Name="Factura" ColumnName="Factura" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_DocumentosAplicadosXCuotas" FunctionName="AventasModel.Store.SP_DocumentosAplicadosXCuotas">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_DocumentosAplicadosXCuotas_Result">
+                <ScalarProperty Name="IdAcuerdoxCliente" ColumnName="IdAcuerdoxCliente" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+                <ScalarProperty Name="Flete" ColumnName="Flete" />
+                <ScalarProperty Name="NumeroCuota" ColumnName="NumeroCuota" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           <EntitySetMapping Name="UsuarioLinea">
             <EntityTypeMapping TypeName="AventasModel.UsuarioLinea">
               <MappingFragment StoreEntitySet="UsuarioLinea">
@@ -13682,6 +13900,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_ActualizarFleteFacturasAcuerdo" FunctionName="AventasModel.Store.SP_ActualizarFleteFacturasAcuerdo" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

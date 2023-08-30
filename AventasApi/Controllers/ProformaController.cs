@@ -332,7 +332,8 @@ namespace AventasApi.Controllers
                                         SpecPago = pago.TipoPagoDetalle,
                                         UsuarioCreacion = user.UserAccount,
                                         FechaCreacion = DateTime.Now,
-                                        EmpresaUsuario = proformaPost.EmpresaUsuario
+                                        EmpresaUsuario = proformaPost.EmpresaUsuario,
+                                        firmaByte = asesor.firma,
                                     };
                                     recibosxCliente.Add(reciboXCliente);
                                 }
