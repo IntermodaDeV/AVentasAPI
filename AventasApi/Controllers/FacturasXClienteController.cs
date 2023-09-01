@@ -41,12 +41,47 @@ namespace AventasApi.Controllers
         {
             try
             {
-                using(AVentasEntities ctx = new AVentasEntities())
+                using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    var facturasDescuentoVencido = await ctx.FacturasxCliente
-                        .Where(x=>x.CodigoCliente == cliente && x.Saldo>0 && x.FechaMaxDescuento < DateTime.Now)
-                        .Select(x => new { documento=x.Tipo ,numero = x.Factura,fecha=x.FechaFactura,vencimiento=x.FechaVencimiento ,valor=x.TotalFactura,saldo=x.Saldo,excepcionDescuento = x.ExcepcionDescuento })
+                    var facturas = await ctx.FacturasxCliente
+                        .Include(x => x.Clientes)
+                        .Where(x => x.CodigoCliente == cliente && x.Saldo > 0 && x.FechaMaxDescuento < DateTime.Now && x.IdAcuerdoxCliente == null && x.Descuento == 0)
                         .ToListAsync();
+
+                    foreach (var factura in facturas)
+                    {
+                        var grupoDescuento = await ctx.Descuento.FirstOrDefaultAsync(x => x.Codigo.ToUpper() == factura.Clientes.Descuento.ToUpper() && x.EmpresaId.ToUpper() == factura.Clientes.EmpresaId.ToUpper());
+                        if (grupoDescuento == null)
+                        {
+                            continue;
+                        }
+
+                        var descuentoDetalle = await ctx.DescuentoDetalle.FirstOrDefaultAsync(x => x.IdDescuento == grupoDescuento.IdDescuento && x.IdLinea.ToUpper() == factura.IdLinea.ToUpper());
+                        if (descuentoDetalle == null)
+                        {
+                            continue;
+                        }
+
+                        var totalDocumentosAplicados = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == factura.Factura).Sum(x => x.Valor) ?? 0;
+                        var subfactura = await ctx.SubFacturasxCliente.FirstOrDefaultAsync(x => x.Factura == factura.Factura && x.Flete != null);
+                        decimal? flete = 0;
+
+                        if (subfactura != null)
+                        {
+                            flete = subfactura.Flete.Value;
+                        }
+
+                        var totalFactura = factura.TotalFactura - totalDocumentosAplicados - flete;
+                        var descuento = totalFactura * (descuentoDetalle.Porcentaje / 100);
+                        factura.FechaMaxDescuento = factura.FechaFactura?.AddDays(descuentoDetalle.DiasDescuento.Value);
+                        factura.Descuento = descuento;
+                    }
+
+                    var facturasDescuentoVencido = facturas
+                        .Where(x => x.Descuento > 0)
+                        .Select(x => new { documento = x.Tipo, numero = x.Factura, fecha = x.FechaFactura, vencimiento = x.FechaVencimiento, valor = x.TotalFactura, saldo = x.Saldo, excepcionDescuento = x.ExcepcionDescuento, descuento = x.Descuento, vencimientoDescuento = x.FechaMaxDescuento })
+                        .ToList();
+
 
                     return Ok(facturasDescuentoVencido);
                 }
