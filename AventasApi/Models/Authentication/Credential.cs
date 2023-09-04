@@ -21,12 +21,6 @@ namespace AventasApi.Models.Authentication
                 return false;
             }
 
-            if (Password.Length <8)
-            {
-                message = "Contraseña debe ser de al menos 8 carácteres.";
-                return false;
-            }
-
             message = "Ok.";
             return true;
         }

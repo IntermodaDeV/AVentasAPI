@@ -45,11 +45,16 @@ namespace AventasApi.Controllers
                 {
                     var facturas = await ctx.FacturasxCliente
                         .Include(x => x.Clientes)
-                        .Where(x => x.CodigoCliente == cliente && x.Saldo > 0 && x.FechaMaxDescuento < DateTime.Now && x.IdAcuerdoxCliente == null && x.Descuento == 0)
+                        .Where(x => x.CodigoCliente == cliente && x.Saldo > 0 && x.FechaMaxDescuento < DateTime.Now && x.IdAcuerdoxCliente == null)
                         .ToListAsync();
 
                     foreach (var factura in facturas)
                     {
+                        if (factura.Descuento > 0)
+                        {
+                            continue;
+                        }
+
                         var grupoDescuento = await ctx.Descuento.FirstOrDefaultAsync(x => x.Codigo.ToUpper() == factura.Clientes.Descuento.ToUpper() && x.EmpresaId.ToUpper() == factura.Clientes.EmpresaId.ToUpper());
                         if (grupoDescuento == null)
                         {
@@ -78,7 +83,7 @@ namespace AventasApi.Controllers
                     }
 
                     var facturasDescuentoVencido = facturas
-                        .Where(x => x.Descuento > 0)
+                        .Where(x => x.Descuento > 0 && x.FechaMaxDescuento < DateTime.Now)
                         .Select(x => new { documento = x.Tipo, numero = x.Factura, fecha = x.FechaFactura, vencimiento = x.FechaVencimiento, valor = x.TotalFactura, saldo = x.Saldo, excepcionDescuento = x.ExcepcionDescuento, descuento = x.Descuento, vencimientoDescuento = x.FechaMaxDescuento })
                         .ToList();
 
