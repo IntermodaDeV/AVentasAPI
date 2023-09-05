@@ -738,14 +738,12 @@ namespace AventasApi.Controllers
                     Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
                     Clientes cliente = await ctx.Clientes.FindAsync(devoluciones[0].CodigoCliente);
                     List<Object> nuevasDevoluciones = new List<Object>();
-                    
+
                     var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devoluciones[0].MotivoDevolucionDetalle);
-                    List<MotivosDevConAprobacion> AprobadoresSinFactura = new List<MotivosDevConAprobacion>();
                     var empresa = devoluciones[0].Empresa;
-                    var motivoSinFactura = await ctx.MotivosDevolucion.FirstOrDefaultAsync(x => x.CodigoMotivoDevolucion == "SIN-FACTURA" && x.EmpresaId == empresa);
                     var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
                     int minutosValue = 2;
-                   
+
 
                     if (minutosConf != null)
                     {
@@ -756,11 +754,6 @@ namespace AventasApi.Controllers
                         catch (Exception)
                         {
                         }
-                    }
-
-                    if (motivoSinFactura != null)
-                    {
-                        AprobadoresSinFactura = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == motivoSinFactura.IdMotivoDevolucion && x.Estado == true).ToListAsync();
                     }
 
                     foreach (DevolucionPostModel devolucion in devoluciones)
@@ -828,40 +821,22 @@ namespace AventasApi.Controllers
 
                             if (guardadoExito)
                             {
-                                if (string.IsNullOrEmpty(devolucion.FacturaOriginal) || string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
+
+                                foreach (var x in PendienteAprobacion)
                                 {
-                                    foreach (var x in AprobadoresSinFactura)
+                                    AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
                                     {
-                                        AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
-                                        {
-                                            IdUsuario = x.IdUsuario,
-                                            NumDevolucion = devolucion.Correlativo,
-                                            Estado = true,
-                                            UsuarioCrea = user.Id,
-                                            FechaCrea = DateTime.Now,
-                                            Visible = false
-                                        };
-                                        ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
-                                        var result = await ctx.SaveChangesAsync();
-                                    }
+                                        IdUsuario = x.IdUsuario,
+                                        NumDevolucion = devolucion.Correlativo,
+                                        Estado = true,
+                                        UsuarioCrea = user.Id,
+                                        FechaCrea = DateTime.Now,
+                                        Visible = false
+                                    };
+                                    ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
+                                    var result = await ctx.SaveChangesAsync();
                                 }
-                                else
-                                {
-                                    foreach (var x in PendienteAprobacion)
-                                    {
-                                        AprobacionDevoluciones aprobacionDevoluciones = new AprobacionDevoluciones()
-                                        {
-                                            IdUsuario = x.IdUsuario,
-                                            NumDevolucion = devolucion.Correlativo,
-                                            Estado = true,
-                                            UsuarioCrea = user.Id,
-                                            FechaCrea = DateTime.Now,
-                                            Visible = false
-                                        };
-                                        ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
-                                        var result = await ctx.SaveChangesAsync();
-                                    }
-                                }
+
 
                                 if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
                                 {
