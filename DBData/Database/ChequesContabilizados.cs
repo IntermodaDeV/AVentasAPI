@@ -12,18 +12,17 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class Usuario_Rol
+    public partial class ChequesContabilizados
     {
         public int Id { get; set; }
-        public int usuarioId { get; set; }
-        public int rolId { get; set; }
-        public bool status { get; set; }
-        public string createdBy { get; set; }
-        public System.DateTime createdDate { get; set; }
-        public string editedBy { get; set; }
-        public System.DateTime editedDate { get; set; }
-    
-        public virtual Roles Roles { get; set; }
-        public virtual Usuarios Usuarios { get; set; }
+        public string NumeroRecibo { get; set; }
+        public System.DateTime FechaRecepcion { get; set; }
+        public string NumeroCheque { get; set; }
+        public string Banco { get; set; }
+        public decimal ValorCheque { get; set; }
+        public System.DateTime FechaVencimiento { get; set; }
+        public string TipoCheque { get; set; }
+        public string CodigoCliente { get; set; }
+        public bool Activo { get; set; }
     }
 }

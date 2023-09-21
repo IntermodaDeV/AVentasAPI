@@ -8,6 +8,7 @@ namespace AventasApi.Models.ViewModels
     public class CuotasViewModel
     {
         public int IdSubFactura { get; set; }
+        public int DiasGracia { get; set; }
         public string Factura { get; set; }
         public string NumeroFEL { get; set; }
         public string CodigoCliente { get; set; }

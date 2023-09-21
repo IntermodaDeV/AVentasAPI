@@ -129,6 +129,9 @@
     <Compile Include="Database\CategoriaTipoGastoViaje.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ChequesContabilizados.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\ClienteContado.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

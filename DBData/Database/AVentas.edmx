@@ -5,8 +5,8 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="AventasModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Acciones">
           <Key>
             <PropertyRef Name="IdAccion" />
@@ -92,7 +92,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="FechaCrea" Type="datetime" Nullable="false" />
           <Property Name="UsuarioModifica" Type="int" />
           <Property Name="FechaModifica" Type="datetime" />
-          <Property Name="Visible" Type="bit" Nullable="false" />
+          <Property Name="Visible" Type="bit" />
         </EntityType>
         <EntityType Name="Asesores">
           <Key>
@@ -236,6 +236,21 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ProveedorPredefinido" Type="varchar" MaxLength="50" />
           <Property Name="CuentaContrapartida" Type="varchar" MaxLength="50" />
           <Property Name="GrupoImpuesto" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="ChequesContabilizados">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NumeroRecibo" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="FechaRecepcion" Type="datetime" Nullable="false" />
+          <Property Name="NumeroCheque" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Banco" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="ValorCheque" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="FechaVencimiento" Type="datetime" Nullable="false" />
+          <Property Name="TipoCheque" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="CodigoCliente" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ClienteContado">
           <Key>
@@ -638,6 +653,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Actualizado" Type="bit" Nullable="false" />
           <Property Name="NumeroPedido" Type="varchar" MaxLength="100" />
           <Property Name="ExcepcionDescuento" Type="bit" Nullable="false" />
+          <Property Name="DiasGracia" Type="int" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -971,7 +987,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="FechaCrea" Type="datetime" Nullable="false" />
           <Property Name="UsuarioModifica" Type="int" />
           <Property Name="FechaModifica" Type="datetime" />
-          <Property Name="Nivel" Type="int" Nullable="false" />
+          <Property Name="Nivel" Type="int" />
         </EntityType>
         <EntityType Name="MotivosDevolucion">
           <Key>
@@ -1308,8 +1324,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="VisibleParaVentas" Type="bit" Nullable="false" />
           <Property Name="CantidadMinima" Type="decimal" Precision="18" Scale="2" />
           <Property Name="StockVisible" Type="bit" Nullable="false" />
-          <Property Name="Deshabilitado" Type="bit" Nullable="false" />
           <Property Name="InOut" Type="bit" Nullable="false" />
+          <Property Name="Deshabilitado" Type="bit" Nullable="false" />
           <Property Name="Prioridad" Type="int" Nullable="false" />
           <Property Name="TieneVentaMaxima" Type="bit" Nullable="false" />
           <Property Name="Nuevo" Type="bit" Nullable="false" />
@@ -1619,8 +1635,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ReferenciaCuotas" Type="varchar(max)" />
           <Property Name="IdFactura" Type="int" />
           <Property Name="completaCuota" Type="bit" />
-          <Property Name="Flete" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Valor" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Flete" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -1821,8 +1837,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
           <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_AtributosxColeccion">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -1834,8 +1850,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
           <Property Name="CodigoAtributo" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ClientesxRuta">
           <Key>
             <PropertyRef Name="CodigoCliente" />
@@ -1855,8 +1871,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene defin
           <Property Name="Longitud" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Ruta" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ColeccionesBodegaEspecifico">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -1880,8 +1896,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' 
           <Property Name="Sitio" Type="varchar" MaxLength="50" />
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ColoresxProducto">
           <Key>
             <PropertyRef Name="IdColorxProducto" />
@@ -1892,8 +1908,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene de
           <Property Name="Rgb" Type="varchar" MaxLength="250" />
           <Property Name="IdProducto" Type="int" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_FisicoDisponible">
           <Key>
             <PropertyRef Name="IdFisicoDisponible" />
@@ -1905,8 +1921,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene de
           <Property Name="Disponible" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_TallasxProducto">
           <Key>
             <PropertyRef Name="IdProducto" />
@@ -3025,7 +3041,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__PedidosxC__Sales__008BB26A">
+        <Association Name="FK__PedidosxC__Sales__7A13BF05">
           <End Role="SaleStatus" Type="Self.SaleStatus" Multiplicity="1" />
           <End Role="PedidosxCliente" Type="Self.PedidosxCliente" Multiplicity="*" />
           <ReferentialConstraint>
@@ -3577,7 +3593,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__UsuarioLi__IdLin__21B79C0B">
+        <Association Name="FK__UsuarioLi__IdLin__6B909584">
           <End Role="MaestroLinea" Type="Self.MaestroLinea" Multiplicity="1" />
           <End Role="UsuarioLinea" Type="Self.UsuarioLinea" Multiplicity="*" />
           <ReferentialConstraint>
@@ -3589,7 +3605,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__UsuarioLi__Usuar__22ABC044">
+        <Association Name="FK__UsuarioLi__Usuar__6C84B9BD">
           <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
           <End Role="UsuarioLinea" Type="Self.UsuarioLinea" Multiplicity="*" />
           <ReferentialConstraint>
@@ -4521,6 +4537,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="BitacoraNoVentaEnVisitas" EntityType="Self.BitacoraNoVentaEnVisitas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BitacoraVisitasCliente" EntityType="Self.BitacoraVisitasCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CategoriaTipoGastoViaje" EntityType="Self.CategoriaTipoGastoViaje" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChequesContabilizados" EntityType="Self.ChequesContabilizados" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClienteContado" EntityType="Self.ClienteContado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Clientes" EntityType="Self.Clientes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientesxRuta" EntityType="Self.ClientesxRuta" Schema="dbo" store:Type="Tables" />
@@ -5093,7 +5110,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="TiposdePedido" EntitySet="TiposdePedido" />
             <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
           </AssociationSet>
-          <AssociationSet Name="FK__PedidosxC__Sales__008BB26A" Association="Self.FK__PedidosxC__Sales__008BB26A">
+          <AssociationSet Name="FK__PedidosxC__Sales__7A13BF05" Association="Self.FK__PedidosxC__Sales__7A13BF05">
             <End Role="SaleStatus" EntitySet="SaleStatus" />
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
           </AssociationSet>
@@ -5277,11 +5294,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="MaestroBodegaAlmacenes" EntitySet="MaestroBodegaAlmacenes" />
             <End Role="UbicacionesXAlmacen" EntitySet="UbicacionesXAlmacen" />
           </AssociationSet>
-          <AssociationSet Name="FK__UsuarioLi__IdLin__21B79C0B" Association="Self.FK__UsuarioLi__IdLin__21B79C0B">
+          <AssociationSet Name="FK__UsuarioLi__IdLin__6B909584" Association="Self.FK__UsuarioLi__IdLin__6B909584">
             <End Role="MaestroLinea" EntitySet="MaestroLinea" />
             <End Role="UsuarioLinea" EntitySet="UsuarioLinea" />
           </AssociationSet>
-          <AssociationSet Name="FK__UsuarioLi__Usuar__22ABC044" Association="Self.FK__UsuarioLi__Usuar__22ABC044">
+          <AssociationSet Name="FK__UsuarioLi__Usuar__6C84B9BD" Association="Self.FK__UsuarioLi__Usuar__6C84B9BD">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="UsuarioLinea" EntitySet="UsuarioLinea" />
           </AssociationSet>
@@ -5882,6 +5899,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="NumeroPedido" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Actualizado" Type="Boolean" Nullable="false" />
           <Property Name="ExcepcionDescuento" Type="Boolean" Nullable="false" />
+          <Property Name="DiasGracia" Type="Int32" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -8043,8 +8061,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="UsuarioLinea" EntitySet="UsuarioLinea" />
           </AssociationSet>
           <FunctionImport Name="SP_ActualizarFleteFacturasAcuerdo">
-            <Parameter Name="CLIENTE" Mode="In" Type="String" />
+          <Parameter Name="CLIENTE" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="ChequesContabilizados" EntityType="AventasModel.ChequesContabilizados" />
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -10827,7 +10846,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIO" FromRole="MotivosDevConAprobacion" ToRole="Usuarios" />
           <NavigationProperty Name="Usuarios1" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA" FromRole="MotivosDevConAprobacion" ToRole="Usuarios" />
           <NavigationProperty Name="Usuarios2" Relationship="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS" FromRole="MotivosDevConAprobacion" ToRole="Usuarios" />
-          <Property Name="Nivel" Type="Int32" Nullable="false" />
+          <Property Name="Nivel" Type="Int32" />
         </EntityType>
         <Association Name="FK_MOTIVOSDEVOLUCIONCONAPROBACION_MOTIVODEVOLUCION">
           <End Type="AventasModel.MotivosDevolucion" Role="MotivosDevolucion" Multiplicity="1" />
@@ -11066,7 +11085,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_AprobacionDevolucion_usuario" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
           <NavigationProperty Name="Usuarios1" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_IdUsuario" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
           <NavigationProperty Name="Usuarios2" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
-          <Property Name="Visible" Type="Boolean" Nullable="false" />
+          <Property Name="Visible" Type="Boolean" />
         </EntityType>
         <Association Name="FK_AprobacionDevolucion_Devolucion_NumeroDevolucion">
           <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="1" />
@@ -11636,6 +11655,21 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ChequesContabilizados">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NumeroRecibo" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="FechaRecepcion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="NumeroCheque" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Banco" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ValorCheque" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="FechaVencimiento" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TipoCheque" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CodigoCliente" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11871,6 +11905,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="FacturasxCliente">
             <EntityTypeMapping TypeName="AventasModel.FacturasxCliente">
               <MappingFragment StoreEntitySet="FacturasxCliente">
+                <ScalarProperty Name="DiasGracia" ColumnName="DiasGracia" />
                 <ScalarProperty Name="ExcepcionDescuento" ColumnName="ExcepcionDescuento" />
                 <ScalarProperty Name="Actualizado" ColumnName="Actualizado" />
                 <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
@@ -13901,6 +13936,22 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SP_ActualizarFleteFacturasAcuerdo" FunctionName="AventasModel.Store.SP_ActualizarFleteFacturasAcuerdo" />
+          <EntitySetMapping Name="ChequesContabilizados">
+            <EntityTypeMapping TypeName="AventasModel.ChequesContabilizados">
+              <MappingFragment StoreEntitySet="ChequesContabilizados">
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="CodigoCliente" ColumnName="CodigoCliente" />
+                <ScalarProperty Name="TipoCheque" ColumnName="TipoCheque" />
+                <ScalarProperty Name="FechaVencimiento" ColumnName="FechaVencimiento" />
+                <ScalarProperty Name="ValorCheque" ColumnName="ValorCheque" />
+                <ScalarProperty Name="Banco" ColumnName="Banco" />
+                <ScalarProperty Name="NumeroCheque" ColumnName="NumeroCheque" />
+                <ScalarProperty Name="FechaRecepcion" ColumnName="FechaRecepcion" />
+                <ScalarProperty Name="NumeroRecibo" ColumnName="NumeroRecibo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -35,7 +35,8 @@ namespace AventasApi.Models.ViewModels
         public Nullable<int> IdTipoPedido { get; set; }
         public List<CuotasViewModel> Cuotas { get; set; }
         public List<DocumentosAplicadosAFacturasViewModel> DocumentosAplicadosAFacturas { get; set; }
-        public bool ExcepcionDescuento { get; set;}
-       
+        public bool ExcepcionDescuento { get; set; }
+        public int DiasGracia { get; set; }
+
     }
 }

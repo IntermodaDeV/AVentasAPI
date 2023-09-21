@@ -10,7 +10,7 @@ namespace AventasApi.Models
     public class ClienteViewModel
     {
         public string EmpresaId { get; set; }
-        public string Codigo { get; set; } 
+        public string Codigo { get; set; }
         public string Asesor { get; set; }
         public string Nombre { get; set; }
         public string Zona { get; set; }
@@ -27,9 +27,9 @@ namespace AventasApi.Models
         public string Telefono { get; set; }
         public string ModoEntrega { get; set; }
         //public List<string> CuentaCorriente;
-        public List<ContactosxClienteViewModel> Contacto ;
+        public List<ContactosxClienteViewModel> Contacto;
         public List<DescuentoViewModel> MaestroDescuento;
-        public List<string> PedidosAbierto ;
+        public List<string> PedidosAbierto;
         public List<CuentaCorrienteViewModel> CuentaCorriente;
         public List<AcuerdoVentaViewModel> AcuerdosVenta;
         public List<PedidosXClienteViewModel> Pedido;
@@ -38,6 +38,9 @@ namespace AventasApi.Models
         public Nullable<decimal> Longitud { get; set; }
         public List<FacturasXClienteViewModel> Facturas;
         public List<AcuerdosXTipoPedidoViewModel> AcuerdosXTipoPedido;
+
+        public List<ChequesContabilizadosViewModel> chequesContabilizados;
+
         public string NombreGrupoPrecio { get; set; }
 
         public double NumeroFacturasVencidas { get; set; }
@@ -60,6 +63,7 @@ namespace AventasApi.Models
             this.Facturas = new List<FacturasXClienteViewModel>();
             this.AcuerdosXTipoPedido = new List<AcuerdosXTipoPedidoViewModel>();
             this.Credito = new List<PResumenCredito_Result>();
+            this.chequesContabilizados = new List<ChequesContabilizadosViewModel>();
             this.DocumentosAplicadosxCuotas = new List<SP_DocumentosAplicadosXCuotas_Result>();
         }
     }
