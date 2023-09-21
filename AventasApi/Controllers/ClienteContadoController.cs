@@ -45,6 +45,7 @@ namespace AventasApi.Controllers
                 item.Telefono = cliente.Telefono;
                 item.FlagClientePotencial = cliente.FlagClientePotencial;
                 item.Direccion = cliente.Direccion;
+                item.Provincia = cliente.Provincia;
                 context.SaveChanges();
                 return Ok(item);
             }
