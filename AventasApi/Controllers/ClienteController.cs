@@ -309,10 +309,10 @@ namespace AventasApi.Controllers
                         GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
                         ModoEntrega = cli.ModoEntrega,
                         //Credito =  context.PResumenCredito().Where(resCred=> resCred.codigocliente == cli.CodigoCliente).ToList(),
-                        NumeroFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite),
-                        MontoFacturasVencidas = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento < FechaLimite).Sum(faccli => faccli.Saldo) ?? 0,
-                        NumeroFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Count(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo),
-                        MontoFacturasXVencer = cli.FacturasxCliente.SelectMany(faccli => faccli.SubFacturasxCliente).Where(faccli => faccli.Saldo > 0 && faccli.FechaVencimiento > FechaLimite && faccli.FechaVencimiento < FechaLimiteFuturo).Sum(faccli => faccli.Saldo) ?? 0,
+                        NumeroFacturasVencidas = 0,
+                        MontoFacturasVencidas =  0,
+                        NumeroFacturasXVencer = 0,
+                        MontoFacturasXVencer = 0,
                         FacturacionEntrega = cli.FacturacionEntrega,
                         CuentaCorriente = context.LimiteCreditoxCliente.Where(lcc => lcc.CodigoCliente == cli.CodigoCliente).Select(lcc => new CuentaCorrienteViewModel
                         {
@@ -324,46 +324,11 @@ namespace AventasApi.Controllers
                             NumPedido = rec.NumPedido,
                             CodigoCliente = rec.CodigoCliente
                         }).ToList(),
-                        Pedido = context.PedidosxCliente.Where(ped => ped.CodigoCliente == cli.CodigoCliente && ped.IdLinea == "BIO" && !Recibos.Contains(ped.PedidoId) && ped.PedidoId != null && ped.Sincronizado == true).Select(ped => new PedidosXClienteViewModel
-                        {
-                            PedidoId = ped.NumeroPedido,
-                            NumeroPedido = ped.PedidoId,
-                            CodigoColeccion = ped.Colecciones.CodigoColeccion,
-                            NombreColeccion = ped.Colecciones.Nombre,
-                            FechaEntrega = ped.FechaEntrega,
-                            FechaActual = ped.Fecha,
-                            TotalXPedido = ped.TotalPedido,
-                            ClienteContadoId = ped.ClienteContadoId
-
-                        }).ToList()
+                        
                     }).ToList();
 
                 foreach (var cliente in clientesSinFiltrar)
                 {
-                    var acuerdos = await context.AcuerdosxCliente.Where(a => a.Desde <= DateTime.Today && a.Hasta >= DateTime.Today).AsNoTracking().Where(acue => acue.CodigoCliente == cliente.Codigo).ToListAsync();
-                    cliente.AcuerdosVenta = acuerdos.Select(axc => new AcuerdoVentaViewModel
-                    {
-                        IdAcuerdoxCliente = axc.IdAcuerdoxCliente,
-                        CodigoCliente = axc.CodigoCliente,
-                        IdTipoPedido = axc.IdTipoPedido,
-                        IdMoneda = axc.IdMoneda,
-                        EmpresaId = axc.EmpresaId,
-                        Tipo = axc.Tipo,
-                        TipoPago = axc.TipoPago,
-                        Total = axc.Total,
-                        Saldo = axc.Saldo,
-                        Linea = axc.IdLinea,
-                        Liberado = axc.Liberado,
-                        Facturado = axc.Facturado,
-                        Entregado = axc.Entregado,
-                        detalleAcuerdo = context.AcuerdosxClienteDetalle.Where(axcd => axcd.IdAcuerdoxCliente == axc.IdAcuerdoxCliente).Select(axcd => new AcuerdoVentaDetalleViewModel
-                        {
-                            Fecha = axcd.Fecha,
-                            Monto = axcd.Monto,
-                            Saldo = axcd.Saldo
-                        }).ToList()
-                    }).ToList();
-
                     cliente.chequesContabilizados = context.ChequesContabilizados.Where(c => c.Activo && c.CodigoCliente == cliente.Codigo).Select(ch => new ChequesContabilizadosViewModel
                     {
                         NumeroCheque = ch.NumeroCheque,
