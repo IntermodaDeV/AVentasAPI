@@ -72,7 +72,7 @@ namespace AventasApi.Controllers
                 {
                     var facturas = await ctx.FacturasxCliente
                         .Include(x => x.Clientes)
-                        .Where(x => x.CodigoCliente == cliente && x.Saldo > 0 && x.FechaMaxDescuento < DateTime.Now && x.IdAcuerdoxCliente == null)
+                        .Where(x => x.CodigoCliente == cliente && x.Saldo > 0 && x.IdAcuerdoxCliente == null)
                         .ToListAsync();
 
                     foreach (var factura in facturas)
