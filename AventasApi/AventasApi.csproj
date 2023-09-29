@@ -283,6 +283,7 @@
     <Compile Include="Models\ViewModels\BodegaAlmacenesViewModel.cs" />
     <Compile Include="Models\ViewModels\CategoriaGastoDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\CategoriaGastoViewModel.cs" />
+    <Compile Include="Models\ViewModels\ChequesContabilizadosViewModel.cs" />
     <Compile Include="Models\ViewModels\ClienteSincronizacionViewModel.cs" />
     <Compile Include="Models\ViewModels\ClientesYMaestroGrupoPrecioViewModel.cs" />
     <Compile Include="Models\ViewModels\ClienteViewModel.cs" />
@@ -322,6 +323,7 @@
     <Compile Include="Models\ViewModels\EmpresaViewModel.cs" />
     <Compile Include="Models\ViewModels\EncPedTempViewModel.cs" />
     <Compile Include="Models\ViewModels\FacturasEnCuotasAcuerdoViewModel.cs" />
+    <Compile Include="Models\ViewModels\FacturasXClienteDiasGraciaViewModel.cs" />
     <Compile Include="Models\ViewModels\GastoNoSincronizadosViewModel.cs" />
     <Compile Include="Models\ViewModels\GastoPendienteViewModel.cs" />
     <Compile Include="Models\ViewModels\GastosExcelViewModel.cs" />

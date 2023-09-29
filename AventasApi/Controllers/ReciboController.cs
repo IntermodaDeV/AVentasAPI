@@ -1042,25 +1042,29 @@ namespace AventasApi.Controllers
 
                                             if (GrupoDescuentoAcuerdo != null)
                                             {
-                                                var FechaMaxDescuento = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota).FechaVencimiento;
-                                                if (FechaMaxDescuento >= reciboPost.FechaPago)
+                                                var cuotaAcuerdo = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota);
+                                                
+                                                if (cuotaAcuerdo != null)
                                                 {
-                                                    var documentosAplicados = context.SP_DocumentosAplicadosXCuotas(asesor.CodigoAsesor).FirstOrDefault(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente);
-                                                    var FletePorCuota = documentosAplicados == null ? 0 : documentosAplicados.Flete;
-                                                    var NotasAplicadasCuota = documentosAplicados == null ? 0 : documentosAplicados.Valor;
+                                                    var FechaMaxDescuento = cuotaAcuerdo.FechaVencimiento;
+                                                    if (FechaMaxDescuento >= reciboPost.FechaPago)
+                                                    {
+                                                        var documentosAplicados = context.SP_DocumentosAplicadosXCuotas(asesor.CodigoAsesor).FirstOrDefault(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente);
+                                                        var FletePorCuota = documentosAplicados == null ? 0 : documentosAplicados.Flete;
+                                                        var NotasAplicadasCuota = documentosAplicados == null ? 0 : documentosAplicados.Valor;
 
-                                                    CuotasXAcuerdo cuotaAcuerdo = context.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota);
-                                                    decimal? consumidoCuota = cuotaAcuerdo.ValorCuota - cuotaAcuerdo.SaldoDiponible;
+                                                        decimal? consumidoCuota = cuotaAcuerdo.ValorCuota - cuotaAcuerdo.SaldoDiponible;
 
-                                                    var valoCuota = consumidoCuota - FletePorCuota - NotasAplicadasCuota ?? 0;
-                                                    var pagosAplicados = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente).ToList();
-                                                    var pagadoCuota = pagosAplicados.Sum(x => x.SaldoDivisa - x.Saldo) ?? 0;
+                                                        var valoCuota = consumidoCuota - FletePorCuota - NotasAplicadasCuota ?? 0;
+                                                        var pagosAplicados = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente).ToList();
+                                                        var pagadoCuota = pagosAplicados.Sum(x => x.SaldoDivisa - x.Saldo) ?? 0;
 
-                                                    var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
-                                                    Descuento = CalcularDescuentoAplicar(subFacturas, subfactura, DescuentoCuota);
-                                                    aplicaDescuento = valor == 0 ? true : valor >= (Decimal.ToDouble(valoCuota - pagadoCuota) - Descuento);
+                                                        var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
+                                                        Descuento = CalcularDescuentoAplicar(subFacturas, subfactura, DescuentoCuota);
+                                                        aplicaDescuento = valor == 0 ? true : valor >= (Decimal.ToDouble(valoCuota - pagadoCuota) - Descuento);
 
-                                                    valorCuota = aplicaDescuento ? (Decimal.ToDouble(subfactura.Saldo.Value) - Descuento) : Decimal.ToDouble(subfactura.Saldo.Value);
+                                                        valorCuota = aplicaDescuento ? (Decimal.ToDouble(subfactura.Saldo.Value) - Descuento) : Decimal.ToDouble(subfactura.Saldo.Value);
+                                                    }
                                                 }
                                             }
                                         }

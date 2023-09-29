@@ -12,16 +12,17 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class ClienteContado
+    public partial class ChequesContabilizados
     {
-        public int id { get; set; }
-        public string Nombre { get; set; }
-        public string Direccion { get; set; }
-        public string RTN { get; set; }
-        public Nullable<bool> FlagClientePotencial { get; set; }
-        public string Telefono { get; set; }
-        public string ComunidadAutonoma { get; set; }
-        public string Asesor { get; set; }
-        public string Provincia { get; set; }
+        public int Id { get; set; }
+        public string NumeroRecibo { get; set; }
+        public System.DateTime FechaRecepcion { get; set; }
+        public string NumeroCheque { get; set; }
+        public string Banco { get; set; }
+        public decimal ValorCheque { get; set; }
+        public System.DateTime FechaVencimiento { get; set; }
+        public string TipoCheque { get; set; }
+        public string CodigoCliente { get; set; }
+        public bool Activo { get; set; }
     }
 }

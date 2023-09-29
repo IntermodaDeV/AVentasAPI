@@ -351,6 +351,7 @@
         <EntityTypeShape EntityType="AventasModel.UsuarioLinea" Width="1.5" PointX="20.25" PointY="23.75" />
         <AssociationConnector Association="AventasModel.FK__UsuarioLi__IdLin__21B79C0B" />
         <AssociationConnector Association="AventasModel.FK__UsuarioLi__Usuar__22ABC044" />
+        <EntityTypeShape EntityType="AventasModel.ChequesContabilizados" Width="1.5" PointX="22.375" PointY="21.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

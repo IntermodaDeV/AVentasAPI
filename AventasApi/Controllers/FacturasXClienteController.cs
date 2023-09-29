@@ -2,6 +2,7 @@
 using System;
 using System.Data.Entity;
 using System.Linq;
+using AventasApi.Models.ViewModels;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -35,6 +36,32 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("diasgraciafactura/{cliente}/{factura}/{dias}")]
+        public async Task<IHttpActionResult> ActualizarDiasdeGracia(string cliente, string factura, int dias)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    FacturasxCliente facturaBD = await ctx.FacturasxCliente.FirstOrDefaultAsync(x => x.CodigoCliente == cliente && x.Factura == factura);
+                    if (facturaBD == null)
+                    {
+                        return NotFound();
+                    }
+
+                    facturaBD.DiasGracia = dias;
+                    await ctx.SaveChangesAsync();
+
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
         [HttpGet]
         [Route("descuentovencido/{cliente}")]
         public async Task<IHttpActionResult> ObtenerFacturasDescuentoVencido(string cliente)
@@ -45,7 +72,7 @@ namespace AventasApi.Controllers
                 {
                     var facturas = await ctx.FacturasxCliente
                         .Include(x => x.Clientes)
-                        .Where(x => x.CodigoCliente == cliente && x.Saldo > 0 && x.FechaMaxDescuento < DateTime.Now && x.IdAcuerdoxCliente == null)
+                        .Where(x => x.CodigoCliente == cliente && x.Saldo > 0 && x.IdAcuerdoxCliente == null)
                         .ToListAsync();
 
                     foreach (var factura in facturas)
@@ -109,6 +136,38 @@ namespace AventasApi.Controllers
                         .OrderByDescending(x => x.FechaFactura)
                         .Select(x => new { factura = x.Factura, pedido = x.NumeroPedido, linea = x.IdLinea })
                         .ToListAsync();
+
+                    return Ok(facturas);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+
+        }
+
+        [HttpGet]
+        [Route("facturasdiasgracias/{cliente}")]
+        public async Task<IHttpActionResult> GetFacturasCliente(string cliente)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var facturas = ctx.FacturasxCliente.Where(f => f.Saldo > 0.1M && f.CodigoCliente == cliente).Select(fa => new FacturasXClienteDiasGraciaViewModel
+                    {
+                        Tipo = fa.Tipo,
+                        Factura = fa.Factura,
+                        FechaFactura = fa.FechaFactura,
+                        FechaVencimiento = fa.FechaVencimiento,
+                        TotalFactura = fa.TotalFactura,
+                        Saldo = fa.Saldo,
+                        Descuento = fa.Saldo,
+                        FechaMaxDescuento = fa.FechaMaxDescuento,
+                        CodigoCliente = fa.CodigoCliente,
+                        DiasGracia = fa.DiasGracia ?? 0
+                    }).ToList();
 
                     return Ok(facturas);
                 }
