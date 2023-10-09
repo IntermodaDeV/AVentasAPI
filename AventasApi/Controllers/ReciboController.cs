@@ -1078,7 +1078,8 @@ namespace AventasApi.Controllers
                                             var descuentoDetalle = context.DescuentoDetalle.Where(x => x.IdDescuento == descuento.IdDescuento && x.IdLinea == subfactura.FacturasxCliente.IdLinea && x.activo == true).FirstOrDefault();
                                             if (descuentoDetalle != null)
                                             {
-                                                var FechaMaxDescuento = FechaFact.AddDays(descuentoDetalle.DiasDescuento + 1 ?? 0);
+                                                int sumaDias = (descuentoDetalle.DiasDescuento ?? 0) + cliente.DiasTransporte;
+                                                var FechaMaxDescuento = FechaFact.AddDays(sumaDias);
                                                 if ((FechaMaxDescuento >= reciboPost.FechaPago) || subfactura.FacturasxCliente.ExcepcionDescuento)
                                                 {
                                                     var documentosAplicadosFactura = TotalDocumentosAplicados(Factura.Factura, Factura.CodigoCliente);

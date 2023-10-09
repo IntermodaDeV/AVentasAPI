@@ -105,7 +105,8 @@ namespace AventasApi.Controllers
 
                         var totalFactura = factura.TotalFactura - totalDocumentosAplicados - flete;
                         var descuento = totalFactura * (descuentoDetalle.Porcentaje / 100);
-                        factura.FechaMaxDescuento = factura.FechaFactura?.AddDays(descuentoDetalle.DiasDescuento.Value);
+                        var sumaDias = descuentoDetalle.DiasDescuento.Value + factura.Clientes.DiasTransporte;
+                        factura.FechaMaxDescuento = factura.FechaFactura?.AddDays(sumaDias);
                         factura.Descuento = descuento;
                     }
 

@@ -42,6 +42,7 @@ namespace AventasApi.Models
         public List<ChequesContabilizadosViewModel> chequesContabilizados;
 
         public string NombreGrupoPrecio { get; set; }
+        public int DiasTransporte { get; set; }
 
         public double NumeroFacturasVencidas { get; set; }
         public decimal MontoFacturasVencidas { get; set; }

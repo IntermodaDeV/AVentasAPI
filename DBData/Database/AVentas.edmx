@@ -298,6 +298,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="IgnorarSeqFact" Type="bit" />
           <Property Name="IncluyeImpuesto" Type="bit" />
           <Property Name="FlagClienteEspecial" Type="bit" Nullable="false" />
+          <Property Name="DiasTransporte" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -5713,6 +5714,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="IncluyeImpuesto" Type="Boolean" />
           <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucion_Clientes_CodigoCliente" FromRole="Clientes" ToRole="Devolucion" />
           <Property Name="FlagClienteEspecial" Type="Boolean" Nullable="false" />
+          <Property Name="DiasTransporte" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -11759,6 +11761,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Clientes">
             <EntityTypeMapping TypeName="AventasModel.Clientes">
               <MappingFragment StoreEntitySet="Clientes">
+                <ScalarProperty Name="DiasTransporte" ColumnName="DiasTransporte" />
                 <ScalarProperty Name="FlagClienteEspecial" ColumnName="FlagClienteEspecial" />
                 <ScalarProperty Name="IncluyeImpuesto" ColumnName="IncluyeImpuesto" />
                 <ScalarProperty Name="IgnorarSeqFact" ColumnName="IgnorarSeqFact" />
