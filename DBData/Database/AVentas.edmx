@@ -1017,6 +1017,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="FechaModifica" Type="datetime" />
           <Property Name="UsuarioModifica" Type="int" />
         </EntityType>
+        <EntityType Name="MotivoTiempoFuera">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="descripcion" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="activo" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="PagosAFacturasDeCuotas">
           <Key>
             <PropertyRef Name="IdPagosAFacturasDeCuota" />
@@ -1666,6 +1674,21 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="IdTallaxProducto" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdProducto" Type="int" />
           <Property Name="IdTallaxGrupo" Type="int" />
+        </EntityType>
+        <EntityType Name="TiempoFueraAgenda">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="codigoAsesor" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="horaEntrada" Type="datetime" />
+          <Property Name="latitudEntrada" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="longitudEntrada" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="horaSalida" Type="datetime" />
+          <Property Name="latitudSalida" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="longitudSalida" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="motivoTiempoFueraId" Type="int" />
+          <Property Name="descripcion" Type="varchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="TipoGastoViaje">
           <Key>
@@ -3547,6 +3570,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__TiempoFue__motiv__5EF5B475">
+          <End Role="MotivoTiempoFuera" Type="Self.MotivoTiempoFuera" Multiplicity="0..1" />
+          <End Role="TiempoFueraAgenda" Type="Self.TiempoFueraAgenda" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MotivoTiempoFuera">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="TiempoFueraAgenda">
+              <PropertyRef Name="motivoTiempoFueraId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__TiposdePa__Empre__29971E47">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
           <End Role="TiposdePago" Type="Self.TiposdePago" Multiplicity="*" />
@@ -4512,6 +4547,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <Function Name="SP_VISITASPORMES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="User" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="SPObtenerTiemposFueraDelDia" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="asesor" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="VisitasCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CodigoCliente" Type="varchar" Mode="In" />
         </Function>
@@ -4600,6 +4638,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="MotivosDevConAprobacion" EntityType="Self.MotivosDevConAprobacion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MotivosDevolucion" EntityType="Self.MotivosDevolucion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MotivosDevolucionDetalle" EntityType="Self.MotivosDevolucionDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MotivoTiempoFuera" EntityType="Self.MotivoTiempoFuera" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PagosAFacturasDeCuotas" EntityType="Self.PagosAFacturasDeCuotas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pantallas" EntityType="Self.Pantallas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pantallas_Funciones" EntityType="Self.Pantallas_Funciones" Schema="dbo" store:Type="Tables" />
@@ -4641,6 +4680,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TallasXGrupo" EntityType="Self.TallasXGrupo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TallasxProducto" EntityType="Self.TallasxProducto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TiempoFueraAgenda" EntityType="Self.TiempoFueraAgenda" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TipoGastoViaje" EntityType="Self.TipoGastoViaje" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdeColeccion" EntityType="Self.TiposdeColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdePago" EntityType="Self.TiposdePago" Schema="dbo" store:Type="Tables" />
@@ -5279,6 +5319,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK__TallasxPr__IdTal__2803DB90" Association="Self.FK__TallasxPr__IdTal__2803DB90">
             <End Role="TallasXGrupo" EntitySet="TallasXGrupo" />
             <End Role="TallasxProducto" EntitySet="TallasxProducto" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TiempoFue__motiv__5EF5B475" Association="Self.FK__TiempoFue__motiv__5EF5B475">
+            <End Role="MotivoTiempoFuera" EntitySet="MotivoTiempoFuera" />
+            <End Role="TiempoFueraAgenda" EntitySet="TiempoFueraAgenda" />
           </AssociationSet>
           <AssociationSet Name="FK__TiposdePa__Empre__29971E47" Association="Self.FK__TiposdePa__Empre__29971E47">
             <End Role="Empresa" EntitySet="Empresa" />
@@ -8067,6 +8111,15 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="CLIENTE" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="ChequesContabilizados" EntityType="AventasModel.ChequesContabilizados" />
+          <EntitySet Name="MotivoTiempoFuera" EntityType="AventasModel.MotivoTiempoFuera" />
+          <EntitySet Name="TiempoFueraAgenda" EntityType="AventasModel.TiempoFueraAgenda" />
+          <AssociationSet Name="FK__TiempoFue__motiv__5EF5B475" Association="AventasModel.FK__TiempoFue__motiv__5EF5B475">
+            <End Role="MotivoTiempoFuera" EntitySet="MotivoTiempoFuera" />
+            <End Role="TiempoFueraAgenda" EntitySet="TiempoFueraAgenda" />
+          </AssociationSet>
+          <FunctionImport Name="SPObtenerTiemposFueraDelDia" ReturnType="Collection(AventasModel.SPObtenerTiemposFueraDelDia_Result)">
+            <Parameter Name="asesor" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -11674,6 +11727,50 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="CodigoCliente" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Activo" Type="Boolean" Nullable="false" />
         </EntityType>
+        <EntityType Name="MotivoTiempoFuera">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="descripcion" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="activo" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="TiempoFueraAgenda" Relationship="AventasModel.FK__TiempoFue__motiv__5EF5B475" FromRole="MotivoTiempoFuera" ToRole="TiempoFueraAgenda" />
+        </EntityType>
+        <EntityType Name="TiempoFueraAgenda">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="codigoAsesor" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="horaEntrada" Type="DateTime" Precision="3" />
+          <Property Name="latitudEntrada" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="longitudEntrada" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="horaSalida" Type="DateTime" Precision="3" />
+          <Property Name="latitudSalida" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="longitudSalida" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="motivoTiempoFueraId" Type="Int32" />
+          <Property Name="descripcion" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="MotivoTiempoFuera" Relationship="AventasModel.FK__TiempoFue__motiv__5EF5B475" FromRole="TiempoFueraAgenda" ToRole="MotivoTiempoFuera" />
+        </EntityType>
+        <Association Name="FK__TiempoFue__motiv__5EF5B475">
+          <End Type="AventasModel.MotivoTiempoFuera" Role="MotivoTiempoFuera" Multiplicity="0..1" />
+          <End Type="AventasModel.TiempoFueraAgenda" Role="TiempoFueraAgenda" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MotivoTiempoFuera">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="TiempoFueraAgenda">
+              <PropertyRef Name="motivoTiempoFueraId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="SPObtenerTiemposFueraDelDia_Result">
+          <Property Type="Int32" Name="id" Nullable="false" />
+          <Property Type="String" Name="motivo" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="descripcion" Nullable="true" MaxLength="150" />
+          <Property Type="DateTime" Name="horaEntrada" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="horaSalida" Nullable="true" Precision="23" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -13958,6 +14055,42 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="MotivoTiempoFuera">
+            <EntityTypeMapping TypeName="AventasModel.MotivoTiempoFuera">
+              <MappingFragment StoreEntitySet="MotivoTiempoFuera">
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TiempoFueraAgenda">
+            <EntityTypeMapping TypeName="AventasModel.TiempoFueraAgenda">
+              <MappingFragment StoreEntitySet="TiempoFueraAgenda">
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="motivoTiempoFueraId" ColumnName="motivoTiempoFueraId" />
+                <ScalarProperty Name="longitudSalida" ColumnName="longitudSalida" />
+                <ScalarProperty Name="latitudSalida" ColumnName="latitudSalida" />
+                <ScalarProperty Name="horaSalida" ColumnName="horaSalida" />
+                <ScalarProperty Name="longitudEntrada" ColumnName="longitudEntrada" />
+                <ScalarProperty Name="latitudEntrada" ColumnName="latitudEntrada" />
+                <ScalarProperty Name="horaEntrada" ColumnName="horaEntrada" />
+                <ScalarProperty Name="codigoAsesor" ColumnName="codigoAsesor" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SPObtenerTiemposFueraDelDia" FunctionName="AventasModel.Store.SPObtenerTiemposFueraDelDia">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SPObtenerTiemposFueraDelDia_Result">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="motivo" ColumnName="motivo" />
+                <ScalarProperty Name="descripcion" ColumnName="descripcion" />
+                <ScalarProperty Name="horaEntrada" ColumnName="horaEntrada" />
+                <ScalarProperty Name="horaSalida" ColumnName="horaSalida" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

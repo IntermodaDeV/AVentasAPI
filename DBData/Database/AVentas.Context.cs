@@ -165,6 +165,8 @@ namespace DBData.Database
         public virtual DbSet<DocumentosAplicadosAFacturas> DocumentosAplicadosAFacturas { get; set; }
         public virtual DbSet<UsuarioLinea> UsuarioLinea { get; set; }
         public virtual DbSet<ChequesContabilizados> ChequesContabilizados { get; set; }
+        public virtual DbSet<MotivoTiempoFuera> MotivoTiempoFuera { get; set; }
+        public virtual DbSet<TiempoFueraAgenda> TiempoFueraAgenda { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -491,6 +493,15 @@ namespace DBData.Database
                 new ObjectParameter("CLIENTE", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ActualizarFleteFacturasAcuerdo", cLIENTEParameter);
+        }
+    
+        public virtual ObjectResult<SPObtenerTiemposFueraDelDia_Result> SPObtenerTiemposFueraDelDia(string asesor)
+        {
+            var asesorParameter = asesor != null ?
+                new ObjectParameter("asesor", asesor) :
+                new ObjectParameter("asesor", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SPObtenerTiemposFueraDelDia_Result>("SPObtenerTiemposFueraDelDia", asesorParameter);
         }
     }
 }

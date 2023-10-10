@@ -186,6 +186,7 @@
     <Compile Include="Controllers\CorreoController.cs" />
     <Compile Include="Controllers\LineaController.cs" />
     <Compile Include="Controllers\SincronizacionController.cs" />
+    <Compile Include="Controllers\TiempoFueraController.cs" />
     <Compile Include="Controllers\TrackingDevolucionCalidadController.cs" />
     <Compile Include="Controllers\DevolucionController.cs" />
     <Compile Include="Controllers\DocumentosPendientesController.cs" />

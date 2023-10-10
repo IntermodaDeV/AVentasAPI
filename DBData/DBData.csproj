@@ -342,6 +342,9 @@
     <Compile Include="Database\MotivosDevolucionDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\MotivoTiempoFuera.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\PagosAFacturasDeCuotas.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -462,6 +465,9 @@
     <Compile Include="Database\Secciones_Usuarios.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\SPObtenerTiemposFueraDelDia_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\SP_DocumentosAplicadosXCuotas_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -499,6 +505,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\TallasxProducto.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\TiempoFueraAgenda.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\TipoGastoViaje.cs">

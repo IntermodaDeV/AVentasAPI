@@ -352,6 +352,9 @@
         <AssociationConnector Association="AventasModel.FK__UsuarioLi__IdLin__21B79C0B" />
         <AssociationConnector Association="AventasModel.FK__UsuarioLi__Usuar__22ABC044" />
         <EntityTypeShape EntityType="AventasModel.ChequesContabilizados" Width="1.5" PointX="22.375" PointY="21.75" />
+        <EntityTypeShape EntityType="AventasModel.MotivoTiempoFuera" Width="1.5" PointX="24.375" PointY="20.625" />
+        <EntityTypeShape EntityType="AventasModel.TiempoFueraAgenda" Width="1.5" PointX="26.625" PointY="20" />
+        <AssociationConnector Association="AventasModel.FK__TiempoFue__motiv__5EF5B475" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
