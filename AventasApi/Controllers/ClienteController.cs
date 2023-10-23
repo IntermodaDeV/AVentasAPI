@@ -1067,6 +1067,7 @@ namespace AventasApi.Controllers
                         GrupoPrecio = cli.GrupoPrecio,
                         GrupoCliente = cli.GrupoCliente,
                         Descuento = cli.Descuento,
+                        DiasTransporte = cli.DiasTransporte,
                         MaestroDescuento = ctx.Descuento.Where(x => x.Codigo.ToUpper() == cli.Descuento.ToUpper() && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
                         {
                             Codigo = x.Codigo,
