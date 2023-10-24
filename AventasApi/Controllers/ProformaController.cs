@@ -61,6 +61,82 @@ namespace AventasApi.Controllers
             }
         }
 
+        private decimal TotalDocumentosAplicados(string factura, string codigoCliente)
+        {
+            var valor = 0m;
+            using (var ctx = new AVentasEntities())
+            {
+                IQueryable<DocumentosAplicadosAFacturas> documentos = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == factura && x.CodigoCliente == codigoCliente);
+                foreach (DocumentosAplicadosAFacturas documento in documentos)
+                {
+                    valor += documento.Valor ?? 0;
+                }
+                return valor;
+            }
+        }
+
+        private bool EsFacturaConMayorSaldoCuota(List<SubFacturasxCliente> facturas, SubFacturasxCliente factura)
+        {
+            List<SubFacturasxCliente> nuevasFacturas = facturas.Where(x => x.NumeroCuota == factura.NumeroCuota).OrderByDescending(x => x.Saldo.Value).ToList();
+            return nuevasFacturas[0].Factura == factura.Factura;
+        }
+
+        private bool ExisteFacturaCubreDescuento(List<SubFacturasxCliente> facturas, int numeroCuota, double descuentoCuota)
+        {
+            IEnumerable<SubFacturasxCliente> nuevasFacturas = facturas.Where(x => x.NumeroCuota == numeroCuota);
+
+            foreach (SubFacturasxCliente factura in nuevasFacturas)
+            {
+                if (decimal.ToDouble(factura.Saldo ?? 0) >= descuentoCuota)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private double CalcularDescuentoAplicar(List<SubFacturasxCliente> facturas, SubFacturasxCliente factura, double descuentoCuota)
+        {
+
+            bool saldoCubreDescuento = decimal.ToDouble(factura.Saldo.Value) >= descuentoCuota;
+
+            if (EsFacturaConMayorSaldoCuota(facturas, factura) && saldoCubreDescuento)
+            {
+                return descuentoCuota;
+            }
+
+            if (ExisteFacturaCubreDescuento(facturas, factura.NumeroCuota.Value, descuentoCuota))
+            {
+                return 0;
+            }
+
+            List<SubFacturasxCliente> nuevasFacturas = facturas.Where(x => x.NumeroCuota == factura.NumeroCuota).ToList();
+            double descuento = descuentoCuota;
+
+            using (var ctx = new AVentasEntities())
+            {
+                foreach (SubFacturasxCliente e in nuevasFacturas)
+                {
+                    SubFacturasxCliente subfactura = ctx.SubFacturasxCliente.FirstOrDefault(x => x.IdFactura == e.IdFactura);
+                    //Si es la ultima factura de la cuota devolvemos el descuento sobrante
+                    if (subfactura.Factura == nuevasFacturas[nuevasFacturas.Count - 1].Factura)
+                    {
+                        return descuento;
+                    }
+
+                    if (subfactura.Factura == factura.Factura)
+                    {
+                        return descuento > decimal.ToDouble(subfactura.Saldo ?? 0) ? decimal.ToDouble(subfactura.Saldo ?? 0) : descuento;
+                    }
+
+                    descuento -= decimal.ToDouble(subfactura.Saldo ?? 0);
+                }
+            }
+
+            return 0;
+        }
+
         [HttpGet]
         [Route("{asesor}/{FechaInicio}/{FechaFin}")]
         public async Task<IHttpActionResult> ObtenerProformas(string Asesor,DateTime FechaInicio,DateTime FechaFin)
@@ -216,7 +292,7 @@ namespace AventasApi.Controllers
                     var codigoCliente = "";
                     int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
-                    var subFacturas = ctx.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => proformaPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(subFac => subFac.FechaVencimiento).ToList();
+                    var subFacturas = ctx.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => proformaPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(x => x.NumeroCuota).ThenBy(subFac => subFac.FechaVencimiento).ThenBy(x => x.Factura).ToList();
                     foreach (PagosReciboPostViewModel pago in proformaPost.Pagos.OrderBy(pag => pag.Orden))
                     {
                         var pagoBD = PagosBD.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
@@ -244,17 +320,98 @@ namespace AventasApi.Controllers
                             double valorCuotaOriginal = Decimal.ToDouble(subfactura.Saldo ?? 0);
                             var Factura = ctx.FacturasxCliente.Where(fa => fa.Factura == subfactura.Factura).FirstOrDefault();
                             Factura.PendienteFactura = Decimal.Parse((valor).ToString());
+                            double Descuento = 0;
                             if ((valor > 0) && (valorCuota > 0))
                             {
                                 bool aplicaDescuento = false;
-                                aplicaDescuento = ((subfactura.Descuento ?? 0) > 0 &&
-                                    ((subfactura.FechaMaxDescuento.HasValue && proformaPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
-                                    (subfactura.FechaVencimientoDescuento.HasValue && proformaPost.FechaPago.Date <= subfactura.FechaVencimientoDescuento.Value.Date)
-                                    ));
-                                if (aplicaDescuento)
+
+                                if (proformaPost.Pagos[0].TipoPagoDetalle == "CH_PSF")
                                 {
-                                    valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
+                                    Descuento = 0;
                                 }
+                                else if ((subfactura.Descuento ?? 0) == 0)
+                                {
+                                    DateTime FechaFact = Convert.ToDateTime(Factura.FechaFactura);
+
+                                    if (!String.IsNullOrEmpty(subfactura.ReferenciaAcuerdo) && !subfactura.ReferenciaAcuerdo.Equals("0"))
+                                    {
+                                        var acuerdo = ctx.AcuerdosxCliente.FirstOrDefault(a => a.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente && a.EmpresaId == subfactura.EmpresaId);
+                                        if (acuerdo != null)
+                                        {
+                                            var GrupoDescuentoAcuerdo = ctx.DescuentoEnAcuerdo.FirstOrDefault(x => x.CodigoDescuento == acuerdo.GrupoDescuento && x.empresaId == acuerdo.EmpresaId);
+
+                                            if (GrupoDescuentoAcuerdo != null)
+                                            {
+                                                var cuotaAcuerdo = ctx.CuotasXAcuerdo.FirstOrDefault(c => c.IdAcuerdoVenta == subfactura.IdAcuerdoxCliente && c.NumCuota == subfactura.NumeroCuota);
+
+                                                if (cuotaAcuerdo != null)
+                                                {
+                                                    var FechaMaxDescuento = cuotaAcuerdo.FechaVencimiento;
+                                                    if (FechaMaxDescuento >= proformaPost.FechaPago)
+                                                    {
+                                                        var documentosAplicados = ctx.SP_DocumentosAplicadosXCuotas(asesor.CodigoAsesor).FirstOrDefault(x => x.NumeroCuota == subfactura.NumeroCuota && x.CodigoCliente == subfactura.CodigoCliente && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente);
+                                                        var FletePorCuota = documentosAplicados == null ? 0 : documentosAplicados.Flete;
+                                                        var NotasAplicadasCuota = documentosAplicados == null ? 0 : documentosAplicados.Valor;
+
+                                                        decimal? consumidoCuota = cuotaAcuerdo.ValorCuota - cuotaAcuerdo.SaldoDiponible;
+
+                                                        var valoCuota = consumidoCuota - FletePorCuota - NotasAplicadasCuota ?? 0;
+                                                        var pagosAplicados = ctx.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente).ToList();
+                                                        var pagadoCuota = pagosAplicados.Sum(x => x.SaldoDivisa - x.Saldo) ?? 0;
+
+                                                        var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
+                                                        Descuento = CalcularDescuentoAplicar(subFacturas, subfactura, DescuentoCuota);
+                                                        aplicaDescuento = valor == 0 ? true : valor >= (Decimal.ToDouble(valoCuota - pagadoCuota) - Descuento);
+
+                                                        valorCuota = aplicaDescuento ? (Decimal.ToDouble(subfactura.Saldo.Value) - Descuento) : Decimal.ToDouble(subfactura.Saldo.Value);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var cliente = ctx.Clientes.Where(x => x.CodigoCliente == subfactura.CodigoCliente && x.EmpresaId == subfactura.EmpresaId).FirstOrDefault();
+                                        var descuento = ctx.Descuento.Where(x => x.Codigo == cliente.Descuento && x.EmpresaId == cliente.EmpresaId).FirstOrDefault();
+                                        if (descuento != null)
+                                        {
+                                            var descuentoDetalle = ctx.DescuentoDetalle.Where(x => x.IdDescuento == descuento.IdDescuento && x.IdLinea == subfactura.FacturasxCliente.IdLinea && x.activo == true).FirstOrDefault();
+                                            if (descuentoDetalle != null)
+                                            {
+                                                int sumaDias = (descuentoDetalle.DiasDescuento ?? 0) + cliente.DiasTransporte;
+                                                var FechaMaxDescuento = FechaFact.AddDays(sumaDias);
+                                                if ((FechaMaxDescuento >= proformaPost.FechaPago) || subfactura.FacturasxCliente.ExcepcionDescuento)
+                                                {
+                                                    var documentosAplicadosFactura = TotalDocumentosAplicados(Factura.Factura, Factura.CodigoCliente);
+                                                    var valorFact = subfactura.FacturasxCliente.TotalFactura.Value - documentosAplicadosFactura - subfactura.Flete.Value;
+                                                    Descuento = descuentoDetalle != null ? Math.Round(Decimal.ToDouble(valorFact) * Decimal.ToDouble(descuentoDetalle.Porcentaje.Value / 100), 2, MidpointRounding.AwayFromZero) : 0;
+                                                    valorCuota = Decimal.ToDouble(subfactura.Saldo.Value) - Descuento;
+                                                    aplicaDescuento = true;
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (proformaPost.Pagos[0].TipoPagoDetalle == "CH_PSF")
+                                    {
+                                        Descuento = 0;
+                                    }
+                                    else
+                                    {
+                                        aplicaDescuento = ((subfactura.FechaMaxDescuento.HasValue && proformaPost.FechaPago.Date <= subfactura.FechaMaxDescuento.Value.Date) ||
+                                         (subfactura.FechaVencimientoDescuento.HasValue && proformaPost.FechaPago.Date <= subfactura.FechaVencimientoDescuento.Value.Date) || subfactura.FacturasxCliente.ExcepcionDescuento);
+                                        if (aplicaDescuento)
+                                        {
+                                            valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
+                                            Descuento = Decimal.ToDouble(subfactura.Descuento.Value);
+                                        }
+                                    }
+
+                                }
+
                                 var pagoValor = Decimal.Parse((valor).ToString());
                                 var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotanteRecibo");
                                 double minutosValue = 1;
