@@ -75,6 +75,7 @@
     <Compile Include="ApiModels\DevolucionApiModel.cs" />
     <Compile Include="ApiModels\DevolucionDetalleJson.cs" />
     <Compile Include="ApiModels\DistribucionXTallaApiModel.cs" />
+    <Compile Include="ApiModels\DocumentosAplicadosFacturaApiModel.cs" />
     <Compile Include="ApiModels\EmpresasCRMApiModel.cs" />
     <Compile Include="ApiModels\EspecificacionPagosCRMApiModel.cs" />
     <Compile Include="ApiModels\FacturasXClienteApiModel.cs" />

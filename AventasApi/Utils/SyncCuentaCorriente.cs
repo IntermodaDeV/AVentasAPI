@@ -1,4 +1,5 @@
 ﻿using DBData.Database;
+using ExternalApiData.ApiModels;
 using ExternalApiData.Enviroments;
 using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
@@ -54,6 +55,7 @@ namespace AventasApi.Utils
                             newEntity.FacturaStatus = factura.STATUS;
                             newEntity.NumeroPagos = int.TryParse(factura.N_PAYMENTS, out nPagos) ? nPagos : 0;
                             newEntity.Referencia = factura.REF_TRANS;
+                            newEntity.DiasGracia = 0;
                             context.FacturasxCliente.Add(newEntity);
                         }
                         else
@@ -199,6 +201,56 @@ namespace AventasApi.Utils
 
             }
         }
+        private void UpdateDocumentosAplicados(string empresa, List<DocumentosAplicadosFacturaApiModel> documentos)
+        {
+            try
+            {
+                using (AVentasEntities context = new AVentasEntities())
+                { 
+                    foreach(var datos in documentos)
+                    {
+                        DocumentosAplicadosAFacturas model = new DocumentosAplicadosAFacturas
+                        {
+                            Factura = datos.INVOICEORIGIN,
+                            Voucher = datos.OFFSETTRANSVOUCHER,
+                            TipoDocumento = datos.TAXTYPEDOCUMENTID,
+                            FacturaDocumento = datos.INVOICEID,
+                            Valor = decimal.Round(Convert.ToDecimal(datos.SETTLEAMOUNTCUR), 2),
+                            MontoPorAplicar = decimal.Round(Convert.ToDecimal(datos.SETTLEAMOUNTCUR), 2),
+                            CodigoCliente = datos.ACCOUNTNUM,
+                            SecuenciaNumerica = datos.NUMBERSEQUENCEGROUP,
+                            Moneda = datos.CURRENCYCODE,
+                            Empresa = empresa,
+                            FechaCrea = DateTime.Now
+                        };
+
+                        var entityFound = context.DocumentosAplicadosAFacturas.FirstOrDefault(p => p.Empresa == model.Empresa && p.CodigoCliente == model.CodigoCliente && p.Factura == model.Factura && p.Voucher == model.Voucher && p.Valor == model.Valor && p.SecuenciaNumerica == model.SecuenciaNumerica);
+                        if(entityFound == null)
+                        {
+                            context.DocumentosAplicadosAFacturas.Add(model);
+                        }
+                        else
+                        {
+                            entityFound.Factura = model.Factura;
+                            entityFound.Voucher = model.Voucher;
+                            entityFound.TipoDocumento = model.TipoDocumento;
+                            entityFound.FacturaDocumento = model.FacturaDocumento;
+                            entityFound.Valor = model.Valor;
+                            entityFound.CodigoCliente = model.CodigoCliente;
+                            entityFound.SecuenciaNumerica = model.SecuenciaNumerica;
+                            entityFound.Moneda = model.Moneda;
+                            entityFound.Empresa = model.Empresa;
+                            entityFound.SubFacturasxCliente = context.SubFacturasxCliente.FirstOrDefault(p => p.Empresa.EmpresaId == model.Empresa && p.Clientes.CodigoCliente == model.CodigoCliente && p.Factura == model.Factura);
+                        }
+
+                        context.SaveChanges();
+                    }
+                }
+            }catch(Exception e)
+            {
+
+            }
+        }
 
         private void UpdateFleteSubfacturasAcuerdo(string codigoCliente)
         {
@@ -207,6 +259,50 @@ namespace AventasApi.Utils
                 using(var context = new AVentasEntities())
                 {
                     context.SP_ActualizarFleteFacturasAcuerdo(codigoCliente);
+                }
+            }catch(Exception e)
+            {
+
+            }
+        }
+        private void UpdateFacturasCuotaCero()
+        {
+            try
+            {
+                using(var ctx = new AVentasEntities())
+                {
+                    ctx.SPActualizarSubFacturasCuotaCero();
+
+                    var configuracion = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "VencimientoCuotaCero");
+                    if (configuracion == null)
+                    {
+                        return;
+                    }
+
+                    var cuotas = ctx.SPObtenerSaldoCuotaCero().ToList();
+
+                    foreach(var cuota in cuotas)
+                    {
+
+                        var entityFound = ctx.CuotasXAcuerdo.FirstOrDefault(x => x.IdAcuerdoVenta == cuota.IdAcuerdoxCliente && x.NumCuota == cuota.NumeroCuota);
+                        var fechaVencimientoCuota = DateTime.ParseExact(configuracion.Valor, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                        if (entityFound == null)
+                        {
+                            var cuotaBD = new CuotasXAcuerdo() { IdAcuerdoVenta = cuota.IdAcuerdoxCliente, FechaVencimiento = fechaVencimientoCuota, SaldoDiponible = 0, ValorCuota = cuota.Saldo ?? 0, NumCuota = 0 };
+                            ctx.CuotasXAcuerdo.Add(cuotaBD);
+                            ctx.SaveChanges();
+                        }
+                        else
+                        {
+                            if (entityFound.ValorCuota >= (cuota.Saldo ?? 0))
+                            {
+                                entityFound.ValorCuota = cuota.Saldo ?? 0;
+                                ctx.SaveChanges();
+                            }
+                        }
+
+                    }
                 }
             }catch(Exception e)
             {
@@ -254,11 +350,33 @@ namespace AventasApi.Utils
                     if (facturas.Count() > 0)
                     {
                         UpdateFleteSubfacturasAcuerdo(codigoCliente);
+                        UpdateFacturasCuotaCero();
                     }
                 }
 
             }
             catch (Exception e)
+            {
+
+            }
+        }
+        public void SyncDocumentosAplicadosFactura(string empresa,string asesor)
+        {
+            try
+            {
+                var facturas = new List<DocumentosAplicadosFacturaApiModel>();
+                var resClient = new RestClient(Enviroment.CRMWebServiceURLApi);
+                var request = new RestRequest($"facturas/{empresa}/{asesor}/DocumentosAplicadosFactura", Method.GET);
+                request.AddHeader("Accept", "application/json");
+                IRestResponse response = resClient.Execute(request);
+
+                if (response.IsSuccessful && response.Content != "null")
+                {
+                    facturas = JsonConvert.DeserializeObject<List<DocumentosAplicadosFacturaApiModel>>(response.Content);
+                    UpdateDocumentosAplicados(empresa, facturas);
+                }
+            }
+            catch(Exception e)
             {
 
             }

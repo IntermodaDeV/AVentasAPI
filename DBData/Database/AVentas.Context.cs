@@ -503,5 +503,15 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SPObtenerTiemposFueraDelDia_Result>("SPObtenerTiemposFueraDelDia", asesorParameter);
         }
+    
+        public virtual int SPActualizarSubFacturasCuotaCero()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SPActualizarSubFacturasCuotaCero");
+        }
+    
+        public virtual ObjectResult<SPObtenerSaldoCuotaCero_Result> SPObtenerSaldoCuotaCero()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SPObtenerSaldoCuotaCero_Result>("SPObtenerSaldoCuotaCero");
+        }
     }
 }

@@ -3570,7 +3570,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__TiempoFue__motiv__5EF5B475">
+        <Association Name="FK__TiempoFue__motiv__12AA62A5">
           <End Role="MotivoTiempoFuera" Type="Self.MotivoTiempoFuera" Multiplicity="0..1" />
           <End Role="TiempoFueraAgenda" Type="Self.TiempoFueraAgenda" Multiplicity="*" />
           <ReferentialConstraint>
@@ -4547,6 +4547,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <Function Name="SP_VISITASPORMES" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="User" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="SPActualizarSubFacturasCuotaCero" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="SPObtenerSaldoCuotaCero" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="SPObtenerTiemposFueraDelDia" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="asesor" Type="varchar" Mode="In" />
         </Function>
@@ -5320,7 +5322,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="TallasXGrupo" EntitySet="TallasXGrupo" />
             <End Role="TallasxProducto" EntitySet="TallasxProducto" />
           </AssociationSet>
-          <AssociationSet Name="FK__TiempoFue__motiv__5EF5B475" Association="Self.FK__TiempoFue__motiv__5EF5B475">
+          <AssociationSet Name="FK__TiempoFue__motiv__12AA62A5" Association="Self.FK__TiempoFue__motiv__12AA62A5">
             <End Role="MotivoTiempoFuera" EntitySet="MotivoTiempoFuera" />
             <End Role="TiempoFueraAgenda" EntitySet="TiempoFueraAgenda" />
           </AssociationSet>
@@ -8118,8 +8120,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="TiempoFueraAgenda" EntitySet="TiempoFueraAgenda" />
           </AssociationSet>
           <FunctionImport Name="SPObtenerTiemposFueraDelDia" ReturnType="Collection(AventasModel.SPObtenerTiemposFueraDelDia_Result)">
-            <Parameter Name="asesor" Mode="In" Type="String" />
+          <Parameter Name="asesor" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="SPActualizarSubFacturasCuotaCero" />
+          <FunctionImport Name="SPObtenerSaldoCuotaCero" ReturnType="Collection(AventasModel.SPObtenerSaldoCuotaCero_Result)" />
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -11771,6 +11775,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="DateTime" Name="horaEntrada" Nullable="true" Precision="23" />
           <Property Type="DateTime" Name="horaSalida" Nullable="true" Precision="23" />
         </ComplexType>
+        <ComplexType Name="SPObtenerSaldoCuotaCero_Result">
+          <Property Type="String" Name="IdAcuerdoxCliente" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="NumeroCuota" Nullable="true" />
+          <Property Type="Decimal" Name="Saldo" Nullable="true" Precision="38" Scale="4" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -14088,6 +14097,16 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="descripcion" ColumnName="descripcion" />
                 <ScalarProperty Name="horaEntrada" ColumnName="horaEntrada" />
                 <ScalarProperty Name="horaSalida" ColumnName="horaSalida" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SPActualizarSubFacturasCuotaCero" FunctionName="AventasModel.Store.SPActualizarSubFacturasCuotaCero" />
+          <FunctionImportMapping FunctionImportName="SPObtenerSaldoCuotaCero" FunctionName="AventasModel.Store.SPObtenerSaldoCuotaCero">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SPObtenerSaldoCuotaCero_Result">
+                <ScalarProperty Name="IdAcuerdoxCliente" ColumnName="IdAcuerdoxCliente" />
+                <ScalarProperty Name="NumeroCuota" ColumnName="NumeroCuota" />
+                <ScalarProperty Name="Saldo" ColumnName="Saldo" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

@@ -1159,6 +1159,7 @@ namespace AventasApi.Controllers
                                 IdTipoPedido = facCli.IdTipoPedido,
                                 TipoPedidoString = facCli.TiposdePedido.TipoPedido,
                                 ExcepcionDescuento=facCli.ExcepcionDescuento,
+                                DiasGracia=facCli.DiasGracia ?? 0,
                                 Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.FechaMaxDescuento >= DateTime.Today ? (subFac.Saldo - subFac.Descuento) > 0 : subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                                 {
                                     FechaFactura = subFac.FacturasxCliente.FechaFactura,
@@ -1189,6 +1190,7 @@ namespace AventasApi.Controllers
                                     completaCuota = subFac.completaCuota,
                                     Flete = subFac.Flete ?? 0,
                                     ExcepcionDescuento=facCli.ExcepcionDescuento,
+                                    DiasGracia=facCli.DiasGracia ?? 0,
                                     SaldoCuota = subFac.AcuerdosxCliente != null ? ctx.CuotasXAcuerdo.FirstOrDefault(x => x.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && x.NumCuota == subFac.NumeroCuota).ValorCuota : 0,
                                     DisponibleCuota = subFac.AcuerdosxCliente != null ? ctx.CuotasXAcuerdo.FirstOrDefault(x => x.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && x.NumCuota == subFac.NumeroCuota).SaldoDiponible : 0,
                                 }).ToList()
@@ -1273,6 +1275,7 @@ namespace AventasApi.Controllers
                     {
                         syncCuentaCorriente.SyncFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente);
                         syncCuentaCorriente.SyncSubFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
+                        syncCuentaCorriente.SyncDocumentosAplicadosFactura(clienteBd.EmpresaId, clienteBd.CodigoAsesor);
                         syncAcuerdosVentas.SyncAcuerdoVenta(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
                         syncClientes.SyncCliente(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
                         return Ok("Cuenta del cliente actualizada exitosamente.");
