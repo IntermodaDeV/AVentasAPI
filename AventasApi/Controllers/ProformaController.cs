@@ -361,7 +361,7 @@ namespace AventasApi.Controllers
 
                                                         var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
                                                         Descuento = CalcularDescuentoAplicar(subFacturas, subfactura, DescuentoCuota);
-                                                        aplicaDescuento = valor == 0 ? true : valor >= (Decimal.ToDouble(valoCuota - pagadoCuota) - Descuento);
+                                                        aplicaDescuento = valor >= (Decimal.ToDouble(valoCuota - pagadoCuota) - Descuento);
 
                                                         valorCuota = aplicaDescuento ? (Decimal.ToDouble(subfactura.Saldo.Value) - Descuento) : Decimal.ToDouble(subfactura.Saldo.Value);
                                                     }
