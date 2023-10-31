@@ -1160,6 +1160,18 @@ namespace AventasApi.Controllers
                                 TipoPedidoString = facCli.TiposdePedido.TipoPedido,
                                 ExcepcionDescuento=facCli.ExcepcionDescuento,
                                 DiasGracia=facCli.DiasGracia ?? 0,
+                                DocumentosAplicadosAFacturas = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == facCli.Factura).Select(x => new DocumentosAplicadosAFacturasViewModel
+                                {
+                                    Factura = x.Factura,
+                                    CodigoCliente = x.CodigoCliente,
+                                    Empresa = x.Empresa,
+                                    Voucher = x.Voucher,
+                                    TipoDocumento = x.TipoDocumento,
+                                    FacturaDocumento = x.FacturaDocumento,
+                                    SecuenciaNumerica = x.SecuenciaNumerica,
+                                    MontoPorAplicar = x.MontoPorAplicar,
+                                    Valor = x.Valor
+                                }).ToList(),
                                 Cuotas = facCli.SubFacturasxCliente.Where(subFac => subFac.FechaMaxDescuento >= DateTime.Today ? (subFac.Saldo - subFac.Descuento) > 0 : subFac.Saldo > 0).OrderBy(subFac => subFac.FechaVencimiento).Select(subFac => new CuotasViewModel
                                 {
                                     FechaFactura = subFac.FacturasxCliente.FechaFactura,
