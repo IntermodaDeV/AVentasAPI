@@ -1064,6 +1064,13 @@ namespace AventasApi.Controllers
                                                         aplicaDescuento = valor >= (Decimal.ToDouble(valoCuota - pagadoCuota) - Descuento);
 
                                                         valorCuota = aplicaDescuento ? (Decimal.ToDouble(subfactura.Saldo.Value) - Descuento) : Decimal.ToDouble(subfactura.Saldo.Value);
+
+                                                        var subFacturaBD = context.SubFacturasxCliente.FirstOrDefault(x => x.IdSubFactura == subfactura.IdSubFactura);
+                                                        if (subFacturaBD != null)
+                                                        {
+                                                            subFacturaBD.Saldo = subFacturaBD.Saldo.Value - (decimal)valorCuota;
+                                                            context.SaveChanges();
+                                                        }
                                                     }
                                                 }
                                             }
