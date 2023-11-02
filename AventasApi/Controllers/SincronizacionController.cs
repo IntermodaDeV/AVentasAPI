@@ -1,6 +1,8 @@
 ﻿using AventasApi.Utils;
+using DBData.Database;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -60,7 +62,32 @@ namespace AventasApi.Controllers
 
         }
 
+        [HttpGet]
+        [Route("cuotas/{acuerdo}")]
+        public async Task<IHttpActionResult> SincronizarCuotas(string acuerdo)
+        {
+            try
+            {
+                using(var ctx=new AVentasEntities())
+                {
+                    var entity = await ctx.AcuerdosxCliente.FirstOrDefaultAsync(x=>x.IdAcuerdoxCliente == acuerdo);
+                    if (entity == null)
+                    {
+                        return NotFound();
+                    }
 
+                    new SyncAcuerdosVentas().SyncCuotasAcuerdoVenta(acuerdo);
+
+                    return Ok();
+                }
+                
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
 
     }
 }

@@ -293,6 +293,7 @@ namespace AventasApi.Controllers
                     int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     var subFacturas = ctx.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => proformaPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(x => x.NumeroCuota).ThenBy(subFac => subFac.FechaVencimiento).ThenBy(x => x.Factura).ToList();
+                    Dictionary<int, double> pagadoMemory = new Dictionary<int, double>();
                     foreach (PagosReciboPostViewModel pago in proformaPost.Pagos.OrderBy(pag => pag.Orden))
                     {
                         var pagoBD = PagosBD.FirstOrDefault(pa => pa.IdTipoPago.ToString() == pago.CodigoTipoPago);
@@ -354,22 +355,23 @@ namespace AventasApi.Controllers
                                                         var NotasAplicadasCuota = documentosAplicados == null ? 0 : documentosAplicados.Valor;
 
                                                         decimal? consumidoCuota = cuotaAcuerdo.ValorCuota - cuotaAcuerdo.SaldoDiponible;
+                                                        if (!pagadoMemory.ContainsKey(cuotaAcuerdo.NumCuota))
+                                                        {
+                                                            pagadoMemory.Add(cuotaAcuerdo.NumCuota, 0);
+                                                        }
 
                                                         var valoCuota = consumidoCuota - FletePorCuota - NotasAplicadasCuota ?? 0;
                                                         var pagosAplicados = ctx.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente).ToList();
                                                         var pagadoCuota = pagosAplicados.Sum(x => x.SaldoDivisa - x.Saldo) ?? 0;
+                                                        pagadoCuota = pagadoCuota + (decimal)pagadoMemory[cuotaAcuerdo.NumCuota];
 
                                                         var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
                                                         Descuento = CalcularDescuentoAplicar(subFacturas, subfactura, DescuentoCuota);
                                                         aplicaDescuento = valor >= (Decimal.ToDouble(valoCuota - pagadoCuota) - Descuento);
 
                                                         valorCuota = aplicaDescuento ? (Decimal.ToDouble(subfactura.Saldo.Value) - Descuento) : Decimal.ToDouble(subfactura.Saldo.Value);
-                                                        var subFacturaBD = ctx.SubFacturasxCliente.FirstOrDefault(x => x.IdSubFactura == subfactura.IdSubFactura);
-                                                        if (subFacturaBD != null)
-                                                        {
-                                                            subFacturaBD.Saldo = subFacturaBD.Saldo.Value - (decimal)valorCuota;
-                                                            ctx.SaveChanges();
-                                                        }
+
+                                                        pagadoMemory[cuotaAcuerdo.NumCuota] = pagadoMemory[cuotaAcuerdo.NumCuota] + valorCuota;
                                                     }
                                                 }
                                             }

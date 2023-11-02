@@ -990,6 +990,7 @@ namespace AventasApi.Controllers
                 var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(x => x.NumeroCuota).ThenBy(subFac => subFac.FechaVencimiento).ThenBy(x => x.Factura).ToList();
                 List<ReciboApiModel> recibos = new List<ReciboApiModel>();
                 var isOnline = EnLinea(asesor.EmpresaId, asesor.CodigoAsesor);
+                Dictionary<int, double> pagadoMemory = new Dictionary<int, double>();
 
                 foreach (PagosReciboPostViewModel pago in reciboPost.Pagos.OrderBy(pag => pag.Orden))
                 {
@@ -1054,10 +1055,15 @@ namespace AventasApi.Controllers
                                                         var NotasAplicadasCuota = documentosAplicados == null ? 0 : documentosAplicados.Valor;
 
                                                         decimal? consumidoCuota = cuotaAcuerdo.ValorCuota - cuotaAcuerdo.SaldoDiponible;
+                                                        if (!pagadoMemory.ContainsKey(cuotaAcuerdo.NumCuota))
+                                                        {
+                                                            pagadoMemory.Add(cuotaAcuerdo.NumCuota, 0);
+                                                        }
 
                                                         var valoCuota = consumidoCuota - FletePorCuota - NotasAplicadasCuota ?? 0;
                                                         var pagosAplicados = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente).ToList();
                                                         var pagadoCuota = pagosAplicados.Sum(x => x.SaldoDivisa - x.Saldo) ?? 0;
+                                                        pagadoCuota = pagadoCuota + (decimal)pagadoMemory[cuotaAcuerdo.NumCuota];
 
                                                         var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
                                                         Descuento = CalcularDescuentoAplicar(subFacturas, subfactura, DescuentoCuota);
@@ -1065,12 +1071,7 @@ namespace AventasApi.Controllers
 
                                                         valorCuota = aplicaDescuento ? (Decimal.ToDouble(subfactura.Saldo.Value) - Descuento) : Decimal.ToDouble(subfactura.Saldo.Value);
 
-                                                        var subFacturaBD = context.SubFacturasxCliente.FirstOrDefault(x => x.IdSubFactura == subfactura.IdSubFactura);
-                                                        if (subFacturaBD != null)
-                                                        {
-                                                            subFacturaBD.Saldo = subFacturaBD.Saldo.Value - (decimal)valorCuota;
-                                                            context.SaveChanges();
-                                                        }
+                                                        pagadoMemory[cuotaAcuerdo.NumCuota] = pagadoMemory[cuotaAcuerdo.NumCuota] + valorCuota;
                                                     }
                                                 }
                                             }

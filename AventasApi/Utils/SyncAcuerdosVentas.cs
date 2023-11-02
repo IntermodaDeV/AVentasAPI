@@ -1,4 +1,6 @@
-﻿using DBData.Database;
+﻿using AventasApi.Models.Authentication;
+using DBData.Database;
+using ExternalApiData.ApiModels;
 using ExternalApiData.Enviroments;
 using ExternalApiData.Models.ApiModels;
 using Newtonsoft.Json;
@@ -32,6 +34,72 @@ namespace AventasApi.Utils
                     UpdateAcuerdosVentas(acuerdos);
                 }
 
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        public void SyncCuotasAcuerdoVenta(string acuerdoVenta)
+        {
+            try
+            {
+                var acuerdos = new List<CuotasXAcuerdoApiModel>();
+                var resClient = new RestClient(Enviroment.CRMWebServiceURLApi);
+                var request = new RestRequest($"acuerdos/cuotas/{acuerdoVenta}", Method.GET);
+                request.AddHeader("Accept", "application/json");
+                IRestResponse response = resClient.Execute(request);
+
+                if (response.IsSuccessful && response.Content != "null")
+                {
+                    acuerdos = JsonConvert.DeserializeObject<List<CuotasXAcuerdoApiModel>>(response.Content);
+                }
+
+                if (acuerdos.Count > 0)
+                {
+                    UpdateCuotaAcuerdos(acuerdoVenta,acuerdos);
+                }
+
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
+        private void UpdateCuotaAcuerdos(string acuerdo,List<CuotasXAcuerdoApiModel> cuotas)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    foreach (var cuota in cuotas)
+                    {
+                        CuotasXAcuerdo model = new CuotasXAcuerdo
+                        {
+                            IdAcuerdoVenta = acuerdo,
+                            NumCuota = cuota.IMPAYMENTNUMBER,
+                            ValorCuota = cuota.AMOUNT,
+                            SaldoDiponible = cuota.REMAINAMOUNT,
+                            FechaVencimiento = cuota.DUEDATE
+                        };
+
+                        var entityFound = ctx.CuotasXAcuerdo.FirstOrDefault(p => p.IdAcuerdoVenta == model.IdAcuerdoVenta && p.NumCuota == model.NumCuota);
+
+                        if (entityFound == null)
+                        {
+                            ctx.CuotasXAcuerdo.Add(model);
+                        }
+                        else
+                        {
+                            entityFound.NumCuota = model.NumCuota;
+                            entityFound.ValorCuota = model.ValorCuota;
+                            entityFound.SaldoDiponible = model.SaldoDiponible;
+                            entityFound.FechaVencimiento = model.FechaVencimiento;
+                            ctx.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        ctx.SaveChanges();
+                    }
+                }
             }
             catch (Exception e)
             {
