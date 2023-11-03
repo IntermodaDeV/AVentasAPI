@@ -513,5 +513,18 @@ namespace DBData.Database
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SPObtenerSaldoCuotaCero_Result>("SPObtenerSaldoCuotaCero");
         }
+    
+        public virtual ObjectResult<Nullable<decimal>> IMObtenerPagadoCuota(string aCUERDO, Nullable<int> cUOTA)
+        {
+            var aCUERDOParameter = aCUERDO != null ?
+                new ObjectParameter("ACUERDO", aCUERDO) :
+                new ObjectParameter("ACUERDO", typeof(string));
+    
+            var cUOTAParameter = cUOTA.HasValue ?
+                new ObjectParameter("CUOTA", cUOTA) :
+                new ObjectParameter("CUOTA", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<decimal>>("IMObtenerPagadoCuota", aCUERDOParameter, cUOTAParameter);
+        }
     }
 }

@@ -1060,14 +1060,13 @@ namespace AventasApi.Controllers
                                                             pagadoMemory.Add(cuotaAcuerdo.NumCuota, 0);
                                                         }
 
-                                                        var valoCuota = consumidoCuota - FletePorCuota - NotasAplicadasCuota ?? 0;
-                                                        var pagosAplicados = context.SubFacturasxCliente.Where(x => x.NumeroCuota == subfactura.NumeroCuota && x.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente).ToList();
-                                                        var pagadoCuota = pagosAplicados.Sum(x => x.SaldoDivisa - x.Saldo) ?? 0;
-                                                        pagadoCuota = pagadoCuota + (decimal)pagadoMemory[cuotaAcuerdo.NumCuota];
+                                                        var valoCuota = consumidoCuota - FletePorCuota - NotasAplicadasCuota ?? 0;                                                        
+                                                        var pagadoCuota = context.IMObtenerPagadoCuota(subfactura.IdAcuerdoxCliente,subfactura.NumeroCuota).FirstOrDefault();
+                                                        var pagadoCuotaMemory = (pagadoCuota ?? 0) + (decimal)pagadoMemory[cuotaAcuerdo.NumCuota];
 
                                                         var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
                                                         Descuento = CalcularDescuentoAplicar(subFacturas, subfactura, DescuentoCuota);
-                                                        aplicaDescuento = valor >= (Decimal.ToDouble(valoCuota - pagadoCuota) - Descuento);
+                                                        aplicaDescuento = valor >= (Decimal.ToDouble(valoCuota - (pagadoCuotaMemory)) - Descuento);
 
                                                         valorCuota = aplicaDescuento ? (Decimal.ToDouble(subfactura.Saldo.Value) - Descuento) : Decimal.ToDouble(subfactura.Saldo.Value);
 

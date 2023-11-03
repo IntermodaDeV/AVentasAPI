@@ -4470,6 +4470,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="User" Type="varchar" Mode="In" />
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
+        <Function Name="IMObtenerPagadoCuota" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ACUERDO" Type="varchar" Mode="In" />
+          <Parameter Name="CUOTA" Type="int" Mode="In" />
+        </Function>
         <Function Name="PResumenCredito" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="PRODUCTOSDEFACTURA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="numFactura" Type="varchar" Mode="In" />
@@ -8124,6 +8128,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </FunctionImport>
           <FunctionImport Name="SPActualizarSubFacturasCuotaCero" />
           <FunctionImport Name="SPObtenerSaldoCuotaCero" ReturnType="Collection(AventasModel.SPObtenerSaldoCuotaCero_Result)" />
+          <FunctionImport Name="IMObtenerPagadoCuota" ReturnType="Collection(Decimal)">
+            <Parameter Name="ACUERDO" Mode="In" Type="String" />
+            <Parameter Name="CUOTA" Mode="In" Type="Int32" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -14110,6 +14118,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="IMObtenerPagadoCuota" FunctionName="AventasModel.Store.IMObtenerPagadoCuota" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
