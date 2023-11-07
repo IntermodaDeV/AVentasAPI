@@ -36,6 +36,7 @@ namespace AventasApi.Models.ViewModels
         public bool ExcepcionDescuento { get; set; }
         public int DiasGracia { get; set; }
         public string CodigoDescuento { get; set; }
+        public string IdAcuerdoxCliente { get; set; }
 
     }
 }

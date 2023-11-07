@@ -385,6 +385,7 @@ namespace AventasApi.Controllers
                                 DiasGracia = facCli.DiasGracia ?? 0,
                                 ExcepcionDescuento = facCli.ExcepcionDescuento,
                                 CodigoDescuento = facCli.CodigoDescuento,
+                                IdAcuerdoxCliente = facCli.IdAcuerdoxCliente,
                                 DocumentosAplicadosAFacturas = context.DocumentosAplicadosAFacturas.Where(x => x.Factura == facCli.Factura).Select(x => new DocumentosAplicadosAFacturasViewModel
                                 {
                                     Factura = x.Factura,
@@ -981,6 +982,7 @@ namespace AventasApi.Controllers
                                         DiasGracia = facCli.DiasGracia ?? 0,
                                         ExcepcionDescuento =facCli.ExcepcionDescuento,
                                         CodigoDescuento=facCli.CodigoDescuento,
+                                        IdAcuerdoxCliente = facCli.IdAcuerdoxCliente,
                                         DocumentosAplicadosAFacturas = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == facCli.Factura).Select(x => new DocumentosAplicadosAFacturasViewModel
                                         {
                                             Factura = x.Factura,
@@ -1163,6 +1165,7 @@ namespace AventasApi.Controllers
                                 ExcepcionDescuento=facCli.ExcepcionDescuento,
                                 DiasGracia=facCli.DiasGracia ?? 0,
                                 CodigoDescuento = facCli.CodigoDescuento,
+                                IdAcuerdoxCliente = facCli.IdAcuerdoxCliente,
                                 DocumentosAplicadosAFacturas = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == facCli.Factura).Select(x => new DocumentosAplicadosAFacturasViewModel
                                 {
                                     Factura = x.Factura,
