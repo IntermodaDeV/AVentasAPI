@@ -46,6 +46,7 @@ namespace DBData.Database
         public Nullable<int> proformaId { get; set; }
         public string Origen { get; set; }
         public byte[] firma { get; set; }
+        public bool Anulado { get; set; }
     
         public virtual FacturasxCliente FacturasxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

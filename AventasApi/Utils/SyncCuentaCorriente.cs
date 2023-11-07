@@ -56,6 +56,7 @@ namespace AventasApi.Utils
                             newEntity.NumeroPagos = int.TryParse(factura.N_PAYMENTS, out nPagos) ? nPagos : 0;
                             newEntity.Referencia = factura.REF_TRANS;
                             newEntity.DiasGracia = 0;
+                            newEntity.CodigoDescuento = factura.KREACASHDISCCODE;
                             context.FacturasxCliente.Add(newEntity);
                         }
                         else
@@ -86,6 +87,7 @@ namespace AventasApi.Utils
                             entityFound.FacturaStatus = factura.STATUS;
                             entityFound.NumeroPagos = int.TryParse(factura.N_PAYMENTS, out nPagos) ? nPagos : 0;
                             entityFound.Referencia = factura.REF_TRANS;
+                            entityFound.CodigoDescuento = factura.KREACASHDISCCODE;
 
                             context.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
                         }
@@ -310,20 +312,21 @@ namespace AventasApi.Utils
             }
         }
 
-        public void SyncFacturas(string empresa,string codigoCliente)
+        public void SyncFacturas(string empresa,string codigoCliente,string codigoasesor)
         {
             try
             {
                 var facturas = new List<FacturasXClienteApiModel>();
                 var resClient = new RestClient(Enviroment.CRMWebServiceURLApi);
-                var request = new RestRequest($"facturas/{empresa}/{codigoCliente}", Method.GET);
+                var request = new RestRequest($"facturas/{empresa}/1/{codigoasesor}", Method.GET);
                 request.AddHeader("Accept", "application/json");
                 IRestResponse response = resClient.Execute(request);
 
                 if (response.IsSuccessful && response.Content != "null")
                 {
                     facturas = JsonConvert.DeserializeObject<List<FacturasXClienteApiModel>>(response.Content);
-                    UpdateFacturas(codigoCliente, empresa, facturas);
+                    var facturascliente = facturas.Where(x => x.ACCOUNT_NUM == codigoCliente).ToList();
+                    UpdateFacturas(codigoCliente, empresa, facturascliente);
                 }
 
             }

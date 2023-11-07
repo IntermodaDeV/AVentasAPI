@@ -656,6 +656,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="NumeroPedido" Type="varchar" MaxLength="100" />
           <Property Name="ExcepcionDescuento" Type="bit" Nullable="false" />
           <Property Name="DiasGracia" Type="int" />
+          <Property Name="CodigoDescuento" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -1465,6 +1466,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="proformaId" Type="int" />
           <Property Name="Origen" Type="varchar" MaxLength="10" />
           <Property Name="firma" Type="varbinary(max)" />
+          <Property Name="Anulado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="RecibosxClienteFlotante">
           <Key>
@@ -4470,6 +4472,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="User" Type="varchar" Mode="In" />
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
+        <Function Name="IMObtenerDetalleDescuento" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
+          <Parameter Name="LINEA" Type="varchar" Mode="In" />
+          <Parameter Name="CODIGO" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="IMObtenerPagadoCuota" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ACUERDO" Type="varchar" Mode="In" />
           <Parameter Name="CUOTA" Type="int" Mode="In" />
@@ -5953,6 +5960,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Actualizado" Type="Boolean" Nullable="false" />
           <Property Name="ExcepcionDescuento" Type="Boolean" Nullable="false" />
           <Property Name="DiasGracia" Type="Int32" />
+          <Property Name="CodigoDescuento" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -8132,6 +8140,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <Parameter Name="ACUERDO" Mode="In" Type="String" />
             <Parameter Name="CUOTA" Mode="In" Type="Int32" />
           </FunctionImport>
+          <FunctionImport Name="IMObtenerDetalleDescuento" ReturnType="Collection(AventasModel.IMObtenerDetalleDescuento_Result)">
+            <Parameter Name="EMPRESA" Mode="In" Type="String" />
+            <Parameter Name="LINEA" Mode="In" Type="String" />
+            <Parameter Name="CODIGO" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -8237,6 +8250,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="LogRecibo" Relationship="AventasModel.FK__LogRecibo__Recib__7365F61F" FromRole="RecibosxCliente" ToRole="LogRecibo" />
           <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Anulado" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
           <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
@@ -11788,6 +11802,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="Int32" Name="NumeroCuota" Nullable="true" />
           <Property Type="Decimal" Name="Saldo" Nullable="true" Precision="38" Scale="4" />
         </ComplexType>
+        <ComplexType Name="IMObtenerDetalleDescuento_Result">
+          <Property Type="Int32" Name="Dias" Nullable="false" />
+          <Property Type="Decimal" Name="Porcentaje" Nullable="false" Precision="10" Scale="2" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12024,6 +12042,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="FacturasxCliente">
             <EntityTypeMapping TypeName="AventasModel.FacturasxCliente">
               <MappingFragment StoreEntitySet="FacturasxCliente">
+                <ScalarProperty Name="CodigoDescuento" ColumnName="CodigoDescuento" />
                 <ScalarProperty Name="DiasGracia" ColumnName="DiasGracia" />
                 <ScalarProperty Name="ExcepcionDescuento" ColumnName="ExcepcionDescuento" />
                 <ScalarProperty Name="Actualizado" ColumnName="Actualizado" />
@@ -12555,6 +12574,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="RecibosxCliente">
             <EntityTypeMapping TypeName="AventasModel.RecibosxCliente">
               <MappingFragment StoreEntitySet="RecibosxCliente">
+                <ScalarProperty Name="Anulado" ColumnName="Anulado" />
                 <ScalarProperty Name="firma" ColumnName="firma" />
                 <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="proformaId" ColumnName="proformaId" />
@@ -14119,6 +14139,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="IMObtenerPagadoCuota" FunctionName="AventasModel.Store.IMObtenerPagadoCuota" />
+          <FunctionImportMapping FunctionImportName="IMObtenerDetalleDescuento" FunctionName="AventasModel.Store.IMObtenerDetalleDescuento">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.IMObtenerDetalleDescuento_Result">
+                <ScalarProperty Name="Dias" ColumnName="Dias" />
+                <ScalarProperty Name="Porcentaje" ColumnName="Porcentaje" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

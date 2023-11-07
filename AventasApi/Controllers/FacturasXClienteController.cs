@@ -88,7 +88,7 @@ namespace AventasApi.Controllers
                             continue;
                         }
 
-                        var descuentoDetalle = await ctx.DescuentoDetalle.FirstOrDefaultAsync(x => x.IdDescuento == grupoDescuento.IdDescuento && x.IdLinea.ToUpper() == factura.IdLinea.ToUpper());
+                        var descuentoDetalle = ctx.DescuentoDetalle.Include(x => x.Descuento).Where(x => x.IdLinea == factura.IdLinea && x.Descuento.EmpresaId == factura.EmpresaId && x.CodigoDescuento == factura.CodigoDescuento).FirstOrDefault();
                         if (descuentoDetalle == null)
                         {
                             continue;

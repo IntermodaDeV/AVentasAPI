@@ -854,7 +854,7 @@ namespace AventasApi.Controllers
                                         ctx.SaveChanges();
                                     }
 
-                                    syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE);
+                                    syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                                     syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                                 }
                                 
@@ -1082,7 +1082,7 @@ namespace AventasApi.Controllers
                                         var descuento = context.Descuento.Where(x => x.Codigo == cliente.Descuento && x.EmpresaId == cliente.EmpresaId).FirstOrDefault();
                                         if (descuento != null)
                                         {
-                                            var descuentoDetalle = context.DescuentoDetalle.Where(x => x.IdDescuento == descuento.IdDescuento && x.IdLinea == subfactura.FacturasxCliente.IdLinea && x.activo == true).FirstOrDefault();
+                                            var descuentoDetalle = context.DescuentoDetalle.Include(x=>x.Descuento).Where(x => x.IdLinea == Factura.IdLinea && x.Descuento.EmpresaId==cliente.EmpresaId && x.CodigoDescuento == Factura.CodigoDescuento).FirstOrDefault();
                                             if (descuentoDetalle != null)
                                             {
                                                 int sumaDias = (descuentoDetalle.DiasDescuento ?? 0) + cliente.DiasTransporte;
@@ -1605,7 +1605,7 @@ namespace AventasApi.Controllers
                             await ctx.SaveChangesAsync();
                         }
 
-                        syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE);
+                        syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE,recibos[0].ASESOR);
                         syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         return Ok($"El recibo {recibos[0].RECIBO} ha sido sincronizado exitosamente con AX.");
                     }
@@ -1653,7 +1653,7 @@ namespace AventasApi.Controllers
                             await ctx.SaveChangesAsync();
                         }
 
-                        syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE);
+                        syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         return Ok($"El recibo {recibos[0].RECIBO} ha sido sincronizado exitosamente con AX.");
                     }
@@ -2031,7 +2031,7 @@ namespace AventasApi.Controllers
                                     await ctx.SaveChangesAsync();
                                 }
 
-                                syncCuentaCorriente.SyncFacturas(ReciboSincronizar[0].COMPANY, ReciboSincronizar[0].CLIENTE);
+                                syncCuentaCorriente.SyncFacturas(ReciboSincronizar[0].COMPANY, ReciboSincronizar[0].CLIENTE, ReciboSincronizar[0].ASESOR);
                                 syncCuentaCorriente.SyncSubFacturas(ReciboSincronizar[0].COMPANY, ReciboSincronizar[0].CLIENTE, ReciboSincronizar[0].ASESOR);
                                 return Ok($"El recibo ha sido aprobado y sincronizado exitosamente con AX.");
                             }

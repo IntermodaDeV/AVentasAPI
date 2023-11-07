@@ -227,6 +227,7 @@ namespace AventasApi.Services.AsyncJobs
                         proformaId = rec.proformaId,
                         Origen = "Web",
                         firma = rec.firmaByte,
+                        Anulado=false,
                         RecibosDetalle = rec.DetalleRecibo.Select(recDet => new RecibosDetalle
                         {
                             IdReciboDetalle = recDet.IdReciboDetalle,

@@ -26,5 +26,6 @@ namespace ExternalApiData.Models.ApiModels
         public string PROD_LINE { get; set; }
         public string DOC_TYPE { get; set; }
         public string FACTURACION_FEL { get; set; }
+        public string KREACASHDISCCODE { get; set; }
     }
 }

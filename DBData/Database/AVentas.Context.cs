@@ -526,5 +526,22 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<decimal>>("IMObtenerPagadoCuota", aCUERDOParameter, cUOTAParameter);
         }
+    
+        public virtual ObjectResult<IMObtenerDetalleDescuento_Result> IMObtenerDetalleDescuento(string eMPRESA, string lINEA, string cODIGO)
+        {
+            var eMPRESAParameter = eMPRESA != null ?
+                new ObjectParameter("EMPRESA", eMPRESA) :
+                new ObjectParameter("EMPRESA", typeof(string));
+    
+            var lINEAParameter = lINEA != null ?
+                new ObjectParameter("LINEA", lINEA) :
+                new ObjectParameter("LINEA", typeof(string));
+    
+            var cODIGOParameter = cODIGO != null ?
+                new ObjectParameter("CODIGO", cODIGO) :
+                new ObjectParameter("CODIGO", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerDetalleDescuento_Result>("IMObtenerDetalleDescuento", eMPRESAParameter, lINEAParameter, cODIGOParameter);
+        }
     }
 }

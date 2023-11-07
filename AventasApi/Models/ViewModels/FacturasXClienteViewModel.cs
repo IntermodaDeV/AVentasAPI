@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace AventasApi.Models.ViewModels
 {
@@ -37,6 +35,7 @@ namespace AventasApi.Models.ViewModels
         public List<DocumentosAplicadosAFacturasViewModel> DocumentosAplicadosAFacturas { get; set; }
         public bool ExcepcionDescuento { get; set; }
         public int DiasGracia { get; set; }
+        public string CodigoDescuento { get; set; }
 
     }
 }

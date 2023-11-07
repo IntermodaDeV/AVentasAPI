@@ -382,7 +382,7 @@ namespace AventasApi.Controllers
                                         var descuento = ctx.Descuento.Where(x => x.Codigo == cliente.Descuento && x.EmpresaId == cliente.EmpresaId).FirstOrDefault();
                                         if (descuento != null)
                                         {
-                                            var descuentoDetalle = ctx.DescuentoDetalle.Where(x => x.IdDescuento == descuento.IdDescuento && x.IdLinea == subfactura.FacturasxCliente.IdLinea && x.activo == true).FirstOrDefault();
+                                            var descuentoDetalle = ctx.DescuentoDetalle.Include(x => x.Descuento).Where(x => x.IdLinea == Factura.IdLinea && x.Descuento.EmpresaId == cliente.EmpresaId && x.CodigoDescuento == Factura.CodigoDescuento).FirstOrDefault();
                                             if (descuentoDetalle != null)
                                             {
                                                 int sumaDias = (descuentoDetalle.DiasDescuento ?? 0) + cliente.DiasTransporte;

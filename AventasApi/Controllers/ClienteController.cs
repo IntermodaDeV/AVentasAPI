@@ -291,7 +291,7 @@ namespace AventasApi.Controllers
                             Codigo = x.Codigo,
                             Descripcion = x.Descripcion,
                             Empresa = x.EmpresaId,
-                            DescuentoDetalle = x.DescuentoDetalle.Where(d=>d.activo==true).Select(d => new DescuentoDetalleViewModel
+                            DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
                             {
                                 Linea = d.IdLinea,
                                 CodigoDescuento = d.CodigoDescuento,
@@ -384,6 +384,7 @@ namespace AventasApi.Controllers
                                 TipoPedidoString = facCli.TiposdePedido.TipoPedido,
                                 DiasGracia = facCli.DiasGracia ?? 0,
                                 ExcepcionDescuento = facCli.ExcepcionDescuento,
+                                CodigoDescuento = facCli.CodigoDescuento,
                                 DocumentosAplicadosAFacturas = context.DocumentosAplicadosAFacturas.Where(x => x.Factura == facCli.Factura).Select(x => new DocumentosAplicadosAFacturasViewModel
                                 {
                                     Factura = x.Factura,
@@ -891,7 +892,7 @@ namespace AventasApi.Controllers
                                 Codigo = x.Codigo,
                                 Descripcion = x.Descripcion,
                                 Empresa = x.EmpresaId,
-                                DescuentoDetalle = x.DescuentoDetalle.Where(d => d.activo == true).Select(d => new DescuentoDetalleViewModel
+                                DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
                                 {
                                     Linea = d.IdLinea,
                                     CodigoDescuento = d.CodigoDescuento,
@@ -979,6 +980,7 @@ namespace AventasApi.Controllers
                                         TipoPedidoString = facCli.TiposdePedido.TipoPedido,
                                         DiasGracia = facCli.DiasGracia ?? 0,
                                         ExcepcionDescuento =facCli.ExcepcionDescuento,
+                                        CodigoDescuento=facCli.CodigoDescuento,
                                         DocumentosAplicadosAFacturas = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == facCli.Factura).Select(x => new DocumentosAplicadosAFacturasViewModel
                                         {
                                             Factura = x.Factura,
@@ -1073,7 +1075,7 @@ namespace AventasApi.Controllers
                             Codigo = x.Codigo,
                             Descripcion = x.Descripcion,
                             Empresa = x.EmpresaId,
-                            DescuentoDetalle = x.DescuentoDetalle.Where(d => d.activo == true).Select(d => new DescuentoDetalleViewModel
+                            DescuentoDetalle = x.DescuentoDetalle.Select(d => new DescuentoDetalleViewModel
                             {
                                 Linea = d.IdLinea,
                                 CodigoDescuento = d.CodigoDescuento,
@@ -1160,6 +1162,7 @@ namespace AventasApi.Controllers
                                 TipoPedidoString = facCli.TiposdePedido.TipoPedido,
                                 ExcepcionDescuento=facCli.ExcepcionDescuento,
                                 DiasGracia=facCli.DiasGracia ?? 0,
+                                CodigoDescuento = facCli.CodigoDescuento,
                                 DocumentosAplicadosAFacturas = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == facCli.Factura).Select(x => new DocumentosAplicadosAFacturasViewModel
                                 {
                                     Factura = x.Factura,
@@ -1285,7 +1288,7 @@ namespace AventasApi.Controllers
 
                     if (EnLinea(clienteBd.EmpresaId, clienteBd.CodigoAsesor))
                     {
-                        syncCuentaCorriente.SyncFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente);
+                        syncCuentaCorriente.SyncFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
                         syncCuentaCorriente.SyncSubFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
                         syncCuentaCorriente.SyncDocumentosAplicadosFactura(clienteBd.EmpresaId, clienteBd.CodigoAsesor);
                         syncAcuerdosVentas.SyncAcuerdoVenta(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
