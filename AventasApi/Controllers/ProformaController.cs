@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Script.Serialization;
@@ -382,7 +383,7 @@ namespace AventasApi.Controllers
                                         var descuento = ctx.Descuento.Where(x => x.Codigo == cliente.Descuento && x.EmpresaId == cliente.EmpresaId).FirstOrDefault();
                                         if (descuento != null)
                                         {
-                                            var descuentoDetalle = ctx.DescuentoDetalle.Include(x => x.Descuento).Where(x => x.IdLinea == Factura.IdLinea && x.Descuento.EmpresaId == cliente.EmpresaId && x.CodigoDescuento == Factura.CodigoDescuento).FirstOrDefault();
+                                            var descuentoDetalle = ctx.DescuentoDetalle.Include(x => x.Descuento).Where(x => x.IdLinea.ToUpper() == Factura.IdLinea.ToUpper() && x.Descuento.EmpresaId.ToUpper() == cliente.EmpresaId.ToUpper() && x.CodigoDescuento.ToUpper() == Factura.CodigoDescuento.ToUpper()).FirstOrDefault();
                                             if (descuentoDetalle != null)
                                             {
                                                 int sumaDias = (descuentoDetalle.DiasDescuento ?? 0) + cliente.DiasTransporte;
