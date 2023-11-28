@@ -988,6 +988,7 @@ namespace AventasApi.Controllers
                 int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
                 string inicialesAsesor = asesor.InicialesNombre;
                 var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(x => x.NumeroCuota).ThenBy(subFac => subFac.FechaVencimiento).ThenBy(x => x.Factura).ToList();
+                var subFacturasCopy = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(x => x.NumeroCuota).ThenBy(subFac => subFac.FechaVencimiento).ThenBy(x => x.Factura).ToList();
                 List<ReciboApiModel> recibos = new List<ReciboApiModel>();
                 var isOnline = EnLinea(asesor.EmpresaId, asesor.CodigoAsesor);
                 Dictionary<int, double> pagadoMemory = new Dictionary<int, double>();
@@ -1065,7 +1066,7 @@ namespace AventasApi.Controllers
                                                         var pagadoCuotaMemory = (pagadoCuota ?? 0) + (decimal)pagadoMemory[cuotaAcuerdo.NumCuota];
 
                                                         var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
-                                                        Descuento = CalcularDescuentoAplicar(subFacturas, subfactura, DescuentoCuota);
+                                                        Descuento = CalcularDescuentoAplicar(subFacturasCopy, subfactura, DescuentoCuota);
                                                         aplicaDescuento = valor >= (Decimal.ToDouble(valoCuota - (pagadoCuotaMemory)) - Descuento);
 
                                                         valorCuota = aplicaDescuento ? (Decimal.ToDouble(subfactura.Saldo.Value) - Descuento) : Decimal.ToDouble(subfactura.Saldo.Value);
