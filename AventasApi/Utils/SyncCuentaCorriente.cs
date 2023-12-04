@@ -109,7 +109,7 @@ namespace AventasApi.Utils
                     context.SP_SubFacturasxCliente_UpdateSaldoXCliente(codigoCliente, empresa);
                     foreach (var subFactura in subFacturas)
                     {
-                        var fFactura = context.FacturasxCliente.FirstOrDefault(x => x.Referencia == subFactura.REF_CUSTTRANS);
+                        var fFactura = context.FacturasxCliente.FirstOrDefault(x => x.Referencia == subFactura.REF_CUSTTRANS && x.Factura.ToUpper() == subFactura.INVOICE.ToUpper());
 
                         if (fFactura == null)
                         {
