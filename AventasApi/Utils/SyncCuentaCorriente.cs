@@ -352,8 +352,8 @@ namespace AventasApi.Utils
 
                     if (facturas.Count() > 0)
                     {
-                        UpdateFleteSubfacturasAcuerdo(codigoCliente);
                         UpdateFacturasCuotaCero();
+                        UpdateFleteSubfacturasAcuerdo(codigoCliente);
                     }
                 }
 
