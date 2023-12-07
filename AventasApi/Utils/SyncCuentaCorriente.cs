@@ -260,7 +260,25 @@ namespace AventasApi.Utils
             {
                 using(var context = new AVentasEntities())
                 {
-                    context.SP_ActualizarFleteFacturasAcuerdo(codigoCliente);
+                    var subFacturas = context.IMObtenerFacturasFletes(codigoCliente).ToList();
+                    if(subFacturas.Count > 0)
+                    {
+                        foreach(var sub in subFacturas)
+                        {
+                            var subFacturasBD = context.SubFacturasxCliente.Where(x => x.Factura == sub.FACTURA.ToUpper() && x.CodigoCliente.ToUpper() == codigoCliente.ToUpper() && x.Saldo > 0).ToList();
+
+                            if(subFacturasBD.Count > 0)
+                            {
+                                var fleteMaximo = subFacturasBD.Max(x => x.Flete);
+                                var flete = fleteMaximo / sub.CANTIDAD;
+                                foreach (var subf in subFacturasBD)
+                                {
+                                    subf.Flete = flete;
+                                    context.SaveChanges();
+                                }
+                            } 
+                        }
+                    }
                 }
             }catch(Exception e)
             {

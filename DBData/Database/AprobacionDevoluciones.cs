@@ -29,5 +29,9 @@ namespace DBData.Database
         public virtual Usuarios Usuarios { get; set; }
         public virtual Usuarios Usuarios1 { get; set; }
         public virtual Usuarios Usuarios2 { get; set; }
+        public virtual AprobacionDevoluciones AprobacionDevoluciones1 { get; set; }
+        public virtual AprobacionDevoluciones AprobacionDevoluciones2 { get; set; }
+        public virtual AprobacionDevoluciones AprobacionDevoluciones11 { get; set; }
+        public virtual AprobacionDevoluciones AprobacionDevoluciones3 { get; set; }
     }
 }

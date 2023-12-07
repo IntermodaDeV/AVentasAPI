@@ -543,5 +543,14 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerDetalleDescuento_Result>("IMObtenerDetalleDescuento", eMPRESAParameter, lINEAParameter, cODIGOParameter);
         }
+    
+        public virtual ObjectResult<IMObtenerFacturasFletes_Result> IMObtenerFacturasFletes(string codigoCliente)
+        {
+            var codigoClienteParameter = codigoCliente != null ?
+                new ObjectParameter("CodigoCliente", codigoCliente) :
+                new ObjectParameter("CodigoCliente", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerFacturasFletes_Result>("IMObtenerFacturasFletes", codigoClienteParameter);
+        }
     }
 }

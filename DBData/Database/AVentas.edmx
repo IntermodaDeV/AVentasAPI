@@ -3704,6 +3704,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AprobacionDevoluciones_AprobacionDevoluciones">
+          <End Role="AprobacionDevoluciones" Type="Self.AprobacionDevoluciones" Multiplicity="1" />
+          <End Role="AprobacionDevoluciones1" Type="Self.AprobacionDevoluciones" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="AprobacionDevoluciones">
+              <PropertyRef Name="IdDevAprobacion" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones1">
+              <PropertyRef Name="IdDevAprobacion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_AsignacionesXAsesor_IdAsignacionxAsesor">
           <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="1" />
           <End Role="PromesaPago" Type="Self.PromesaPago" Multiplicity="*" />
@@ -4149,14 +4161,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_tbAprobacionDevoluciones_NumDevolucion">
-          <End Role="Devolucion" Type="Self.Devolucion" Multiplicity="1" />
-          <End Role="AprobacionDevoluciones" Type="Self.AprobacionDevoluciones" Multiplicity="*" />
+          <End Role="AprobacionDevoluciones" Type="Self.AprobacionDevoluciones" Multiplicity="1" />
+          <End Role="AprobacionDevoluciones1" Type="Self.AprobacionDevoluciones" Multiplicity="0..1" />
           <ReferentialConstraint>
-            <Principal Role="Devolucion">
-              <PropertyRef Name="NumDevolucion" />
+            <Principal Role="AprobacionDevoluciones">
+              <PropertyRef Name="IdDevAprobacion" />
             </Principal>
-            <Dependent Role="AprobacionDevoluciones">
-              <PropertyRef Name="NumDevolucion" />
+            <Dependent Role="AprobacionDevoluciones1">
+              <PropertyRef Name="IdDevAprobacion" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4476,6 +4488,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
           <Parameter Name="LINEA" Type="varchar" Mode="In" />
           <Parameter Name="CODIGO" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="IMObtenerFacturasFletes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CodigoCliente" Type="varchar" Mode="In" />
         </Function>
         <Function Name="IMObtenerPagadoCuota" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ACUERDO" Type="varchar" Mode="In" />
@@ -5377,6 +5392,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="AcuerdosxCliente" EntitySet="AcuerdosxCliente" />
             <End Role="CuotasXAcuerdo" EntitySet="CuotasXAcuerdo" />
           </AssociationSet>
+          <AssociationSet Name="FK_AprobacionDevoluciones_AprobacionDevoluciones" Association="Self.FK_AprobacionDevoluciones_AprobacionDevoluciones">
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+            <End Role="AprobacionDevoluciones1" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
           <AssociationSet Name="FK_AsignacionesXAsesor_IdAsignacionxAsesor" Association="Self.FK_AsignacionesXAsesor_IdAsignacionxAsesor">
             <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
             <End Role="PromesaPago" EntitySet="PromesaPago" />
@@ -5526,8 +5545,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
           </AssociationSet>
           <AssociationSet Name="FK_tbAprobacionDevoluciones_NumDevolucion" Association="Self.FK_tbAprobacionDevoluciones_NumDevolucion">
-            <End Role="Devolucion" EntitySet="Devolucion" />
             <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+            <End Role="AprobacionDevoluciones1" EntitySet="AprobacionDevoluciones" />
           </AssociationSet>
           <AssociationSet Name="FK_tbAprobacionDevoluciones_UsuarioCrea" Association="Self.FK_tbAprobacionDevoluciones_UsuarioCrea">
             <End Role="Usuarios" EntitySet="Usuarios" />
@@ -8144,6 +8163,17 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <Parameter Name="EMPRESA" Mode="In" Type="String" />
             <Parameter Name="LINEA" Mode="In" Type="String" />
             <Parameter Name="CODIGO" Mode="In" Type="String" />
+          </FunctionImport>
+          <AssociationSet Name="FK_AprobacionDevoluciones_AprobacionDevoluciones" Association="AventasModel.FK_AprobacionDevoluciones_AprobacionDevoluciones">
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+            <End Role="AprobacionDevoluciones1" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbAprobacionDevoluciones_NumDevolucion" Association="AventasModel.FK_tbAprobacionDevoluciones_NumDevolucion">
+            <End Role="AprobacionDevoluciones" EntitySet="AprobacionDevoluciones" />
+            <End Role="AprobacionDevoluciones1" EntitySet="AprobacionDevoluciones" />
+          </AssociationSet>
+          <FunctionImport Name="IMObtenerFacturasFletes" ReturnType="Collection(AventasModel.IMObtenerFacturasFletes_Result)">
+            <Parameter Name="CodigoCliente" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -11169,6 +11199,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Usuarios1" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_IdUsuario" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
           <NavigationProperty Name="Usuarios2" Relationship="AventasModel.FK_AprobacionDevolucion_Usuario_UsuarioModifica" FromRole="AprobacionDevoluciones" ToRole="Usuarios" />
           <Property Name="Visible" Type="Boolean" />
+          <NavigationProperty Name="AprobacionDevoluciones1" Relationship="AventasModel.FK_AprobacionDevoluciones_AprobacionDevoluciones" FromRole="AprobacionDevoluciones" ToRole="AprobacionDevoluciones1" />
+          <NavigationProperty Name="AprobacionDevoluciones2" Relationship="AventasModel.FK_AprobacionDevoluciones_AprobacionDevoluciones" FromRole="AprobacionDevoluciones1" ToRole="AprobacionDevoluciones" />
+          <NavigationProperty Name="AprobacionDevoluciones11" Relationship="AventasModel.FK_tbAprobacionDevoluciones_NumDevolucion" FromRole="AprobacionDevoluciones" ToRole="AprobacionDevoluciones1" />
+          <NavigationProperty Name="AprobacionDevoluciones3" Relationship="AventasModel.FK_tbAprobacionDevoluciones_NumDevolucion" FromRole="AprobacionDevoluciones1" ToRole="AprobacionDevoluciones" />
         </EntityType>
         <Association Name="FK_AprobacionDevolucion_Devolucion_NumeroDevolucion">
           <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="1" />
@@ -11805,6 +11839,34 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <ComplexType Name="IMObtenerDetalleDescuento_Result">
           <Property Type="Int32" Name="Dias" Nullable="false" />
           <Property Type="Decimal" Name="Porcentaje" Nullable="false" Precision="10" Scale="2" />
+        </ComplexType>
+        <Association Name="FK_AprobacionDevoluciones_AprobacionDevoluciones">
+          <End Type="AventasModel.AprobacionDevoluciones" Role="AprobacionDevoluciones" Multiplicity="1" />
+          <End Type="AventasModel.AprobacionDevoluciones" Role="AprobacionDevoluciones1" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="AprobacionDevoluciones">
+              <PropertyRef Name="IdDevAprobacion" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones1">
+              <PropertyRef Name="IdDevAprobacion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbAprobacionDevoluciones_NumDevolucion">
+          <End Type="AventasModel.AprobacionDevoluciones" Role="AprobacionDevoluciones" Multiplicity="1" />
+          <End Type="AventasModel.AprobacionDevoluciones" Role="AprobacionDevoluciones1" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="AprobacionDevoluciones">
+              <PropertyRef Name="IdDevAprobacion" />
+            </Principal>
+            <Dependent Role="AprobacionDevoluciones1">
+              <PropertyRef Name="IdDevAprobacion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="IMObtenerFacturasFletes_Result">
+          <Property Type="String" Name="FACTURA" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="CANTIDAD" Nullable="true" />
         </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
@@ -14144,6 +14206,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               <ComplexTypeMapping TypeName="AventasModel.IMObtenerDetalleDescuento_Result">
                 <ScalarProperty Name="Dias" ColumnName="Dias" />
                 <ScalarProperty Name="Porcentaje" ColumnName="Porcentaje" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="IMObtenerFacturasFletes" FunctionName="AventasModel.Store.IMObtenerFacturasFletes">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.IMObtenerFacturasFletes_Result">
+                <ScalarProperty Name="FACTURA" ColumnName="FACTURA" />
+                <ScalarProperty Name="CANTIDAD" ColumnName="CANTIDAD" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

@@ -355,6 +355,8 @@
         <EntityTypeShape EntityType="AventasModel.MotivoTiempoFuera" Width="1.5" PointX="24.375" PointY="20.625" />
         <EntityTypeShape EntityType="AventasModel.TiempoFueraAgenda" Width="1.5" PointX="26.625" PointY="20" />
         <AssociationConnector Association="AventasModel.FK__TiempoFue__motiv__5EF5B475" />
+        <AssociationConnector Association="AventasModel.FK_AprobacionDevoluciones_AprobacionDevoluciones" />
+        <AssociationConnector Association="AventasModel.FK_tbAprobacionDevoluciones_NumDevolucion" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
