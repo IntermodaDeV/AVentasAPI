@@ -79,10 +79,10 @@ namespace AventasApi.Utils
                             entityFound.PendienteFactura = Decimal.TryParse(factura.AMOUNT_PENDING, out pFactura) ? pFactura : 0;
                             entityFound.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;
 
-                            if (entityFound.PendienteFactura > 0)
+                            /*if (entityFound.PendienteFactura > 0)
                             {
                                 entityFound.Saldo = entityFound.Saldo - entityFound.PendienteFactura - (entityFound.FechaMaxDescuento < DateTime.Today ? 0 : entityFound.Descuento);
-                            }
+                            }*/
                            
                             entityFound.FacturaStatus = factura.STATUS;
                             entityFound.NumeroPagos = int.TryParse(factura.N_PAYMENTS, out nPagos) ? nPagos : 0;
