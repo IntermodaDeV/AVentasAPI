@@ -153,7 +153,8 @@ namespace AventasApi.Controllers
                         IdFactura = rec.IdFactura,
                         Longitude = rec.Longitude,
                         Latitude = rec.Latitude,
-                        firmaByte = rec.firma,
+                        //firmaByte = rec.firma,
+                        firma="",
                         locationCliente = new LocationCliente
                         {
                             latitude = context.Clientes.FirstOrDefault(x => x.CodigoCliente == rec.CodigoCliente).Latitud,
@@ -241,7 +242,8 @@ namespace AventasApi.Controllers
                         Longitude = ant.Longitude,
                         DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == ant.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
                         Descuento = 0,
-                        firmaByte = ant.firma,
+                        //firmaByte = ant.firma,
+                        firma="",
                         Cliente = context.Clientes.Where(cli => cli.CodigoCliente == ant.CodigoCliente).Select(cli => new ClienteViewModel
                         {
                             Codigo = cli.CodigoCliente,
@@ -283,7 +285,7 @@ namespace AventasApi.Controllers
 
                 }
 
-                    foreach (var recibo in ListaRecibos)
+                    /*foreach (var recibo in ListaRecibos)
                     {
                         if (recibo.firmaByte != null)
                         {
@@ -297,7 +299,7 @@ namespace AventasApi.Controllers
                             recibo.firma = "";
                             recibo.firmaByte = null;
                         }
-                    }
+                    }*/
 
                     return Ok(ListaRecibos);
                 }
@@ -724,7 +726,7 @@ namespace AventasApi.Controllers
                                     FechaCreacion = DateTime.Now,
                                     Descuento = 0,
                                     Origen="Web",
-                                    firma = asesor.firma
+                                    //firma = asesor.firma
                                 };
                                 context.AnticiposxCliente.Add(anticipo);
                             }
@@ -2054,6 +2056,54 @@ namespace AventasApi.Controllers
                 }
             }
             catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/Recibo/obtenerfirma/{recibo}")]
+        public async Task<IHttpActionResult> ObtenerFirmaRecibo(string recibo)
+        {
+            try
+            {
+                using(AVentasEntities entities = new AVentasEntities())
+                {
+                    var reciboBD = await entities.RecibosxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == recibo.ToUpper());
+                    if (reciboBD != null)
+                    {
+                        var asesor = await entities.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor.ToUpper() == reciboBD.UsuarioCreacion.ToUpper());
+                        if (asesor != null)
+                        {
+                            string firma = "";
+                            if (asesor.firma != null)
+                            {
+                                firma = "data:image/png;base64," + Convert.ToBase64String(asesor.firma);
+                            }
+
+                            return Ok(new { nombreAsesor=asesor.Nombre,firma=firma});
+                        }
+                    }
+
+                    var anticipoBd = await entities.AnticiposxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == recibo.ToUpper());
+                    if (anticipoBd != null)
+                    {
+                        var asesor = await entities.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor.ToUpper() == anticipoBd.UsuarioCreacion.ToUpper());
+                        if (asesor != null)
+                        {
+                            string firma = "";
+                            if (asesor.firma != null)
+                            {
+                                firma = "data:image/png;base64," + Convert.ToBase64String(asesor.firma);
+                            }
+
+                            return Ok(new { nombreAsesor = asesor.Nombre, firma = firma });
+                        }
+                    }
+
+                    return NotFound();
+                }
+            }catch(Exception e)
             {
                 return BadRequest(e.ToString());
             }
