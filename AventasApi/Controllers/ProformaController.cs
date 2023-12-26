@@ -336,7 +336,7 @@ namespace AventasApi.Controllers
                                 {
                                     DateTime FechaFact = Convert.ToDateTime(Factura.FechaFactura);
 
-                                    if (!String.IsNullOrEmpty(subfactura.ReferenciaAcuerdo) && !subfactura.ReferenciaAcuerdo.Equals("0"))
+                                    if (!String.IsNullOrEmpty(subfactura.IdAcuerdoxCliente))
                                     {
                                         var acuerdo = ctx.AcuerdosxCliente.FirstOrDefault(a => a.IdAcuerdoxCliente == subfactura.IdAcuerdoxCliente && a.EmpresaId == subfactura.EmpresaId);
                                         if (acuerdo != null)
