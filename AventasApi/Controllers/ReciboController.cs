@@ -497,6 +497,13 @@ namespace AventasApi.Controllers
                             NUM_PEDIDO = "",
 
                         };
+
+                        if (Detalle.SubFacturasxCliente.EmpresaId.ToUpper() == "IMGT")
+                        {
+                            var banco = Banco != null ? Banco.NombreBanco : "";
+                            Recibos.DESCRIPCION = $"{Recibo.NumeroRecibo} {Recibo.Referencia} {banco} {Recibo.Fecha.Value.ToString("dd/MM/yyyy")} {Detalle.SubFacturasxCliente.CodigoCliente}";
+                        }
+
                         ReciboSincronizar.Add(Recibos);
                     }
 
@@ -825,6 +832,13 @@ namespace AventasApi.Controllers
                             ES_CONTADO = anticipoPost.EsContado,
                             NUM_PEDIDO = anticipoPost.NumPedido
                         };
+
+                        if (asesor.EmpresaId.ToUpper() == "IMGT")
+                        {
+                            var banco = bank != null ? bank.NombreBanco : "";
+                            anticipoAX.DESCRIPCION = $"{anticipoPost.NumeroRecibo} {pago.Referencia} {banco} {anticipoAX.FECHA} {anticipoPost.CodigoCliente}";
+                        }
+
                         recibos.Add(anticipoAX);
                     }
                     int affectedRows = context.SaveChanges();
@@ -1179,6 +1193,13 @@ namespace AventasApi.Controllers
                                         DESCUENTO = "0",
                                         REF_TRANSOPEN = subfactura.Referencia,
                                     };
+
+                                    if (subfactura.EmpresaId.ToUpper() == "IMGT")
+                                    {
+                                        var banco = bank != null ? bank.NombreBanco : "";
+                                        recibo.DESCRIPCION = $"{reciboPost.NumeroRecibo} {pago.Referencia} {banco} {recibo.FECHA} {subfactura.CodigoCliente}";
+                                    }
+
                                     recibosXPago.Add(recibo);
                                     //if (reciboPost.Pagos.Count() > 1)
                                     //numeroCorrelativoRecibo++;
