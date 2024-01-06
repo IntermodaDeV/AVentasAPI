@@ -103,19 +103,7 @@ namespace AventasApi.Controllers
                 {
 
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    List<string> asesoresHabilitados = new List<string>();
-                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
-                    var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
 
-                    if (usuario.FlagTodosAsesores.Value)
-                    {
-                        asesoresHabilitados = await context.Asesores.Where(x => x.CodigoAsesor == Asesor).Select(x => x.CodigoAsesor).ToListAsync();
-                    }
-                    else
-                    {
-                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
-                        asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId)).Select(x => x.CodigoAsesor).ToListAsync();
-                    }
 
                     if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
                     {
@@ -128,16 +116,15 @@ namespace AventasApi.Controllers
                     }
 
                     List<RecibosxClienteViewModel> ListaRecibos = new List<RecibosxClienteViewModel>();
-                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
-                    {
 
-                    var asesorBD = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == asesor);
 
-                    var Recibos = context.RecibosxCliente.Where(r => r.CodigoAsesor == asesor && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
+                    var clientes = context.Clientes.Where(x => x.CodigoAsesor.ToUpper() == Asesor.ToUpper()).Select(x => x.CodigoCliente);
+
+                    var Recibos = context.RecibosxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
-                        NumeroCopia=context.LogRecibo.Where(x=>x.ReciboId==rec.ReciboId).Count()+1,
-                        Anticipo=false,
-                        NombreAsesor = asesorBD.Nombre,
+                        NumeroCopia = context.LogRecibo.Where(x => x.ReciboId == rec.ReciboId).Count() + 1,
+                        Anticipo = false,
+                        NombreAsesor = "",
                         Asesor = rec.CodigoAsesor,
                         NumeroRecibo = rec.NumeroRecibo,
                         CodigoCliente = rec.CodigoCliente,
@@ -154,7 +141,7 @@ namespace AventasApi.Controllers
                         Longitude = rec.Longitude,
                         Latitude = rec.Latitude,
                         //firmaByte = rec.firma,
-                        firma="",
+                        firma = "",
                         locationCliente = new LocationCliente
                         {
                             latitude = context.Clientes.FirstOrDefault(x => x.CodigoCliente == rec.CodigoCliente).Latitud,
@@ -177,7 +164,7 @@ namespace AventasApi.Controllers
                             Tipo = tp.Tipo,
                             EmpresaId = tp.EmpresaId,
                             TiposdePagoDetalle = tp.TiposdePagoDetalle.Where(d => d.CodigoDetalle == rec.SpecPago).Select(pd => new TipoPagoDetalleViewModel
-                            { 
+                            {
                                 Codigo = pd.Codigo,
                                 CodigoDetalle = pd.CodigoDetalle,
                                 Descripcion = pd.Descripcion
@@ -200,7 +187,7 @@ namespace AventasApi.Controllers
                             ValorSinDescuento = (recDet.Valor ?? 0) + (recDet.Descuento ?? 0),
                             Descuento = recDet.Descuento,
                             EsAbono = recDet.EsAbono,
-                            DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0               
+                            DiasVencimiento = DbFunctions.DiffDays(rec.Fecha, recDet.SubFacturasxCliente.FechaVencimiento) ?? 0
                         } : new RecibosDetalleViewModel
                         {
                             IdReciboDetalle = recDet.IdReciboDetalle,
@@ -220,11 +207,11 @@ namespace AventasApi.Controllers
                         }
                         ).ToList()
                     }).ToList();
-                    
-                    var anticiposXAsesor = context.AnticiposxCliente.Where(recCli => recCli.CodigoAsesor == asesor).Select(ant => new RecibosxClienteViewModel
+
+                    var anticiposXAsesor = context.AnticiposxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(ant => new RecibosxClienteViewModel
                     {
-                        Anticipo=true,
-                        NombreAsesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == ant.CodigoAsesor).Nombre,
+                        Anticipo = true,
+                        NombreAsesor = "",
                         Asesor = ant.CodigoAsesor,
                         NumeroRecibo = ant.NumeroRecibo,
                         CodigoCliente = ant.CodigoCliente,
@@ -243,7 +230,7 @@ namespace AventasApi.Controllers
                         DescripcionBanco = context.Bancos.Where(banco => banco.IdBanco == ant.IdBanco).Select(banco => banco.Descripcion).FirstOrDefault(),
                         Descuento = 0,
                         //firmaByte = ant.firma,
-                        firma="",
+                        firma = "",
                         Cliente = context.Clientes.Where(cli => cli.CodigoCliente == ant.CodigoCliente).Select(cli => new ClienteViewModel
                         {
                             Codigo = cli.CodigoCliente,
@@ -280,10 +267,10 @@ namespace AventasApi.Controllers
                     FechaFactura=ant.Fecha
                 } }
                     }).ToList();
-                        ListaRecibos.AddRange(Recibos);
-                        ListaRecibos.AddRange(anticiposXAsesor);
+                    ListaRecibos.AddRange(Recibos);
+                    ListaRecibos.AddRange(anticiposXAsesor);
 
-                }
+
 
                     /*foreach (var recibo in ListaRecibos)
                     {
@@ -301,7 +288,7 @@ namespace AventasApi.Controllers
                         }
                     }*/
 
-                    return Ok(ListaRecibos);
+                    return Ok(ListaRecibos.OrderByDescending(x=>x.FechaCreacion));
                 }
             }catch(Exception e)
             {
