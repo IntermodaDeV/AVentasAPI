@@ -588,6 +588,13 @@ namespace AventasApi.Controllers
                 RespuestaRecibo respuestaPagoRecibo = new RespuestaRecibo();
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                 var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount && ase.EmpresaId==anticipoPost.EmpresaUsuario);
+
+                var clienteAsesor = context.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == anticipoPost.CodigoCliente.ToUpper() && x.CodigoAsesor.ToUpper() == asesor.CodigoAsesor.ToUpper());
+                if (clienteAsesor == null)
+                {
+                    return BadRequest("El usuario no tiene permiso para realizar recibos al cliente seleccionado.");
+                }
+
                 var correlativo = anticipoPost.ReciboProforma ? anticipoPost.NumeroRecibo.Substring(2, anticipoPost.NumeroRecibo.Length - 2) : anticipoPost.NumeroRecibo;
                 if (anticipoPost.Pagos != null)
                 {
@@ -985,6 +992,13 @@ namespace AventasApi.Controllers
                 reciboPost.FechaPago = new DateTime(reciboPost.FechaPago.Year, reciboPost.FechaPago.Month, reciboPost.FechaPago.Day);
                 var existeRecibo = 0;
                 var asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+
+                var clienteAsesor = context.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == reciboPost.CodigoCliente.ToUpper() && x.CodigoAsesor.ToUpper()==asesor.CodigoAsesor.ToUpper());
+                if (clienteAsesor == null)
+                {
+                    return BadRequest("El usuario no tiene permiso para realizar recibos al cliente seleccionado.");
+                }
+
                 var PagosBD = context.TiposdePago.AsNoTracking().ToList();
                 var BancosBD = context.Bancos.AsNoTracking().ToList();
                 var codigoCliente = "";

@@ -287,6 +287,13 @@ namespace AventasApi.Controllers
                     proformaPost.FechaPago = new DateTime(proformaPost.FechaPago.Year, proformaPost.FechaPago.Month, proformaPost.FechaPago.Day);
                     var existeRecibo = 0;
                     var asesor = ctx.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+
+                    var clienteAsesor = ctx.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == proformaPost.CodigoCliente.ToUpper() && x.CodigoAsesor.ToUpper() == asesor.CodigoAsesor.ToUpper());
+                    if (clienteAsesor == null)
+                    {
+                        return BadRequest("El usuario no tiene permiso para realizar recibos al cliente seleccionado.");
+                    }
+
                     var PagosBD = ctx.TiposdePago.AsNoTracking().ToList();
                     var BancosBD = ctx.Bancos.AsNoTracking().ToList();
                     List<ReciboApiModel> recibos = new List<ReciboApiModel>();
