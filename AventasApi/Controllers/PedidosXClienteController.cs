@@ -487,23 +487,9 @@ namespace AventasApi.Controllers
                 {
 
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    List<string> asesoresHabilitados = new List<string>();
-                    var usuario = await context.Usuarios.FirstOrDefaultAsync(x => x.Id == user.Id);
-                    var empresas = await context.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
 
-                    if (usuario.FlagTodosAsesores.Value)
-                    {
-                        asesoresHabilitados = await context.Asesores.Where(x => x.CodigoAsesor == Asesor && x.Activo==true).Select(x => x.CodigoAsesor).ToListAsync();
-                    }
-                    else
-                    {
-                        var asesores = await context.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
-                        asesoresHabilitados = await context.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo==true).Select(x => x.CodigoAsesor).ToListAsync();
-                    }
+                    var clientes = context.Clientes.Where(p => p.CodigoAsesor.ToUpper() == Asesor.ToUpper()).Select(c => c.CodigoCliente);
 
-                    List<PedidosXClienteViewModel> ListaPedidos = new List<PedidosXClienteViewModel>();
-                    foreach (var asesor in asesoresHabilitados.Distinct().ToList())
-                    {
                     if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
                     {
                         FechaInicio = DateTime.Today.AddDays(-30);
@@ -514,11 +500,11 @@ namespace AventasApi.Controllers
                         FechaFin = FechaFin.AddDays(1);
                     }
 
-                    List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == asesor && p.Fecha >= FechaInicio && p.Fecha < FechaFin).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
+                    List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => clientes.Contains(p.CodigoCliente) && p.Fecha >= FechaInicio && p.Fecha < FechaFin).OrderByDescending(ped => ped.Fecha).Select(ped => new PedidosXClienteViewModel
                     {
                         Asesor = ped.CodigoAsesor,
                         PedidoId = ped.PedidoId,
-                        BodegaEspecifica=ped.BodegaEspecifica,
+                        BodegaEspecifica = ped.BodegaEspecifica,
                         NumeroPedido = ped.NumeroPedido,
                         Sincronizado = ped.Sincronizado,
                         CodigoColeccion = ped.Colecciones.CodigoColeccion,
@@ -574,9 +560,9 @@ namespace AventasApi.Controllers
                             longitude = ped.Clientes.Longitud
                         }
                     }).ToList();
-                        ListaPedidos.AddRange(pedidos);
-                    }
-                    foreach (var pedido in ListaPedidos)
+
+
+                    foreach (var pedido in pedidos)
                     {
                         string imagenB64 = "";
 
@@ -596,7 +582,7 @@ namespace AventasApi.Controllers
 
                         }
                     }
-                    return Ok(ListaPedidos);
+                    return Ok(pedidos);
                 }
                 }catch(Exception e)
                 {
