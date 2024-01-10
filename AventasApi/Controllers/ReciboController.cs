@@ -14,7 +14,10 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using System.Web.Script.Serialization;
 
@@ -2128,6 +2131,59 @@ namespace AventasApi.Controllers
             }catch(Exception e)
             {
                 return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/recibo/comprobantes/{numero}")]
+        public async Task<IHttpActionResult> UploadImage(string numero)
+        {
+            using (var ctx = new AVentasEntities())
+            {
+                var recibo = await ctx.RecibosxCliente.FirstOrDefaultAsync(x=>x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                if(recibo == null)
+                {
+                    return NotFound();
+                }
+
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                string uploadFolder = HttpContext.Current.Server.MapPath("~/Uploads");
+
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                var provider = new MultipartFormDataStreamProvider(uploadFolder);
+
+                try
+                {
+                    await Request.Content.ReadAsMultipartAsync(provider);
+
+                    foreach (var file in provider.FileData)
+                    {
+                        string filePath = file.LocalFileName;
+
+                        string fileName = file.Headers.ContentDisposition.FileName.Trim('"');
+
+                        string destinationPath = Path.Combine(uploadFolder, fileName);
+
+                        File.Move(filePath, destinationPath);
+
+                        ctx.DepositoRecibo.Add(new DepositoRecibo { reciboId = recibo.ReciboId, depositoUrl = destinationPath });
+                        await ctx.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return InternalServerError(ex);
+                }
             }
         }
 

@@ -167,6 +167,7 @@ namespace DBData.Database
         public virtual DbSet<ChequesContabilizados> ChequesContabilizados { get; set; }
         public virtual DbSet<MotivoTiempoFuera> MotivoTiempoFuera { get; set; }
         public virtual DbSet<TiempoFueraAgenda> TiempoFueraAgenda { get; set; }
+        public virtual DbSet<DepositoRecibo> DepositoRecibo { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {

@@ -19,6 +19,7 @@ namespace DBData.Database
         {
             this.RecibosDetalle = new HashSet<RecibosDetalle>();
             this.LogRecibo = new HashSet<LogRecibo>();
+            this.DepositoRecibo = new HashSet<DepositoRecibo>();
         }
     
         public int ReciboId { get; set; }
@@ -54,5 +55,7 @@ namespace DBData.Database
         public virtual RecibosProforma RecibosProforma { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LogRecibo> LogRecibo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DepositoRecibo> DepositoRecibo { get; set; }
     }
 }
