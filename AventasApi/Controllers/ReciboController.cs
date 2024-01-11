@@ -2163,19 +2163,21 @@ namespace AventasApi.Controllers
                 try
                 {
                     await Request.Content.ReadAsMultipartAsync(provider);
-
+                    int numeroDeposito = 1;
                     foreach (var file in provider.FileData)
                     {
                         string filePath = file.LocalFileName;
 
-                        string fileName = file.Headers.ContentDisposition.FileName.Trim('"');
+                        string[] fileParts = file.Headers.ContentDisposition.FileName.Trim('"').Split('.');
+                        string fileName = $"{recibo.NumeroRecibo}-{numeroDeposito}.{fileParts[1]}";
 
                         string destinationPath = Path.Combine(uploadFolder, fileName);
 
                         File.Move(filePath, destinationPath);
 
-                        ctx.DepositoRecibo.Add(new DepositoRecibo { reciboId = recibo.ReciboId, depositoUrl = destinationPath });
+                        ctx.DepositoRecibo.Add(new DepositoRecibo { reciboId = recibo.ReciboId, depositoUrl = fileName });
                         await ctx.SaveChangesAsync();
+                        numeroDeposito++;
                     }
 
                     return Ok();
@@ -2186,6 +2188,31 @@ namespace AventasApi.Controllers
                 }
             }
         }
+
+        [HttpGet]
+        [Route("~/api/recibo/comprobantes/{numero}")]
+        public async Task<IHttpActionResult> ObtenerComprobantes(string numero)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var recibo = await ctx.RecibosxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                    if (recibo == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var depositos = ctx.DepositoRecibo.Where(x => x.reciboId == recibo.ReciboId).Select(x => new { id=x.id,deposito=x.depositoUrl }).ToList();
+                    return Ok(depositos);
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+        
 
         private RecibosxCliente GenerarRecibo(RecibosxClienteFlotante reciboFlotante, string numeroReferencia,Asesores asesor)
         {
