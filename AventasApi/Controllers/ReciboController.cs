@@ -125,6 +125,7 @@ namespace AventasApi.Controllers
 
                     var Recibos = context.RecibosxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
+                        depositos = context.DepositoRecibo.Where(x => x.reciboId == rec.ReciboId).Select(x => new {id=x.id,deposito=x.depositoUrl}).ToList(),
                         NumeroCopia = context.LogRecibo.Where(x => x.ReciboId == rec.ReciboId).Count() + 1,
                         Anticipo = false,
                         NombreAsesor = "",
