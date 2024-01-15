@@ -214,6 +214,7 @@ namespace AventasApi.Controllers
 
                     var anticiposXAsesor = context.AnticiposxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(ant => new RecibosxClienteViewModel
                     {
+                        depositos = context.DepositoRecibo.Where(x => x.reciboId == ant.AnticipoId).Select(x => new { id = x.id, deposito = x.depositoUrl }).ToList(),
                         Anticipo = true,
                         NombreAsesor = "",
                         Asesor = ant.CodigoAsesor,
