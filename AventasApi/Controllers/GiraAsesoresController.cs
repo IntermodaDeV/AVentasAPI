@@ -1,6 +1,7 @@
 ﻿using AventasApi.Models.ViewModels;
 using DBData.Database;
 using ExternalApiData.Enviroments;
+using OfficeOpenXml;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -436,65 +437,147 @@ namespace AventasApi.Controllers
         {
             dateFin = dateFin.AddHours(23);
             dateFin = dateFin.AddMinutes(59);
+            
+             try
+             {
+                 using (var ctx = new AVentasEntities())
+                 {
 
-            try
-            {
-                using (var ctx = new AVentasEntities())
-                {
+                     var pendientes = await ctx.GastosViajeDetalle
+                         .Join(ctx.CategoriaTipoGastoViaje,
+                             gasto => gasto.IdCategoriaTipoGastoViaje,
+                             categoria => categoria.IdCategoriaTipoGastoViaje,
+                             (gasto, categoria) => new { Gasto = gasto, Categoria = categoria })
+                         .Join(ctx.TipoGastoViaje,
+                             gastocategoria => gastocategoria.Categoria.IdTipoGastoViaje,
+                             tipo => tipo.IdTipoGastoViaje,
+                             (gastocategoria, tipo) => new { GastoCategoria = gastocategoria, Tipo = tipo }
+                         )
+                         .Join(ctx.Estado,
+                             gastoEstado => gastoEstado.GastoCategoria.Gasto.IdEstado,
+                             estado => estado.IdEstado,
+                             (gastoEstado, Estado) => new { GastoEstado = gastoEstado, Estado = Estado }
+                             )
+                         .Where(x => x.GastoEstado.GastoCategoria.Gasto.UsuarioAsesor == usuario &&
+                           x.GastoEstado.GastoCategoria.Gasto.FechaFactura <= dateFin &&
+                         x.GastoEstado.GastoCategoria.Gasto.FechaFactura >= dateIni
+                         && x.GastoEstado.GastoCategoria.Gasto.IdEstado != 1)
+                         .Select(x => new HistorialGastosViewModel
+                         {
+                             IdGastoViajeDetalle = x.GastoEstado.GastoCategoria.Gasto.IdGastoViajeDetalle,
+                             tipo = x.GastoEstado.Tipo.Nombre,
+                             categoria = x.GastoEstado.GastoCategoria.Categoria.Nombre,
+                             UsuarioAsesor = x.GastoEstado.GastoCategoria.Gasto.UsuarioAsesor,
+                             NoFactura = x.GastoEstado.GastoCategoria.Gasto.NoFactura,
+                             Descripcion = x.GastoEstado.GastoCategoria.Gasto.Descripcion,
+                             DescripcionAdmin = x.GastoEstado.GastoCategoria.Gasto.DescripcionAdmin,
+                             importeExento = x.GastoEstado.GastoCategoria.Gasto.importeExento != null ? x.GastoEstado.GastoCategoria.Gasto.importeExento : 0,
+                             importeGravado = x.GastoEstado.GastoCategoria.Gasto.importeGravado != null ? x.GastoEstado.GastoCategoria.Gasto.importeGravado : 0,
+                             ValorFactura = x.GastoEstado.GastoCategoria.Gasto.ValorFactura,
+                             FechaFactura = x.GastoEstado.GastoCategoria.Gasto.FechaFactura,
+                             FechaCreacion = x.GastoEstado.GastoCategoria.Gasto.FechaCreacion,
+                             Estado = x.Estado.Nombre,
+                             serie = x.GastoEstado.GastoCategoria.Gasto.serie,
 
-                    var pendientes = await ctx.GastosViajeDetalle
-                        .Join(ctx.CategoriaTipoGastoViaje,
-                            gasto => gasto.IdCategoriaTipoGastoViaje,
-                            categoria => categoria.IdCategoriaTipoGastoViaje,
-                            (gasto, categoria) => new { Gasto = gasto, Categoria = categoria })
-                        .Join(ctx.TipoGastoViaje,
-                            gastocategoria => gastocategoria.Categoria.IdTipoGastoViaje,
-                            tipo => tipo.IdTipoGastoViaje,
-                            (gastocategoria, tipo) => new { GastoCategoria = gastocategoria, Tipo = tipo }
-                        )
-                        .Join(ctx.Estado,
-                            gastoEstado => gastoEstado.GastoCategoria.Gasto.IdEstado,
-                            estado => estado.IdEstado,
-                            (gastoEstado, Estado) => new { GastoEstado = gastoEstado, Estado = Estado }
-                            )
-                        .Where(x => x.GastoEstado.GastoCategoria.Gasto.UsuarioAsesor == usuario &&
-                          x.GastoEstado.GastoCategoria.Gasto.FechaCreacion <= dateFin &&
-                        x.GastoEstado.GastoCategoria.Gasto.FechaCreacion >= dateIni
-                        && x.GastoEstado.GastoCategoria.Gasto.IdEstado != 1)
-                        .Select(x => new HistorialGastosViewModel
-                        {
-                            IdGastoViajeDetalle = x.GastoEstado.GastoCategoria.Gasto.IdGastoViajeDetalle,
-                            tipo = x.GastoEstado.Tipo.Nombre,
-                            categoria = x.GastoEstado.GastoCategoria.Categoria.Nombre,
-                            UsuarioAsesor = x.GastoEstado.GastoCategoria.Gasto.UsuarioAsesor,
-                            NoFactura = x.GastoEstado.GastoCategoria.Gasto.NoFactura,
-                            Descripcion = x.GastoEstado.GastoCategoria.Gasto.Descripcion,
-                            DescripcionAdmin = x.GastoEstado.GastoCategoria.Gasto.DescripcionAdmin,
-                            importeExento = x.GastoEstado.GastoCategoria.Gasto.importeExento != null ? x.GastoEstado.GastoCategoria.Gasto.importeExento : 0,
-                            importeGravado = x.GastoEstado.GastoCategoria.Gasto.importeGravado != null ? x.GastoEstado.GastoCategoria.Gasto.importeGravado : 0,
-                            ValorFactura = x.GastoEstado.GastoCategoria.Gasto.ValorFactura,
-                            FechaFactura = x.GastoEstado.GastoCategoria.Gasto.FechaFactura,
-                            FechaCreacion = x.GastoEstado.GastoCategoria.Gasto.FechaCreacion,
-                            Estado = x.Estado.Nombre,
-                            serie = x.GastoEstado.GastoCategoria.Gasto.serie,
-
-                        }).ToListAsync();
+                         }).ToListAsync();
 
 
-                    return Ok(pendientes);
-                }
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.ToString());
-            }
+                     return Ok(pendientes);
+                 }
+             }
+             catch (Exception e)
+             {
+                 return BadRequest(e.ToString());
+             }
         }
 
         [HttpGet]
         [Route("GastosPDF/{usuario}/{dateIni}/{dateFin}/{tipoGasto}")]
-        public async Task<IHttpActionResult> ObtenerGastosExcel(string usuario, DateTime dateIni, DateTime dateFin, int tipoGasto)
+        public async Task<bool> ObtenerGastosExcel(string usuario, DateTime dateIni, DateTime dateFin, int tipoGasto)
         {
             dateFin = dateFin.AddHours(23);
+            dateFin = dateFin.AddMinutes(59);
+            var historico = new List<HistoricoViewModel>();
+            string nombreAsesor = "";
+            string empresa = "";
+            string Tipo = "";
+
+            //obtener los registros
+            using (var ctx = new AVentasEntities())
+            {
+
+                historico = await ctx.GastosViajeDetalle
+                    .Join(ctx.CategoriaTipoGastoViaje,
+                            gasto => gasto.IdCategoriaTipoGastoViaje,
+                            categoria => categoria.IdCategoriaTipoGastoViaje,
+                            (gasto, categoria) => new { Gasto = gasto, Categoria = categoria })
+                   .Where(x => x.Gasto.UsuarioAsesor == usuario && x.Gasto.FechaFactura >= dateIni && x.Gasto.FechaFactura <= dateFin && x.Categoria.IdTipoGastoViaje == tipoGasto)
+                   .Select(x => new HistoricoViewModel
+                   {
+                       FechaFactura = x.Gasto.FechaFactura,
+                       Proveedor = x.Gasto.Proveedor,
+                       NoFactura = x.Gasto.NoFactura,
+                       Descripcion = x.Gasto.Descripcion,
+                       ValorFactura = x.Gasto.ValorFactura
+                   }).ToListAsync();
+
+                nombreAsesor = ctx.Usuarios.FirstOrDefault(x => x.usuario == usuario).nombre;
+                empresa = ctx.Usuarios.FirstOrDefault(x => x.usuario == usuario).EmpresaId;
+
+                Tipo =  ctx.TipoGastoViaje.FirstOrDefault(x => x.IdTipoGastoViaje == tipoGasto).Nombre;
+                //obtener el nombre del proveedor
+
+            }
+
+            try
+            {
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                using (ExcelPackage package = new ExcelPackage(@"\\10.100.2.17\Gira Asesores\Plantilla\" + empresa + @".xlsx"))
+                {
+
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                    //Nombre completo del asesor
+
+                    worksheet.Cells[6, 3].Value = nombreAsesor;
+                    worksheet.Cells[7, 3].Value = dateIni;
+                    worksheet.Cells[8, 3].Value = dateFin;
+
+                    for (int i = 11; i < (historico.Count() + 11); i++)
+                    {
+                        var client = new RestClient();
+                        var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}proveedores/NombreProveedor/{historico[i - 11].Proveedor}/{empresa}");
+                        var respuesta = client.Execute(request);
+
+                        worksheet.Cells[i, 2].Value = historico[i - 11].FechaFactura;
+                        worksheet.Cells[i, 3].Value = respuesta.Content.Replace("\"", "");
+                        worksheet.Cells[i, 4].Value = historico[i - 11].NoFactura;
+                        worksheet.Cells[i, 5].Value = historico[i - 11].Descripcion;
+                        worksheet.Cells[i, 6].Value = historico[i - 11].ValorFactura;
+                    }
+
+
+
+                    string date1 = dateIni.Year + "-" + dateIni.Month + "-" + dateIni.Day;
+                    string date2 = dateFin.Year + "-" + dateFin.Month + "-" + dateFin.Day;
+
+
+                    package.SaveAs(@"\\10.100.2.17\Gira Asesores\" + empresa + @"\"+Tipo + " " + usuario + " " + date1 + " a " + date2 + ".xlsx");
+
+                }
+
+                return (true);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            
+
+            //aqui
+            /*dateFin = dateFin.AddHours(23);
             dateFin = dateFin.AddMinutes(59);
 
             try
@@ -539,7 +622,7 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.ToString());
-            }
+            }*/
         }
 
         [HttpGet]
@@ -830,7 +913,7 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
-
+        
         [HttpGet]
         [Route("GrupoImpuesto/{empresa}")]
         public async Task<IHttpActionResult> obtenerGrupoImpuestosEmpresa(string empresa)
