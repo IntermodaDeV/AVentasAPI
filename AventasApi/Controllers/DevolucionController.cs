@@ -579,7 +579,7 @@ namespace AventasApi.Controllers
 
         [HttpPost]
         [Route("completa")]
-        public async Task<IHttpActionResult> PostDevolucion([FromBody]DevolucionPostModel devolucion)
+        public IHttpActionResult PostDevolucion([FromBody]DevolucionPostModel devolucion)
         {
             try
             {
@@ -597,12 +597,12 @@ namespace AventasApi.Controllers
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
-                    Clientes cliente = await ctx.Clientes.FindAsync(devolucion.CodigoCliente);
-                    var PendienteAprobacion = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToListAsync();
-                    var usuariosCorreo = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToListAsync();
-                    var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null && usuariosCorreo.Contains(x.Id)).Select(x => x.Correo).ToListAsync();
-                    var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devolucion.MotivoDevolucionDetalle);
+                    Usuarios usuario = ctx.Usuarios.Find(user.Id);
+                    Clientes cliente = ctx.Clientes.Find(devolucion.CodigoCliente);
+                    var PendienteAprobacion = ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToList();
+                    var usuariosCorreo = ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToList();
+                    var correos = ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null && usuariosCorreo.Contains(x.Id)).Select(x => x.Correo).ToList();
+                    var motivoDetalle = ctx.MotivosDevolucionDetalle.Find(devolucion.MotivoDevolucionDetalle);
 
                     var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
                     int minutosValue = 2;
@@ -621,7 +621,7 @@ namespace AventasApi.Controllers
                     var fechaDesde = DateTime.Now.AddMinutes(Convert.ToDouble(minutosValue * -1));
                     var totalUnidades = devolucion.DetalleDevolucion.Sum(x => decimal.Parse(x.Cantidad.ToString()));
                     var totalPedido = devolucion.SubTotal;
-                    var ubicacion = await ctx.UbicacionesXAlmacen.FirstOrDefaultAsync(x => x.MaestroBodegaAlmacenes.Almacen == devolucion.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == devolucion.Empresa && x.ActivoDevolucion == true);
+                    var ubicacion = ctx.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == devolucion.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == devolucion.Empresa && x.ActivoDevolucion == true);
                     
                     found = ctx.Devolucion.FirstOrDefault(x => (x.FechaCrea >= fechaDesde && x.FechaCrea <= DateTime.Now)
                                                                 && x.CodigoCliente == devolucion.CodigoCliente
@@ -693,7 +693,7 @@ namespace AventasApi.Controllers
                                     Visible = false,
                                 };
                                 ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
-                                var result = await ctx.SaveChangesAsync();
+                                var result = ctx.SaveChanges();
                             }
                         }
 
@@ -703,7 +703,7 @@ namespace AventasApi.Controllers
                         }
 
 
-                        _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion} ", correos);
+                        //_ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion} ", correos);
                     }
 
                     return Ok(devolucion.Correlativo);
@@ -717,7 +717,7 @@ namespace AventasApi.Controllers
 
         [HttpPost]
         [Route("parcial")]
-        public async Task<IHttpActionResult> PostDevolucionParcial([FromBody] List<DevolucionPostModel> devoluciones)
+        public IHttpActionResult PostDevolucionParcial([FromBody] List<DevolucionPostModel> devoluciones)
         {
             try
             {
@@ -735,11 +735,11 @@ namespace AventasApi.Controllers
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    Usuarios usuario = await ctx.Usuarios.FindAsync(user.Id);
-                    Clientes cliente = await ctx.Clientes.FindAsync(devoluciones[0].CodigoCliente);
+                    Usuarios usuario =  ctx.Usuarios.Find(user.Id);
+                    Clientes cliente =  ctx.Clientes.Find(devoluciones[0].CodigoCliente);
                     List<Object> nuevasDevoluciones = new List<Object>();
 
-                    var motivoDetalle = await ctx.MotivosDevolucionDetalle.FindAsync(devoluciones[0].MotivoDevolucionDetalle);
+                    var motivoDetalle = ctx.MotivosDevolucionDetalle.Find(devoluciones[0].MotivoDevolucionDetalle);
                     var empresa = devoluciones[0].Empresa;
                     var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
                     int minutosValue = 2;
@@ -758,15 +758,15 @@ namespace AventasApi.Controllers
 
                     foreach (DevolucionPostModel devolucion in devoluciones)
                     {
-                        var usuariosCorreo = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToListAsync();
-                        var correos = await ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null && usuariosCorreo.Contains(x.Id)).Select(x => x.Correo).ToListAsync();
-                        var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == usuario.EmpresaId);
-                        var PendienteAprobacion = await ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToListAsync();
+                        var usuariosCorreo =  ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToList();
+                        var correos =  ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null && usuariosCorreo.Contains(x.Id)).Select(x => x.Correo).ToList();
+                        var asesor =  ctx.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == usuario.EmpresaId);
+                        var PendienteAprobacion =  ctx.MotivosDevConAprobacion.Where(x => x.IdMotivoDevolucion == devolucion.MotivoDevolucion && x.Estado == true).ToList();
                         Devolucion found = null;
                         var fechaDesde = DateTime.Now.AddMinutes(Convert.ToDouble(minutosValue * -1));
                         var totalUnidades = devolucion.DetalleDevolucion.Sum(x => decimal.Parse(x.Cantidad.ToString()));
                         var totalPedido = devolucion.SubTotal;
-                        var ubicacion = await ctx.UbicacionesXAlmacen.FirstOrDefaultAsync(x => x.MaestroBodegaAlmacenes.Almacen == devolucion.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == devolucion.Empresa && x.ActivoDevolucion == true);
+                        var ubicacion =  ctx.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == devolucion.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == devolucion.Empresa && x.ActivoDevolucion == true);
 
                         found = ctx.Devolucion.FirstOrDefault(x => (x.FechaCrea >= fechaDesde && x.FechaCrea <= DateTime.Now)
                                                                     && x.CodigoCliente == devolucion.CodigoCliente
@@ -834,7 +834,7 @@ namespace AventasApi.Controllers
                                         Visible = false
                                     };
                                     ctx.AprobacionDevoluciones.Add(aprobacionDevoluciones);
-                                    var result = await ctx.SaveChangesAsync();
+                                    var result =  ctx.SaveChanges();
                                 }
 
 
@@ -844,7 +844,7 @@ namespace AventasApi.Controllers
                                 }
                             }
 
-                            _ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion}", correos);
+                            //_ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion}", correos);
                         }
 
                         nuevasDevoluciones.Add(new { referencia = devolucion.Correlativo, factura = devolucion.FacturaOriginal });
@@ -860,21 +860,21 @@ namespace AventasApi.Controllers
             }
         }
 
-        private async void ReducirPendienteDevolucion(Devolucion pedido)
+        private void ReducirPendienteDevolucion(Devolucion pedido)
         {
             using (var ctx = new AVentasEntities())
             {
                 var lineasPedido = pedido.DevolucionDetalle;
-                var PedidoOriginal = await ctx.PedidosxCliente.FirstOrDefaultAsync(x => x.NumeroPedido == pedido.PedidoOrigen && x.EmpresaId == pedido.EmpresaId);
+                var PedidoOriginal =  ctx.PedidosxCliente.FirstOrDefault(x => x.NumeroPedido == pedido.PedidoOrigen && x.EmpresaId == pedido.EmpresaId);
 
                 if (PedidoOriginal != null)
                 {
                     foreach (var linea in lineasPedido)
                     {
                         var talla = linea.CodigoTalla.ToUpper();
-                        var fisico = await ctx.PedidosDetalle.FirstOrDefaultAsync(x => x.PedidoId==PedidoOriginal.PedidoId && x.CodigoColor==linea.CodigoColor && x.CodigoTalla.ToUpper() == talla && x.IdProducto==linea.IdProducto);
+                        var fisico =  ctx.PedidosDetalle.FirstOrDefault(x => x.PedidoId==PedidoOriginal.PedidoId && x.CodigoColor==linea.CodigoColor && x.CodigoTalla.ToUpper() == talla && x.IdProducto==linea.IdProducto);
                         fisico.CantidadDevolucion = fisico.CantidadDevolucion - linea.Cantidad;
-                        await ctx.SaveChangesAsync();
+                         ctx.SaveChanges();
                     }
                 }
             }

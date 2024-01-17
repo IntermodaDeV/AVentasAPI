@@ -493,7 +493,7 @@ namespace AventasApi.Controllers
                         if (Detalle.SubFacturasxCliente.EmpresaId.ToUpper() == "IMGT")
                         {
                             var banco = Banco != null ? Banco.NombreBanco : "";
-                            Recibos.DESCRIPCION = $"{Recibo.NumeroRecibo} {Recibo.Referencia} {banco} {Recibo.Fecha.Value.ToString("dd/MM/yyyy")} {Detalle.SubFacturasxCliente.CodigoCliente}";
+                            Recibos.DESCRIPCION = $"{Recibo.NumeroRecibo} {Recibo.Referencia} {banco} {Recibos.FECHA_PAGO} {Detalle.SubFacturasxCliente.CodigoCliente}";
                         }
 
                         ReciboSincronizar.Add(Recibos);
@@ -835,7 +835,7 @@ namespace AventasApi.Controllers
                         if (asesor.EmpresaId.ToUpper() == "IMGT")
                         {
                             var banco = bank != null ? bank.NombreBanco : "";
-                            anticipoAX.DESCRIPCION = $"{anticipoPost.NumeroRecibo} {pago.Referencia} {banco} {anticipoAX.FECHA} {anticipoPost.CodigoCliente}";
+                            anticipoAX.DESCRIPCION = $"{anticipoPost.NumeroRecibo} {pago.Referencia} {banco} {anticipoAX.FECHA_PAGO} {anticipoPost.CodigoCliente}";
                         }
 
                         recibos.Add(anticipoAX);
@@ -1109,11 +1109,19 @@ namespace AventasApi.Controllers
                                             if (descuentoDetalle != null)
                                             {
                                                 int sumaDias = (descuentoDetalle.DiasDescuento ?? 0) + cliente.DiasTransporte;
+                                                var diasTranscurridos = (new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day) - FechaFact).TotalDays;
                                                 var FechaMaxDescuento = FechaFact.AddDays(sumaDias);
                                                 if ((FechaMaxDescuento >= reciboPost.FechaPago) || subfactura.FacturasxCliente.ExcepcionDescuento)
                                                 {
                                                     var documentosAplicadosFactura = TotalDocumentosAplicados(Factura.Factura, Factura.CodigoCliente);
                                                     var valorFact = subfactura.FacturasxCliente.TotalFactura.Value - documentosAplicadosFactura - subfactura.Flete.Value;
+
+                                                    if (diasTranscurridos > 60 && cliente.EmpresaId.ToUpper() == "IMGT")
+                                                    {
+                                                        var porcentajeDeduccion = 1.12;
+                                                        valorFact = valorFact / (decimal)porcentajeDeduccion;
+                                                    }
+
                                                     Descuento = descuentoDetalle != null ? Math.Round(Decimal.ToDouble(valorFact) * Decimal.ToDouble(descuentoDetalle.Porcentaje.Value / 100), 2, MidpointRounding.AwayFromZero) : 0;
                                                     valorCuota = Decimal.ToDouble(subfactura.Saldo.Value) - Descuento;
                                                     aplicaDescuento = true;
@@ -1203,7 +1211,7 @@ namespace AventasApi.Controllers
                                     if (subfactura.EmpresaId.ToUpper() == "IMGT")
                                     {
                                         var banco = bank != null ? bank.NombreBanco : "";
-                                        recibo.DESCRIPCION = $"{reciboPost.NumeroRecibo} {pago.Referencia} {banco} {recibo.FECHA} {subfactura.CodigoCliente}";
+                                        recibo.DESCRIPCION = $"{reciboPost.NumeroRecibo} {pago.Referencia} {banco} {recibo.FECHA_PAGO} {subfactura.CodigoCliente}";
                                     }
 
                                     recibosXPago.Add(recibo);

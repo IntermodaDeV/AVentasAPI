@@ -395,11 +395,19 @@ namespace AventasApi.Controllers
                                             if (descuentoDetalle != null)
                                             {
                                                 int sumaDias = (descuentoDetalle.DiasDescuento ?? 0) + cliente.DiasTransporte;
+                                                var diasTranscurridos = (new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day) - FechaFact).TotalDays;
                                                 var FechaMaxDescuento = FechaFact.AddDays(sumaDias);
                                                 if ((FechaMaxDescuento >= proformaPost.FechaPago) || subfactura.FacturasxCliente.ExcepcionDescuento)
                                                 {
                                                     var documentosAplicadosFactura = TotalDocumentosAplicados(Factura.Factura, Factura.CodigoCliente);
                                                     var valorFact = subfactura.FacturasxCliente.TotalFactura.Value - documentosAplicadosFactura - subfactura.Flete.Value;
+
+                                                    if (diasTranscurridos > 60 && cliente.EmpresaId.ToUpper() == "IMGT")
+                                                    {
+                                                        var porcentajeDeduccion = 1.12;
+                                                        valorFact = valorFact / (decimal)porcentajeDeduccion;
+                                                    }
+
                                                     Descuento = descuentoDetalle != null ? Math.Round(Decimal.ToDouble(valorFact) * Decimal.ToDouble(descuentoDetalle.Porcentaje.Value / 100), 2, MidpointRounding.AwayFromZero) : 0;
                                                     valorCuota = Decimal.ToDouble(subfactura.Saldo.Value) - Descuento;
                                                     aplicaDescuento = true;
