@@ -125,7 +125,7 @@ namespace AventasApi.Controllers
 
                     var Recibos = context.RecibosxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
-                        depositos = context.DepositoRecibo.Where(x => x.reciboId == rec.ReciboId).Select(x => new {id=x.id,deposito=x.depositoUrl}).ToList(),
+                        depositos = context.DepositoRecibo.Where(x => x.recibo == rec.NumeroRecibo).Select(x => new {id=x.id,deposito=x.depositoUrl}).ToList(),
                         NumeroCopia = context.LogRecibo.Where(x => x.ReciboId == rec.ReciboId).Count() + 1,
                         Anticipo = false,
                         NombreAsesor = "",
@@ -214,7 +214,7 @@ namespace AventasApi.Controllers
 
                     var anticiposXAsesor = context.AnticiposxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(ant => new RecibosxClienteViewModel
                     {
-                        depositos = context.DepositoRecibo.Where(x => x.reciboId == ant.AnticipoId).Select(x => new { id = x.id, deposito = x.depositoUrl }).ToList(),
+                        depositos = context.DepositoRecibo.Where(x => x.recibo == ant.NumeroRecibo).Select(x => new { id = x.id, deposito = x.depositoUrl }).ToList(),
                         Anticipo = true,
                         NombreAsesor = "",
                         Asesor = ant.CodigoAsesor,
@@ -2185,7 +2185,7 @@ namespace AventasApi.Controllers
 
                         File.Move(filePath, destinationPath);
 
-                        ctx.DepositoRecibo.Add(new DepositoRecibo { reciboId = recibo.ReciboId, depositoUrl = fileName });
+                        ctx.DepositoRecibo.Add(new DepositoRecibo { recibo = recibo.NumeroRecibo, depositoUrl = fileName });
                         await ctx.SaveChangesAsync();
                         numeroDeposito++;
                     }
@@ -2213,7 +2213,7 @@ namespace AventasApi.Controllers
                         return NotFound();
                     }
 
-                    var depositos = ctx.DepositoRecibo.Where(x => x.reciboId == recibo.ReciboId).Select(x => new { id=x.id,deposito=x.depositoUrl }).ToList();
+                    var depositos = ctx.DepositoRecibo.Where(x => x.recibo == recibo.NumeroRecibo).Select(x => new { id=x.id,deposito=x.depositoUrl }).ToList();
                     return Ok(depositos);
                 }
             }

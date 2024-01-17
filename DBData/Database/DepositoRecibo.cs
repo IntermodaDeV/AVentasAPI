@@ -15,9 +15,8 @@ namespace DBData.Database
     public partial class DepositoRecibo
     {
         public int id { get; set; }
-        public Nullable<int> reciboId { get; set; }
+        public string recibo { get; set; }
         public string depositoUrl { get; set; }
-    
-        public virtual RecibosxCliente RecibosxCliente { get; set; }
+        public string dpi { get; set; }
     }
 }
