@@ -125,7 +125,7 @@ namespace AventasApi.Controllers
 
                     var Recibos = context.RecibosxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
-                        depositos = context.DepositoRecibo.Where(x => x.recibo == rec.NumeroRecibo).Select(x => new {id=x.id,deposito=x.depositoUrl}).ToList(),
+                        depositos = context.DepositoRecibo.Where(x => x.recibo == rec.NumeroRecibo).Select(x => new {id=x.id,deposito=x.depositoUrl,dpi=x.dpi}).ToList(),
                         NumeroCopia = context.LogRecibo.Where(x => x.ReciboId == rec.ReciboId).Count() + 1,
                         Anticipo = false,
                         NombreAsesor = "",
@@ -214,7 +214,7 @@ namespace AventasApi.Controllers
 
                     var anticiposXAsesor = context.AnticiposxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(ant => new RecibosxClienteViewModel
                     {
-                        depositos = context.DepositoRecibo.Where(x => x.recibo == ant.NumeroRecibo).Select(x => new { id = x.id, deposito = x.depositoUrl }).ToList(),
+                        depositos = context.DepositoRecibo.Where(x => x.recibo == ant.NumeroRecibo).Select(x => new { id = x.id, deposito = x.depositoUrl,dpi=x.dpi }).ToList(),
                         Anticipo = true,
                         NombreAsesor = "",
                         Asesor = ant.CodigoAsesor,
@@ -2156,6 +2156,12 @@ namespace AventasApi.Controllers
                     return NotFound();
                 }
 
+                var anticipo = await ctx.AnticiposxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                if (anticipo == null && recibo == null)
+                {
+                    return NotFound();
+                }
+
                 if (!Request.Content.IsMimeMultipartContent())
                 {
                     throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
@@ -2173,7 +2179,19 @@ namespace AventasApi.Controllers
                 try
                 {
                     await Request.Content.ReadAsMultipartAsync(provider);
-                    int numeroDeposito = 1;
+                    int cantidadDepositoRecibo = 0;
+
+                    if (recibo != null)
+                    {
+                        cantidadDepositoRecibo = context.DepositoRecibo.Where(x => x.recibo == recibo.NumeroRecibo).ToList().Count();
+                    }
+
+                    if (anticipo != null)
+                    {
+                        cantidadDepositoRecibo = context.DepositoRecibo.Where(x => x.recibo == anticipo.NumeroRecibo).ToList().Count();
+                    }
+
+                    int numeroDeposito = cantidadDepositoRecibo + 1;
                     foreach (var file in provider.FileData)
                     {
                         string filePath = file.LocalFileName;
@@ -2201,19 +2219,13 @@ namespace AventasApi.Controllers
 
         [HttpGet]
         [Route("~/api/recibo/comprobantes/{numero}")]
-        public async Task<IHttpActionResult> ObtenerComprobantes(string numero)
+        public IHttpActionResult ObtenerComprobantes(string numero)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var recibo = await ctx.RecibosxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
-                    if (recibo == null)
-                    {
-                        return NotFound();
-                    }
-
-                    var depositos = ctx.DepositoRecibo.Where(x => x.recibo == recibo.NumeroRecibo).Select(x => new { id=x.id,deposito=x.depositoUrl }).ToList();
+                    var depositos = ctx.DepositoRecibo.Where(x => x.recibo.ToUpper() == numero.ToUpper()).Select(x => new { id=x.id,deposito=x.depositoUrl,dpi=x.dpi ?? "" }).ToList();
                     return Ok(depositos);
                 }
             }
@@ -2222,7 +2234,32 @@ namespace AventasApi.Controllers
                 return InternalServerError(ex);
             }
         }
-        
+
+        [HttpPost]
+        [Route("~/api/recibo/comprobante/dpi/{id}")]
+        public IHttpActionResult ActualizarDpi(int id,[FromBody] NuevoDpi nuevoDpi)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var deposito = ctx.DepositoRecibo.Find(id);
+                    if (deposito == null)
+                    {
+                        return NotFound();
+                    }
+
+                    deposito.dpi = nuevoDpi.dpi;
+                    ctx.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
 
         private RecibosxCliente GenerarRecibo(RecibosxClienteFlotante reciboFlotante, string numeroReferencia,Asesores asesor)
         {
@@ -2428,6 +2465,11 @@ namespace AventasApi.Controllers
             Pagos = new List<RespuestaPago>();
             Facturas = new List<RespuestaFactura>();
         }
+    }
+
+    public class NuevoDpi
+    {
+        public string dpi { get; set; }
     }
     public class RespuestaFactura
     {
