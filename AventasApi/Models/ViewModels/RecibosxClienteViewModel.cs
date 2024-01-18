@@ -51,5 +51,6 @@ namespace AventasApi.Models.ViewModels
         public int NumeroCopia { get; internal set; }
         public string EmpresaUsuario { get; set; }
         public object depositos { get; set; }
+        public bool anulado { get; set; }
     }
 }

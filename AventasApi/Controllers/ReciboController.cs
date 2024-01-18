@@ -145,6 +145,7 @@ namespace AventasApi.Controllers
                         Longitude = rec.Longitude,
                         Latitude = rec.Latitude,
                         //firmaByte = rec.firma,
+                        anulado=rec.Anulado,
                         firma = "",
                         locationCliente = new LocationCliente
                         {
