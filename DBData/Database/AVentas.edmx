@@ -78,6 +78,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Longitude" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Origen" Type="varchar" MaxLength="10" />
           <Property Name="firma" Type="varbinary(max)" />
+          <Property Name="Anulado" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="AprobacionDevoluciones">
           <Key>
@@ -11662,6 +11663,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Longitude" Type="Decimal" Precision="18" Scale="15" />
           <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Anulado" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Combustibles">
           <Key>
@@ -14066,6 +14068,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="AnticiposxCliente">
             <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
               <MappingFragment StoreEntitySet="AnticiposxCliente">
+                <ScalarProperty Name="Anulado" ColumnName="Anulado" />
                 <ScalarProperty Name="firma" ColumnName="firma" />
                 <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />

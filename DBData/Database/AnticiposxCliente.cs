@@ -40,5 +40,6 @@ namespace DBData.Database
         public Nullable<decimal> Longitude { get; set; }
         public string Origen { get; set; }
         public byte[] firma { get; set; }
+        public bool Anulado { get; set; }
     }
 }

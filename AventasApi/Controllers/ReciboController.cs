@@ -2270,12 +2270,22 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var reciboAnular = ctx.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
-                    if (reciboAnular == null)
+                    var anticipoAnular = ctx.AnticiposxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                    if (reciboAnular == null && anticipoAnular ==null)
                     {
                         return NotFound();
                     }
 
-                    reciboAnular.Anulado = true;
+                    if (reciboAnular != null)
+                    {
+                        reciboAnular.Anulado = true;
+                    }
+
+                    if (anticipoAnular != null)
+                    {
+                        anticipoAnular.Anulado = true;
+                    }
+
                     ctx.SaveChanges();
                     return Ok();
                 }
