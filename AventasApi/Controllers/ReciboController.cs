@@ -2261,6 +2261,31 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("~/api/recibo/anular/{numero}")]
+        public IHttpActionResult AnularRecibo(string numero)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var reciboAnular = ctx.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                    if (reciboAnular == null)
+                    {
+                        return NotFound();
+                    }
+
+                    reciboAnular.Anulado = true;
+                    ctx.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
 
         private RecibosxCliente GenerarRecibo(RecibosxClienteFlotante reciboFlotante, string numeroReferencia,Asesores asesor)
         {
