@@ -2218,6 +2218,62 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("~/api/recibo/comprobantes/actualizar/{numero}/{id}")]
+        public async Task<IHttpActionResult> CambiarImagenDeposito(string numero,int id)
+        {
+            using (var ctx = new AVentasEntities())
+            {
+                var imagenDeposito = ctx.DepositoRecibo.FirstOrDefault(x => x.id == id);
+                if (imagenDeposito == null)
+                {
+                    return NotFound();
+                }
+                
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                string uploadFolder = HttpContext.Current.Server.MapPath("~/Uploads");
+
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                var provider = new MultipartFormDataStreamProvider(uploadFolder);
+
+                try
+                {
+                    await Request.Content.ReadAsMultipartAsync(provider);
+                    int cantidadDepositoRecibo = context.DepositoRecibo.Where(x => x.recibo.ToUpper() == numero.ToUpper()).ToList().Count(); ;
+
+                    int numeroDeposito = cantidadDepositoRecibo + 1;
+                    foreach (var file in provider.FileData)
+                    {
+                        string filePath = file.LocalFileName;
+
+                        string[] fileParts = file.Headers.ContentDisposition.FileName.Trim('"').Split('.');
+                        string fileName = $"{numero}-{numeroDeposito}.{fileParts[1]}";
+
+                        string destinationPath = Path.Combine(uploadFolder, fileName);
+
+                        File.Move(filePath, destinationPath);
+
+                        imagenDeposito.depositoUrl = fileName;
+                        await ctx.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return InternalServerError(ex);
+                }
+            }
+        }
+
         [HttpGet]
         [Route("~/api/recibo/comprobantes/{numero}")]
         public IHttpActionResult ObtenerComprobantes(string numero)
