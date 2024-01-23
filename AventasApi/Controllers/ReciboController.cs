@@ -2352,6 +2352,41 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("~/api/recibo/sindepoosito/{asesor}")]
+        public IHttpActionResult ExisteReciboSinDeposito(string asesor)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var asesorBd = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor.ToUpper() == asesor.ToUpper());
+                    if (asesorBd == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var fechaAnterior = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day).AddDays(-1);
+                    var fechaActual = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+                    var recibos = ctx.RecibosxCliente.Where(x => x.Fecha >= fechaAnterior && x.Fecha < fechaActual && x.CodigoAsesor.ToUpper()==asesor.ToUpper()).Select(x => x.NumeroRecibo).ToList();
+                    foreach(var recibo in recibos)
+                    {
+                        var cantidadDeposito = ctx.DepositoRecibo.Where(x => x.recibo.ToUpper() == recibo.ToUpper()).Count();
+                        if (cantidadDeposito == 0)
+                        {
+                            return Ok(new { sindepositos=true});
+                        }
+                    }
+
+                    return Ok(new { sindepositos = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
 
         private RecibosxCliente GenerarRecibo(RecibosxClienteFlotante reciboFlotante, string numeroReferencia,Asesores asesor)
         {
