@@ -553,5 +553,18 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerFacturasFletes_Result>("IMObtenerFacturasFletes", codigoClienteParameter);
         }
+    
+        public virtual ObjectResult<IMObtenerProductosColeccionConInventario_Result> IMObtenerProductosColeccionConInventario(string empresa, string coleccion)
+        {
+            var empresaParameter = empresa != null ?
+                new ObjectParameter("empresa", empresa) :
+                new ObjectParameter("empresa", typeof(string));
+    
+            var coleccionParameter = coleccion != null ?
+                new ObjectParameter("coleccion", coleccion) :
+                new ObjectParameter("coleccion", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerProductosColeccionConInventario_Result>("IMObtenerProductosColeccionConInventario", empresaParameter, coleccionParameter);
+        }
     }
 }

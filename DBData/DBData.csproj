@@ -288,6 +288,9 @@
     <Compile Include="Database\IMObtenerFacturasFletes_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\IMObtenerProductosColeccionConInventario_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\LimiteCreditoxCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
