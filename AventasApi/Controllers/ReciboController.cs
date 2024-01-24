@@ -237,6 +237,7 @@ namespace AventasApi.Controllers
                         Descuento = 0,
                         //firmaByte = ant.firma,
                         firma = "",
+                        anulado=ant.Anulado,
                         Cliente = context.Clientes.Where(cli => cli.CodigoCliente == ant.CodigoCliente).Select(cli => new ClienteViewModel
                         {
                             Codigo = cli.CodigoCliente,
