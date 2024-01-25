@@ -414,6 +414,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="recibo" Type="varchar" MaxLength="250" />
           <Property Name="depositoUrl" Type="varchar(max)" />
           <Property Name="dpi" Type="varchar" MaxLength="250" />
+          <Property Name="FechaCreacion" Type="datetime" />
+          <Property Name="FechaModificacion" Type="datetime" />
         </EntityType>
         <EntityType Name="Descuento">
           <Key>
@@ -11899,6 +11901,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="recibo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="depositoUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="dpi" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
         </EntityType>
         <ComplexType Name="IMObtenerProductosColeccionConInventario_Result">
           <Property Type="Int32" Name="Producto" Nullable="false" />
@@ -14258,6 +14262,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="DepositoRecibo">
             <EntityTypeMapping TypeName="AventasModel.DepositoRecibo">
               <MappingFragment StoreEntitySet="DepositoRecibo">
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
                 <ScalarProperty Name="dpi" ColumnName="dpi" />
                 <ScalarProperty Name="depositoUrl" ColumnName="depositoUrl" />
                 <ScalarProperty Name="recibo" ColumnName="recibo" />

@@ -18,5 +18,7 @@ namespace DBData.Database
         public string recibo { get; set; }
         public string depositoUrl { get; set; }
         public string dpi { get; set; }
+        public Nullable<System.DateTime> FechaCreacion { get; set; }
+        public Nullable<System.DateTime> FechaModificacion { get; set; }
     }
 }

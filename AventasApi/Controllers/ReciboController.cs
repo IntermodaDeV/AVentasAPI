@@ -125,7 +125,7 @@ namespace AventasApi.Controllers
 
                     var Recibos = context.RecibosxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
-                        depositos = context.DepositoRecibo.Where(x => x.recibo == rec.NumeroRecibo).Select(x => new {id=x.id,deposito=x.depositoUrl,dpi=x.dpi}).ToList(),
+                        depositos = context.DepositoRecibo.Where(x => x.recibo == rec.NumeroRecibo).Select(x => new {id=x.id,deposito=x.depositoUrl,dpi=x.dpi,fecha=x.FechaModificacion}).ToList(),
                         NumeroCopia = context.LogRecibo.Where(x => x.ReciboId == rec.ReciboId).Count() + 1,
                         Anticipo = false,
                         NombreAsesor = "",
@@ -2205,7 +2205,7 @@ namespace AventasApi.Controllers
 
                         File.Move(filePath, destinationPath);
 
-                        ctx.DepositoRecibo.Add(new DepositoRecibo { recibo = recibo.NumeroRecibo, depositoUrl = fileName });
+                        ctx.DepositoRecibo.Add(new DepositoRecibo { recibo = recibo.NumeroRecibo, depositoUrl = fileName,FechaCreacion=DateTime.Now,FechaModificacion=DateTime.Now });
                         await ctx.SaveChangesAsync();
                         numeroDeposito++;
                     }
@@ -2263,6 +2263,7 @@ namespace AventasApi.Controllers
                         File.Move(filePath, destinationPath);
 
                         imagenDeposito.depositoUrl = fileName;
+                        imagenDeposito.FechaModificacion = DateTime.Now;
                         await ctx.SaveChangesAsync();
                     }
 
