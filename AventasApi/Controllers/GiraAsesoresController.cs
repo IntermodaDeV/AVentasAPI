@@ -2,6 +2,7 @@
 using DBData.Database;
 using ExternalApiData.Enviroments;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -493,7 +495,7 @@ namespace AventasApi.Controllers
 
         [HttpGet]
         [Route("GastosPDF/{usuario}/{dateIni}/{dateFin}/{tipoGasto}")]
-        public async Task<bool> ObtenerGastosExcel(string usuario, DateTime dateIni, DateTime dateFin, int tipoGasto)
+        public async Task<IHttpActionResult> ObtenerGastosExcel(string usuario, DateTime dateIni, DateTime dateFin, int tipoGasto)
         {
             dateFin = dateFin.AddHours(23);
             dateFin = dateFin.AddMinutes(59);
@@ -532,17 +534,93 @@ namespace AventasApi.Controllers
             try
             {
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-                using (ExcelPackage package = new ExcelPackage(@"\\10.100.2.17\Gira Asesores\Plantilla\" + empresa + @".xlsx"))
+                var stream = new MemoryStream();
+                //using (ExcelPackage package = new ExcelPackage(@"\\10.100.2.17\Gira Asesores\Plantilla\" + empresa + @".xlsx"))
+                using (ExcelPackage package = new ExcelPackage(stream))
                 {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Hoja1");                   
+                    
+                    //tamaño de las columnas
+                    worksheet.Column(2).Width = 16;
+                    worksheet.Column(3).Width = 56;
+                    worksheet.Column(4).Width = 20;
+                    worksheet.Column(5).Width = 15;
+                    worksheet.Column(6).Width = 10;
 
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                    // Obtener la ruta del directorio del controlador
+                    string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+                    // Construir la ruta completa de la imagen dentro del directorio del controlador
+                    string imagePath ;
+                    //encabezado
+                    worksheet.Cells["B2:F2"].Merge = true;
+                    switch (empresa)
+                    {
+                        case "IMHN":
+                            worksheet.Cells[2, 2].Value = "INTERMODA S.A DE C.V";
+                            imagePath = Path.Combine(baseDirectory, "Logos", "Logo_IMHN.png");
+                            break;
+                        case "IMGT":
+                            worksheet.Cells[2, 2].Value = "MODINTER";
+                            imagePath = Path.Combine(baseDirectory, "Logos", "Logo_IMGT.jpg");
+                            break;
+                        default:                        
+                            worksheet.Cells[2, 2].Value = "INTERMODA S.A DE C.V";
+                            imagePath = Path.Combine(baseDirectory, "Controllers", "Logos", "Logo_IMHN.png");
+                            break;
+
+                    }
+
+                    //colocar imagen en pantalla
+                    var picture = worksheet.Drawings.AddPicture("Logo", new FileInfo(imagePath));
+                    picture.SetPosition(0, 0, 1, 0);
+
+                    worksheet.Cells[2, 2].Style.Font.Bold = true;
+                    worksheet.Cells["B4:F4"].Merge = true;
+                    worksheet.Cells[4, 2].Value = "Reporte de "+ Tipo;
+                    worksheet.Cells[4, 2].Style.Font.Bold = true;
+
+
+                    using (var range = worksheet.Cells["B2:F4"])
+                    {
+                        range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        range.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    }
+
 
                     //Nombre completo del asesor
-
+                    worksheet.Cells[6, 2].Value = "Nombre Completo";
+                    worksheet.Cells[6, 2].Style.Font.Bold = true;
                     worksheet.Cells[6, 3].Value = nombreAsesor;
+                    worksheet.Cells["C6:F6"].Merge = true;
+
+                    worksheet.Cells[7, 2].Value = "Desde";
+                    worksheet.Cells[7, 2].Style.Font.Bold = true;
                     worksheet.Cells[7, 3].Value = dateIni;
+                    worksheet.Cells[7, 3].Style.Numberformat.Format = "yyyy-mm-dd";
+                    worksheet.Cells["C7:F7"].Merge = true;
+
+                    worksheet.Cells[8, 2].Value = "hasta";
+                    worksheet.Cells[8, 2].Style.Font.Bold = true;
                     worksheet.Cells[8, 3].Value = dateFin;
+                    worksheet.Cells[8, 3].Style.Numberformat.Format = "yyyy-mm-dd";
+                    worksheet.Cells["C8:F8"].Merge = true;
+
+                    //centrar nombre y fechas
+                    using (var range = worksheet.Cells["C6:C8"])
+                    {
+                        range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        range.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    }
+
+
+                    //encabezado de la tabla
+                    worksheet.Cells[10, 2].Value = "Fecha";
+                    worksheet.Cells[10, 3].Value = "Proveedor";
+                    worksheet.Cells[10, 4].Value = "Factura";
+                    worksheet.Cells[10, 5].Value = "Descripcion";
+                    worksheet.Cells[10, 6].Value = "Valor";
 
                     for (int i = 11; i < (historico.Count() + 11); i++)
                     {
@@ -551,27 +629,40 @@ namespace AventasApi.Controllers
                         var respuesta = client.Execute(request);
 
                         worksheet.Cells[i, 2].Value = historico[i - 11].FechaFactura;
+                        worksheet.Cells[i, 2].Style.Numberformat.Format = "yyyy-mm-dd";
+
                         worksheet.Cells[i, 3].Value = respuesta.Content.Replace("\"", "");
                         worksheet.Cells[i, 4].Value = historico[i - 11].NoFactura;
                         worksheet.Cells[i, 5].Value = historico[i - 11].Descripcion;
                         worksheet.Cells[i, 6].Value = historico[i - 11].ValorFactura;
                     }
 
+                    var startCell = worksheet.Cells["B10"];
+                    var endCell = worksheet.Cells[worksheet.Dimension.End.Row, worksheet.Dimension.End.Column];
+                    var table = worksheet.Tables.Add(worksheet.Cells[$"B10:F{historico.Count() + 10}"], "MiTabla");
+
+                    table.TableStyle = OfficeOpenXml.Table.TableStyles.Custom;
 
 
-                    string date1 = dateIni.Year + "-" + dateIni.Month + "-" + dateIni.Day;
-                    string date2 = dateFin.Year + "-" + dateFin.Month + "-" + dateFin.Day;
-
-
-                    package.SaveAs(@"\\10.100.2.17\Gira Asesores\" + empresa + @"\"+Tipo + " " + usuario + " " + date1 + " a " + date2 + ".xlsx");
-
+                    package.Save(); 
                 }
 
-                return (true);
+                string date1 = dateIni.Year + "-" + dateIni.Month + "-" + dateIni.Day;
+                string date2 = dateFin.Year + "-" + dateFin.Month + "-" + dateFin.Day;
+                string nombreArchivo = Tipo + " " + usuario + " " + date1 + " a " + date2 + ".xlsx";
+
+                stream.Position = 0;
+                var content = new StreamContent(stream);
+                var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = content };
+                response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                response.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment") { FileName = nombreArchivo };
+
+                return ResponseMessage(response);
+
             }
             catch (Exception e)
             {
-                return false;
+                return InternalServerError(e);
             }
 
             
