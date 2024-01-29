@@ -2152,11 +2152,7 @@ namespace AventasApi.Controllers
         {
             using (var ctx = new AVentasEntities())
             {
-                var recibo = await ctx.RecibosxCliente.FirstOrDefaultAsync(x=>x.NumeroRecibo.ToUpper() == numero.ToUpper());
-                if(recibo == null)
-                {
-                    return NotFound();
-                }
+                var recibo = await ctx.RecibosxCliente.FirstOrDefaultAsync(x=>x.NumeroRecibo.ToUpper() == numero.ToUpper());      
 
                 var anticipo = await ctx.AnticiposxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
                 if (anticipo == null && recibo == null)
@@ -2199,13 +2195,13 @@ namespace AventasApi.Controllers
                         string filePath = file.LocalFileName;
                         var fechaActual = DateTime.Now.ToString("ddMMyyhhmm");
                         string[] fileParts = file.Headers.ContentDisposition.FileName.Trim('"').Split('.');
-                        string fileName = $"{recibo.NumeroRecibo}-{numeroDeposito}{fechaActual}.{fileParts[fileParts.Length-1]}";
+                        string fileName = $"{numero}-{numeroDeposito}{fechaActual}.{fileParts[fileParts.Length-1]}";
 
                         string destinationPath = Path.Combine(uploadFolder, fileName);
 
                         File.Move(filePath, destinationPath);
 
-                        ctx.DepositoRecibo.Add(new DepositoRecibo { recibo = recibo.NumeroRecibo, depositoUrl = fileName,FechaCreacion=DateTime.Now,FechaModificacion=DateTime.Now });
+                        ctx.DepositoRecibo.Add(new DepositoRecibo { recibo = numero, depositoUrl = fileName,FechaCreacion=DateTime.Now,FechaModificacion=DateTime.Now });
                         await ctx.SaveChangesAsync();
                         numeroDeposito++;
                     }
