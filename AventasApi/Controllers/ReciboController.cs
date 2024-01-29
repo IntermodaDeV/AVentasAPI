@@ -2199,7 +2199,7 @@ namespace AventasApi.Controllers
                         string filePath = file.LocalFileName;
                         var fechaActual = DateTime.Now.ToString("ddMMyyhhmm");
                         string[] fileParts = file.Headers.ContentDisposition.FileName.Trim('"').Split('.');
-                        string fileName = $"{recibo.NumeroRecibo}-{numeroDeposito}{fechaActual}.{fileParts[1]}";
+                        string fileName = $"{recibo.NumeroRecibo}-{numeroDeposito}{fechaActual}.{fileParts[fileParts.Length-1]}";
 
                         string destinationPath = Path.Combine(uploadFolder, fileName);
 
@@ -2256,7 +2256,7 @@ namespace AventasApi.Controllers
                         string filePath = file.LocalFileName;
                         var fechaActual = DateTime.Now.ToString("ddMMyyhhmm");
                         string[] fileParts = file.Headers.ContentDisposition.FileName.Trim('"').Split('.');
-                        string fileName = $"{numero}-{numeroDeposito}{fechaActual}.{fileParts[1]}";
+                        string fileName = $"{numero}-{numeroDeposito}{fechaActual}.{fileParts[fileParts.Length - 1]}";
 
                         string destinationPath = Path.Combine(uploadFolder, fileName);
 
