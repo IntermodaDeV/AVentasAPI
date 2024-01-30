@@ -14,7 +14,10 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using System.Web.Script.Serialization;
 
@@ -122,6 +125,7 @@ namespace AventasApi.Controllers
 
                     var Recibos = context.RecibosxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(rec => new RecibosxClienteViewModel
                     {
+                        depositos = context.DepositoRecibo.Where(x => x.recibo == rec.NumeroRecibo).Select(x => new {id=x.id,deposito=x.depositoUrl,dpi=x.dpi,fecha=x.FechaModificacion}).ToList(),
                         NumeroCopia = context.LogRecibo.Where(x => x.ReciboId == rec.ReciboId).Count() + 1,
                         Anticipo = false,
                         NombreAsesor = "",
@@ -141,6 +145,7 @@ namespace AventasApi.Controllers
                         Longitude = rec.Longitude,
                         Latitude = rec.Latitude,
                         //firmaByte = rec.firma,
+                        anulado=rec.Anulado,
                         firma = "",
                         locationCliente = new LocationCliente
                         {
@@ -210,6 +215,7 @@ namespace AventasApi.Controllers
 
                     var anticiposXAsesor = context.AnticiposxCliente.Where(r => clientes.Contains(r.CodigoCliente) && r.Fecha >= FechaInicio && r.Fecha < FechaFin).Select(ant => new RecibosxClienteViewModel
                     {
+                        depositos = context.DepositoRecibo.Where(x => x.recibo == ant.NumeroRecibo).Select(x => new { id = x.id, deposito = x.depositoUrl,dpi=x.dpi }).ToList(),
                         Anticipo = true,
                         NombreAsesor = "",
                         Asesor = ant.CodigoAsesor,
@@ -231,6 +237,7 @@ namespace AventasApi.Controllers
                         Descuento = 0,
                         //firmaByte = ant.firma,
                         firma = "",
+                        anulado=ant.Anulado,
                         Cliente = context.Clientes.Where(cli => cli.CodigoCliente == ant.CodigoCliente).Select(cli => new ClienteViewModel
                         {
                             Codigo = cli.CodigoCliente,
@@ -2139,6 +2146,246 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("~/api/recibo/comprobantes/{numero}")]
+        public async Task<IHttpActionResult> UploadImage(string numero)
+        {
+            using (var ctx = new AVentasEntities())
+            {
+                var recibo = await ctx.RecibosxCliente.FirstOrDefaultAsync(x=>x.NumeroRecibo.ToUpper() == numero.ToUpper());      
+
+                var anticipo = await ctx.AnticiposxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                if (anticipo == null && recibo == null)
+                {
+                    return NotFound();
+                }
+
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                string uploadFolder = HttpContext.Current.Server.MapPath("~/Uploads");
+
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                var provider = new MultipartFormDataStreamProvider(uploadFolder);
+
+                try
+                {
+                    await Request.Content.ReadAsMultipartAsync(provider);
+                    int cantidadDepositoRecibo = 0;
+
+                    if (recibo != null)
+                    {
+                        cantidadDepositoRecibo = context.DepositoRecibo.Where(x => x.recibo == recibo.NumeroRecibo).ToList().Count();
+                    }
+
+                    if (anticipo != null)
+                    {
+                        cantidadDepositoRecibo = context.DepositoRecibo.Where(x => x.recibo == anticipo.NumeroRecibo).ToList().Count();
+                    }
+
+                    int numeroDeposito = cantidadDepositoRecibo + 1;
+                    foreach (var file in provider.FileData)
+                    {
+                        string filePath = file.LocalFileName;
+                        var fechaActual = DateTime.Now.ToString("ddMMyyhhmm");
+                        string[] fileParts = file.Headers.ContentDisposition.FileName.Trim('"').Split('.');
+                        string fileName = $"{numero}-{numeroDeposito}{fechaActual}.{fileParts[fileParts.Length-1]}";
+
+                        string destinationPath = Path.Combine(uploadFolder, fileName);
+
+                        File.Move(filePath, destinationPath);
+
+                        ctx.DepositoRecibo.Add(new DepositoRecibo { recibo = numero, depositoUrl = fileName,FechaCreacion=DateTime.Now,FechaModificacion=DateTime.Now });
+                        await ctx.SaveChangesAsync();
+                        numeroDeposito++;
+                    }
+
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return InternalServerError(ex);
+                }
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/recibo/comprobantes/actualizar/{numero}/{id}")]
+        public async Task<IHttpActionResult> CambiarImagenDeposito(string numero,int id)
+        {
+            using (var ctx = new AVentasEntities())
+            {
+                var imagenDeposito = ctx.DepositoRecibo.FirstOrDefault(x => x.id == id);
+                if (imagenDeposito == null)
+                {
+                    return NotFound();
+                }
+                
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                string uploadFolder = HttpContext.Current.Server.MapPath("~/Uploads");
+
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                var provider = new MultipartFormDataStreamProvider(uploadFolder);
+
+                try
+                {
+                    await Request.Content.ReadAsMultipartAsync(provider);
+                    int cantidadDepositoRecibo = context.DepositoRecibo.Where(x => x.recibo.ToUpper() == numero.ToUpper()).ToList().Count();
+
+                    int numeroDeposito = cantidadDepositoRecibo + 1;
+                    foreach (var file in provider.FileData)
+                    {
+                        string filePath = file.LocalFileName;
+                        var fechaActual = DateTime.Now.ToString("ddMMyyhhmm");
+                        string[] fileParts = file.Headers.ContentDisposition.FileName.Trim('"').Split('.');
+                        string fileName = $"{numero}-{numeroDeposito}{fechaActual}.{fileParts[fileParts.Length - 1]}";
+
+                        string destinationPath = Path.Combine(uploadFolder, fileName);
+
+                        File.Move(filePath, destinationPath);
+
+                        imagenDeposito.depositoUrl = fileName;
+                        imagenDeposito.FechaModificacion = DateTime.Now;
+                        await ctx.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return InternalServerError(ex);
+                }
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/recibo/comprobantes/{numero}")]
+        public IHttpActionResult ObtenerComprobantes(string numero)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var depositos = ctx.DepositoRecibo.Where(x => x.recibo.ToUpper() == numero.ToUpper()).Select(x => new { id=x.id,deposito=x.depositoUrl,dpi=x.dpi ?? "" }).ToList();
+                    return Ok(depositos);
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/recibo/comprobante/dpi/{id}")]
+        public IHttpActionResult ActualizarDpi(int id,[FromBody] NuevoDpi nuevoDpi)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var deposito = ctx.DepositoRecibo.Find(id);
+                    if (deposito == null)
+                    {
+                        return NotFound();
+                    }
+
+                    deposito.dpi = nuevoDpi.dpi;
+                    ctx.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpDelete]
+        [Route("~/api/recibo/anular/{numero}")]
+        public IHttpActionResult AnularRecibo(string numero)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var reciboAnular = ctx.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                    var anticipoAnular = ctx.AnticiposxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                    if (reciboAnular == null && anticipoAnular ==null)
+                    {
+                        return NotFound();
+                    }
+
+                    if (reciboAnular != null)
+                    {
+                        reciboAnular.Anulado = true;
+                    }
+
+                    if (anticipoAnular != null)
+                    {
+                        anticipoAnular.Anulado = true;
+                    }
+
+                    ctx.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/recibo/sindepoosito/{asesor}")]
+        public IHttpActionResult ExisteReciboSinDeposito(string asesor)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var asesorBd = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor.ToUpper() == asesor.ToUpper());
+                    if (asesorBd == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var fechaAnterior = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day).AddDays(-1);
+                    var fechaActual = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+                    var recibos = ctx.RecibosxCliente.Where(x => x.Fecha >= fechaAnterior && x.Fecha < fechaActual && x.CodigoAsesor.ToUpper()==asesor.ToUpper()).Select(x => x.NumeroRecibo).ToList();
+                    foreach(var recibo in recibos)
+                    {
+                        var cantidadDeposito = ctx.DepositoRecibo.Where(x => x.recibo.ToUpper() == recibo.ToUpper()).Count();
+                        if (cantidadDeposito == 0)
+                        {
+                            return Ok(new { sindepositos=true});
+                        }
+                    }
+
+                    return Ok(new { sindepositos = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
         private RecibosxCliente GenerarRecibo(RecibosxClienteFlotante reciboFlotante, string numeroReferencia,Asesores asesor)
         {
             RecibosxCliente reciboBD = new RecibosxCliente()
@@ -2343,6 +2590,11 @@ namespace AventasApi.Controllers
             Pagos = new List<RespuestaPago>();
             Facturas = new List<RespuestaFactura>();
         }
+    }
+
+    public class NuevoDpi
+    {
+        public string dpi { get; set; }
     }
     public class RespuestaFactura
     {

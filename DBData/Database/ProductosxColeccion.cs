@@ -48,6 +48,7 @@ namespace DBData.Database
         public int Prioridad { get; set; }
         public bool TieneVentaMaxima { get; set; }
         public bool Nuevo { get; set; }
+        public bool PiezaSuelta { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AtributosxProducto> AtributosxProducto { get; set; }

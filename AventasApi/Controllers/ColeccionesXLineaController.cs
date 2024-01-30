@@ -576,6 +576,19 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
+                    var productosConInventario = new List<int>();
+                    var resultStored = ctx.IMObtenerProductosColeccionConInventario(pais, coleccion).ToList();
+                    var paquete = ctx.Colecciones.FirstOrDefault(x => x.CodigoColeccion.ToUpper() == coleccion.ToUpper());
+                    productosConInventario = resultStored.Select(x => x.Producto).ToList();
+
+                    if (paquete != null)
+                    {
+                        if (paquete.ColeccionTipo != "F")
+                        {
+                            productosConInventario = resultStored.Where(x => x.Inventario > 0).Select(x => x.Producto).ToList();
+                        }
+                    }
+
                     string urlImagenes = ctx.Configuraciones.FirstOrDefault(conf => conf.CodigoConfiguracion == "UrlImages")?.Valor ?? "";
                     bool filtarXGrupoPrecio = grupoprecio != null;
                     List<ColeccionViewModel> colecciones = await ctx.Colecciones
@@ -589,7 +602,7 @@ namespace AventasApi.Controllers
                                    IdEdad = me.IdEdad,
                                    Edad = me.MaestroEdad.Edad,
                                    Orden = me.MaestroEdad.Orden,
-                                   ProductosXEdad = ctx.ProductosxColeccion.Where(pxc => pxc.EmpresaId == pais.ToUpper() && pxc.IdColeccion == vw_coleccion.IdColeccion && pxc.IdEdad == me.IdEdad && pxc.IdLinea == me.IdLinea && pxc.VisibleParaVentas == true).Select(pxc => new ProductoXColeccionViewModel
+                                   ProductosXEdad = ctx.ProductosxColeccion.Where(pxc => productosConInventario.Contains(pxc.IdProducto) && pxc.IdEdad == me.IdEdad && pxc.IdLinea == me.IdLinea && pxc.VisibleParaVentas == true).Select(pxc => new ProductoXColeccionViewModel
                                    {
                                        ProductoId = pxc.CodigoProducto,
                                        CodigoColeccion = vw_coleccion.CodigoColeccion,

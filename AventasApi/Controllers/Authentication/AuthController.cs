@@ -106,7 +106,8 @@ namespace AventasApi.Controllers.Authentication
                         }).ToList(),
                         AsesoresUsuario = db.Asesores.Where(a => AsesoresUsuario.Contains(a.CodigoAsesor)).Select(a => new AsesoresUsuarioViewModel
                         { 
-                            Usuario = a.CodigoAsesor
+                            Usuario = a.CodigoAsesor,
+                            Nombre=a.Nombre,
 
                         }).Distinct().ToList(),
                     }).ToList();

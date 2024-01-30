@@ -167,6 +167,7 @@ namespace DBData.Database
         public virtual DbSet<ChequesContabilizados> ChequesContabilizados { get; set; }
         public virtual DbSet<MotivoTiempoFuera> MotivoTiempoFuera { get; set; }
         public virtual DbSet<TiempoFueraAgenda> TiempoFueraAgenda { get; set; }
+        public virtual DbSet<DepositoRecibo> DepositoRecibo { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -551,6 +552,19 @@ namespace DBData.Database
                 new ObjectParameter("CodigoCliente", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerFacturasFletes_Result>("IMObtenerFacturasFletes", codigoClienteParameter);
+        }
+    
+        public virtual ObjectResult<IMObtenerProductosColeccionConInventario_Result> IMObtenerProductosColeccionConInventario(string empresa, string coleccion)
+        {
+            var empresaParameter = empresa != null ?
+                new ObjectParameter("empresa", empresa) :
+                new ObjectParameter("empresa", typeof(string));
+    
+            var coleccionParameter = coleccion != null ?
+                new ObjectParameter("coleccion", coleccion) :
+                new ObjectParameter("coleccion", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerProductosColeccionConInventario_Result>("IMObtenerProductosColeccionConInventario", empresaParameter, coleccionParameter);
         }
     }
 }
