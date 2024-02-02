@@ -295,7 +295,7 @@ namespace AventasApi.Controllers
                         }
                     }*/
 
-                    return Ok(ListaRecibos.OrderByDescending(x=>x.FechaCreacion));
+                    return Ok(ListaRecibos.OrderBy(x=>x.Fecha));
                 }
             }catch(Exception e)
             {
