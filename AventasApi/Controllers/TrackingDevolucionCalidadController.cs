@@ -1,18 +1,14 @@
 ﻿using AventasApi.enums;
 using AventasApi.Models;
-using AventasApi.Models.Authentication;
 using AventasApi.Models.ViewModels;
 using AventasApi.Services.Authentication;
 using DBData.Database;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Windows.Interop;
 
 namespace AventasApi.Controllers
 {
@@ -206,45 +202,11 @@ namespace AventasApi.Controllers
         {
             using (AVentasEntities ctx = new AVentasEntities())
             {
-                var result = 0;
                 try {
                     var oldData = await ctx.Devolucion.FirstAsync(x => x.NumDevolucion == numDevolucion);
                     oldData.EstadoBodega = estadoBodega;
-                    result = await ctx.SaveChangesAsync();
-
-                    var usuarioData = await ctx.Usuarios.FirstOrDefaultAsync(x => x.usuario == oldData.CodigoAsesor);
-
-
-
-                    if (result > 0 && usuarioData.Correo != null)
-                    {
-                        var correoPrincipal = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "CorreoPrincipal").FirstOrDefault();
-                        var usuario = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "UsuarioCorreo").FirstOrDefault();
-                        var password = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "CredencialCorreo").FirstOrDefault();
-                        var port = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "MailPort").FirstOrDefault();
-                        var host = ctx.Configuraciones.Where(x => x.CodigoConfiguracion == "Host").FirstOrDefault();
-                        var estado = Enum.GetName(typeof(EstadoBodega), estadoBodega);
-                                              
-                        MailMessage mail = new MailMessage();
-                        mail.IsBodyHtml = true;
-                        mail.From = new MailAddress(correoPrincipal.Valor, usuario.Valor);
-                        mail.To.Add(new MailAddress(usuarioData.Correo, usuarioData.usuario));
-                        mail.Subject = $"Seguimiento de calidad devolucion {numDevolucion}";
-                        mail.Body = $"<h1>Se cambio es estado de la devolucion {numDevolucion} a {estado.Replace("_", " ")} <h1>";
-
-                        using (SmtpClient smtp = new SmtpClient())
-                        {
-                            smtp.Host = host.Valor;
-                            smtp.Port = Convert.ToInt32(port.Valor);
-                            smtp.EnableSsl = true;
-                            System.Net.NetworkCredential NetworkCred = new System.Net.NetworkCredential();
-                            NetworkCred.UserName = correoPrincipal.Valor;
-                            NetworkCred.Password = password.Valor;
-                            smtp.UseDefaultCredentials = true;
-                            smtp.Credentials = NetworkCred;
-                            smtp.Send(mail);
-                        }
-                   }
+                    var result = await ctx.SaveChangesAsync();
+                    return Ok(result);
                 }
                 catch(Exception e)
                 {
@@ -252,8 +214,6 @@ namespace AventasApi.Controllers
                     return BadRequest(e.ToString());
 
                 }
-
-                return Ok(result);
                
             }
         }
