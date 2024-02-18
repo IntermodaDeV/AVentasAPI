@@ -2386,6 +2386,40 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("~/api/recibo/comprobante/eliminar/{id}")]
+        public IHttpActionResult EliminarDeposito(int id)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var depositoBD = ctx.DepositoRecibo.Find(id);
+                    if(depositoBD== null)
+                    {
+                        return NotFound();
+                    }
+
+                    string uploadFolder = HttpContext.Current.Server.MapPath("~/Uploads");
+
+                    if (!Directory.Exists(uploadFolder))
+                    {
+                        Directory.CreateDirectory(uploadFolder);
+                    }
+
+                    string destinationPath = Path.Combine(uploadFolder, depositoBD.depositoUrl);
+                    File.Delete(destinationPath);
+                    ctx.DepositoRecibo.Remove(depositoBD);
+                    ctx.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
         private RecibosxCliente GenerarRecibo(RecibosxClienteFlotante reciboFlotante, string numeroReferencia,Asesores asesor)
         {
             RecibosxCliente reciboBD = new RecibosxCliente()
