@@ -924,6 +924,59 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("operaciones")]
+        public  IHttpActionResult ObtenerOperacionesDevolucion()
+        {
+            try
+            {
+                using(AVentasEntities ctx=new AVentasEntities())
+                {
+                    var operaciones = ctx.OperacionDevolucion.Select(x => new { id = x.id, descripcion = x.descripcion }).ToList();
+                    return Ok(operaciones);
+                }
+            }catch(Exception e)
+            {
+                return InternalServerError(e);
+            }
+        }
+
+        [HttpGet]
+        [Route("defectos")]
+        public IHttpActionResult ObtenerDefectosDevolucion()
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var defectos = ctx.DefectoDevolucion.Select(x => new { id = x.id, descripcion = x.descripcion }).ToList();
+                    return Ok(defectos);
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+        }
+
+        [HttpGet]
+        [Route("clasificacion/{devolucion}")]
+        public IHttpActionResult ObtenerDefectosDevolucion(string devolucion)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var clasificaciones = ctx.IMClasificacionDevolucion(devolucion).ToList();
+                    return Ok(clasificaciones);
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+        }
+
         private void EscribirLogDevolucion(string Message)
         {
             try

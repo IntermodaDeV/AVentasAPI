@@ -168,6 +168,8 @@ namespace DBData.Database
         public virtual DbSet<MotivoTiempoFuera> MotivoTiempoFuera { get; set; }
         public virtual DbSet<TiempoFueraAgenda> TiempoFueraAgenda { get; set; }
         public virtual DbSet<DepositoRecibo> DepositoRecibo { get; set; }
+        public virtual DbSet<DefectoDevolucion> DefectoDevolucion { get; set; }
+        public virtual DbSet<OperacionDevolucion> OperacionDevolucion { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -565,6 +567,15 @@ namespace DBData.Database
                 new ObjectParameter("coleccion", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerProductosColeccionConInventario_Result>("IMObtenerProductosColeccionConInventario", empresaParameter, coleccionParameter);
+        }
+    
+        public virtual ObjectResult<IMClasificacionDevolucion_Result> IMClasificacionDevolucion(string numdevolucion)
+        {
+            var numdevolucionParameter = numdevolucion != null ?
+                new ObjectParameter("numdevolucion", numdevolucion) :
+                new ObjectParameter("numdevolucion", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMClasificacionDevolucion_Result>("IMClasificacionDevolucion", numdevolucionParameter);
         }
     }
 }

@@ -10,24 +10,16 @@
 namespace DBData.Database
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class DevolucionDetalle
+    public partial class IMClasificacionDevolucion_Result
     {
-        public int IdDevolucionDetalle { get; set; }
-        public string NumDevolucion { get; set; }
-        public int IdProducto { get; set; }
+        public int devolucionDetalleId { get; set; }
+        public string CodigoProducto { get; set; }
         public string CodigoColor { get; set; }
         public string CodigoTalla { get; set; }
-        public int Cantidad { get; set; }
-        public Nullable<decimal> PrecioUnitario { get; set; }
-        public Nullable<decimal> MontoLinea { get; set; }
         public Nullable<int> operacionId { get; set; }
         public Nullable<int> defectoId { get; set; }
         public string clasificacion { get; set; }
         public Nullable<int> cantidadMantenimiento { get; set; }
-    
-        public virtual Devolucion Devolucion { get; set; }
-        public virtual ProductosxColeccion ProductosxColeccion { get; set; }
     }
 }

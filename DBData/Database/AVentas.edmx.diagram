@@ -358,6 +358,8 @@
         <AssociationConnector Association="AventasModel.FK_AprobacionDevoluciones_AprobacionDevoluciones" />
         <AssociationConnector Association="AventasModel.FK_tbAprobacionDevoluciones_NumDevolucion" />
         <EntityTypeShape EntityType="AventasModel.DepositoRecibo" Width="1.5" PointX="0.75" PointY="24.75" />
+        <EntityTypeShape EntityType="AventasModel.DefectoDevolucion" Width="1.5" PointX="25.375" PointY="14.75" />
+        <EntityTypeShape EntityType="AventasModel.OperacionDevolucion" Width="1.5" PointX="25.375" PointY="17.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
