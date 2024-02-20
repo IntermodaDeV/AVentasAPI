@@ -977,6 +977,35 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("clasificacion/{detalleId}")]
+        public IHttpActionResult ActualizarDevolucionDetalle(int detalleId,[FromBody] ClasificacionDevolucionBody body)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var detalleBD = ctx.DevolucionDetalle.Find(detalleId);
+                    if (detalleBD == null)
+                    {
+                        return NotFound();
+                    }
+
+                    detalleBD.cantidadMantenimiento = body.cantidadMantenimiento;
+                    detalleBD.clasificacion = body.clasificacion;
+                    detalleBD.operacionId = body.operacionId;
+                    detalleBD.defectoId = body.defectoId;
+                    ctx.SaveChanges();
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+        }
+
         private void EscribirLogDevolucion(string Message)
         {
             try
@@ -1040,5 +1069,13 @@ namespace AventasApi.Controllers
     {
         public string numero { get; set; }
         public string motivo { get; set; }
+    }
+
+    public class ClasificacionDevolucionBody
+    {
+        public int operacionId { get; set; }
+        public int defectoId { get; set; }
+        public int cantidadMantenimiento { get; set; }
+        public string clasificacion { get; set; }
     }
 }
