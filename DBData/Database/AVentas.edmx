@@ -253,6 +253,20 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="CodigoCliente" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Activo" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="ClasificacionDevolucion">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="numdevolucion" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="codigoColor" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="codigoTalla" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="cantidadMantenimiento" Type="int" />
+          <Property Name="clasificacion" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="operacionId" Type="int" />
+          <Property Name="defectoId" Type="int" />
+          <Property Name="idProducto" Type="int" />
+        </EntityType>
         <EntityType Name="ClienteContado">
           <Key>
             <PropertyRef Name="id" />
@@ -488,6 +502,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="NotaCredito" Type="nvarchar" MaxLength="30" />
           <Property Name="FechaNotaCredito" Type="datetime" />
           <Property Name="FechaCreacionAx" Type="datetime" />
+          <Property Name="plantillaGenerada" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -501,10 +516,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Cantidad" Type="int" Nullable="false" />
           <Property Name="PrecioUnitario" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MontoLinea" Type="decimal" Precision="18" Scale="2" />
-          <Property Name="operacionId" Type="int" />
-          <Property Name="defectoId" Type="int" />
-          <Property Name="clasificacion" Type="varchar" MaxLength="50" />
-          <Property Name="cantidadMantenimiento" Type="int" />
         </EntityType>
         <EntityType Name="DistribucionxTalla">
           <Key>
@@ -639,6 +650,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           </Key>
           <Property Name="IdEstado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Estado" Type="varchar" MaxLength="250" />
+          <Property Name="Activo" Type="bit" />
         </EntityType>
         <EntityType Name="FacturasEnCuotasAcuerdos">
           <Key>
@@ -4644,6 +4656,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="BitacoraVisitasCliente" EntityType="Self.BitacoraVisitasCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CategoriaTipoGastoViaje" EntityType="Self.CategoriaTipoGastoViaje" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ChequesContabilizados" EntityType="Self.ChequesContabilizados" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ClasificacionDevolucion" EntityType="Self.ClasificacionDevolucion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClienteContado" EntityType="Self.ClienteContado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Clientes" EntityType="Self.Clientes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ClientesxRuta" EntityType="Self.ClientesxRuta" Schema="dbo" store:Type="Tables" />
@@ -5980,6 +5993,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="Estado" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD" FromRole="EstadosPedido" ToRole="PedidosxCliente" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__IdEst__0ADD8CFD1" FromRole="EstadosPedido" ToRole="PedidosxClienteFlotante" />
+          <Property Name="Activo" Type="Boolean" />
         </EntityType>
         <EntityType Name="FacturasxCliente">
           <Key>
@@ -6223,13 +6237,13 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Colecciones" Relationship="AventasModel.FK__Productos__IdCol__4DB4832C" FromRole="ProductosxColeccion" ToRole="Colecciones" />
           <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" FromRole="ProductosxColeccion" ToRole="PedidosDetalleFlotante" />
           <Property Name="StockVisible" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="ProductosxColeccion" ToRole="DevolucionDetalle" />
           <Property Name="Deshabilitado" Type="Boolean" Nullable="false" />
           <Property Name="InOut" Type="Boolean" Nullable="false" />
           <Property Name="Prioridad" Type="Int32" Nullable="false" />
           <Property Name="TieneVentaMaxima" Type="Boolean" Nullable="false" />
           <Property Name="Nuevo" Type="Boolean" Nullable="false" />
           <Property Name="PiezaSuelta" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="ProductosxColeccion" ToRole="DevolucionDetalle" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -8000,7 +8014,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="CodigoCliente" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Devolucion" EntityType="AventasModel.Devolucion" />
-          <EntitySet Name="DevolucionDetalle" EntityType="AventasModel.DevolucionDetalle" />
           <AssociationSet Name="FK_tbDevolucion_Clientes_CodigoCliente" Association="AventasModel.FK_tbDevolucion_Clientes_CodigoCliente">
             <End Role="Clientes" EntitySet="Clientes" />
             <End Role="Devolucion" EntitySet="Devolucion" />
@@ -8016,14 +8029,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <AssociationSet Name="FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle" Association="AventasModel.FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle">
             <End Role="MotivosDevolucionDetalle" EntitySet="MotivosDevolucionDetalle" />
             <End Role="Devolucion" EntitySet="Devolucion" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tbDevolucionDetalle_Devolucion_idDevolucion" Association="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion">
-            <End Role="Devolucion" EntitySet="Devolucion" />
-            <End Role="DevolucionDetalle" EntitySet="DevolucionDetalle" />
-          </AssociationSet>
-          <AssociationSet Name="FK_tbDevolucionDetalle_Producto_idProducto" Association="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto">
-            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
-            <End Role="DevolucionDetalle" EntitySet="DevolucionDetalle" />
           </AssociationSet>
           <FunctionImport Name="VisitasClienteGlobal" ReturnType="Collection(AventasModel.VisitasClienteGlobal_Result)">
             <Parameter Name="FechaInicio" Mode="In" Type="DateTime" />
@@ -8225,8 +8230,18 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="DefectoDevolucion" EntityType="AventasModel.DefectoDevolucion" />
           <EntitySet Name="OperacionDevolucion" EntityType="AventasModel.OperacionDevolucion" />
           <FunctionImport Name="IMClasificacionDevolucion" ReturnType="Collection(AventasModel.IMClasificacionDevolucion_Result)">
-            <Parameter Name="numdevolucion" Mode="In" Type="String" />
+          <Parameter Name="numdevolucion" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="ClasificacionDevolucion" EntityType="AventasModel.ClasificacionDevolucion" />
+          <EntitySet Name="DevolucionDetalle" EntityType="AventasModel.DevolucionDetalle" />
+          <AssociationSet Name="FK_tbDevolucionDetalle_Devolucion_idDevolucion" Association="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion">
+            <End Role="Devolucion" EntitySet="Devolucion" />
+            <End Role="DevolucionDetalle" EntitySet="DevolucionDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbDevolucionDetalle_Producto_idProducto" Association="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto">
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+            <End Role="DevolucionDetalle" EntitySet="DevolucionDetalle" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -11107,7 +11122,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK_tbDevolucion_Empresa_EmpresaId" FromRole="Devolucion" ToRole="Empresa" />
           <NavigationProperty Name="MaestroLinea" Relationship="AventasModel.FK_tbDevolucion_Linea_IdLinea" FromRole="Devolucion" ToRole="MaestroLinea" />
           <NavigationProperty Name="MotivosDevolucionDetalle" Relationship="AventasModel.FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle" FromRole="Devolucion" ToRole="MotivosDevolucionDetalle" />
-          <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" FromRole="Devolucion" ToRole="DevolucionDetalle" />
           <Property Name="Sincronizado" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="AprobacionDevoluciones" Relationship="AventasModel.FK_AprobacionDevolucion_Devolucion_NumeroDevolucion" FromRole="Devolucion" ToRole="AprobacionDevoluciones" />
           <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" FromRole="Devolucion" ToRole="Usuarios" />
@@ -11122,25 +11136,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="NotaCredito" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="FechaNotaCredito" Type="DateTime" Precision="3" />
           <Property Name="FechaCreacionAx" Type="DateTime" Precision="3" />
-        </EntityType>
-        <EntityType Name="DevolucionDetalle">
-          <Key>
-            <PropertyRef Name="IdDevolucionDetalle" />
-          </Key>
-          <Property Name="IdDevolucionDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="NumDevolucion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IdProducto" Type="Int32" Nullable="false" />
-          <Property Name="CodigoColor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="CodigoTalla" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Cantidad" Type="Int32" Nullable="false" />
-          <Property Name="PrecioUnitario" Type="Decimal" Precision="18" Scale="2" />
-          <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" FromRole="DevolucionDetalle" ToRole="Devolucion" />
-          <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="DevolucionDetalle" ToRole="ProductosxColeccion" />
-          <Property Name="MontoLinea" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="operacionId" Type="Int32" />
-          <Property Name="defectoId" Type="Int32" />
-          <Property Name="clasificacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="cantidadMantenimiento" Type="Int32" />
+          <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" FromRole="Devolucion" ToRole="DevolucionDetalle" />
+          <Property Name="plantillaGenerada" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_tbDevolucion_Clientes_CodigoCliente">
           <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
@@ -11187,30 +11184,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Principal>
             <Dependent Role="Devolucion">
               <PropertyRef Name="IdMotivoDevDetalle" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tbDevolucionDetalle_Devolucion_idDevolucion">
-          <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="0..1" />
-          <End Type="AventasModel.DevolucionDetalle" Role="DevolucionDetalle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Devolucion">
-              <PropertyRef Name="NumDevolucion" />
-            </Principal>
-            <Dependent Role="DevolucionDetalle">
-              <PropertyRef Name="NumDevolucion" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_tbDevolucionDetalle_Producto_idProducto">
-          <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="1" />
-          <End Type="AventasModel.DevolucionDetalle" Role="DevolucionDetalle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProductosxColeccion">
-              <PropertyRef Name="IdProducto" />
-            </Principal>
-            <Dependent Role="DevolucionDetalle">
-              <PropertyRef Name="IdProducto" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -11964,6 +11937,59 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="String" Name="clasificacion" Nullable="true" MaxLength="50" />
           <Property Type="Int32" Name="cantidadMantenimiento" Nullable="true" />
         </ComplexType>
+        <EntityType Name="ClasificacionDevolucion">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="numdevolucion" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="codigoColor" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="codigoTalla" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="cantidadMantenimiento" Type="Int32" />
+          <Property Name="clasificacion" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="operacionId" Type="Int32" />
+          <Property Name="defectoId" Type="Int32" />
+          <Property Name="idProducto" Type="Int32" />
+        </EntityType>
+        <EntityType Name="DevolucionDetalle">
+          <Key>
+            <PropertyRef Name="IdDevolucionDetalle" />
+          </Key>
+          <Property Name="IdDevolucionDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NumDevolucion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IdProducto" Type="Int32" Nullable="false" />
+          <Property Name="CodigoColor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoTalla" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Cantidad" Type="Int32" Nullable="false" />
+          <Property Name="PrecioUnitario" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="MontoLinea" Type="Decimal" Precision="18" Scale="2" />
+          <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" FromRole="DevolucionDetalle" ToRole="Devolucion" />
+          <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="DevolucionDetalle" ToRole="ProductosxColeccion" />
+        </EntityType>
+        <Association Name="FK_tbDevolucionDetalle_Devolucion_idDevolucion">
+          <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="0..1" />
+          <End Type="AventasModel.DevolucionDetalle" Role="DevolucionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Devolucion">
+              <PropertyRef Name="NumDevolucion" />
+            </Principal>
+            <Dependent Role="DevolucionDetalle">
+              <PropertyRef Name="NumDevolucion" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbDevolucionDetalle_Producto_idProducto">
+          <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="1" />
+          <End Type="AventasModel.DevolucionDetalle" Role="DevolucionDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductosxColeccion">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="DevolucionDetalle">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12192,6 +12218,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="EstadosPedido">
             <EntityTypeMapping TypeName="AventasModel.EstadosPedido">
               <MappingFragment StoreEntitySet="EstadosPedido">
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
                 <ScalarProperty Name="IdEstado" ColumnName="IdEstado" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
               </MappingFragment>
@@ -13835,6 +13862,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Devolucion">
             <EntityTypeMapping TypeName="AventasModel.Devolucion">
               <MappingFragment StoreEntitySet="Devolucion">
+                <ScalarProperty Name="plantillaGenerada" ColumnName="plantillaGenerada" />
                 <ScalarProperty Name="FechaCreacionAx" ColumnName="FechaCreacionAx" />
                 <ScalarProperty Name="FechaNotaCredito" ColumnName="FechaNotaCredito" />
                 <ScalarProperty Name="NotaCredito" ColumnName="NotaCredito" />
@@ -13862,24 +13890,6 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="NumeroRMA" ColumnName="NumeroRMA" />
                 <ScalarProperty Name="PedidoDevolucion" ColumnName="PedidoDevolucion" />
                 <ScalarProperty Name="NumDevolucion" ColumnName="NumDevolucion" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="DevolucionDetalle">
-            <EntityTypeMapping TypeName="AventasModel.DevolucionDetalle">
-              <MappingFragment StoreEntitySet="DevolucionDetalle">
-                <ScalarProperty Name="cantidadMantenimiento" ColumnName="cantidadMantenimiento" />
-                <ScalarProperty Name="clasificacion" ColumnName="clasificacion" />
-                <ScalarProperty Name="defectoId" ColumnName="defectoId" />
-                <ScalarProperty Name="operacionId" ColumnName="operacionId" />
-                <ScalarProperty Name="MontoLinea" ColumnName="MontoLinea" />
-                <ScalarProperty Name="PrecioUnitario" ColumnName="PrecioUnitario" />
-                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
-                <ScalarProperty Name="CodigoTalla" ColumnName="CodigoTalla" />
-                <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
-                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
-                <ScalarProperty Name="NumDevolucion" ColumnName="NumDevolucion" />
-                <ScalarProperty Name="IdDevolucionDetalle" ColumnName="IdDevolucionDetalle" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -14369,6 +14379,35 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="ClasificacionDevolucion">
+            <EntityTypeMapping TypeName="AventasModel.ClasificacionDevolucion">
+              <MappingFragment StoreEntitySet="ClasificacionDevolucion">
+                <ScalarProperty Name="idProducto" ColumnName="idProducto" />
+                <ScalarProperty Name="defectoId" ColumnName="defectoId" />
+                <ScalarProperty Name="operacionId" ColumnName="operacionId" />
+                <ScalarProperty Name="clasificacion" ColumnName="clasificacion" />
+                <ScalarProperty Name="cantidadMantenimiento" ColumnName="cantidadMantenimiento" />
+                <ScalarProperty Name="codigoTalla" ColumnName="codigoTalla" />
+                <ScalarProperty Name="codigoColor" ColumnName="codigoColor" />
+                <ScalarProperty Name="numdevolucion" ColumnName="numdevolucion" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DevolucionDetalle">
+            <EntityTypeMapping TypeName="AventasModel.DevolucionDetalle">
+              <MappingFragment StoreEntitySet="DevolucionDetalle">
+                <ScalarProperty Name="MontoLinea" ColumnName="MontoLinea" />
+                <ScalarProperty Name="PrecioUnitario" ColumnName="PrecioUnitario" />
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="CodigoTalla" ColumnName="CodigoTalla" />
+                <ScalarProperty Name="CodigoColor" ColumnName="CodigoColor" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="NumDevolucion" ColumnName="NumDevolucion" />
+                <ScalarProperty Name="IdDevolucionDetalle" ColumnName="IdDevolucionDetalle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

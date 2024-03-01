@@ -22,10 +22,6 @@ namespace DBData.Database
         public int Cantidad { get; set; }
         public Nullable<decimal> PrecioUnitario { get; set; }
         public Nullable<decimal> MontoLinea { get; set; }
-        public Nullable<int> operacionId { get; set; }
-        public Nullable<int> defectoId { get; set; }
-        public string clasificacion { get; set; }
-        public Nullable<int> cantidadMantenimiento { get; set; }
     
         public virtual Devolucion Devolucion { get; set; }
         public virtual ProductosxColeccion ProductosxColeccion { get; set; }

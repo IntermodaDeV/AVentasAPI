@@ -654,7 +654,8 @@ namespace AventasApi.Controllers
                             TotalUnidades = 0,
                             almacen = devolucion.Almacen,
                             IdUbicacion = ubicacion.UbicacionId,
-                            Origen = "Web"
+                            Origen = "Web",
+                            plantillaGenerada=false
                         };
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -799,7 +800,8 @@ namespace AventasApi.Controllers
                                 Subtotal = devolucion.SubTotal,
                                 TotalUnidades = 0,
                                 almacen = devolucion.Almacen,
-                                IdUbicacion = ubicacion.UbicacionId
+                                IdUbicacion = ubicacion.UbicacionId,
+                                plantillaGenerada=false
                             };
 
                             foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -985,7 +987,7 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    var detalleBD = ctx.DevolucionDetalle.Find(detalleId);
+                    var detalleBD = ctx.ClasificacionDevolucion.Find(detalleId);
                     if (detalleBD == null)
                     {
                         return NotFound();
@@ -1001,6 +1003,65 @@ namespace AventasApi.Controllers
                 }
             }
             catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("clasificacion/generar/{devolucion}")]
+        public IHttpActionResult GenerarClasificacionDevolucion(string devolucion)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var devolucionDB = ctx.Devolucion.FirstOrDefault(x => x.NumDevolucion.ToUpper() == devolucion.ToUpper());
+                    if (devolucionDB == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var detalles = ctx.DevolucionDetalle.Where(x => x.NumDevolucion.ToUpper() == devolucion.ToUpper()).ToList();
+
+                    foreach (var detalle in detalles)
+                    {
+                        if (detalle.Cantidad > 1)
+                        {
+                            for(var i = 0; i < detalle.Cantidad; i++)
+                            {
+                                ctx.ClasificacionDevolucion.Add(new ClasificacionDevolucion
+                                {
+                                    numdevolucion = devolucion.ToUpper(),
+                                    codigoTalla = detalle.CodigoTalla,
+                                    codigoColor = detalle.CodigoColor,
+                                    idProducto = detalle.IdProducto,
+                                    clasificacion="",
+                                });
+
+                               
+                            }
+                        }
+                        else
+                        {
+                            ctx.ClasificacionDevolucion.Add(new ClasificacionDevolucion
+                            {
+                                numdevolucion = devolucion.ToUpper(),
+                                codigoTalla = detalle.CodigoTalla,
+                                codigoColor = detalle.CodigoColor,
+                                idProducto=detalle.IdProducto,
+                                clasificacion=""
+                            });
+
+                            
+                        }
+                    }
+
+                    devolucionDB.plantillaGenerada = true;
+                    ctx.SaveChanges();
+                    return Ok();
+                }
+            }catch(Exception e)
             {
                 return InternalServerError(e);
             }

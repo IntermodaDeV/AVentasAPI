@@ -132,6 +132,9 @@
     <Compile Include="Database\ChequesContabilizados.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ClasificacionDevolucion.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\ClienteContado.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

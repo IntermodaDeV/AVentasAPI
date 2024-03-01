@@ -61,7 +61,8 @@ namespace AventasApi.Controllers
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
                             },
-                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()                           
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()     ,
+                            plantillaGenerada=x.plantillaGenerada
 
                         }).ToListAsync();
 
@@ -89,7 +90,8 @@ namespace AventasApi.Controllers
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
                             },
-                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault(),
+                            plantillaGenerada = x.plantillaGenerada
                         }).ToListAsync();
                     }
 
@@ -148,7 +150,8 @@ namespace AventasApi.Controllers
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
                             },
-                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault(),
+                            plantillaGenerada = x.plantillaGenerada
                         }).ToListAsync();
                     }
                     else
@@ -173,7 +176,8 @@ namespace AventasApi.Controllers
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
                             },
-                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault(),
+                            plantillaGenerada = x.plantillaGenerada
                         }).ToListAsync();
 
                     }
