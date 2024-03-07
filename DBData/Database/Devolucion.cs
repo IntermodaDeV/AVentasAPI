@@ -17,8 +17,8 @@ namespace DBData.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Devolucion()
         {
-            this.DevolucionDetalle = new HashSet<DevolucionDetalle>();
             this.AprobacionDevoluciones = new HashSet<AprobacionDevoluciones>();
+            this.DevolucionDetalle = new HashSet<DevolucionDetalle>();
         }
     
         public string NumDevolucion { get; set; }
@@ -48,16 +48,17 @@ namespace DBData.Database
         public string NotaCredito { get; set; }
         public Nullable<System.DateTime> FechaNotaCredito { get; set; }
         public Nullable<System.DateTime> FechaCreacionAx { get; set; }
+        public bool plantillaGenerada { get; set; }
     
         public virtual Clientes Clientes { get; set; }
         public virtual Empresa Empresa { get; set; }
         public virtual MaestroLinea MaestroLinea { get; set; }
         public virtual MotivosDevolucionDetalle MotivosDevolucionDetalle { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DevolucionDetalle> DevolucionDetalle { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AprobacionDevoluciones> AprobacionDevoluciones { get; set; }
         public virtual Usuarios Usuarios { get; set; }
         public virtual UbicacionesXAlmacen UbicacionesXAlmacen { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DevolucionDetalle> DevolucionDetalle { get; set; }
     }
 }

@@ -23,6 +23,7 @@ namespace DBData.Database
     
         public int IdEstado { get; set; }
         public string Estado { get; set; }
+        public Nullable<bool> Activo { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PedidosxCliente> PedidosxCliente { get; set; }

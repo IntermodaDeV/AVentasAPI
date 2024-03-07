@@ -47,6 +47,7 @@ namespace AventasApi.Models.ViewModels
         public int? EstadoBodega { get; set; }
 
         public bool? Aprobado { get; set; }
+        public bool plantillaGenerada { get; set; }
 
         public int? IdDevAprobacion { get; set; }
         public string FacturaOrigen { get; set; }

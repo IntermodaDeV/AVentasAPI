@@ -654,7 +654,8 @@ namespace AventasApi.Controllers
                             TotalUnidades = 0,
                             almacen = devolucion.Almacen,
                             IdUbicacion = ubicacion.UbicacionId,
-                            Origen = "Web"
+                            Origen = "Web",
+                            plantillaGenerada=false
                         };
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -799,7 +800,8 @@ namespace AventasApi.Controllers
                                 Subtotal = devolucion.SubTotal,
                                 TotalUnidades = 0,
                                 almacen = devolucion.Almacen,
-                                IdUbicacion = ubicacion.UbicacionId
+                                IdUbicacion = ubicacion.UbicacionId,
+                                plantillaGenerada=false
                             };
 
                             foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
@@ -924,6 +926,147 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("operaciones")]
+        public  IHttpActionResult ObtenerOperacionesDevolucion()
+        {
+            try
+            {
+                using(AVentasEntities ctx=new AVentasEntities())
+                {
+                    var operaciones = ctx.OperacionDevolucion.Select(x => new { id = x.id, descripcion = x.descripcion }).ToList();
+                    return Ok(operaciones);
+                }
+            }catch(Exception e)
+            {
+                return InternalServerError(e);
+            }
+        }
+
+        [HttpGet]
+        [Route("defectos")]
+        public IHttpActionResult ObtenerDefectosDevolucion()
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var defectos = ctx.DefectoDevolucion.Select(x => new { id = x.id, descripcion = x.descripcion }).ToList();
+                    return Ok(defectos);
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+        }
+
+        [HttpGet]
+        [Route("clasificacion/{devolucion}")]
+        public IHttpActionResult ObtenerDefectosDevolucion(string devolucion)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var clasificaciones = ctx.IMClasificacionDevolucion(devolucion).ToList();
+                    return Ok(clasificaciones);
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+        }
+
+        [HttpPut]
+        [Route("clasificacion/{detalleId}")]
+        public IHttpActionResult ActualizarDevolucionDetalle(int detalleId,[FromBody] ClasificacionDevolucionBody body)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var detalleBD = ctx.ClasificacionDevolucion.Find(detalleId);
+                    if (detalleBD == null)
+                    {
+                        return NotFound();
+                    }
+
+                    detalleBD.cantidadMantenimiento = body.cantidadMantenimiento;
+                    detalleBD.clasificacion = body.clasificacion;
+                    detalleBD.operacionId = body.operacionId;
+                    detalleBD.defectoId = body.defectoId;
+                    ctx.SaveChanges();
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+        }
+
+        [HttpPost]
+        [Route("clasificacion/generar/{devolucion}")]
+        public IHttpActionResult GenerarClasificacionDevolucion(string devolucion)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var devolucionDB = ctx.Devolucion.FirstOrDefault(x => x.NumDevolucion.ToUpper() == devolucion.ToUpper());
+                    if (devolucionDB == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var detalles = ctx.DevolucionDetalle.Where(x => x.NumDevolucion.ToUpper() == devolucion.ToUpper()).ToList();
+
+                    foreach (var detalle in detalles)
+                    {
+                        if (detalle.Cantidad > 1)
+                        {
+                            for(var i = 0; i < detalle.Cantidad; i++)
+                            {
+                                ctx.ClasificacionDevolucion.Add(new ClasificacionDevolucion
+                                {
+                                    numdevolucion = devolucion.ToUpper(),
+                                    codigoTalla = detalle.CodigoTalla,
+                                    codigoColor = detalle.CodigoColor,
+                                    idProducto = detalle.IdProducto,
+                                    clasificacion="",
+                                });
+
+                               
+                            }
+                        }
+                        else
+                        {
+                            ctx.ClasificacionDevolucion.Add(new ClasificacionDevolucion
+                            {
+                                numdevolucion = devolucion.ToUpper(),
+                                codigoTalla = detalle.CodigoTalla,
+                                codigoColor = detalle.CodigoColor,
+                                idProducto=detalle.IdProducto,
+                                clasificacion=""
+                            });
+
+                            
+                        }
+                    }
+
+                    devolucionDB.plantillaGenerada = true;
+                    ctx.SaveChanges();
+                    return Ok();
+                }
+            }catch(Exception e)
+            {
+                return InternalServerError(e);
+            }
+        }
+
         private void EscribirLogDevolucion(string Message)
         {
             try
@@ -987,5 +1130,13 @@ namespace AventasApi.Controllers
     {
         public string numero { get; set; }
         public string motivo { get; set; }
+    }
+
+    public class ClasificacionDevolucionBody
+    {
+        public int operacionId { get; set; }
+        public int defectoId { get; set; }
+        public int cantidadMantenimiento { get; set; }
+        public string clasificacion { get; set; }
     }
 }

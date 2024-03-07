@@ -302,13 +302,10 @@
         <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOCREA" />
         <AssociationConnector Association="AventasModel.FK_MOTIVOSDEVOLUCIONCONAPROBACION_USUARIOS" />
         <EntityTypeShape EntityType="AventasModel.Devolucion" Width="1.5" PointX="31.75" PointY="38.75" />
-        <EntityTypeShape EntityType="AventasModel.DevolucionDetalle" Width="1.5" PointX="34" PointY="41.375" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucion_Clientes_CodigoCliente" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucion_Empresa_EmpresaId" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucion_Linea_IdLinea" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucion_MotivoDevolucion_IdMotivoDevDetalle" />
-        <AssociationConnector Association="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" />
-        <AssociationConnector Association="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" />
         <EntityTypeShape EntityType="AventasModel.AprobacionDevoluciones" Width="1.5" PointX="34" PointY="34.875" />
         <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_Devolucion_NumeroDevolucion" />
         <AssociationConnector Association="AventasModel.FK_AprobacionDevolucion_usuario" />
@@ -358,6 +355,12 @@
         <AssociationConnector Association="AventasModel.FK_AprobacionDevoluciones_AprobacionDevoluciones" />
         <AssociationConnector Association="AventasModel.FK_tbAprobacionDevoluciones_NumDevolucion" />
         <EntityTypeShape EntityType="AventasModel.DepositoRecibo" Width="1.5" PointX="0.75" PointY="24.75" />
+        <EntityTypeShape EntityType="AventasModel.DefectoDevolucion" Width="1.5" PointX="25.375" PointY="14.75" />
+        <EntityTypeShape EntityType="AventasModel.OperacionDevolucion" Width="1.5" PointX="25.375" PointY="17.75" />
+        <EntityTypeShape EntityType="AventasModel.ClasificacionDevolucion" Width="1.5" PointX="27.375" PointY="0.75" />
+        <EntityTypeShape EntityType="AventasModel.DevolucionDetalle" Width="1.5" PointX="34" PointY="41.875" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" />
+        <AssociationConnector Association="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

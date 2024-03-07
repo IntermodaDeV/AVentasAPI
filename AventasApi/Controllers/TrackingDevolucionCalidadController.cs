@@ -61,7 +61,8 @@ namespace AventasApi.Controllers
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
                             },
-                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()                           
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()     ,
+                            plantillaGenerada=x.plantillaGenerada
 
                         }).ToListAsync();
 
@@ -89,7 +90,8 @@ namespace AventasApi.Controllers
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
                             },
-                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault(),
+                            plantillaGenerada = x.plantillaGenerada
                         }).ToListAsync();
                     }
 
@@ -112,8 +114,8 @@ namespace AventasApi.Controllers
 
 
         [HttpGet]
-        [Route("obtenerDevolucionesAprobadas/{fechaInicio}/{fechaFin}/{bodegaEstado}")]
-        public async Task<IHttpActionResult> ObtenerDevolucionesAprobadas(DateTime fechaInicio, DateTime fechaFin, int bodegaEstado)
+        [Route("obtenerDevolucionesAprobadasEmpresa/{fechaInicio}/{fechaFin}/{bodegaEstado}/{empresa}")]
+        public async Task<IHttpActionResult> ObtenerDevolucionesAprobadasEmpresa(DateTime fechaInicio, DateTime fechaFin, int bodegaEstado,string empresa)
         {
             try
             {
@@ -128,7 +130,7 @@ namespace AventasApi.Controllers
 
                     if (bodegaEstado == 5 || bodegaEstado == 3 || bodegaEstado == 4) 
                     {
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) ).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EmpresaId == empresa).Select(x => new DevolucionesViewModel
                         {
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
@@ -148,12 +150,13 @@ namespace AventasApi.Controllers
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
                             },
-                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault(),
+                            plantillaGenerada = x.plantillaGenerada
                         }).ToListAsync();
                     }
                     else
                     {
-                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado).Select(x => new DevolucionesViewModel
+                        devolucion = await ctx.Devolucion.Where(x => devolucionesAprovadas.Contains(x.NumDevolucion) && x.EstadoBodega == bodegaEstado && x.EmpresaId == empresa).Select(x => new DevolucionesViewModel
                         {
                             NumDevolucion = x.NumDevolucion,
                             NumeroRMA = x.NumeroRMA,
@@ -173,7 +176,8 @@ namespace AventasApi.Controllers
                                 Moneda = x.Clientes.IdMoneda,
                                 EmpresaId = x.Clientes.EmpresaId
                             },
-                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault()
+                            Aprobado = x.AprobacionDevoluciones.Select(a => a.Aprobado).FirstOrDefault(),
+                            plantillaGenerada = x.plantillaGenerada
                         }).ToListAsync();
 
                     }

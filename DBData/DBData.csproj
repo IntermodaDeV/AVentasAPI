@@ -132,6 +132,9 @@
     <Compile Include="Database\ChequesContabilizados.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ClasificacionDevolucion.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\ClienteContado.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -172,6 +175,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\CuotasXAcuerdo.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\DefectoDevolucion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\DepositoRecibo.cs">
@@ -282,6 +288,9 @@
     <Compile Include="Database\GrupoTalla.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\IMClasificacionDevolucion_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\IMObtenerDetalleDescuento_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -355,6 +364,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\MotivoTiempoFuera.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\OperacionDevolucion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\PagosAFacturasDeCuotas.cs">
