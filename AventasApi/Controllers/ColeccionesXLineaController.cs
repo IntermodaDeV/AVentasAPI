@@ -58,7 +58,7 @@ namespace AventasApi.Controllers
                 {
                     var Colecciones = db.Colecciones.Where(c => c.CodigoColeccion == codigoColeccion).ToList();
                     var config = db.Configuraciones.FirstOrDefault(c => c.CodigoConfiguracion == "UrlImages");
-                    if(Colecciones.Count() > 0 && Imagenes.Count() > 0)
+                    if (Colecciones.Count() > 0 && Imagenes.Count() > 0)
                     {
                         Base64ToImage(Imagenes[0].IMAGE, Imagenes[0].PACKAGEID);
                         var url = config.Valor + Imagenes[0].PACKAGEID + ".jpg";
@@ -93,7 +93,7 @@ namespace AventasApi.Controllers
         }
         [HttpGet]
         [Route("{id}/{pais}")]
-        public async Task<IHttpActionResult> GetcoleccionesXGrupoPrecio(string id,string pais)
+        public async Task<IHttpActionResult> GetcoleccionesXGrupoPrecio(string id, string pais)
         {
             var colecciones = await ObtenerColecciones(id, pais);
             return Ok(colecciones);
@@ -101,9 +101,9 @@ namespace AventasApi.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Getcolecciones()
         {
-            return Ok(ObtenerColecciones(null,"").Result);
+            return Ok(ObtenerColecciones(null, "").Result);
         }
-        private async Task<List<ColeccionViewModel>> ObtenerColecciones(string grupoPrecio,string pais)
+        private async Task<List<ColeccionViewModel>> ObtenerColecciones(string grupoPrecio, string pais)
         {
 
             bool filtarXGrupoPrecio = grupoPrecio != null;
@@ -558,7 +558,7 @@ namespace AventasApi.Controllers
                                                       Precio = preEsp.Hasta == new DateTime(1900, 1, 1) ? preEsp.Precio : pxc.PreciosxProducto.FirstOrDefault(pre => pre.GrupoPrecio == grupoPrecio && pre.IdProducto == preEsp.IdProducto).Precio,
                                                   }).ToList(),
                                               }).ToList()
-                    }).OrderByDescending(x=> x.ListaTalla.Count()).ToList();
+                    }).OrderByDescending(x => x.ListaTalla.Count()).ToList();
                     return Ok(prod.First());
                 }
             }
@@ -615,6 +615,7 @@ namespace AventasApi.Controllers
                                        Deshabilitado = pxc.Deshabilitado,
                                        Prioridad = pxc.Prioridad,
                                        Nuevo = pxc.Nuevo,
+                                       atributo = pxc.AtributosxProducto.Where(x => x.Descripcion2 == "BASE" || x.Descripcion2 == "TIPO ROPA").Select(x => new { codigo = x.CodigoAtributo }).FirstOrDefault(),
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
                                            GrupoPrecio = precio.GrupoPrecio,
@@ -737,7 +738,7 @@ namespace AventasApi.Controllers
                     {
                         ListaGrupoPrecios = ctx.MaestroGrupoPrecio.Where(x => grupo.ListaPrecios.Contains(x.GrupoPrecio) && x.EmpresaId == pais).Select(x => x.GrupoPrecio).ToList();
                         List<ColeccionViewModel> colecciones = await ctx.Colecciones
-                            .Where(vw_coleccion =>vw_coleccion.Estatus == 1 && vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today
+                            .Where(vw_coleccion => vw_coleccion.Estatus == 1 && vw_coleccion.VentaInicio <= DateTime.Today && vw_coleccion.VentaFinal >= DateTime.Today
                                    && vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper() && !paquetesBodegaEspecifico.Contains(vw_coleccion.IdColeccion)).OrderBy(vw_coleccion => vw_coleccion.VentaFinal).Select(vw_coleccion =>
                                          new ColeccionViewModel
                                          {
@@ -901,23 +902,23 @@ namespace AventasApi.Controllers
                         ListaImagenes = pxc.FotografiasXProducto.Where(txp => txp.FotografiaProducto != null)
                         .Where(txp => (pxc.FotografiasXProducto.Where(fxp => fxp.CodigoColor == "").Count() > 0 && txp.CodigoColor == "") || (pxc.FotografiasXProducto.FirstOrDefault() != null && txp.CodigoColor == pxc.FotografiasXProducto.FirstOrDefault().CodigoColor))
                         .OrderByDescending(foto => foto.Principal)
-                        .Select(foto => new 
+                        .Select(foto => new
                         {
                             FotografiaProducto = urlImagenes + foto.FotografiaProducto,
                             CodigoColor = foto.CodigoColor,
                             Principal = foto.Principal ?? false
                         }).ToList(),
                         ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo != null).Select(txp => txp.TallasXGrupo).Where(txp => false || (pxc.Colecciones.ColeccionTipo == "F") || txp.DistribucionxTalla.Count > 0 || pxc.FisicoDisponible.Where(f => f.CodigoTalla == txp.CodigoTalla).Sum(f => f.Disponible) >= 0)
-                          .Select(txp => new 
+                          .Select(txp => new
                           {
                               Talla = txp.CodigoTalla.ToUpper(),
                               Orden = txp.Orden ?? 0,
                           }).OrderBy(txp => txp.Orden).ToList(),
-                        ListaColores = pxc.ColoresxProducto.Where(cpp => (pxc.Colecciones.ColeccionTipo == "F") || cpp.Colores.FisicoDisponible.Where(f => f.IdProducto == pxc.IdProducto).Sum(f => f.Disponible) > 0).OrderBy(cpp => cpp.Colores.Color).Select(cpp => new 
+                        ListaColores = pxc.ColoresxProducto.Where(cpp => (pxc.Colecciones.ColeccionTipo == "F") || cpp.Colores.FisicoDisponible.Where(f => f.IdProducto == pxc.IdProducto).Sum(f => f.Disponible) > 0).OrderBy(cpp => cpp.Colores.Color).Select(cpp => new
                         {
                             CodigoColor = cpp.Colores.CodigoColor,
                             NombreColor = cpp.Colores.Color,
-                            ImagenesPorColor = pxc.FotografiasXProducto.Where(txp => txp.FotografiaProducto != null && txp.CodigoColor == cpp.Colores.CodigoColor).Select(foto => new 
+                            ImagenesPorColor = pxc.FotografiasXProducto.Where(txp => txp.FotografiaProducto != null && txp.CodigoColor == cpp.Colores.CodigoColor).Select(foto => new
                             {
                                 FotografiaProducto = urlImagenes + foto.FotografiaProducto,
                                 CodigoColor = foto.CodigoColor,
@@ -926,7 +927,7 @@ namespace AventasApi.Controllers
 
                         }).ToList(),
                         InventarioDisponible = pxc.FisicoDisponible
-                        .Select(f => new 
+                        .Select(f => new
                         {
                             CodigoColor = f.CodigoColor,
                             IdTalla = f.CodigoTalla.ToUpper(),
@@ -1035,18 +1036,18 @@ namespace AventasApi.Controllers
             }
         }
 
-        
+
 
         [HttpGet]
         [Route("~/api/colecciones/inventario/{IdColeccion}")]
         public IHttpActionResult ObtenerInventarioDisponible(int IdColeccion)
-        
+
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var Inventario =  ctx.SP_InventarioXColeccion(IdColeccion).ToList();
+                    var Inventario = ctx.SP_InventarioXColeccion(IdColeccion).ToList();
                     return Ok(Inventario);
                 }
             }

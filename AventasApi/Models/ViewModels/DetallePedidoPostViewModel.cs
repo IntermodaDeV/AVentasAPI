@@ -16,5 +16,6 @@ namespace AventasApi.Models.ViewModels
         public string Talla { get; set; }
         public string CodigoColeccion { get; set; }
         public string PorcentajeDescuento { get; set; }
+        public string CodigoImpuesto { get; set; }
     }
 }

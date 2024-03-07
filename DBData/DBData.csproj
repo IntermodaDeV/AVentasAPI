@@ -117,6 +117,9 @@
     <Compile Include="Database\Bancos.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\BaseColorImpuesto.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\BitacoraGeoposicion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -289,6 +292,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\IMClasificacionDevolucion_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\IMObtenerBasesProductos_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\IMObtenerDetalleDescuento_Result.cs">

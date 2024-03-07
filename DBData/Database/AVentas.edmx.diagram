@@ -361,6 +361,7 @@
         <EntityTypeShape EntityType="AventasModel.DevolucionDetalle" Width="1.5" PointX="34" PointY="41.875" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" />
         <AssociationConnector Association="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" />
+        <EntityTypeShape EntityType="AventasModel.BaseColorImpuesto" Width="1.5" PointX="27.375" PointY="4.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

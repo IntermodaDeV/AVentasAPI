@@ -50,7 +50,7 @@ namespace AventasApi.Controllers
 
         }
 
-        private bool EnLinea(string empresa,string asesor)
+        private bool EnLinea(string empresa, string asesor)
         {
             var client = new RestClient(Enviroment.CRMWebServiceURLApi);
             client.Authenticator = new RestSharp.Authenticators.NtlmAuthenticator();
@@ -83,8 +83,8 @@ namespace AventasApi.Controllers
                     var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
                     int minutosValue = 2;
 
-                    if(minutosConf != null)
-                    { 
+                    if (minutosConf != null)
+                    {
                         try
                         {
                             int.TryParse(minutosConf.Valor, out minutosValue);
@@ -98,7 +98,7 @@ namespace AventasApi.Controllers
                     var totalUnidades = Pedido.DetallePedido.Sum(x => decimal.Parse(x.Cantidad));
                     var totalPedido = Pedido.subtotal + decimal.Parse(Pedido.Impuesto.ToString()) + Pedido.Flete;
 
-                    found = ctx.PedidosxCliente.FirstOrDefault(x => (x.Fecha >= fechaDesde  && x.Fecha <= DateTime.Now)
+                    found = ctx.PedidosxCliente.FirstOrDefault(x => (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
                                                                 && x.CodigoCliente == Pedido.CodigoCliente
                                                                 && x.Colecciones.CodigoColeccion == Pedido.CodigoColeccion
                                                                 && x.TotalPedido == totalPedido
@@ -114,7 +114,7 @@ namespace AventasApi.Controllers
                 string numeroReferencia = Pedido.NumeroReferencia;
                 //int numeroCorelativo = 0;
                 //var cache = false;
-                
+
 
                 Asesores asesor;
                 Colecciones coleccion;
@@ -143,7 +143,7 @@ namespace AventasApi.Controllers
                     ubicacion = context.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == Pedido.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == cliente.EmpresaId && x.Estatus == true);
                 }
                 DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
-                
+
                 if (found == null)
                 {
                     PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
@@ -167,10 +167,10 @@ namespace AventasApi.Controllers
                         ModoVenta = Pedido.ModoVenta,
                         Flete = Pedido.Flete,
                         RequiereEntrega = Pedido.RequiereEntrega,
-                        BodegaEspecifica=Pedido.BodegaEspecifica,
-                        Sitio=Pedido.Sitio,
-                        Almacen=Pedido.Almacen,
-                        Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : "",
+                        BodegaEspecifica = Pedido.BodegaEspecifica,
+                        Sitio = Pedido.Sitio,
+                        Almacen = Pedido.Almacen,
+                        Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
                         SalesStatusId = 1,
                         Origen = "Web"
                     };
@@ -195,7 +195,8 @@ namespace AventasApi.Controllers
                                 Fecha = DateTime.Now,
                                 CodigoAsesor = asesor.CodigoAsesor,
                                 PrecioUnitario = precioUnitario,
-                                CantidadDevolucion = 0
+                                CantidadDevolucion = 0,
+                                CodigoImpuesto = detalle.CodigoImpuesto,
                             });
                         }
 
@@ -210,8 +211,8 @@ namespace AventasApi.Controllers
                     PedidoBDAGuardar.Procesando = false;
 
                     PResumenCredito_Result resultado;
-                    
-                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma,Pedido.EmpresaUsuario);
+
+                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma, Pedido.EmpresaUsuario);
                     if (guardadoExito)
                     {
                         using (AVentasEntities context = new AVentasEntities())
@@ -256,7 +257,7 @@ namespace AventasApi.Controllers
                             BodegaEspecifica = Pedido.BodegaEspecifica,
                             Sitio = Pedido.Sitio,
                             Almacen = Pedido.Almacen,
-                            Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : ""
+                            Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : ""
                         };
 
                         //if (numeroReferencia == "")
@@ -287,7 +288,8 @@ namespace AventasApi.Controllers
                                     MontoLinea = (precioUnitario * cantidad),
                                     Fecha = DateTime.Now,
                                     CodigoAsesor = asesor.CodigoAsesor,
-                                    PrecioUnitario = precioUnitario
+                                    PrecioUnitario = precioUnitario,
+                                    CodigoImpuesto = detalle.CodigoImpuesto
                                 });
                             }
 
@@ -336,7 +338,7 @@ namespace AventasApi.Controllers
                         BodegaEspecifica = Pedido.BodegaEspecifica,
                         Sitio = Pedido.Sitio,
                         Almacen = Pedido.Almacen,
-                        Ubicacion= ubicacion != null ? ubicacion.CodigoUbicacion : ""
+                        Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : ""
                     };
 
                     //if (numeroReferencia == "")
@@ -367,7 +369,8 @@ namespace AventasApi.Controllers
                                 MontoLinea = (precioUnitario * cantidad),
                                 Fecha = DateTime.Now,
                                 CodigoAsesor = asesor.CodigoAsesor,
-                                PrecioUnitario = precioUnitario
+                                PrecioUnitario = precioUnitario,
+                                CodigoImpuesto = detalle.CodigoImpuesto,
                             });
                         }
 
@@ -385,7 +388,7 @@ namespace AventasApi.Controllers
                     AsyncSqlInsert.IngresarPedidoFlotante(PedidoBDAGuardar, Pedido.Firma);
                 }
 
-                return Ok(new { correlativo= numeroReferencia,mensaje= "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de pedidos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento comercial para que procedan a revisar y gestionar su pedido para que sea válido." });
+                return Ok(new { correlativo = numeroReferencia, mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de pedidos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento comercial para que procedan a revisar y gestionar su pedido para que sea válido." });
             }
             catch (Exception e)
             {
@@ -395,14 +398,14 @@ namespace AventasApi.Controllers
 
         [HttpGet]
         [Route("~/api/PedidosXCliente/correlativo/{empresa}")]
-        public async Task <IHttpActionResult> GetCorrelativo(string empresa)
+        public async Task<IHttpActionResult> GetCorrelativo(string empresa)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId==empresa);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
@@ -421,7 +424,7 @@ namespace AventasApi.Controllers
                     return Ok(numeroReferencia);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
@@ -482,7 +485,8 @@ namespace AventasApi.Controllers
         [Route("~/api/PedidosXCliente/{asesor}/{FechaInicio}/{FechaFin}")]
         public async Task<IHttpActionResult> Get(string Asesor, DateTime FechaInicio, DateTime FechaFin)
         {
-            try {
+            try
+            {
                 using (AVentasEntities context = new AVentasEntities())
                 {
 
@@ -584,10 +588,11 @@ namespace AventasApi.Controllers
                     }
                     return Ok(pedidos);
                 }
-                }catch(Exception e)
-                {
-                    return BadRequest(e.ToString());
-                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
 
         [HttpGet]
@@ -608,13 +613,13 @@ namespace AventasApi.Controllers
                         FechaFin = FechaFin.AddDays(1);
                     }
 
-                    List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == Asesor && p.Fecha >= FechaInicio && p.Fecha < FechaFin && p.Sincronizado==false).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
+                    List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => p.CodigoAsesor == Asesor && p.Fecha >= FechaInicio && p.Fecha < FechaFin && p.Sincronizado == false).OrderByDescending(ped => ped.PedidoId).Select(ped => new PedidosXClienteViewModel
                     {
                         PedidoId = ped.PedidoId,
                         NumeroPedido = ped.NumeroPedido,
                         Sincronizado = ped.Sincronizado,
                         Procesando = ped.Procesando.Value,
-                        BodegaEspecifica=ped.BodegaEspecifica,
+                        BodegaEspecifica = ped.BodegaEspecifica,
                         ErrorAx = ped.ErrorAx,
                         NombreColeccion = context.Colecciones.FirstOrDefault(col => col.IdColeccion == ped.IdColeccion).Nombre,
                         TotalUnidades = ped.TotalUnidades,
@@ -770,7 +775,8 @@ namespace AventasApi.Controllers
                     return Ok(pedidos[0].gruposXDetPed);
 
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.ToString());
             }
@@ -786,7 +792,7 @@ namespace AventasApi.Controllers
                 var Pedido = new PedidoCRMApiModel();
                 using (var ctx = new AVentasEntities())
                 {
-                    var pedidoDB = ctx.PedidosxCliente.FirstOrDefault(x => x.PedidoId == pedido && x.Procesando==false);
+                    var pedidoDB = ctx.PedidosxCliente.FirstOrDefault(x => x.PedidoId == pedido && x.Procesando == false);
 
                     if (pedidoDB == null)
                     {
@@ -815,7 +821,7 @@ namespace AventasApi.Controllers
                         ESPEC_INV = pedidoDB.BodegaEspecifica == null ? "0" : (pedidoDB.BodegaEspecifica.Value ? "1" : "0"),
                         LOCATION = pedidoDB.Almacen,
                         SITE = pedidoDB.Sitio,
-                        WMSLOCATION = pedidoDB.Ubicacion==null?"":pedidoDB.Ubicacion
+                        WMSLOCATION = pedidoDB.Ubicacion == null ? "" : pedidoDB.Ubicacion
                     };
                     if (pedidoDB.ClienteContadoId != null)
                     {
@@ -848,7 +854,8 @@ namespace AventasApi.Controllers
                              REFERENCE = detalle.PedidosxCliente.PedidoId,
                              SIZE = detalle.CodigoTalla,
                              UNIT = "Und",
-                             UNIT_PRICE = Convert.ToString(detalle.PrecioUnitario)
+                             UNIT_PRICE = Convert.ToString(detalle.PrecioUnitario),
+                             TAX_CODE = detalle.CodigoImpuesto == null ? "" : detalle.CodigoImpuesto,
                          });
                     }
 
@@ -912,7 +919,7 @@ namespace AventasApi.Controllers
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
@@ -985,7 +992,8 @@ namespace AventasApi.Controllers
                     }
                     return BadRequest("Servidor de AX no disponible");
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 string msj = e.Message;
                 try
@@ -1007,13 +1015,13 @@ namespace AventasApi.Controllers
 
         [HttpGet]
         [Route("~/api/PedidosXCliente/Flotantes/{FechaInicio}/{FechaFin}/{estado}/{asesor}")]
-        public async Task<IHttpActionResult> GetFlotantes(DateTime FechaInicio, DateTime FechaFin, int estado,string asesor)
+        public async Task<IHttpActionResult> GetFlotantes(DateTime FechaInicio, DateTime FechaFin, int estado, string asesor)
         {
             try
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);                    
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
 
                     if (FechaInicio == DateTime.Parse("1900-01-01") || FechaFin == DateTime.Parse("1900-01-01"))
                     {
@@ -1024,8 +1032,8 @@ namespace AventasApi.Controllers
                     {
                         FechaFin = FechaFin.AddDays(1);
                     }
-                    
-                    List<PedidosXClienteViewModel> pedidosFlotantes = ctx.PedidosxClienteFlotante.Where(x => x.ESTADO == estado && x.Fecha >= FechaInicio && x.Fecha < FechaFin && x.CodigoAsesor==asesor).OrderByDescending(x => x.PedidoId).Select(ped => new PedidosXClienteViewModel
+
+                    List<PedidosXClienteViewModel> pedidosFlotantes = ctx.PedidosxClienteFlotante.Where(x => x.ESTADO == estado && x.Fecha >= FechaInicio && x.Fecha < FechaFin && x.CodigoAsesor == asesor).OrderByDescending(x => x.PedidoId).Select(ped => new PedidosXClienteViewModel
                     {
                         Id = ped.Id,
                         Asesor = ped.CodigoAsesor,
@@ -1127,7 +1135,7 @@ namespace AventasApi.Controllers
 
                     if (usuario.FlagTodosAsesores.Value)
                     {
-                        asesoresHabilitados = await ctx.Asesores.Where(x =>x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
+                        asesoresHabilitados = await ctx.Asesores.Where(x => x.Activo == true).Select(x => x.CodigoAsesor).ToListAsync();
                     }
                     else
                     {
@@ -1284,7 +1292,7 @@ namespace AventasApi.Controllers
                         return BadRequest("El pedido no existe.");
                     }
 
-                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == pedido.CodigoAsesor && x.CorrelativoPedidos!=null);
+                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == pedido.CodigoAsesor && x.CorrelativoPedidos != null);
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
                     string numeroReferencia = $"{asesor.InicialesNombre}-1{numeroCorelativo.ToString("D5")}";
                     var ubicacion = ctx.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == pedido.Almacen && x.Estatus == true);
@@ -1315,9 +1323,9 @@ namespace AventasApi.Controllers
                         Procesando = false,
                         PedidoId = numeroReferencia,
                         NumeroPedido = "",
-                        BodegaEspecifica=pedido.BodegaEspecifica,
-                        Sitio=pedido.Sitio,
-                        Almacen=pedido.Almacen,
+                        BodegaEspecifica = pedido.BodegaEspecifica,
+                        Sitio = pedido.Sitio,
+                        Almacen = pedido.Almacen,
                         Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
                         SalesStatusId = 1
                     };
@@ -1461,7 +1469,7 @@ namespace AventasApi.Controllers
                 var lineasPedido = pedido.PedidosDetalle;
                 foreach (var linea in lineasPedido)
                 {
-                    var fisico = await ctx.FisicoDisponible.FirstOrDefaultAsync(x => x.CodigoColor == linea.CodigoColor && x.CodigoTalla == linea.CodigoTalla && x.IdProducto == linea.IdProducto && x.Sitio==pedido.Sitio && x.Almacen==pedido.Almacen);
+                    var fisico = await ctx.FisicoDisponible.FirstOrDefaultAsync(x => x.CodigoColor == linea.CodigoColor && x.CodigoTalla == linea.CodigoTalla && x.IdProducto == linea.IdProducto && x.Sitio == pedido.Sitio && x.Almacen == pedido.Almacen);
                     fisico.Disponible = fisico.Disponible - linea.Cantidad;
                     await ctx.SaveChangesAsync();
                 }

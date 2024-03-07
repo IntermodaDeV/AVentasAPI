@@ -171,6 +171,7 @@ namespace DBData.Database
         public virtual DbSet<OperacionDevolucion> OperacionDevolucion { get; set; }
         public virtual DbSet<ClasificacionDevolucion> ClasificacionDevolucion { get; set; }
         public virtual DbSet<DevolucionDetalle> DevolucionDetalle { get; set; }
+        public virtual DbSet<BaseColorImpuesto> BaseColorImpuesto { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -577,6 +578,11 @@ namespace DBData.Database
                 new ObjectParameter("numdevolucion", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMClasificacionDevolucion_Result>("IMClasificacionDevolucion", numdevolucionParameter);
+        }
+    
+        public virtual ObjectResult<IMObtenerBasesProductos_Result> IMObtenerBasesProductos()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerBasesProductos_Result>("IMObtenerBasesProductos");
         }
     }
 }
