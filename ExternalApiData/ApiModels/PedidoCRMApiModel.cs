@@ -49,5 +49,6 @@ namespace ExternalApiData.Models.ApiModels
         public string LOT_NUMBER { get; set; }
         public string DELIVERY_ADDRESS { get; set; }
         public string DISC_PERCENTAGE { get; set; }
+        public string TAX_CODE { get; set; }
     }
 }

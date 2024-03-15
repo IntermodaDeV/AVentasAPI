@@ -184,6 +184,21 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Descripcion" Type="varchar(max)" />
           <Property Name="EmpresaId" Type="varchar" MaxLength="250" />
         </EntityType>
+        <EntityType Name="BaseColorImpuesto">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="codigobase" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="color" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="porcentajeImpuesto" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="empresa" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="activo" Type="bit" Nullable="false" />
+          <Property Name="fechaCreacion" Type="datetime" Nullable="false" />
+          <Property Name="fechaModificacion" Type="datetime" Nullable="false" />
+          <Property Name="usuario" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="codigoimpuesto" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="BitacoraGeoposicion">
           <Key>
             <PropertyRef Name="IdBitacoraGeo" />
@@ -1154,6 +1169,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
           <Property Name="CantidadDevolucion" Type="decimal" Precision="18" Scale="2" />
           <Property Name="PrecioFacturado" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="CodigoImpuesto" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="PedidosDetalleFlotante">
           <Key>
@@ -1171,6 +1187,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="MontoLinea" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Fecha" Type="datetime" />
           <Property Name="CodigoAsesor" Type="varchar" MaxLength="50" />
+          <Property Name="CodigoImpuesto" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="PedidosxCliente">
           <Key>
@@ -4530,6 +4547,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <Function Name="IMClasificacionDevolucion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="numdevolucion" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="IMObtenerBasesProductos" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="IMObtenerDetalleDescuento" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
           <Parameter Name="LINEA" Type="varchar" Mode="In" />
@@ -4651,6 +4669,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="AtributosxColeccion" EntityType="Self.AtributosxColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AtributosxProducto" EntityType="Self.AtributosxProducto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Bancos" EntityType="Self.Bancos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BaseColorImpuesto" EntityType="Self.BaseColorImpuesto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BitacoraGeoposicion" EntityType="Self.BitacoraGeoposicion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BitacoraNoVentaEnVisitas" EntityType="Self.BitacoraNoVentaEnVisitas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BitacoraVisitasCliente" EntityType="Self.BitacoraVisitasCliente" Schema="dbo" store:Type="Tables" />
@@ -8242,6 +8261,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="DevolucionDetalle" EntitySet="DevolucionDetalle" />
           </AssociationSet>
+          <EntitySet Name="BaseColorImpuesto" EntityType="AventasModel.BaseColorImpuesto" />
+          <FunctionImport Name="IMObtenerBasesProductos" ReturnType="Collection(AventasModel.IMObtenerBasesProductos_Result)" />
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -8639,6 +8660,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B30" FromRole="PedidosDetalle" ToRole="PedidosxCliente" />
           <Property Name="CantidadDevolucion" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="PrecioFacturado" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="CodigoImpuesto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_PedidosDetalle_ProductosxColeccion">
           <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="0..1" />
@@ -9512,6 +9534,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="CodigoAsesor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_PedidosDetalle_ProductosxColeccion1" FromRole="PedidosDetalleFlotante" ToRole="ProductosxColeccion" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B3011" FromRole="PedidosDetalleFlotante" ToRole="PedidosxClienteFlotante" />
+          <Property Name="CodigoImpuesto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_PedidosDetalle_ProductosxColeccion1">
           <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="0..1" />
@@ -11990,6 +12013,25 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="BaseColorImpuesto">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="codigobase" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="color" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="porcentajeImpuesto" Type="Decimal" Nullable="false" Precision="10" Scale="2" />
+          <Property Name="empresa" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="activo" Type="Boolean" Nullable="false" />
+          <Property Name="fechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="fechaModificacion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="usuario" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="codigoimpuesto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="IMObtenerBasesProductos_Result">
+          <Property Type="String" Name="Base" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Descripcion" Nullable="false" MaxLength="4" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12905,6 +12947,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosDetalle">
             <EntityTypeMapping TypeName="AventasModel.PedidosDetalle">
               <MappingFragment StoreEntitySet="PedidosDetalle">
+                <ScalarProperty Name="CodigoImpuesto" ColumnName="CodigoImpuesto" />
                 <ScalarProperty Name="PrecioFacturado" ColumnName="PrecioFacturado" />
                 <ScalarProperty Name="CantidadDevolucion" ColumnName="CantidadDevolucion" />
                 <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
@@ -13267,6 +13310,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosDetalleFlotante">
             <EntityTypeMapping TypeName="AventasModel.PedidosDetalleFlotante">
               <MappingFragment StoreEntitySet="PedidosDetalleFlotante">
+                <ScalarProperty Name="CodigoImpuesto" ColumnName="CodigoImpuesto" />
                 <ScalarProperty Name="CodigoAsesor" ColumnName="CodigoAsesor" />
                 <ScalarProperty Name="Fecha" ColumnName="Fecha" />
                 <ScalarProperty Name="MontoLinea" ColumnName="MontoLinea" />
@@ -14408,6 +14452,30 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="BaseColorImpuesto">
+            <EntityTypeMapping TypeName="AventasModel.BaseColorImpuesto">
+              <MappingFragment StoreEntitySet="BaseColorImpuesto">
+                <ScalarProperty Name="codigoimpuesto" ColumnName="codigoimpuesto" />
+                <ScalarProperty Name="usuario" ColumnName="usuario" />
+                <ScalarProperty Name="fechaModificacion" ColumnName="fechaModificacion" />
+                <ScalarProperty Name="fechaCreacion" ColumnName="fechaCreacion" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="empresa" ColumnName="empresa" />
+                <ScalarProperty Name="porcentajeImpuesto" ColumnName="porcentajeImpuesto" />
+                <ScalarProperty Name="color" ColumnName="color" />
+                <ScalarProperty Name="codigobase" ColumnName="codigobase" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="IMObtenerBasesProductos" FunctionName="AventasModel.Store.IMObtenerBasesProductos">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.IMObtenerBasesProductos_Result">
+                <ScalarProperty Name="Base" ColumnName="Base" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -30,7 +30,8 @@ namespace AventasApi.Models.ViewModels
         public List<FisicoDisponibleViewModel> fisicaDisponible;
         public List<FotografiasXProductoViewModel> ListaImagenes;
         public List<AtributosViewModel> AtributosXProducto;
-        
+        public object atributo { get; set; }
+
         public ProductoXColeccionViewModel () {
             this.ListaTalla = new List<TallaViewModel> ();
             this.ListaColores = new List<ColorViewModel> ();

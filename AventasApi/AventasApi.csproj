@@ -188,6 +188,7 @@
     <Compile Include="Controllers\AsignacionesController.cs" />
     <Compile Include="Controllers\Authentication\AuthController.cs" />
     <Compile Include="Controllers\BancoController.cs" />
+    <Compile Include="Controllers\BaseColorImpuestoController.cs" />
     <Compile Include="Controllers\BitacoraVisitasClienteController.cs" />
     <Compile Include="Controllers\BodegaController.cs" />
     <Compile Include="Controllers\ClienteContadoController.cs" />
