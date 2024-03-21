@@ -201,6 +201,9 @@
     <Compile Include="Database\DevolucionDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\DireccionesCliente.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\DistribucionxTalla.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
