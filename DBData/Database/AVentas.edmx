@@ -1246,6 +1246,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="APSALESSTATUS" Type="int" />
           <Property Name="SalesStatusId" Type="int" Nullable="false" />
           <Property Name="Origen" Type="varchar" MaxLength="10" />
+          <Property Name="postalAddress" Type="bigint" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -1292,6 +1293,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Sitio" Type="varchar" MaxLength="50" />
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
           <Property Name="Ubicacion" Type="varchar" MaxLength="100" />
+          <Property Name="postalAddress" Type="bigint" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -10432,6 +10434,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="SalesStatusId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="SaleStatus" Relationship="AventasModel.FK__PedidosxC__Sales__008BB26A" FromRole="PedidosxCliente" ToRole="SaleStatus" />
           <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="postalAddress" Type="Int64" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -10486,6 +10489,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B3011" FromRole="PedidosxClienteFlotante" ToRole="PedidosDetalleFlotante" />
           <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" FromRole="PedidosxClienteFlotante" ToRole="TiposdePedido" />
           <Property Name="Ubicacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="postalAddress" Type="Int64" />
         </EntityType>
         <EntityType Name="RutasxAsesor">
           <Key>
@@ -13687,6 +13691,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="postalAddress" ColumnName="postalAddress" />
                 <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="SalesStatusId" ColumnName="SalesStatusId" />
                 <ScalarProperty Name="APSALESSTATUS" ColumnName="APSALESSTATUS" />
@@ -13733,6 +13738,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosxClienteFlotante">
             <EntityTypeMapping TypeName="AventasModel.PedidosxClienteFlotante">
               <MappingFragment StoreEntitySet="PedidosxClienteFlotante">
+                <ScalarProperty Name="postalAddress" ColumnName="postalAddress" />
                 <ScalarProperty Name="Ubicacion" ColumnName="Ubicacion" />
                 <ScalarProperty Name="Almacen" ColumnName="Almacen" />
                 <ScalarProperty Name="Sitio" ColumnName="Sitio" />

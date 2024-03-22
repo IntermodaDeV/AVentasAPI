@@ -44,6 +44,7 @@ namespace AventasApi.Models.ViewModels
         public string Sitio { get; set; }
         public string Almacen { get; set; }
         public string Ubicacion { get; set; }
+        public long DireccionEntrega { get; set; }
         public PedidoPostViewModel()
         {
             DetallePedido = new List<DetallePedidoPostViewModel>();
