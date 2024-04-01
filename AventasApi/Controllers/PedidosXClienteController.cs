@@ -144,6 +144,12 @@ namespace AventasApi.Controllers
                 }
                 DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
 
+                long? postalAddress = Pedido.DireccionEntrega;
+                if(cliente.Nombre.Contains("CONSUMIDOR FINAL"))
+                {
+                    postalAddress = null;
+                }
+
                 if (found == null)
                 {
                     PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
@@ -173,7 +179,7 @@ namespace AventasApi.Controllers
                         Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
                         SalesStatusId = 1,
                         Origen = "Web",
-                        postalAddress = Pedido.DireccionEntrega
+                        postalAddress = postalAddress,
                     };
 
                     foreach (var detalle in Pedido.DetallePedido)
@@ -259,7 +265,7 @@ namespace AventasApi.Controllers
                             Sitio = Pedido.Sitio,
                             Almacen = Pedido.Almacen,
                             Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
-                            postalAddress=Pedido.DireccionEntrega
+                            postalAddress= postalAddress
                         };
 
                         //if (numeroReferencia == "")
@@ -341,7 +347,7 @@ namespace AventasApi.Controllers
                         Sitio = Pedido.Sitio,
                         Almacen = Pedido.Almacen,
                         Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
-                        postalAddress=Pedido.DireccionEntrega
+                        postalAddress= postalAddress
                     };
 
                     //if (numeroReferencia == "")
