@@ -69,6 +69,14 @@ namespace AventasApi.Models
         }
     }
 
+    public class DireccionesClienteViewModel
+    {
+        public long postalAddress { get; set; }
+        public string nombreDireccion { get; set; }
+        public string direccion { get; set; }
+        public bool principal { get; set; }
+    }
+
     public class ClientePedidoViewModel
     {
         public string EmpresaId { get; set; }
@@ -93,11 +101,12 @@ namespace AventasApi.Models
         public decimal? Longitud { get; internal set; }
         public decimal? Latitud { get; internal set; }
         public bool IncluyeImpuesto { get; internal set; }
-
+        public List<DireccionesClienteViewModel> Direcciones;
         public ClientePedidoViewModel()
         {
             this.Credito = new List<PResumenCredito_Result>();
             this.CuentaCorriente = new List<CuentaCorrienteViewModel>();
+            this.Direcciones = new List<DireccionesClienteViewModel>();
         }
     }
 

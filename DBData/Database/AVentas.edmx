@@ -532,6 +532,19 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="PrecioUnitario" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MontoLinea" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
+        <EntityType Name="DireccionesCliente">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="codigoCliente" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="postalAddress" Type="bigint" Nullable="false" />
+          <Property Name="nombreDireccion" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="direccion" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="activo" Type="bit" Nullable="false" />
+          <Property Name="principal" Type="bit" Nullable="false" />
+          <Property Name="fechaCreacion" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="DistribucionxTalla">
           <Key>
             <PropertyRef Name="IdDistribucion" />
@@ -1233,6 +1246,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="APSALESSTATUS" Type="int" />
           <Property Name="SalesStatusId" Type="int" Nullable="false" />
           <Property Name="Origen" Type="varchar" MaxLength="10" />
+          <Property Name="postalAddress" Type="bigint" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -1279,6 +1293,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Sitio" Type="varchar" MaxLength="50" />
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
           <Property Name="Ubicacion" Type="varchar" MaxLength="100" />
+          <Property Name="postalAddress" Type="bigint" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -4694,6 +4709,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="DescuentoEnAcuerdo" EntityType="Self.DescuentoEnAcuerdo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Devolucion" EntityType="Self.Devolucion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DevolucionDetalle" EntityType="Self.DevolucionDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DireccionesCliente" EntityType="Self.DireccionesCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DistribucionxTalla" EntityType="Self.DistribucionxTalla" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DocumentosAplicadosAFacturas" EntityType="Self.DocumentosAplicadosAFacturas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DocumentosTransitoxFactura" EntityType="Self.DocumentosTransitoxFactura" Schema="dbo" store:Type="Tables" />
@@ -8263,6 +8279,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </AssociationSet>
           <EntitySet Name="BaseColorImpuesto" EntityType="AventasModel.BaseColorImpuesto" />
           <FunctionImport Name="IMObtenerBasesProductos" ReturnType="Collection(AventasModel.IMObtenerBasesProductos_Result)" />
+          <EntitySet Name="DireccionesCliente" EntityType="AventasModel.DireccionesCliente" />
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -10417,6 +10434,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="SalesStatusId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="SaleStatus" Relationship="AventasModel.FK__PedidosxC__Sales__008BB26A" FromRole="PedidosxCliente" ToRole="SaleStatus" />
           <Property Name="Origen" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="postalAddress" Type="Int64" />
         </EntityType>
         <EntityType Name="PedidosxClienteFlotante">
           <Key>
@@ -10471,6 +10489,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PedidosDetalleFlotante" Relationship="AventasModel.FK__PedidosDe__Pedid__70099B3011" FromRole="PedidosxClienteFlotante" ToRole="PedidosDetalleFlotante" />
           <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" FromRole="PedidosxClienteFlotante" ToRole="TiposdePedido" />
           <Property Name="Ubicacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="postalAddress" Type="Int64" />
         </EntityType>
         <EntityType Name="RutasxAsesor">
           <Key>
@@ -12032,6 +12051,19 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="String" Name="Base" Nullable="true" MaxLength="50" />
           <Property Type="String" Name="Descripcion" Nullable="false" MaxLength="4" />
         </ComplexType>
+        <EntityType Name="DireccionesCliente">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="codigoCliente" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="postalAddress" Type="Int64" Nullable="false" />
+          <Property Name="nombreDireccion" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="direccion" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="activo" Type="Boolean" Nullable="false" />
+          <Property Name="principal" Type="Boolean" Nullable="false" />
+          <Property Name="fechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -13659,6 +13691,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosxCliente">
             <EntityTypeMapping TypeName="AventasModel.PedidosxCliente">
               <MappingFragment StoreEntitySet="PedidosxCliente">
+                <ScalarProperty Name="postalAddress" ColumnName="postalAddress" />
                 <ScalarProperty Name="Origen" ColumnName="Origen" />
                 <ScalarProperty Name="SalesStatusId" ColumnName="SalesStatusId" />
                 <ScalarProperty Name="APSALESSTATUS" ColumnName="APSALESSTATUS" />
@@ -13705,6 +13738,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="PedidosxClienteFlotante">
             <EntityTypeMapping TypeName="AventasModel.PedidosxClienteFlotante">
               <MappingFragment StoreEntitySet="PedidosxClienteFlotante">
+                <ScalarProperty Name="postalAddress" ColumnName="postalAddress" />
                 <ScalarProperty Name="Ubicacion" ColumnName="Ubicacion" />
                 <ScalarProperty Name="Almacen" ColumnName="Almacen" />
                 <ScalarProperty Name="Sitio" ColumnName="Sitio" />
@@ -14476,6 +14510,20 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="DireccionesCliente">
+            <EntityTypeMapping TypeName="AventasModel.DireccionesCliente">
+              <MappingFragment StoreEntitySet="DireccionesCliente">
+                <ScalarProperty Name="fechaCreacion" ColumnName="fechaCreacion" />
+                <ScalarProperty Name="principal" ColumnName="principal" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="direccion" ColumnName="direccion" />
+                <ScalarProperty Name="nombreDireccion" ColumnName="nombreDireccion" />
+                <ScalarProperty Name="postalAddress" ColumnName="postalAddress" />
+                <ScalarProperty Name="codigoCliente" ColumnName="codigoCliente" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

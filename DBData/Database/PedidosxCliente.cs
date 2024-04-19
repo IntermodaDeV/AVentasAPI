@@ -61,6 +61,7 @@ namespace DBData.Database
         public Nullable<int> APSALESSTATUS { get; set; }
         public int SalesStatusId { get; set; }
         public string Origen { get; set; }
+        public Nullable<long> postalAddress { get; set; }
     
         public virtual Clientes Clientes { get; set; }
         public virtual Colecciones Colecciones { get; set; }

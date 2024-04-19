@@ -801,7 +801,8 @@ namespace AventasApi.Controllers
                             {
                                 Descripcion = lcc.Descripcion,
                                 Valor = lcc.Valor ?? 0
-                            }).ToList()
+                            }).ToList(),
+                            Direcciones = ctx.DireccionesCliente.Where(x => x.codigoCliente == cli.CodigoCliente && x.activo == true).Select(x => new DireccionesClienteViewModel { postalAddress = x.postalAddress, nombreDireccion = x.nombreDireccion, direccion = x.direccion, principal = x.principal }).ToList(),
                         }).ToListAsync();
 
                         foreach (var cliente in clientes)

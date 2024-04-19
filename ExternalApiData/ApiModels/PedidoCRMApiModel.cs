@@ -34,6 +34,7 @@ namespace ExternalApiData.Models.ApiModels
         public string SITE { get; set; }
         public string LOCATION { get; set; }
         public string WMSLOCATION { get; set; }
+        public string POSTAL_ADDRESS { get; set; }
 
         public List<PedidoJsonItems> PedidoJsonItems { get; set; }
     }
