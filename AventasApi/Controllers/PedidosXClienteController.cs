@@ -125,6 +125,7 @@ namespace AventasApi.Controllers
                 ClienteContado clienteContado;
                 CONFIGURACIONE SyncTelContado;
                 CONFIGURACIONE SyncTelCredito;
+                List<DireccionesCliente> direccionesClientes;
 
                 using (AVentasConfigEntities config = new AVentasConfigEntities())
                 {
@@ -141,11 +142,26 @@ namespace AventasApi.Controllers
                     cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
                     coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
                     ubicacion = context.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == Pedido.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == cliente.EmpresaId && x.Estatus == true);
+                    direccionesClientes = context.DireccionesCliente.Where(x => x.codigoCliente.ToUpper() == Pedido.CodigoCliente.ToUpper()).ToList();
                 }
                 DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
 
                 long? postalAddress = Pedido.DireccionEntrega;
-                if(cliente.Nombre.Contains("CONSUMIDOR FINAL"))
+                var direccionEntrega = direccionesClientes.FirstOrDefault(x => x.postalAddress == postalAddress);
+                if (direccionEntrega == null)
+                {
+                    var direccionEntregaPrincipal = direccionesClientes.FirstOrDefault(x => x.principal == true);
+                    if (direccionEntregaPrincipal != null)
+                    {
+                        postalAddress = direccionEntregaPrincipal.postalAddress;
+                    }
+                    else
+                    {
+                        postalAddress = null;
+                    }
+                }
+
+                if (cliente.Nombre.Contains("CONSUMIDOR FINAL"))
                 {
                     postalAddress = null;
                 }
