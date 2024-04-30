@@ -585,5 +585,14 @@ namespace DBData.Database
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerBasesProductos_Result>("IMObtenerBasesProductos");
         }
+    
+        public virtual ObjectResult<IMObtenerFacturasDevolucionCompleta_Result> IMObtenerFacturasDevolucionCompleta(string cLIENTE)
+        {
+            var cLIENTEParameter = cLIENTE != null ?
+                new ObjectParameter("CLIENTE", cLIENTE) :
+                new ObjectParameter("CLIENTE", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerFacturasDevolucionCompleta_Result>("IMObtenerFacturasDevolucionCompleta", cLIENTEParameter);
+        }
     }
 }

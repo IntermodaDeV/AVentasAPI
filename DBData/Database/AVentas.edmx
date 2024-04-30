@@ -4568,6 +4568,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="LINEA" Type="varchar" Mode="In" />
           <Parameter Name="CODIGO" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="IMObtenerFacturasDevolucionCompleta" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="IMObtenerFacturasFletes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CodigoCliente" Type="varchar" Mode="In" />
         </Function>
@@ -8280,6 +8283,9 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="BaseColorImpuesto" EntityType="AventasModel.BaseColorImpuesto" />
           <FunctionImport Name="IMObtenerBasesProductos" ReturnType="Collection(AventasModel.IMObtenerBasesProductos_Result)" />
           <EntitySet Name="DireccionesCliente" EntityType="AventasModel.DireccionesCliente" />
+          <FunctionImport Name="IMObtenerFacturasDevolucionCompleta" ReturnType="Collection(AventasModel.IMObtenerFacturasDevolucionCompleta_Result)">
+            <Parameter Name="CLIENTE" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -12064,6 +12070,11 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="principal" Type="Boolean" Nullable="false" />
           <Property Name="fechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
+        <ComplexType Name="IMObtenerFacturasDevolucionCompleta_Result">
+          <Property Type="String" Name="factura" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="linea" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="pedido" Nullable="true" MaxLength="100" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -14524,6 +14535,15 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="IMObtenerFacturasDevolucionCompleta" FunctionName="AventasModel.Store.IMObtenerFacturasDevolucionCompleta">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.IMObtenerFacturasDevolucionCompleta_Result">
+                <ScalarProperty Name="factura" ColumnName="factura" />
+                <ScalarProperty Name="linea" ColumnName="linea" />
+                <ScalarProperty Name="pedido" ColumnName="pedido" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
