@@ -195,6 +195,9 @@
     <Compile Include="Database\DescuentoEnAcuerdo.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\DetalleFacturado.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Devolucion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

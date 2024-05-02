@@ -867,18 +867,19 @@ namespace AventasApi.Controllers
             using (var ctx = new AVentasEntities())
             {
                 var lineasPedido = pedido.DevolucionDetalle;
-                var PedidoOriginal =  ctx.PedidosxCliente.FirstOrDefault(x => x.NumeroPedido == pedido.PedidoOrigen && x.EmpresaId == pedido.EmpresaId);
 
-                if (PedidoOriginal != null)
+                foreach (var linea in lineasPedido)
                 {
-                    foreach (var linea in lineasPedido)
+                    var talla = linea.CodigoTalla.ToUpper();
+                    var fisico = ctx.DetalleFacturado.FirstOrDefault(x => x.pedido.ToUpper() == pedido.PedidoOrigen.ToUpper() && x.codigoColor == linea.CodigoColor && x.codigoTalla.ToUpper() == talla && x.productoId == linea.IdProducto);
+
+                    if (fisico != null)
                     {
-                        var talla = linea.CodigoTalla.ToUpper();
-                        var fisico =  ctx.PedidosDetalle.FirstOrDefault(x => x.PedidoId==PedidoOriginal.PedidoId && x.CodigoColor==linea.CodigoColor && x.CodigoTalla.ToUpper() == talla && x.IdProducto==linea.IdProducto);
-                        fisico.CantidadDevolucion = fisico.CantidadDevolucion - linea.Cantidad;
-                         ctx.SaveChanges();
+                        fisico.cantidad = fisico.cantidad - linea.Cantidad;
+                        ctx.SaveChanges();
                     }
                 }
+
             }
         }
 

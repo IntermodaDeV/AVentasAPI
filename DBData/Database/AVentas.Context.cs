@@ -173,6 +173,7 @@ namespace DBData.Database
         public virtual DbSet<DevolucionDetalle> DevolucionDetalle { get; set; }
         public virtual DbSet<BaseColorImpuesto> BaseColorImpuesto { get; set; }
         public virtual DbSet<DireccionesCliente> DireccionesCliente { get; set; }
+        public virtual DbSet<DetalleFacturado> DetalleFacturado { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
