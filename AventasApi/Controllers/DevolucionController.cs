@@ -885,14 +885,14 @@ namespace AventasApi.Controllers
 
 
         [HttpGet]
-        [Route("obtencionFacturas/{codigoProducto}/{cliente}")]
-        public async Task<IHttpActionResult> ObtenerFacturasPorProducto(string codigoProducto, string cliente)
+        [Route("obtencionFacturas/{codigoProducto}/{color}/{cliente}")]
+        public async Task<IHttpActionResult> ObtenerFacturasPorProducto(string codigoProducto, string color, string cliente)
         {
             try
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    var Facturas = ctx.SP_ObtencionFacturas(codigoProducto, cliente).ToList();
+                    var Facturas = ctx.SP_ObtencionFacturas(codigoProducto, color, cliente).ToList();
                     return Ok(Facturas);
                 }
             }

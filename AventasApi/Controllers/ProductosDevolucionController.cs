@@ -37,14 +37,14 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("factura/{factura}/{producto}")]
-        public IHttpActionResult GetProductoFactura(string factura,string producto)
+        [Route("factura/{factura}/{producto}/{color}")]
+        public IHttpActionResult GetProductoFactura(string factura,string producto,string color)
         {
             try
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    var productos = ctx.PRODUCTOSDEFACTURA(factura).Where(x=>x.CodigoProducto == producto).ToList();
+                    var productos = ctx.PRODUCTOSDEFACTURA(factura).Where(x=>x.CodigoProducto == producto && x.CodigoColor==color).ToList();
                     return Ok(productos);
                 }
             }

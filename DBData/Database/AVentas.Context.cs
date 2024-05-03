@@ -375,17 +375,21 @@ namespace DBData.Database
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<VisitasClientePorAsesor_Result>("VisitasClientePorAsesor", codigoAsesorParameter, fechaInicioParameter, fechaFinalParameter);
         }
     
-        public virtual ObjectResult<SP_ObtencionFacturas_Result> SP_ObtencionFacturas(string codigoProducto, string cliente)
+        public virtual ObjectResult<SP_ObtencionFacturas_Result> SP_ObtencionFacturas(string codigoProducto, string color, string cliente)
         {
             var codigoProductoParameter = codigoProducto != null ?
                 new ObjectParameter("codigoProducto", codigoProducto) :
                 new ObjectParameter("codigoProducto", typeof(string));
     
+            var colorParameter = color != null ?
+                new ObjectParameter("color", color) :
+                new ObjectParameter("color", typeof(string));
+    
             var clienteParameter = cliente != null ?
                 new ObjectParameter("cliente", cliente) :
                 new ObjectParameter("cliente", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtencionFacturas_Result>("SP_ObtencionFacturas", codigoProductoParameter, clienteParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtencionFacturas_Result>("SP_ObtencionFacturas", codigoProductoParameter, colorParameter, clienteParameter);
         }
     
         public virtual int SP_FacturasxCliente_UpdateSaldoXCliente(string cLIENTE, string eMPRESA)

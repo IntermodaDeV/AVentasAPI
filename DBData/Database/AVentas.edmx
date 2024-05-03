@@ -4646,6 +4646,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         </Function>
         <Function Name="SP_ObtencionFacturas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="codigoProducto" Type="varchar" Mode="In" />
+          <Parameter Name="color" Type="varchar" Mode="In" />
           <Parameter Name="cliente" Type="varchar" Mode="In" />
         </Function>
         <Function Name="SP_ObtenerProductosRMA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -8115,6 +8116,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </AssociationSet>
           <FunctionImport Name="SP_ObtencionFacturas" ReturnType="Collection(AventasModel.SP_ObtencionFacturas_Result)">
             <Parameter Name="codigoProducto" Mode="In" Type="String" />
+            <Parameter Name="color" Mode="In" Type="String" />
             <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="vw_ColeccionesBodegaEspecifico" EntityType="AventasModel.vw_ColeccionesBodegaEspecifico" />
