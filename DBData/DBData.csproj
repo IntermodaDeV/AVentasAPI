@@ -525,6 +525,9 @@
     <Compile Include="Database\SP_ObtencionFacturas_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\SP_ObtenerFacturasAbiertas_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\SP_ObtenerProductosRMA_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

@@ -791,6 +791,7 @@ namespace AventasApi.Controllers
                                 IdMotivoDevDetalle = devolucion.MotivoDevolucionDetalle,
                                 EmpresaId = devolucion.Empresa,
                                 PedidoOrigen = devolucion.PedidoOriginal,
+                                //facturaDestino = devolucion.FacturaDestino,
                                 FacturaOrigen = devolucion.FacturaOriginal,
                                 CodigoAsesor = cliente.CodigoAsesor,
                                 UsuarioCrea = user.Id,

@@ -144,6 +144,25 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("abiertas/{cliente}")]
+        public async Task<IHttpActionResult> GetFacturasAbiertasCliente(string cliente)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var facturas = ctx.SP_ObtenerFacturasAbiertas(cliente).ToList();
+                    return Ok(facturas);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+
+        }
+
+        [HttpGet]
         [Route("facturasdiasgracias/{cliente}")]
         public async Task<IHttpActionResult> GetFacturasCliente(string cliente)
         {

@@ -44,7 +44,7 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    var productos = ctx.PRODUCTOSDEFACTURA(factura).Where(x=>x.CodigoProducto == producto && x.CodigoColor==color).ToList();
+                    var productos = ctx.PRODUCTOSDEFACTURA(factura).Where(x=>x.CodigoProducto == producto && x.CodigoColor.ToUpper() == color.ToUpper()).ToList();
                     return Ok(productos);
                 }
             }
