@@ -700,7 +700,7 @@ namespace AventasApi.Controllers
 
                         if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
                         {
-                            ReducirPendienteDevolucion(devolucionDB);
+                            ctx.SP_LimpiarInventarioFactura(devolucion.FacturaOriginal);
                         }
 
 

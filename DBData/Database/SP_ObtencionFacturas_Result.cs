@@ -17,5 +17,7 @@ namespace DBData.Database
         public string NumeroPedido { get; set; }
         public string Linea { get; set; }
         public int Abierta { get; set; }
+        public Nullable<System.DateTime> FechaFactura { get; set; }
+        public string Paquete { get; set; }
     }
 }

@@ -4647,6 +4647,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
         <Function Name="SP_LimpiarAsignacionesAsesor" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="asesor" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="SP_LimpiarInventarioFactura" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="FACTURA" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SP_ObtencionFacturas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="codigoProducto" Type="varchar" Mode="In" />
           <Parameter Name="color" Type="varchar" Mode="In" />
@@ -8313,6 +8316,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <FunctionImport Name="SP_ObtenerFacturasAbiertas" ReturnType="Collection(AventasModel.SP_ObtenerFacturasAbiertas_Result)">
           <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="SP_LimpiarInventarioFactura">
+            <Parameter Name="FACTURA" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -11374,6 +11380,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="String" Name="NumeroPedido" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="Linea" Nullable="true" MaxLength="250" />
           <Property Type="Int32" Name="Abierta" Nullable="false" />
+          <Property Type="DateTime" Name="FechaFactura" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Paquete" Nullable="true" MaxLength="150" />
         </ComplexType>
         <EntityType Name="vw_ColeccionesBodegaEspecifico">
           <Key>
@@ -14085,6 +14093,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
                 <ScalarProperty Name="Linea" ColumnName="Linea" />
                 <ScalarProperty Name="Abierta" ColumnName="Abierta" />
+                <ScalarProperty Name="FechaFactura" ColumnName="FechaFactura" />
+                <ScalarProperty Name="Paquete" ColumnName="Paquete" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -14618,6 +14628,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_LimpiarInventarioFactura" FunctionName="AventasModel.Store.SP_LimpiarInventarioFactura" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
