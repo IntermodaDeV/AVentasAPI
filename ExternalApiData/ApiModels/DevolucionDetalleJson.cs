@@ -10,5 +10,6 @@
         public string SALES_NUMBER { get; set; }
         public string UNIT { get; set; }
         public string UBICATION { get; set; }
+        public string PACKAGE { get; set; }
     }
 }

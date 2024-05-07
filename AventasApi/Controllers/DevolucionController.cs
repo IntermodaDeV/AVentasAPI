@@ -273,7 +273,8 @@ namespace AventasApi.Controllers
                              REFERENCE = detalle.NumDevolucion,
                              SALES_NUMBER = devolucionDB.PedidoOrigen,
                              UNIT = "Und",
-                             UBICATION = ubicacion.CodigoUbicacion
+                             UBICATION = ubicacion.CodigoUbicacion,
+                             PACKAGE = detalle.Paquete == null ? "" : detalle.Paquete,
                          });
                     }
 
