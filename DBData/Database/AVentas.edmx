@@ -548,6 +548,9 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Cantidad" Type="int" Nullable="false" />
           <Property Name="PrecioUnitario" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MontoLinea" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Factura" Type="nvarchar" MaxLength="250" />
+          <Property Name="Pedido" Type="nvarchar" MaxLength="50" />
+          <Property Name="Paquete" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="DireccionesCliente">
           <Key>
@@ -8317,7 +8320,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_LimpiarInventarioFactura">
-            <Parameter Name="FACTURA" Mode="In" Type="String" />
+          <Parameter Name="FACTURA" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -12049,6 +12052,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="MontoLinea" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" FromRole="DevolucionDetalle" ToRole="Devolucion" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="DevolucionDetalle" ToRole="ProductosxColeccion" />
+          <Property Name="Factura" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Pedido" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Paquete" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_tbDevolucionDetalle_Devolucion_idDevolucion">
           <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="0..1" />
@@ -14545,6 +14551,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="DevolucionDetalle">
             <EntityTypeMapping TypeName="AventasModel.DevolucionDetalle">
               <MappingFragment StoreEntitySet="DevolucionDetalle">
+                <ScalarProperty Name="Paquete" ColumnName="Paquete" />
+                <ScalarProperty Name="Pedido" ColumnName="Pedido" />
+                <ScalarProperty Name="Factura" ColumnName="Factura" />
                 <ScalarProperty Name="MontoLinea" ColumnName="MontoLinea" />
                 <ScalarProperty Name="PrecioUnitario" ColumnName="PrecioUnitario" />
                 <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />

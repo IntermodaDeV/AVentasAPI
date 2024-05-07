@@ -817,7 +817,10 @@ namespace AventasApi.Controllers
                                     CodigoTalla = detalle.CodigoTalla,
                                     Cantidad = detalle.Cantidad,
                                     PrecioUnitario = detalle.PrecioUnitario,
-                                    MontoLinea = detalle.Cantidad * detalle.PrecioUnitario
+                                    MontoLinea = detalle.Cantidad * detalle.PrecioUnitario,
+                                    Factura = detalle.Factura,
+                                    Paquete = detalle.Paquete,
+                                    Pedido = detalle.Pedido,
                                 });
                             }
                             bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
@@ -840,11 +843,7 @@ namespace AventasApi.Controllers
                                     var result =  ctx.SaveChanges();
                                 }
 
-
-                                if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
-                                {
-                                    ReducirPendienteDevolucion(devolucionDB);
-                                }
+                                ReducirPendienteDevolucion(devolucionDB);
                             }
 
                             //_ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion}", correos);
@@ -871,13 +870,22 @@ namespace AventasApi.Controllers
 
                 foreach (var linea in lineasPedido)
                 {
-                    var talla = linea.CodigoTalla.ToUpper();
-                    var fisico = ctx.DetalleFacturado.FirstOrDefault(x => x.pedido.ToUpper() == pedido.PedidoOrigen.ToUpper() && x.codigoColor == linea.CodigoColor && x.codigoTalla.ToUpper() == talla && x.productoId == linea.IdProducto);
-
-                    if (fisico != null)
+                    if (linea.Paquete != null && linea.Pedido != null && linea.Factura != null)
                     {
-                        fisico.cantidad = fisico.cantidad - linea.Cantidad;
-                        ctx.SaveChanges();
+                        var talla = linea.CodigoTalla.ToUpper();
+                        var fisico = ctx.DetalleFacturado.FirstOrDefault(x =>
+                        x.pedido.ToUpper() == linea.Pedido.ToUpper()
+                        && x.factura.ToUpper() == linea.Factura.ToUpper()
+                        && x.paquete.ToUpper() == linea.Paquete.ToUpper()
+                        && x.codigoColor == linea.CodigoColor
+                        && x.codigoTalla.ToUpper() == talla
+                        && x.productoId == linea.IdProducto);
+
+                        if (fisico != null)
+                        {
+                            fisico.cantidad -= linea.Cantidad;
+                            ctx.SaveChanges();
+                        }
                     }
                 }
 
