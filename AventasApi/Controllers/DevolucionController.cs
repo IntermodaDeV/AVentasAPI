@@ -604,7 +604,7 @@ namespace AventasApi.Controllers
                     var usuariosCorreo = ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToList();
                     var correos = ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null && usuariosCorreo.Contains(x.Id)).Select(x => x.Correo).ToList();
                     var motivoDetalle = ctx.MotivosDevolucionDetalle.Find(devolucion.MotivoDevolucionDetalle);
-
+                    var detalleFacturado = ctx.DetalleFacturado.FirstOrDefault(x => x.pedido.ToUpper() == devolucion.PedidoOriginal.ToUpper() && x.factura.ToUpper() == devolucion.FacturaOriginal.ToUpper());
                     var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
                     int minutosValue = 2;
 
@@ -671,7 +671,10 @@ namespace AventasApi.Controllers
                                 CodigoTalla = detalle.CodigoTalla,
                                 Cantidad = detalle.Cantidad,
                                 PrecioUnitario = detalle.PrecioUnitario,
-                                MontoLinea = detalle.Cantidad * detalle.PrecioUnitario
+                                MontoLinea = detalle.Cantidad * detalle.PrecioUnitario,
+                                Factura = detalleFacturado?.factura,
+                                Pedido = detalleFacturado?.pedido,
+                                Paquete = detalleFacturado?.paquete
                             });
                         }
                         bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
