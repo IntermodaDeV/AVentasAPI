@@ -617,5 +617,23 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_LimpiarInventarioFactura", fACTURAParameter);
         }
+    
+        public virtual int SP_Devoluciones_UpdateEstado(string codigoAsesor)
+        {
+            var codigoAsesorParameter = codigoAsesor != null ?
+                new ObjectParameter("codigoAsesor", codigoAsesor) :
+                new ObjectParameter("codigoAsesor", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_Devoluciones_UpdateEstado", codigoAsesorParameter);
+        }
+    
+        public virtual int SP_DocumentosTransitoxFactura_UpdateSaldo(string aSESOR)
+        {
+            var aSESORParameter = aSESOR != null ?
+                new ObjectParameter("ASESOR", aSESOR) :
+                new ObjectParameter("ASESOR", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_DocumentosTransitoxFactura_UpdateSaldo", aSESORParameter);
+        }
     }
 }

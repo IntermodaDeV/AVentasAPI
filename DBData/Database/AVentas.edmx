@@ -4625,8 +4625,14 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="version" Type="int" Mode="In" />
           <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
         </Function>
+        <Function Name="SP_Devoluciones_UpdateEstado" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="codigoAsesor" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SP_DocumentosAplicadosXCuotas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CodigoAsesor" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_DocumentosTransitoxFactura_UpdateSaldo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ASESOR" Type="varchar" Mode="In" />
         </Function>
         <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
@@ -8321,6 +8327,12 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </FunctionImport>
           <FunctionImport Name="SP_LimpiarInventarioFactura">
           <Parameter Name="FACTURA" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_Devoluciones_UpdateEstado">
+            <Parameter Name="codigoAsesor" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_DocumentosTransitoxFactura_UpdateSaldo">
+            <Parameter Name="ASESOR" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -14638,6 +14650,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="SP_LimpiarInventarioFactura" FunctionName="AventasModel.Store.SP_LimpiarInventarioFactura" />
+          <FunctionImportMapping FunctionImportName="SP_Devoluciones_UpdateEstado" FunctionName="AventasModel.Store.SP_Devoluciones_UpdateEstado" />
+          <FunctionImportMapping FunctionImportName="SP_DocumentosTransitoxFactura_UpdateSaldo" FunctionName="AventasModel.Store.SP_DocumentosTransitoxFactura_UpdateSaldo" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

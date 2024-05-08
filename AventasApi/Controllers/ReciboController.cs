@@ -871,7 +871,7 @@ namespace AventasApi.Controllers
                                         recibo.Sincronizado = true;
                                         ctx.SaveChanges();
                                     }
-
+                                    syncCuentaCorriente.SyncDocumentosEnTransito(recibos[0].COMPANY, recibos[0].ASESOR);
                                     syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                                     syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                                 }
@@ -1647,7 +1647,7 @@ namespace AventasApi.Controllers
                             recibo.Sincronizado = true;
                             await ctx.SaveChangesAsync();
                         }
-
+                        syncCuentaCorriente.SyncDocumentosEnTransito(recibos[0].COMPANY, recibos[0].ASESOR);
                         syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         return Ok($"El recibo {recibos[0].RECIBO} ha sido sincronizado exitosamente con AX.");
@@ -1695,7 +1695,7 @@ namespace AventasApi.Controllers
                             recibo.Sincronizado = true;
                             await ctx.SaveChangesAsync();
                         }
-
+                        syncCuentaCorriente.SyncDocumentosEnTransito(recibos[0].COMPANY, recibos[0].ASESOR);
                         syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         return Ok($"El recibo {recibos[0].RECIBO} ha sido sincronizado exitosamente con AX.");
@@ -2073,7 +2073,7 @@ namespace AventasApi.Controllers
                                     reciboBDA.Sincronizado = true;
                                     await ctx.SaveChangesAsync();
                                 }
-
+                                syncCuentaCorriente.SyncDocumentosEnTransito(ReciboSincronizar[0].COMPANY, ReciboSincronizar[0].ASESOR);
                                 syncCuentaCorriente.SyncFacturas(ReciboSincronizar[0].COMPANY, ReciboSincronizar[0].CLIENTE, ReciboSincronizar[0].ASESOR);
                                 syncCuentaCorriente.SyncSubFacturas(ReciboSincronizar[0].COMPANY, ReciboSincronizar[0].CLIENTE, ReciboSincronizar[0].ASESOR);
                                 return Ok($"El recibo ha sido aprobado y sincronizado exitosamente con AX.");

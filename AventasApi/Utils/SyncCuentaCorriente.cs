@@ -253,6 +253,86 @@ namespace AventasApi.Utils
 
             }
         }
+        private void UpdateDocumentosEnTransito(string asesor, List<DocumentonsEnTransitoApiModel> documentos)
+        {
+            try
+            {
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    context.SP_DocumentosTransitoxFactura_UpdateSaldo(asesor);
+                    context.SP_Devoluciones_UpdateEstado(asesor);
+
+                    foreach(var datos in documentos)
+                    {
+                        DateTime dummy = new DateTime();
+
+                       
+                        string factura = null;
+                        decimal valor = 0;
+                        int tableId = 0;
+                        int? idSubFactura = null;
+                        var fFactura = context.FacturasxCliente.FirstOrDefault(x => x.Referencia == datos.REF_TRANS && x.Factura == datos.INVOICE && x.EmpresaId == datos.ENTITY.ToUpper());
+                        if (fFactura != null)
+                        {
+                            factura = fFactura.Factura;
+                        }
+
+                        var sFactura = context.SubFacturasxCliente.FirstOrDefault(x => x.Referencia == datos.REF_TRANSOPEN && x.Factura == datos.INVOICE && x.CodigoCliente == datos.ACCOUNTNUM && x.EmpresaId == datos.ENTITY.ToUpper());
+                        if (sFactura != null)
+                        {
+                            idSubFactura = sFactura.IdSubFactura;
+                        }
+
+                        DocumentosTransitoxFactura model = new DocumentosTransitoxFactura
+                        {
+                            Factura = factura,
+                            CreadoPor = datos.CREATEDBY,
+                            Estado = datos.DOCUMENT_STATUS,
+                            FechaCreacion = DateTime.TryParseExact(datos.CREATEDDATETIME, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(datos.CREATEDDATETIME, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now,
+                            IdSubFactura = idSubFactura,
+                            NumeroDocumento = datos.DOCUMENT_NUMBER,
+                            TablaId = int.TryParse(datos.SPECTABLEID, out tableId) ? tableId : 0,
+                            Tipo = datos.TYPE,
+                            Valor = Decimal.TryParse(datos.AMOUNT, out valor) ? valor : 0,
+                            CodigoCliente = datos.ACCOUNTNUM,
+                            EmpresaId = datos.ENTITY.ToUpper(),
+                            IdMoneda = datos.CURRENCY,
+                            Referencia = datos.REF_SPECTRANS,
+                            ReferenciaFacturas = datos.REF_TRANS,
+                            ReferenciaSubFactura = datos.REF_TRANSOPEN,
+                            NumeroFEL = datos.FACTURACION_FEL
+                        };
+
+                        var entityFound = context.DocumentosTransitoxFactura.FirstOrDefault(p => p.Empresa.EmpresaId == model.EmpresaId && p.Clientes.CodigoCliente == model.CodigoCliente && p.SubFacturasxCliente.IdSubFactura == model.IdSubFactura && p.FacturasxCliente.Factura == model.Factura && p.Referencia == model.Referencia);
+                        if (entityFound == null)
+                        {
+                            context.DocumentosTransitoxFactura.Add(model);
+                        }
+                        else
+                        {
+                            entityFound.Factura = model.Factura;
+                            entityFound.NumeroFEL = model.NumeroFEL;
+                            entityFound.Referencia = model.Referencia;
+                            entityFound.ReferenciaFacturas = model.ReferenciaFacturas;
+                            entityFound.CreadoPor = model.CreadoPor;
+                            entityFound.Estado = model.Estado;
+                            entityFound.FechaCreacion = model.FechaCreacion;
+                            entityFound.NumeroDocumento = model.NumeroDocumento;
+                            entityFound.TablaId = model.TablaId;
+                            entityFound.Tipo = model.Tipo;
+                            entityFound.Valor = model.Valor;
+                            entityFound.ReferenciaSubFactura = model.ReferenciaSubFactura;
+                        }
+
+                        context.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
 
         private void UpdateFleteSubfacturasAcuerdo(string codigoCliente)
         {
@@ -401,6 +481,29 @@ namespace AventasApi.Utils
             {
 
             }
+        }
+        public void SyncDocumentosEnTransito(string empresa, string asesor)
+        {
+            try
+            {
+                var docs = new List<DocumentonsEnTransitoApiModel>();
+                var resClient = new RestClient(Enviroment.CRMWebServiceURLApi);
+                var request = new RestRequest($"facturas/{empresa}/{asesor}/documentosentransito", Method.GET);
+                request.AddHeader("Accept", "application/json");
+                IRestResponse response = resClient.Execute(request);
+
+                if (response.IsSuccessful && response.Content != "null")
+                {
+                    docs = JsonConvert.DeserializeObject<List<DocumentonsEnTransitoApiModel>>(response.Content);
+
+                    if (docs.Count() > 0)
+                    {
+                        UpdateDocumentosEnTransito(asesor, docs);
+                    }
+                }
+                
+            }
+            catch(Exception e) { }
         }
     }
 }

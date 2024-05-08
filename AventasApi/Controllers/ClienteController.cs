@@ -1292,6 +1292,7 @@ namespace AventasApi.Controllers
 
                     if (EnLinea(clienteBd.EmpresaId, clienteBd.CodigoAsesor))
                     {
+                        syncCuentaCorriente.SyncDocumentosEnTransito(clienteBd.EmpresaId, clienteBd.CodigoAsesor);
                         syncCuentaCorriente.SyncFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
                         syncCuentaCorriente.SyncSubFacturas(clienteBd.EmpresaId, clienteBd.CodigoCliente, clienteBd.CodigoAsesor);
                         syncCuentaCorriente.SyncDocumentosAplicadosFactura(clienteBd.EmpresaId, clienteBd.CodigoAsesor);
