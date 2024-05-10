@@ -740,6 +740,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="ExcepcionDescuento" Type="bit" Nullable="false" />
           <Property Name="DiasGracia" Type="int" />
           <Property Name="CodigoDescuento" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="EnTransito" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -6107,6 +6108,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ExcepcionDescuento" Type="Boolean" Nullable="false" />
           <Property Name="DiasGracia" Type="Int32" />
           <Property Name="CodigoDescuento" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EnTransito" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -8329,10 +8331,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="FACTURA" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_Devoluciones_UpdateEstado">
-            <Parameter Name="codigoAsesor" Mode="In" Type="String" />
+          <Parameter Name="codigoAsesor" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_DocumentosTransitoxFactura_UpdateSaldo">
-            <Parameter Name="ASESOR" Mode="In" Type="String" />
+          <Parameter Name="ASESOR" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -12386,6 +12388,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="FacturasxCliente">
             <EntityTypeMapping TypeName="AventasModel.FacturasxCliente">
               <MappingFragment StoreEntitySet="FacturasxCliente">
+                <ScalarProperty Name="EnTransito" ColumnName="EnTransito" />
                 <ScalarProperty Name="CodigoDescuento" ColumnName="CodigoDescuento" />
                 <ScalarProperty Name="DiasGracia" ColumnName="DiasGracia" />
                 <ScalarProperty Name="ExcepcionDescuento" ColumnName="ExcepcionDescuento" />

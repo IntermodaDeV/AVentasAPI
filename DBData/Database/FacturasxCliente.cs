@@ -49,6 +49,7 @@ namespace DBData.Database
         public bool ExcepcionDescuento { get; set; }
         public Nullable<int> DiasGracia { get; set; }
         public string CodigoDescuento { get; set; }
+        public bool EnTransito { get; set; }
     
         public virtual AcuerdosxCliente AcuerdosxCliente { get; set; }
         public virtual Clientes Clientes { get; set; }

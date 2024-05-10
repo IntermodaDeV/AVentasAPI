@@ -57,12 +57,13 @@ namespace AventasApi.Utils
                             newEntity.Referencia = factura.REF_TRANS;
                             newEntity.DiasGracia = 0;
                             newEntity.CodigoDescuento = factura.KREACASHDISCCODE;
+                            newEntity.EnTransito = false;
                             context.FacturasxCliente.Add(newEntity);
                         }
                         else
                         {
                             DateTime dummy = new DateTime();
-                            decimal tFactura = 0, sFactura = 0, pFactura = 0, desc = 0;
+                            decimal tFactura = 0, sFactura = 0, pFactura = 0, desc = 0,saldoActualFactura=entityFound.Saldo ?? 0;
                             int nPagos = 0;
                             entityFound.Clientes = context.Clientes.FirstOrDefault(p => p.CodigoCliente == factura.ACCOUNT_NUM);
                             entityFound.TiposdePedido = context.TiposdePedido.FirstOrDefault(p => p.IdTipoPedido == tipoPedido.IdTipoPedido);
@@ -78,10 +79,18 @@ namespace AventasApi.Utils
                             entityFound.Saldo = Decimal.TryParse(factura.REMAIN_AMOUNT_CUR, out sFactura) ? sFactura : 0;
                             entityFound.PendienteFactura = Decimal.TryParse(factura.AMOUNT_PENDING, out pFactura) ? pFactura : 0;
                             entityFound.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;
+                            entityFound.EnTransito = false;
 
                             if (entityFound.PendienteFactura > 0)
                             {
                                 entityFound.Saldo = entityFound.Saldo - entityFound.PendienteFactura - (entityFound.FechaMaxDescuento < DateTime.Today ? 0 : entityFound.Descuento);
+                            }
+
+                            var existeFacturaEnDocumentosEnTransito = context.DocumentosTransitoxFactura.FirstOrDefault(x => x.Factura.ToUpper() == factura.INVOICE.ToUpper() && x.Valor > 0);
+                            if (existeFacturaEnDocumentosEnTransito != null)
+                            {
+                                entityFound.Saldo = saldoActualFactura;
+                                entityFound.EnTransito = true;
                             }
                            
                             entityFound.FacturaStatus = factura.STATUS;
