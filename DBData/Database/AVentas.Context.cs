@@ -635,5 +635,23 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_DocumentosTransitoxFactura_UpdateSaldo", aSESORParameter);
         }
+    
+        public virtual int IMActualizarColeccionInventarioEspecifico(string cOLECCION, Nullable<int> aCTIVAR)
+        {
+            var cOLECCIONParameter = cOLECCION != null ?
+                new ObjectParameter("COLECCION", cOLECCION) :
+                new ObjectParameter("COLECCION", typeof(string));
+    
+            var aCTIVARParameter = aCTIVAR.HasValue ?
+                new ObjectParameter("ACTIVAR", aCTIVAR) :
+                new ObjectParameter("ACTIVAR", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("IMActualizarColeccionInventarioEspecifico", cOLECCIONParameter, aCTIVARParameter);
+        }
+    
+        public virtual ObjectResult<IMObtenerColeccionesInventarioEspecifico_Result> IMObtenerColeccionesInventarioEspecifico()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerColeccionesInventarioEspecifico_Result>("IMObtenerColeccionesInventarioEspecifico");
+        }
     }
 }

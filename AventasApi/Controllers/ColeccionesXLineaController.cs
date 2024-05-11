@@ -1057,5 +1057,62 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("~/api/colecciones/inventarioespecifico")]
+        public IHttpActionResult ObtenerColeccionesInventarioEspecifico()
+
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var Inventario = ctx.IMObtenerColeccionesInventarioEspecifico().ToList();
+                    return Ok(Inventario);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPatch]
+        [Route("~/api/colecciones/inventarioespecifico/activar/{coleccion}")]
+        public IHttpActionResult ActivarColeccionesInventarioEspecifico(string coleccion)
+
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    ctx.IMActualizarColeccionInventarioEspecifico(coleccion, 1);
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpPatch]
+        [Route("~/api/colecciones/inventarioespecifico/desactivar/{coleccion}")]
+        public IHttpActionResult DesactivarColeccionesInventarioEspecifico(string coleccion)
+
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    ctx.IMActualizarColeccionInventarioEspecifico(coleccion, 0);
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
     }
 }

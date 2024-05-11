@@ -82,6 +82,12 @@ namespace AventasApi.Controllers
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
+
+                    if (asesor == null)
+                    {
+                        return Ok();
+                    }
+
                     int numeroCorelativo = asesor.CorrelativoRecibos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";

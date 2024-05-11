@@ -359,6 +359,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="FotoPortada" Type="varchar" MaxLength="2500" />
           <Property Name="FechaUltSincronizacion" Type="datetime" />
           <Property Name="Linea" Type="varchar" MaxLength="15" />
+          <Property Name="InventarioEspecifico" Type="bit" />
         </EntityType>
         <EntityType Name="Colores">
           <Key>
@@ -4580,10 +4581,15 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="User" Type="varchar" Mode="In" />
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
+        <Function Name="IMActualizarColeccionInventarioEspecifico" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="COLECCION" Type="varchar" Mode="In" />
+          <Parameter Name="ACTIVAR" Type="int" Mode="In" />
+        </Function>
         <Function Name="IMClasificacionDevolucion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="numdevolucion" Type="varchar" Mode="In" />
         </Function>
         <Function Name="IMObtenerBasesProductos" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="IMObtenerColeccionesInventarioEspecifico" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="IMObtenerDetalleDescuento" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
           <Parameter Name="LINEA" Type="varchar" Mode="In" />
@@ -8336,6 +8342,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <FunctionImport Name="SP_DocumentosTransitoxFactura_UpdateSaldo">
           <Parameter Name="ASESOR" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="IMActualizarColeccionInventarioEspecifico">
+            <Parameter Name="COLECCION" Mode="In" Type="String" />
+            <Parameter Name="ACTIVAR" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="IMObtenerColeccionesInventarioEspecifico" ReturnType="Collection(AventasModel.IMObtenerColeccionesInventarioEspecifico_Result)" />
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -9516,6 +9527,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="Colecciones" ToRole="PedidosxCliente" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E851" FromRole="Colecciones" ToRole="PedidosxClienteFlotante" />
           <Property Name="Linea" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="InventarioEspecifico" Type="Boolean" />
         </EntityType>
         <Association Name="FK__Atributos__IdCol__6DF7358C">
           <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
@@ -12151,6 +12163,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="String" Name="Factura" Nullable="true" MaxLength="250" />
           <Property Type="String" Name="NumeroPedido" Nullable="true" MaxLength="100" />
         </ComplexType>
+        <ComplexType Name="IMObtenerColeccionesInventarioEspecifico_Result">
+          <Property Type="String" Name="codigo" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="nombre" Nullable="true" />
+          <Property Type="Int32" Name="inventarioEspecifico" Nullable="true" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -13407,6 +13424,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Colecciones">
             <EntityTypeMapping TypeName="AventasModel.Colecciones">
               <MappingFragment StoreEntitySet="Colecciones">
+                <ScalarProperty Name="InventarioEspecifico" ColumnName="InventarioEspecifico" />
                 <ScalarProperty Name="Linea" ColumnName="Linea" />
                 <ScalarProperty Name="FechaUltSincronizacion" ColumnName="FechaUltSincronizacion" />
                 <ScalarProperty Name="FotoPortada" ColumnName="FotoPortada" />
@@ -14655,6 +14673,16 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <FunctionImportMapping FunctionImportName="SP_LimpiarInventarioFactura" FunctionName="AventasModel.Store.SP_LimpiarInventarioFactura" />
           <FunctionImportMapping FunctionImportName="SP_Devoluciones_UpdateEstado" FunctionName="AventasModel.Store.SP_Devoluciones_UpdateEstado" />
           <FunctionImportMapping FunctionImportName="SP_DocumentosTransitoxFactura_UpdateSaldo" FunctionName="AventasModel.Store.SP_DocumentosTransitoxFactura_UpdateSaldo" />
+          <FunctionImportMapping FunctionImportName="IMActualizarColeccionInventarioEspecifico" FunctionName="AventasModel.Store.IMActualizarColeccionInventarioEspecifico" />
+          <FunctionImportMapping FunctionImportName="IMObtenerColeccionesInventarioEspecifico" FunctionName="AventasModel.Store.IMObtenerColeccionesInventarioEspecifico">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.IMObtenerColeccionesInventarioEspecifico_Result">
+                <ScalarProperty Name="codigo" ColumnName="codigo" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="inventarioEspecifico" ColumnName="inventarioEspecifico" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -303,6 +303,9 @@
     <Compile Include="Database\IMObtenerBasesProductos_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\IMObtenerColeccionesInventarioEspecifico_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\IMObtenerDetalleDescuento_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
