@@ -14,6 +14,7 @@ namespace DBData.Database
     public partial class SP_ObtenerFacturasAbiertas_Result
     {
         public string Factura { get; set; }
-        public string NumeroPedido { get; set; }
+        public Nullable<decimal> Saldo { get; set; }
+        public string Abreviacion { get; set; }
     }
 }

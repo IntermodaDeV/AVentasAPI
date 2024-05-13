@@ -599,15 +599,6 @@ namespace DBData.Database
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerFacturasDevolucionCompleta_Result>("IMObtenerFacturasDevolucionCompleta", cLIENTEParameter);
         }
     
-        public virtual ObjectResult<SP_ObtenerFacturasAbiertas_Result> SP_ObtenerFacturasAbiertas(string cliente)
-        {
-            var clienteParameter = cliente != null ?
-                new ObjectParameter("cliente", cliente) :
-                new ObjectParameter("cliente", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerFacturasAbiertas_Result>("SP_ObtenerFacturasAbiertas", clienteParameter);
-        }
-    
         public virtual int SP_LimpiarInventarioFactura(string fACTURA)
         {
             var fACTURAParameter = fACTURA != null ?
@@ -653,13 +644,13 @@ namespace DBData.Database
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerColeccionesInventarioEspecifico_Result>("IMObtenerColeccionesInventarioEspecifico");
         }
     
-        public virtual ObjectResult<SP_ObtenerFacturasAbiertas1_Result> SP_ObtenerFacturasAbiertas1(string cliente)
+        public virtual ObjectResult<SP_ObtenerFacturasAbiertas_Result> SP_ObtenerFacturasAbiertas(string cliente)
         {
             var clienteParameter = cliente != null ?
                 new ObjectParameter("cliente", cliente) :
                 new ObjectParameter("cliente", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerFacturasAbiertas1_Result>("SP_ObtenerFacturasAbiertas1", clienteParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerFacturasAbiertas_Result>("SP_ObtenerFacturasAbiertas", clienteParameter);
         }
     }
 }
