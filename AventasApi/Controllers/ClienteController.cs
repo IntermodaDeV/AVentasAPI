@@ -1166,6 +1166,7 @@ namespace AventasApi.Controllers
                                 ExcepcionDescuento=facCli.ExcepcionDescuento,
                                 DiasGracia=facCli.DiasGracia ?? 0,
                                 CodigoDescuento = facCli.CodigoDescuento,
+                                facturaEnTransito = facCli.EnTransito,
                                 IdAcuerdoxCliente = facCli.IdAcuerdoxCliente,
                                 DocumentosAplicadosAFacturas = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == facCli.Factura).Select(x => new DocumentosAplicadosAFacturasViewModel
                                 {
@@ -1210,6 +1211,7 @@ namespace AventasApi.Controllers
                                     Flete = subFac.Flete ?? 0,
                                     ExcepcionDescuento=facCli.ExcepcionDescuento,
                                     DiasGracia=facCli.DiasGracia ?? 0,
+                                    facturaEnTransito = facCli.EnTransito,
                                     SaldoCuota = subFac.AcuerdosxCliente != null ? ctx.CuotasXAcuerdo.FirstOrDefault(x => x.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && x.NumCuota == subFac.NumeroCuota).ValorCuota : 0,
                                     DisponibleCuota = subFac.AcuerdosxCliente != null ? ctx.CuotasXAcuerdo.FirstOrDefault(x => x.IdAcuerdoVenta == subFac.IdAcuerdoxCliente && x.NumCuota == subFac.NumeroCuota).SaldoDiponible : 0,
                                 }).ToList()
