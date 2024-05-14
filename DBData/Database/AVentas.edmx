@@ -552,6 +552,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Factura" Type="nvarchar" MaxLength="250" />
           <Property Name="Pedido" Type="nvarchar" MaxLength="50" />
           <Property Name="Paquete" Type="nvarchar" MaxLength="50" />
+          <Property Name="Inventdim" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="DireccionesCliente">
           <Key>
@@ -8345,7 +8346,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </FunctionImport>
           <FunctionImport Name="IMObtenerColeccionesInventarioEspecifico" ReturnType="Collection(AventasModel.IMObtenerColeccionesInventarioEspecifico_Result)" />
           <FunctionImport Name="SP_ObtenerFacturasAbiertas" ReturnType="Collection(AventasModel.SP_ObtenerFacturasAbiertas_Result)">
-            <Parameter Name="cliente" Mode="In" Type="String" />
+          <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -12081,6 +12082,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Factura" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="Pedido" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Paquete" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Inventdim" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_tbDevolucionDetalle_Devolucion_idDevolucion">
           <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="0..1" />
@@ -14585,6 +14587,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="DevolucionDetalle">
             <EntityTypeMapping TypeName="AventasModel.DevolucionDetalle">
               <MappingFragment StoreEntitySet="DevolucionDetalle">
+                <ScalarProperty Name="Inventdim" ColumnName="Inventdim" />
                 <ScalarProperty Name="Paquete" ColumnName="Paquete" />
                 <ScalarProperty Name="Pedido" ColumnName="Pedido" />
                 <ScalarProperty Name="Factura" ColumnName="Factura" />

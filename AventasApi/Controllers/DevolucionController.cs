@@ -274,7 +274,7 @@ namespace AventasApi.Controllers
                              SALES_NUMBER = devolucionDB.PedidoOrigen,
                              UNIT = "Und",
                              UBICATION = ubicacion.CodigoUbicacion,
-                             PACKAGE = detalle.Paquete == null ? "" : detalle.Paquete,
+                             INVENTDIM = detalle.Inventdim == null ? "" : detalle.Inventdim,
                          });
                     }
 
@@ -662,6 +662,13 @@ namespace AventasApi.Controllers
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
                         {
+                            var detalleFacturadoBD = ctx.DetalleFacturado.FirstOrDefault(x =>
+                                    x.productoId == detalle.IdProducto
+                                    && x.codigoColor.ToUpper() == detalle.CodigoColor.ToUpper()
+                                    && x.codigoTalla.ToUpper() == detalle.CodigoTalla.ToUpper()
+                                    && x.factura == detalleFacturado.factura
+                                    && x.pedido == detalleFacturado.pedido
+                                );
                             devolucionDB.TotalUnidades += detalle.Cantidad;
 
                             devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
@@ -675,7 +682,8 @@ namespace AventasApi.Controllers
                                 MontoLinea = detalle.Cantidad * detalle.PrecioUnitario,
                                 Factura = detalleFacturado?.factura,
                                 Pedido = detalleFacturado?.pedido,
-                                Paquete = detalleFacturado?.paquete
+                                Paquete = detalleFacturado?.paquete,
+                                Inventdim = detalleFacturadoBD?.inventdim
                             });
                         }
                         bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
@@ -813,6 +821,13 @@ namespace AventasApi.Controllers
 
                             foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
                             {
+                                var detalleFacturado = ctx.DetalleFacturado.FirstOrDefault(x =>
+                                    x.productoId == detalle.IdProducto
+                                    && x.codigoColor.ToUpper() == detalle.CodigoColor.ToUpper()
+                                    && x.codigoTalla.ToUpper() == detalle.CodigoTalla.ToUpper()
+                                    && x.factura == detalle.Factura
+                                    && x.pedido == detalle.Pedido
+                                );
                                 devolucionDB.TotalUnidades += detalle.Cantidad;
 
                                 devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
@@ -827,6 +842,7 @@ namespace AventasApi.Controllers
                                     Factura = detalle.Factura,
                                     Paquete = detalle.Paquete,
                                     Pedido = detalle.Pedido,
+                                    Inventdim = detalleFacturado?.inventdim
                                 });
                             }
                             bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);

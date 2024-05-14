@@ -25,6 +25,7 @@ namespace DBData.Database
         public string Factura { get; set; }
         public string Pedido { get; set; }
         public string Paquete { get; set; }
+        public string Inventdim { get; set; }
     
         public virtual Devolucion Devolucion { get; set; }
         public virtual ProductosxColeccion ProductosxColeccion { get; set; }
