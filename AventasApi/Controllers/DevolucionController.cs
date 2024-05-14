@@ -662,12 +662,15 @@ namespace AventasApi.Controllers
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
                         {
+                            var factura = detalleFacturado?.factura;
+                            var pedido = detalleFacturado?.pedido;
+
                             var detalleFacturadoBD = ctx.DetalleFacturado.FirstOrDefault(x =>
                                     x.productoId == detalle.IdProducto
                                     && x.codigoColor.ToUpper() == detalle.CodigoColor.ToUpper()
                                     && x.codigoTalla.ToUpper() == detalle.CodigoTalla.ToUpper()
-                                    && x.factura == detalleFacturado.factura
-                                    && x.pedido == detalleFacturado.pedido
+                                    && x.factura == factura
+                                    && x.pedido == pedido
                                 );
                             devolucionDB.TotalUnidades += detalle.Cantidad;
 
