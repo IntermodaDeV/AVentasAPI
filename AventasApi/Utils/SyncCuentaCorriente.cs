@@ -163,13 +163,13 @@ namespace AventasApi.Utils
                             newEntity.ReferenciaCuotas = subFactura.PA_REF_APSA;
                             newEntity.Valor = !String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out ssFactura) ? ssFactura : 0 : fFactura.TotalFactura;
                             newEntity.Flete = Decimal.TryParse(subFactura.FREIGHT, out ssFactura) ? ssFactura : 0;
-                            newEntity.completaCuota = false;           
+                            newEntity.completaCuota = false;
 
                             context.SubFacturasxCliente.Add(newEntity);
                         }
                         else
                         {
-                            decimal tFacturaDivisa, ssFactura = 0, psFactura = 0, sDesc = 0, svCuota = 0, svVencidoCuota = 0;
+                            decimal tFacturaDivisa, ssFactura = 0, psFactura = 0, sDesc = 0, svCuota = 0, svVencidoCuota = 0, saldoActualFactura = entityFound.Saldo ?? 0;
                             int snCuota = 0;
                             DateTime dummy = new DateTime();
                             entityFound.Factura = fFactura.Factura;
@@ -182,10 +182,18 @@ namespace AventasApi.Utils
                             entityFound.FechaMaxDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             entityFound.FechaVencimientoDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             entityFound.Saldo = Decimal.TryParse(subFactura.AMOUNT_CUR, out ssFactura) ? ssFactura : 0;
+
+                            var existeFacturaEnDocumentosEnTransito = context.DocumentosTransitoxFactura.FirstOrDefault(x => x.Factura.ToUpper() == fFactura.Factura.ToUpper() && x.Valor > 0);
+                            if (existeFacturaEnDocumentosEnTransito != null)
+                            {
+                                entityFound.Saldo = saldoActualFactura;
+                            }
+
                             if (fFactura.Saldo == 0)
                             {
                                 entityFound.Saldo = 0;
                             }
+
                             entityFound.IdAcuerdoxCliente = String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? null: subFactura.AGREEMENT_NAME;
                             fFactura.IdAcuerdoxCliente = entityFound.IdAcuerdoxCliente;
                             entityFound.SaldoDivisa = Decimal.TryParse(subFactura.AMOUNT_MST, out tFacturaDivisa) ? tFacturaDivisa : 0;
