@@ -357,7 +357,6 @@ namespace AventasApi.Controllers
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-
                     if (asesor == "Todo")
                     {
                         List<string> asesoresHabilitados = new List<string>();
@@ -399,6 +398,7 @@ namespace AventasApi.Controllers
                             IdLinea = x.IdLinea,
                             NotaCredito = x.NotaCredito,
                             FechaNotaCredito = x.FechaNotaCredito,
+                            FacturaDestino = x.facturaDestino,
                             FechaCreacionAx = x.FechaCreacionAx,
                             Cliente = new ClienteViewModel
                             {
@@ -438,6 +438,7 @@ namespace AventasApi.Controllers
                             EstadoBodega = x.EstadoBodega,
                             IdLinea = x.IdLinea,
                             NotaCredito = x.NotaCredito,
+                            FacturaDestino = x.facturaDestino,
                             FechaNotaCredito = x.FechaNotaCredito,
                             FechaCreacionAx = x.FechaCreacionAx,
                             Cliente = new ClienteViewModel
