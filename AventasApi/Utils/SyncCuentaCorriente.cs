@@ -92,6 +92,15 @@ namespace AventasApi.Utils
                                 entityFound.Saldo = saldoActualFactura;
                                 entityFound.EnTransito = true;
                             }
+
+                            /* Si la factura tiene acuerdo colocamos el descuento en 0
+                             * como manera de prevenir que coloque descuento estandar en caso que el acuerdo este mal configurado
+                             * y no afecte la logica de notas de credito automatica.
+                             */
+                            if (entityFound.AcuerdosxCliente != null)
+                            {
+                                entityFound.Descuento = 0;
+                            }
                            
                             entityFound.FacturaStatus = factura.STATUS;
                             entityFound.NumeroPagos = int.TryParse(factura.N_PAYMENTS, out nPagos) ? nPagos : 0;
@@ -165,6 +174,15 @@ namespace AventasApi.Utils
                             newEntity.Flete = Decimal.TryParse(subFactura.FREIGHT, out ssFactura) ? ssFactura : 0;
                             newEntity.completaCuota = false;
 
+                            /* Si la factura tiene acuerdo colocamos el descuento en 0
+                             * como manera de prevenir que coloque descuento estandar en caso que el acuerdo este mal configurado
+                             * y no afecte la logica de notas de credito automatica.
+                             */
+                            if (newEntity.AcuerdosxCliente != null)
+                            {
+                                newEntity.Descuento = 0;
+                            }
+
                             context.SubFacturasxCliente.Add(newEntity);
                         }
                         else
@@ -209,6 +227,15 @@ namespace AventasApi.Utils
                             entityFound.Flete = Decimal.TryParse(subFactura.FREIGHT, out ssFactura) ? ssFactura : 0;
                             entityFound.completaCuota = false;
                             entityFound.Valor = !String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out ssFactura) ? ssFactura : 0 : fFactura.TotalFactura;
+
+                            /* Si la factura tiene acuerdo colocamos el descuento en 0
+                             * como manera de prevenir que coloque descuento estandar en caso que el acuerdo este mal configurado
+                             * y no afecte la logica de notas de credito automatica.
+                             */
+                            if (entityFound.AcuerdosxCliente != null)
+                            {
+                                entityFound.Descuento = 0;
+                            }
 
                             context.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
                         }
