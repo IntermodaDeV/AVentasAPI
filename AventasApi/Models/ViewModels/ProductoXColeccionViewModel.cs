@@ -24,6 +24,7 @@ namespace AventasApi.Models.ViewModels
         public bool Deshabilitado { get; set; }
         public int Prioridad { get; set; }
         public bool Nuevo { get; set; }
+        public bool PiezaSuelta { get; set; }
 
         public List<TallaViewModel> ListaTalla;
         public List<ColorViewModel> ListaColores;

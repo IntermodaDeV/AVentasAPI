@@ -381,6 +381,7 @@ namespace AventasApi.Controllers
                                        Deshabilitado = pxc.Deshabilitado,
                                        Prioridad = pxc.Prioridad,
                                        Nuevo = pxc.Nuevo,
+                                       PiezaSuelta = pxc.PiezaSuelta,
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
                                            GrupoPrecio = precio.GrupoPrecio,
@@ -505,6 +506,7 @@ namespace AventasApi.Controllers
                         Deshabilitado = pxc.Deshabilitado,
                         Prioridad = pxc.Prioridad,
                         Nuevo = pxc.Nuevo,
+                        PiezaSuelta=pxc.PiezaSuelta,
                         GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
                         Precio = pxc.PreciosxProducto.Where(preEsp => preEsp.GrupoPrecio == grupoPrecio).Select(precio => new PrecioXProductoViewModel
                         {
@@ -615,6 +617,7 @@ namespace AventasApi.Controllers
                                        Deshabilitado = pxc.Deshabilitado,
                                        Prioridad = pxc.Prioridad,
                                        Nuevo = pxc.Nuevo,
+                                       PiezaSuelta=pxc.PiezaSuelta,
                                        atributo = pxc.AtributosxProducto.Where(x => x.Descripcion2 == "BASE" || x.Descripcion2 == "TIPO ROPA").Select(x => new { codigo = x.CodigoAtributo }).FirstOrDefault(),
                                        Precio = pxc.PreciosxProducto.Where(preEsp =>/* true || */preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
                                        {
