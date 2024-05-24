@@ -743,6 +743,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="DiasGracia" Type="int" />
           <Property Name="CodigoDescuento" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="EnTransito" Type="bit" Nullable="false" />
+          <Property Name="SinDescuento" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -6116,6 +6117,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="DiasGracia" Type="Int32" />
           <Property Name="CodigoDescuento" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="EnTransito" Type="Boolean" Nullable="false" />
+          <Property Name="SinDescuento" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -12408,6 +12410,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="FacturasxCliente">
             <EntityTypeMapping TypeName="AventasModel.FacturasxCliente">
               <MappingFragment StoreEntitySet="FacturasxCliente">
+                <ScalarProperty Name="SinDescuento" ColumnName="SinDescuento" />
                 <ScalarProperty Name="EnTransito" ColumnName="EnTransito" />
                 <ScalarProperty Name="CodigoDescuento" ColumnName="CodigoDescuento" />
                 <ScalarProperty Name="DiasGracia" ColumnName="DiasGracia" />

@@ -37,6 +37,7 @@ namespace AventasApi.Models.ViewModels
         public Nullable<decimal> Flete { get; set; }
         public bool ExcepcionDescuento { get; set; }
         public bool facturaEnTransito { get; set; }
+        public bool SinDescuento { get; set; }
         public decimal SaldoCuota { get; set; }
         public Nullable<decimal> DisponibleCuota { get; set; }
     }

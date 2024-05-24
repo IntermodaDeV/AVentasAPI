@@ -35,6 +35,7 @@ namespace AventasApi.Models.ViewModels
         public List<DocumentosAplicadosAFacturasViewModel> DocumentosAplicadosAFacturas { get; set; }
         public bool ExcepcionDescuento { get; set; }
         public bool facturaEnTransito { get; set; }
+        public bool SinDescuento { get; set; }
         public int DiasGracia { get; set; }
         public string CodigoDescuento { get; set; }
         public string IdAcuerdoxCliente { get; set; }
