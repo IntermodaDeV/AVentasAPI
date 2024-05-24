@@ -58,6 +58,7 @@ namespace AventasApi.Utils
                             newEntity.DiasGracia = 0;
                             newEntity.CodigoDescuento = factura.KREACASHDISCCODE;
                             newEntity.EnTransito = false;
+                            newEntity.SinDescuento = false;
                             context.FacturasxCliente.Add(newEntity);
                         }
                         else
