@@ -40,6 +40,40 @@ namespace AventasApi.Utils
             }
         }
 
+        public void SyncAcuerdosVenta(string CodigoAsesor)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+
+                    var asesores = ctx.Asesores.Where(x => x.CodigoAsesor.ToUpper() == CodigoAsesor.ToUpper()).Select(x => new { empresa=x.EmpresaId,asesor=x.CodigoAsesor }).ToList();
+                    foreach (var asesor in asesores)
+                    {
+                        var acuerdos = new List<AcuerdoCRMApiModel>();
+                        var resClient = new RestClient(Enviroment.CRMWebServiceURLApi);
+                        var request = new RestRequest($"acuerdos/{asesor.empresa}/{asesor.asesor}", Method.GET);
+                        request.AddHeader("Accept", "application/json");
+                        IRestResponse response = resClient.Execute(request);
+
+                        if (response.IsSuccessful && response.Content != "null")
+                        {
+                            acuerdos = JsonConvert.DeserializeObject<List<AcuerdoCRMApiModel>>(response.Content);
+                        }
+
+                        if (acuerdos.Count > 0)
+                        {
+                            UpdateAcuerdosVentas(acuerdos);
+                        }
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+            }
+        }
+
         public void SyncCuotasAcuerdoVenta(string acuerdoVenta)
         {
             try
@@ -135,7 +169,8 @@ namespace AventasApi.Utils
                             newEntity.Entregado = Decimal.TryParse(acuerdo.DELIVERED, out Entregado) ? Entregado : 0;
                             newEntity.IdLinea = acuerdo.LINE;
                             newEntity.Desde = DateTime.TryParseExact(acuerdo.STARTDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(acuerdo.STARTDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now; 
-                            newEntity.Hasta = DateTime.TryParseExact(acuerdo.ENDDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(acuerdo.ENDDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now; ;
+                            newEntity.Hasta = DateTime.TryParseExact(acuerdo.ENDDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(acuerdo.ENDDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
+                            newEntity.GrupoDescuento = acuerdo.DISC_CODE;
                             context.AcuerdosxCliente.Add(newEntity);
                         }
                         else
@@ -155,6 +190,7 @@ namespace AventasApi.Utils
                             entityFound.IdLinea = acuerdo.LINE;
                             entityFound.Desde = DateTime.TryParseExact(acuerdo.STARTDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(acuerdo.STARTDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             entityFound.Hasta = DateTime.TryParseExact(acuerdo.ENDDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(acuerdo.ENDDATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now; ;
+                            entityFound.GrupoDescuento = acuerdo.DISC_CODE;
 
                             context.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
                         }
