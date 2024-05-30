@@ -412,6 +412,12 @@ namespace AventasApi.Controllers
                                                     valorCuota = Decimal.ToDouble(subfactura.Saldo.Value) - Descuento;
                                                     aplicaDescuento = true;
 
+                                                    if (Factura.SinDescuento)
+                                                    {
+                                                        Descuento = 0;
+                                                        valorCuota = Decimal.ToDouble(subfactura.Saldo.Value);
+                                                        aplicaDescuento = false;
+                                                    }
                                                 }
                                             }
                                         }
@@ -431,6 +437,13 @@ namespace AventasApi.Controllers
                                         {
                                             valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
                                             Descuento = Decimal.ToDouble(subfactura.Descuento.Value);
+                                        }
+
+                                        if (Factura.SinDescuento)
+                                        {
+                                            Descuento = 0;
+                                            valorCuota = Decimal.ToDouble(subfactura.Saldo.Value);
+                                            aplicaDescuento = false;
                                         }
                                     }
 

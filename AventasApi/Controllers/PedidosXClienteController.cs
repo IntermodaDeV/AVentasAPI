@@ -150,7 +150,7 @@ namespace AventasApi.Controllers
                 var direccionEntrega = direccionesClientes.FirstOrDefault(x => x.postalAddress == postalAddress);
                 if (direccionEntrega == null)
                 {
-                    var direccionEntregaPrincipal = direccionesClientes.FirstOrDefault(x => x.principal == true);
+                    var direccionEntregaPrincipal = direccionesClientes.FirstOrDefault(x => x.principal == true && x.activo == true);
                     if (direccionEntregaPrincipal != null)
                     {
                         postalAddress = direccionEntregaPrincipal.postalAddress;
@@ -431,6 +431,12 @@ namespace AventasApi.Controllers
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
+
+                    if (asesor == null)
+                    {
+                        return Ok();
+                    }
+
                     int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";

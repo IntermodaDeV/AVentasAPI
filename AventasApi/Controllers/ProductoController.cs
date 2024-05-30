@@ -202,6 +202,36 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("actualizarPiezaSueltaProducto/{codigo}/{coleccion}")]
+        public async Task<IHttpActionResult> ActualizarPiezaSueltaProducto(string codigo, string coleccion)
+        {
+            try
+            {
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    var productosBD = await context.ProductosxColeccion
+                        .Include(x => x.Colecciones)
+                        .Where(x => x.CodigoProducto == codigo && x.Colecciones.CodigoColeccion == coleccion)
+                        .ToListAsync();
 
+                    foreach (var producto in productosBD)
+                    {
+                        producto.PiezaSuelta = !producto.PiezaSuelta;
+                    }
+
+                    if (productosBD.Count > 0)
+                    {
+                        await context.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }

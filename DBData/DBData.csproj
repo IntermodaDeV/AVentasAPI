@@ -195,6 +195,9 @@
     <Compile Include="Database\DescuentoEnAcuerdo.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\DetalleFacturado.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\Devolucion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -300,7 +303,13 @@
     <Compile Include="Database\IMObtenerBasesProductos_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\IMObtenerColeccionesInventarioEspecifico_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\IMObtenerDetalleDescuento_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\IMObtenerFacturasDevolucionCompleta_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\IMObtenerFacturasFletes_Result.cs">
@@ -517,6 +526,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\SP_ObtencionFacturas_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\SP_ObtenerFacturasAbiertas_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\SP_ObtenerProductosRMA_Result.cs">

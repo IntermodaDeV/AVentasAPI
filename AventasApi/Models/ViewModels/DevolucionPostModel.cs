@@ -14,6 +14,7 @@ namespace AventasApi.Models.ViewModels
         public int MotivoDevolucionDetalle { get; set; }
         public int MotivoDevolucion { get; set; }
         public string FacturaOriginal { get; set; }
+        public string FacturaDestino { get; set; }
         public string PedidoOriginal { get; set; }
         public string Linea { get; set; }
         public string Empresa { get; set; }

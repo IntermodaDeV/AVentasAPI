@@ -273,7 +273,8 @@ namespace AventasApi.Controllers
                              REFERENCE = detalle.NumDevolucion,
                              SALES_NUMBER = devolucionDB.PedidoOrigen,
                              UNIT = "Und",
-                             UBICATION = ubicacion.CodigoUbicacion
+                             UBICATION = ubicacion.CodigoUbicacion,
+                             INVENTDIM = detalle.Inventdim == null ? "" : detalle.Inventdim,
                          });
                     }
 
@@ -356,7 +357,6 @@ namespace AventasApi.Controllers
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-
                     if (asesor == "Todo")
                     {
                         List<string> asesoresHabilitados = new List<string>();
@@ -398,6 +398,7 @@ namespace AventasApi.Controllers
                             IdLinea = x.IdLinea,
                             NotaCredito = x.NotaCredito,
                             FechaNotaCredito = x.FechaNotaCredito,
+                            FacturaDestino = x.facturaDestino,
                             FechaCreacionAx = x.FechaCreacionAx,
                             Cliente = new ClienteViewModel
                             {
@@ -437,6 +438,7 @@ namespace AventasApi.Controllers
                             EstadoBodega = x.EstadoBodega,
                             IdLinea = x.IdLinea,
                             NotaCredito = x.NotaCredito,
+                            FacturaDestino = x.facturaDestino,
                             FechaNotaCredito = x.FechaNotaCredito,
                             FechaCreacionAx = x.FechaCreacionAx,
                             Cliente = new ClienteViewModel
@@ -603,7 +605,7 @@ namespace AventasApi.Controllers
                     var usuariosCorreo = ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToList();
                     var correos = ctx.Usuarios.Where(x => x.CorreoDevolucion == true && x.Correo != null && usuariosCorreo.Contains(x.Id)).Select(x => x.Correo).ToList();
                     var motivoDetalle = ctx.MotivosDevolucionDetalle.Find(devolucion.MotivoDevolucionDetalle);
-
+                    var detalleFacturado = ctx.DetalleFacturado.FirstOrDefault(x => x.pedido.ToUpper() == devolucion.PedidoOriginal.ToUpper() && x.factura.ToUpper() == devolucion.FacturaOriginal.ToUpper());
                     var minutosConf = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "TiempoFlotante");
                     int minutosValue = 2;
 
@@ -645,6 +647,7 @@ namespace AventasApi.Controllers
                             EmpresaId = devolucion.Empresa,
                             PedidoOrigen = devolucion.PedidoOriginal,
                             FacturaOrigen = devolucion.FacturaOriginal,
+                            facturaDestino = devolucion.FacturaDestino,
                             CodigoAsesor = cliente.CodigoAsesor,
                             UsuarioCrea = user.Id,
                             FechaCrea = DateTime.Now,
@@ -660,6 +663,16 @@ namespace AventasApi.Controllers
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
                         {
+                            var factura = detalleFacturado?.factura;
+                            var pedido = detalleFacturado?.pedido;
+
+                            var detalleFacturadoBD = ctx.DetalleFacturado.FirstOrDefault(x =>
+                                    x.productoId == detalle.IdProducto
+                                    && x.codigoColor.ToUpper() == detalle.CodigoColor.ToUpper()
+                                    && x.codigoTalla.ToUpper() == detalle.CodigoTalla.ToUpper()
+                                    && x.factura == factura
+                                    && x.pedido == pedido
+                                );
                             devolucionDB.TotalUnidades += detalle.Cantidad;
 
                             devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
@@ -670,7 +683,11 @@ namespace AventasApi.Controllers
                                 CodigoTalla = detalle.CodigoTalla,
                                 Cantidad = detalle.Cantidad,
                                 PrecioUnitario = detalle.PrecioUnitario,
-                                MontoLinea = detalle.Cantidad * detalle.PrecioUnitario
+                                MontoLinea = detalle.Cantidad * detalle.PrecioUnitario,
+                                Factura = detalleFacturado?.factura,
+                                Pedido = detalleFacturado?.pedido,
+                                Paquete = detalleFacturado?.paquete,
+                                Inventdim = detalleFacturadoBD?.inventdim
                             });
                         }
                         bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
@@ -700,7 +717,7 @@ namespace AventasApi.Controllers
 
                         if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
                         {
-                            ReducirPendienteDevolucion(devolucionDB);
+                            ctx.SP_LimpiarInventarioFactura(devolucion.FacturaOriginal);
                         }
 
 
@@ -791,6 +808,7 @@ namespace AventasApi.Controllers
                                 IdMotivoDevDetalle = devolucion.MotivoDevolucionDetalle,
                                 EmpresaId = devolucion.Empresa,
                                 PedidoOrigen = devolucion.PedidoOriginal,
+                                facturaDestino = devolucion.FacturaDestino,
                                 FacturaOrigen = devolucion.FacturaOriginal,
                                 CodigoAsesor = cliente.CodigoAsesor,
                                 UsuarioCrea = user.Id,
@@ -799,6 +817,7 @@ namespace AventasApi.Controllers
                                 Estado = PendienteAprobacion.Count > 0 ? "Pendiente Aprobacion" : "No Sincronizado",
                                 Subtotal = devolucion.SubTotal,
                                 TotalUnidades = 0,
+                                Origen = "Web",
                                 almacen = devolucion.Almacen,
                                 IdUbicacion = ubicacion.UbicacionId,
                                 plantillaGenerada=false
@@ -806,6 +825,13 @@ namespace AventasApi.Controllers
 
                             foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
                             {
+                                var detalleFacturado = ctx.DetalleFacturado.FirstOrDefault(x =>
+                                    x.productoId == detalle.IdProducto
+                                    && x.codigoColor.ToUpper() == detalle.CodigoColor.ToUpper()
+                                    && x.codigoTalla.ToUpper() == detalle.CodigoTalla.ToUpper()
+                                    && x.factura == detalle.Factura
+                                    && x.pedido == detalle.Pedido
+                                );
                                 devolucionDB.TotalUnidades += detalle.Cantidad;
 
                                 devolucionDB.DevolucionDetalle.Add(new DevolucionDetalle()
@@ -816,7 +842,11 @@ namespace AventasApi.Controllers
                                     CodigoTalla = detalle.CodigoTalla,
                                     Cantidad = detalle.Cantidad,
                                     PrecioUnitario = detalle.PrecioUnitario,
-                                    MontoLinea = detalle.Cantidad * detalle.PrecioUnitario
+                                    MontoLinea = detalle.Cantidad * detalle.PrecioUnitario,
+                                    Factura = detalle.Factura,
+                                    Paquete = detalle.Paquete,
+                                    Pedido = detalle.Pedido,
+                                    Inventdim = detalleFacturado?.inventdim
                                 });
                             }
                             bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
@@ -839,11 +869,7 @@ namespace AventasApi.Controllers
                                     var result =  ctx.SaveChanges();
                                 }
 
-
-                                if (!string.IsNullOrEmpty(devolucion.FacturaOriginal) || !string.IsNullOrWhiteSpace(devolucion.FacturaOriginal))
-                                {
-                                    ReducirPendienteDevolucion(devolucionDB);
-                                }
+                                ReducirPendienteDevolucion(devolucionDB);
                             }
 
                             //_ = new Email().EnviarEmail($"Se ha generado una devolución con el correlativo {devolucion.Correlativo} para el cliente {devolucion.CodigoCliente} por el motivo de {motivoDetalle.Descripcion}", correos);
@@ -867,31 +893,41 @@ namespace AventasApi.Controllers
             using (var ctx = new AVentasEntities())
             {
                 var lineasPedido = pedido.DevolucionDetalle;
-                var PedidoOriginal =  ctx.PedidosxCliente.FirstOrDefault(x => x.NumeroPedido == pedido.PedidoOrigen && x.EmpresaId == pedido.EmpresaId);
 
-                if (PedidoOriginal != null)
+                foreach (var linea in lineasPedido)
                 {
-                    foreach (var linea in lineasPedido)
+                    if (linea.Paquete != null && linea.Pedido != null && linea.Factura != null)
                     {
                         var talla = linea.CodigoTalla.ToUpper();
-                        var fisico =  ctx.PedidosDetalle.FirstOrDefault(x => x.PedidoId==PedidoOriginal.PedidoId && x.CodigoColor==linea.CodigoColor && x.CodigoTalla.ToUpper() == talla && x.IdProducto==linea.IdProducto);
-                        fisico.CantidadDevolucion = fisico.CantidadDevolucion - linea.Cantidad;
-                         ctx.SaveChanges();
+                        var fisico = ctx.DetalleFacturado.FirstOrDefault(x =>
+                        x.pedido.ToUpper() == linea.Pedido.ToUpper()
+                        && x.factura.ToUpper() == linea.Factura.ToUpper()
+                        && x.paquete.ToUpper() == linea.Paquete.ToUpper()
+                        && x.codigoColor == linea.CodigoColor
+                        && x.codigoTalla.ToUpper() == talla
+                        && x.productoId == linea.IdProducto);
+
+                        if (fisico != null)
+                        {
+                            fisico.cantidad -= linea.Cantidad;
+                            ctx.SaveChanges();
+                        }
                     }
                 }
+
             }
         }
 
 
         [HttpGet]
-        [Route("obtencionFacturas/{codigoProducto}/{cliente}")]
-        public async Task<IHttpActionResult> ObtenerFacturasPorProducto(string codigoProducto, string cliente)
+        [Route("obtencionFacturas/{codigoProducto}/{color}/{cliente}")]
+        public async Task<IHttpActionResult> ObtenerFacturasPorProducto(string codigoProducto, string color, string cliente)
         {
             try
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    var Facturas = ctx.SP_ObtencionFacturas(codigoProducto, cliente).ToList();
+                    var Facturas = ctx.SP_ObtencionFacturas(codigoProducto, color, cliente).ToList();
                     return Ok(Facturas);
                 }
             }

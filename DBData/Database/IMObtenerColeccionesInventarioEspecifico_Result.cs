@@ -10,15 +10,11 @@
 namespace DBData.Database
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class vw_FisicoDisponible
+    public partial class IMObtenerColeccionesInventarioEspecifico_Result
     {
-        public int IdFisicoDisponible { get; set; }
-        public string CodigoColor { get; set; }
-        public string CodigoTalla { get; set; }
-        public Nullable<int> IdProducto { get; set; }
-        public Nullable<decimal> Disponible { get; set; }
-        public Nullable<decimal> MinStock { get; set; }
+        public string codigo { get; set; }
+        public string nombre { get; set; }
+        public Nullable<int> inventarioEspecifico { get; set; }
     }
 }

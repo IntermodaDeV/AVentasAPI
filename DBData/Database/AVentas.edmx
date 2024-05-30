@@ -5,8 +5,8 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="AventasModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Acciones">
           <Key>
             <PropertyRef Name="IdAccion" />
@@ -359,6 +359,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="FotoPortada" Type="varchar" MaxLength="2500" />
           <Property Name="FechaUltSincronizacion" Type="datetime" />
           <Property Name="Linea" Type="varchar" MaxLength="15" />
+          <Property Name="InventarioEspecifico" Type="bit" />
         </EntityType>
         <EntityType Name="Colores">
           <Key>
@@ -486,6 +487,22 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Dias" Type="int" Nullable="false" />
           <Property Name="empresaId" Type="varchar" MaxLength="250" Nullable="false" />
         </EntityType>
+        <EntityType Name="DetalleFacturado">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="productoId" Type="int" />
+          <Property Name="codigoProducto" Type="nvarchar" MaxLength="250" />
+          <Property Name="codigoColor" Type="varchar" MaxLength="50" />
+          <Property Name="codigoTalla" Type="varchar" MaxLength="50" />
+          <Property Name="cantidad" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="precioFacturado" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="factura" Type="nvarchar" MaxLength="250" />
+          <Property Name="pedido" Type="nvarchar" MaxLength="150" />
+          <Property Name="paquete" Type="nvarchar" MaxLength="150" />
+          <Property Name="inventdim" Type="nvarchar" MaxLength="250" />
+        </EntityType>
         <EntityType Name="Devolucion">
           <Key>
             <PropertyRef Name="NumDevolucion" />
@@ -518,6 +535,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="FechaNotaCredito" Type="datetime" />
           <Property Name="FechaCreacionAx" Type="datetime" />
           <Property Name="plantillaGenerada" Type="bit" Nullable="false" />
+          <Property Name="facturaDestino" Type="nvarchar" MaxLength="70" />
         </EntityType>
         <EntityType Name="DevolucionDetalle">
           <Key>
@@ -531,6 +549,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="Cantidad" Type="int" Nullable="false" />
           <Property Name="PrecioUnitario" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MontoLinea" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Factura" Type="nvarchar" MaxLength="250" />
+          <Property Name="Pedido" Type="nvarchar" MaxLength="50" />
+          <Property Name="Paquete" Type="nvarchar" MaxLength="50" />
+          <Property Name="Inventdim" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="DireccionesCliente">
           <Key>
@@ -720,6 +742,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ExcepcionDescuento" Type="bit" Nullable="false" />
           <Property Name="DiasGracia" Type="int" />
           <Property Name="CodigoDescuento" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="EnTransito" Type="bit" Nullable="false" />
+          <Property Name="SinDescuento" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -1939,8 +1963,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.Acciones' no tiene definida ning
           <Property Name="ModifiedBy" Type="nvarchar" MaxLength="75" />
           <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_AtributosxColeccion' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_AtributosxColeccion">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -1952,8 +1976,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_AtributosxColeccion' no tiene
           <Property Name="IdLinea" Type="varchar" MaxLength="250" />
           <Property Name="CodigoAtributo" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ClientesxRuta' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ClientesxRuta">
           <Key>
             <PropertyRef Name="CodigoCliente" />
@@ -1973,8 +1997,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ClientesxRuta' no tiene defin
           <Property Name="Longitud" Type="decimal" Precision="18" Scale="15" />
           <Property Name="Ruta" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ColeccionesBodegaEspecifico">
           <Key>
             <PropertyRef Name="IdColeccion" />
@@ -1998,8 +2022,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColeccionesBodegaEspecifico' 
           <Property Name="Sitio" Type="varchar" MaxLength="50" />
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_ColoresxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_ColoresxProducto">
           <Key>
             <PropertyRef Name="IdColorxProducto" />
@@ -2010,8 +2034,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_ColoresxProducto' no tiene de
           <Property Name="Rgb" Type="varchar" MaxLength="250" />
           <Property Name="IdProducto" Type="int" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_FisicoDisponible' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_FisicoDisponible">
           <Key>
             <PropertyRef Name="IdFisicoDisponible" />
@@ -2023,8 +2047,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_FisicoDisponible' no tiene de
           <Property Name="Disponible" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MinStock" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="vw_TallasxProducto">
           <Key>
             <PropertyRef Name="IdProducto" />
@@ -4559,14 +4583,22 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="User" Type="varchar" Mode="In" />
         </Function>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
+        <Function Name="IMActualizarColeccionInventarioEspecifico" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="COLECCION" Type="varchar" Mode="In" />
+          <Parameter Name="ACTIVAR" Type="int" Mode="In" />
+        </Function>
         <Function Name="IMClasificacionDevolucion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="numdevolucion" Type="varchar" Mode="In" />
         </Function>
         <Function Name="IMObtenerBasesProductos" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="IMObtenerColeccionesInventarioEspecifico" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="IMObtenerDetalleDescuento" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
           <Parameter Name="LINEA" Type="varchar" Mode="In" />
           <Parameter Name="CODIGO" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="IMObtenerFacturasDevolucionCompleta" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
         </Function>
         <Function Name="IMObtenerFacturasFletes" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CodigoCliente" Type="varchar" Mode="In" />
@@ -4602,8 +4634,14 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Parameter Name="version" Type="int" Mode="In" />
           <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
         </Function>
+        <Function Name="SP_Devoluciones_UpdateEstado" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="codigoAsesor" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SP_DocumentosAplicadosXCuotas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CodigoAsesor" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_DocumentosTransitoxFactura_UpdateSaldo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ASESOR" Type="varchar" Mode="In" />
         </Function>
         <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
@@ -4627,9 +4665,16 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
         <Function Name="SP_LimpiarAsignacionesAsesor" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="asesor" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="SP_LimpiarInventarioFactura" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="FACTURA" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SP_ObtencionFacturas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="codigoProducto" Type="varchar" Mode="In" />
+          <Parameter Name="color" Type="varchar" Mode="In" />
           <Parameter Name="cliente" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_ObtenerFacturasAbiertas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="cliente" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="SP_ObtenerProductosRMA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="rma" Type="varchar" Mode="In" />
@@ -4707,6 +4752,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="Descuento" EntityType="Self.Descuento" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DescuentoDetalle" EntityType="Self.DescuentoDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DescuentoEnAcuerdo" EntityType="Self.DescuentoEnAcuerdo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DetalleFacturado" EntityType="Self.DetalleFacturado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Devolucion" EntityType="Self.Devolucion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DevolucionDetalle" EntityType="Self.DevolucionDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DireccionesCliente" EntityType="Self.DireccionesCliente" Schema="dbo" store:Type="Tables" />
@@ -6070,6 +6116,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="ExcepcionDescuento" Type="Boolean" Nullable="false" />
           <Property Name="DiasGracia" Type="Int32" />
           <Property Name="CodigoDescuento" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EnTransito" Type="Boolean" Nullable="false" />
+          <Property Name="SinDescuento" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="FirmasxPedido">
           <Key>
@@ -8097,6 +8145,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           </AssociationSet>
           <FunctionImport Name="SP_ObtencionFacturas" ReturnType="Collection(AventasModel.SP_ObtencionFacturas_Result)">
             <Parameter Name="codigoProducto" Mode="In" Type="String" />
+            <Parameter Name="color" Mode="In" Type="String" />
             <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="vw_ColeccionesBodegaEspecifico" EntityType="AventasModel.vw_ColeccionesBodegaEspecifico" />
@@ -8280,6 +8329,27 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySet Name="BaseColorImpuesto" EntityType="AventasModel.BaseColorImpuesto" />
           <FunctionImport Name="IMObtenerBasesProductos" ReturnType="Collection(AventasModel.IMObtenerBasesProductos_Result)" />
           <EntitySet Name="DireccionesCliente" EntityType="AventasModel.DireccionesCliente" />
+          <FunctionImport Name="IMObtenerFacturasDevolucionCompleta" ReturnType="Collection(AventasModel.IMObtenerFacturasDevolucionCompleta_Result)">
+          <Parameter Name="CLIENTE" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="DetalleFacturado" EntityType="AventasModel.DetalleFacturado" />
+          <FunctionImport Name="SP_LimpiarInventarioFactura">
+          <Parameter Name="FACTURA" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_Devoluciones_UpdateEstado">
+          <Parameter Name="codigoAsesor" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_DocumentosTransitoxFactura_UpdateSaldo">
+          <Parameter Name="ASESOR" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="IMActualizarColeccionInventarioEspecifico">
+            <Parameter Name="COLECCION" Mode="In" Type="String" />
+            <Parameter Name="ACTIVAR" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="IMObtenerColeccionesInventarioEspecifico" ReturnType="Collection(AventasModel.IMObtenerColeccionesInventarioEspecifico_Result)" />
+          <FunctionImport Name="SP_ObtenerFacturasAbiertas" ReturnType="Collection(AventasModel.SP_ObtenerFacturasAbiertas_Result)">
+          <Parameter Name="cliente" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -9460,6 +9530,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E85" FromRole="Colecciones" ToRole="PedidosxCliente" />
           <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__PedidosxC__IdCol__6D2D2E851" FromRole="Colecciones" ToRole="PedidosxClienteFlotante" />
           <Property Name="Linea" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="InventarioEspecifico" Type="Boolean" />
         </EntityType>
         <Association Name="FK__Atributos__IdCol__6DF7358C">
           <End Type="AventasModel.Colecciones" Role="Colecciones" Multiplicity="0..1" />
@@ -11180,6 +11251,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="FechaCreacionAx" Type="DateTime" Precision="3" />
           <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" FromRole="Devolucion" ToRole="DevolucionDetalle" />
           <Property Name="plantillaGenerada" Type="Boolean" Nullable="false" />
+          <Property Name="facturaDestino" Type="String" MaxLength="70" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_tbDevolucion_Clientes_CodigoCliente">
           <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="0..1" />
@@ -11340,6 +11412,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Type="String" Name="NumeroPedido" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="Linea" Nullable="true" MaxLength="250" />
           <Property Type="Int32" Name="Abierta" Nullable="false" />
+          <Property Type="DateTime" Name="FechaFactura" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Paquete" Nullable="true" MaxLength="150" />
         </ComplexType>
         <EntityType Name="vw_ColeccionesBodegaEspecifico">
           <Key>
@@ -12007,6 +12081,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="MontoLinea" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucionDetalle_Devolucion_idDevolucion" FromRole="DevolucionDetalle" ToRole="Devolucion" />
           <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="DevolucionDetalle" ToRole="ProductosxColeccion" />
+          <Property Name="Factura" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Pedido" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Paquete" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Inventdim" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_tbDevolucionDetalle_Devolucion_idDevolucion">
           <End Type="AventasModel.Devolucion" Role="Devolucion" Multiplicity="0..1" />
@@ -12064,6 +12142,37 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <Property Name="principal" Type="Boolean" Nullable="false" />
           <Property Name="fechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
+        <ComplexType Name="IMObtenerFacturasDevolucionCompleta_Result">
+          <Property Type="String" Name="factura" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="linea" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="pedido" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <EntityType Name="DetalleFacturado">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="productoId" Type="Int32" />
+          <Property Name="codigoProducto" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="codigoColor" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="codigoTalla" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="cantidad" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="precioFacturado" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="factura" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="pedido" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="paquete" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="inventdim" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <ComplexType Name="IMObtenerColeccionesInventarioEspecifico_Result">
+          <Property Type="String" Name="codigo" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="nombre" Nullable="true" />
+          <Property Type="Int32" Name="inventarioEspecifico" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SP_ObtenerFacturasAbiertas_Result">
+          <Property Type="String" Name="Factura" Nullable="true" MaxLength="250" />
+          <Property Type="Decimal" Name="Saldo" Nullable="true" Precision="15" Scale="4" />
+          <Property Type="String" Name="Abreviacion" Nullable="true" MaxLength="3" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -12301,6 +12410,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="FacturasxCliente">
             <EntityTypeMapping TypeName="AventasModel.FacturasxCliente">
               <MappingFragment StoreEntitySet="FacturasxCliente">
+                <ScalarProperty Name="SinDescuento" ColumnName="SinDescuento" />
+                <ScalarProperty Name="EnTransito" ColumnName="EnTransito" />
                 <ScalarProperty Name="CodigoDescuento" ColumnName="CodigoDescuento" />
                 <ScalarProperty Name="DiasGracia" ColumnName="DiasGracia" />
                 <ScalarProperty Name="ExcepcionDescuento" ColumnName="ExcepcionDescuento" />
@@ -13319,6 +13430,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Colecciones">
             <EntityTypeMapping TypeName="AventasModel.Colecciones">
               <MappingFragment StoreEntitySet="Colecciones">
+                <ScalarProperty Name="InventarioEspecifico" ColumnName="InventarioEspecifico" />
                 <ScalarProperty Name="Linea" ColumnName="Linea" />
                 <ScalarProperty Name="FechaUltSincronizacion" ColumnName="FechaUltSincronizacion" />
                 <ScalarProperty Name="FotoPortada" ColumnName="FotoPortada" />
@@ -13940,6 +14052,7 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="Devolucion">
             <EntityTypeMapping TypeName="AventasModel.Devolucion">
               <MappingFragment StoreEntitySet="Devolucion">
+                <ScalarProperty Name="facturaDestino" ColumnName="facturaDestino" />
                 <ScalarProperty Name="plantillaGenerada" ColumnName="plantillaGenerada" />
                 <ScalarProperty Name="FechaCreacionAx" ColumnName="FechaCreacionAx" />
                 <ScalarProperty Name="FechaNotaCredito" ColumnName="FechaNotaCredito" />
@@ -14025,6 +14138,8 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
                 <ScalarProperty Name="NumeroPedido" ColumnName="NumeroPedido" />
                 <ScalarProperty Name="Linea" ColumnName="Linea" />
                 <ScalarProperty Name="Abierta" ColumnName="Abierta" />
+                <ScalarProperty Name="FechaFactura" ColumnName="FechaFactura" />
+                <ScalarProperty Name="Paquete" ColumnName="Paquete" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -14475,6 +14590,10 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
           <EntitySetMapping Name="DevolucionDetalle">
             <EntityTypeMapping TypeName="AventasModel.DevolucionDetalle">
               <MappingFragment StoreEntitySet="DevolucionDetalle">
+                <ScalarProperty Name="Inventdim" ColumnName="Inventdim" />
+                <ScalarProperty Name="Paquete" ColumnName="Paquete" />
+                <ScalarProperty Name="Pedido" ColumnName="Pedido" />
+                <ScalarProperty Name="Factura" ColumnName="Factura" />
                 <ScalarProperty Name="MontoLinea" ColumnName="MontoLinea" />
                 <ScalarProperty Name="PrecioUnitario" ColumnName="PrecioUnitario" />
                 <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
@@ -14524,6 +14643,54 @@ advertencia 6002: La tabla o vista 'AVentas.dbo.vw_TallasxProducto' no tiene def
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="IMObtenerFacturasDevolucionCompleta" FunctionName="AventasModel.Store.IMObtenerFacturasDevolucionCompleta">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.IMObtenerFacturasDevolucionCompleta_Result">
+                <ScalarProperty Name="factura" ColumnName="factura" />
+                <ScalarProperty Name="linea" ColumnName="linea" />
+                <ScalarProperty Name="pedido" ColumnName="pedido" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="DetalleFacturado">
+            <EntityTypeMapping TypeName="AventasModel.DetalleFacturado">
+              <MappingFragment StoreEntitySet="DetalleFacturado">
+                <ScalarProperty Name="inventdim" ColumnName="inventdim" />
+                <ScalarProperty Name="paquete" ColumnName="paquete" />
+                <ScalarProperty Name="pedido" ColumnName="pedido" />
+                <ScalarProperty Name="factura" ColumnName="factura" />
+                <ScalarProperty Name="precioFacturado" ColumnName="precioFacturado" />
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+                <ScalarProperty Name="codigoTalla" ColumnName="codigoTalla" />
+                <ScalarProperty Name="codigoColor" ColumnName="codigoColor" />
+                <ScalarProperty Name="codigoProducto" ColumnName="codigoProducto" />
+                <ScalarProperty Name="productoId" ColumnName="productoId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_LimpiarInventarioFactura" FunctionName="AventasModel.Store.SP_LimpiarInventarioFactura" />
+          <FunctionImportMapping FunctionImportName="SP_Devoluciones_UpdateEstado" FunctionName="AventasModel.Store.SP_Devoluciones_UpdateEstado" />
+          <FunctionImportMapping FunctionImportName="SP_DocumentosTransitoxFactura_UpdateSaldo" FunctionName="AventasModel.Store.SP_DocumentosTransitoxFactura_UpdateSaldo" />
+          <FunctionImportMapping FunctionImportName="IMActualizarColeccionInventarioEspecifico" FunctionName="AventasModel.Store.IMActualizarColeccionInventarioEspecifico" />
+          <FunctionImportMapping FunctionImportName="IMObtenerColeccionesInventarioEspecifico" FunctionName="AventasModel.Store.IMObtenerColeccionesInventarioEspecifico">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.IMObtenerColeccionesInventarioEspecifico_Result">
+                <ScalarProperty Name="codigo" ColumnName="codigo" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="inventarioEspecifico" ColumnName="inventarioEspecifico" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_ObtenerFacturasAbiertas" FunctionName="AventasModel.Store.SP_ObtenerFacturasAbiertas">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerFacturasAbiertas_Result">
+                <ScalarProperty Name="Factura" ColumnName="Factura" />
+                <ScalarProperty Name="Saldo" ColumnName="Saldo" />
+                <ScalarProperty Name="Abreviacion" ColumnName="Abreviacion" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

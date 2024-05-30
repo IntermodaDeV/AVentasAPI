@@ -10,15 +10,11 @@
 namespace DBData.Database
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class vw_FisicoDisponible
+    public partial class IMObtenerFacturasDevolucionCompleta_Result
     {
-        public int IdFisicoDisponible { get; set; }
-        public string CodigoColor { get; set; }
-        public string CodigoTalla { get; set; }
-        public Nullable<int> IdProducto { get; set; }
-        public Nullable<decimal> Disponible { get; set; }
-        public Nullable<decimal> MinStock { get; set; }
+        public string factura { get; set; }
+        public string linea { get; set; }
+        public string pedido { get; set; }
     }
 }

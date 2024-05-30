@@ -57,12 +57,14 @@ namespace AventasApi.Utils
                             newEntity.Referencia = factura.REF_TRANS;
                             newEntity.DiasGracia = 0;
                             newEntity.CodigoDescuento = factura.KREACASHDISCCODE;
+                            newEntity.EnTransito = false;
+                            newEntity.SinDescuento = false;
                             context.FacturasxCliente.Add(newEntity);
                         }
                         else
                         {
                             DateTime dummy = new DateTime();
-                            decimal tFactura = 0, sFactura = 0, pFactura = 0, desc = 0;
+                            decimal tFactura = 0, sFactura = 0, pFactura = 0, desc = 0,saldoActualFactura=entityFound.Saldo ?? 0;
                             int nPagos = 0;
                             entityFound.Clientes = context.Clientes.FirstOrDefault(p => p.CodigoCliente == factura.ACCOUNT_NUM);
                             entityFound.TiposdePedido = context.TiposdePedido.FirstOrDefault(p => p.IdTipoPedido == tipoPedido.IdTipoPedido);
@@ -78,10 +80,27 @@ namespace AventasApi.Utils
                             entityFound.Saldo = Decimal.TryParse(factura.REMAIN_AMOUNT_CUR, out sFactura) ? sFactura : 0;
                             entityFound.PendienteFactura = Decimal.TryParse(factura.AMOUNT_PENDING, out pFactura) ? pFactura : 0;
                             entityFound.Descuento = Decimal.TryParse(factura.DISCOUNT, out desc) ? desc : 0;
+                            entityFound.EnTransito = false;
 
                             if (entityFound.PendienteFactura > 0)
                             {
                                 entityFound.Saldo = entityFound.Saldo - entityFound.PendienteFactura - (entityFound.FechaMaxDescuento < DateTime.Today ? 0 : entityFound.Descuento);
+                            }
+
+                            var existeFacturaEnDocumentosEnTransito = context.DocumentosTransitoxFactura.FirstOrDefault(x => x.Factura.ToUpper() == factura.INVOICE.ToUpper() && x.Valor > 0);
+                            if (existeFacturaEnDocumentosEnTransito != null)
+                            {
+                                entityFound.Saldo = saldoActualFactura;
+                                entityFound.EnTransito = true;
+                            }
+
+                            /* Si la factura tiene acuerdo colocamos el descuento en 0
+                             * como manera de prevenir que coloque descuento estandar en caso que el acuerdo este mal configurado
+                             * y no afecte la logica de notas de credito automatica.
+                             */
+                            if (entityFound.AcuerdosxCliente != null)
+                            {
+                                entityFound.Descuento = 0;
                             }
                            
                             entityFound.FacturaStatus = factura.STATUS;
@@ -154,13 +173,22 @@ namespace AventasApi.Utils
                             newEntity.ReferenciaCuotas = subFactura.PA_REF_APSA;
                             newEntity.Valor = !String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out ssFactura) ? ssFactura : 0 : fFactura.TotalFactura;
                             newEntity.Flete = Decimal.TryParse(subFactura.FREIGHT, out ssFactura) ? ssFactura : 0;
-                            newEntity.completaCuota = false;           
+                            newEntity.completaCuota = false;
+
+                            /* Si la factura tiene acuerdo colocamos el descuento en 0
+                             * como manera de prevenir que coloque descuento estandar en caso que el acuerdo este mal configurado
+                             * y no afecte la logica de notas de credito automatica.
+                             */
+                            if (newEntity.AcuerdosxCliente != null)
+                            {
+                                newEntity.Descuento = 0;
+                            }
 
                             context.SubFacturasxCliente.Add(newEntity);
                         }
                         else
                         {
-                            decimal tFacturaDivisa, ssFactura = 0, psFactura = 0, sDesc = 0, svCuota = 0, svVencidoCuota = 0;
+                            decimal tFacturaDivisa, ssFactura = 0, psFactura = 0, sDesc = 0, svCuota = 0, svVencidoCuota = 0, saldoActualFactura = entityFound.Saldo ?? 0;
                             int snCuota = 0;
                             DateTime dummy = new DateTime();
                             entityFound.Factura = fFactura.Factura;
@@ -173,10 +201,18 @@ namespace AventasApi.Utils
                             entityFound.FechaMaxDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             entityFound.FechaVencimientoDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             entityFound.Saldo = Decimal.TryParse(subFactura.AMOUNT_CUR, out ssFactura) ? ssFactura : 0;
+
+                            var existeFacturaEnDocumentosEnTransito = context.DocumentosTransitoxFactura.FirstOrDefault(x => x.Factura.ToUpper() == fFactura.Factura.ToUpper() && x.Valor > 0);
+                            if (existeFacturaEnDocumentosEnTransito != null)
+                            {
+                                entityFound.Saldo = saldoActualFactura;
+                            }
+
                             if (fFactura.Saldo == 0)
                             {
                                 entityFound.Saldo = 0;
                             }
+
                             entityFound.IdAcuerdoxCliente = String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? null: subFactura.AGREEMENT_NAME;
                             fFactura.IdAcuerdoxCliente = entityFound.IdAcuerdoxCliente;
                             entityFound.SaldoDivisa = Decimal.TryParse(subFactura.AMOUNT_MST, out tFacturaDivisa) ? tFacturaDivisa : 0;
@@ -192,6 +228,15 @@ namespace AventasApi.Utils
                             entityFound.Flete = Decimal.TryParse(subFactura.FREIGHT, out ssFactura) ? ssFactura : 0;
                             entityFound.completaCuota = false;
                             entityFound.Valor = !String.IsNullOrEmpty(subFactura.AGREEMENT_NAME) ? Decimal.TryParse(subFactura.PA_DUE_AMOUNT, out ssFactura) ? ssFactura : 0 : fFactura.TotalFactura;
+
+                            /* Si la factura tiene acuerdo colocamos el descuento en 0
+                             * como manera de prevenir que coloque descuento estandar en caso que el acuerdo este mal configurado
+                             * y no afecte la logica de notas de credito automatica.
+                             */
+                            if (entityFound.AcuerdosxCliente != null)
+                            {
+                                entityFound.Descuento = 0;
+                            }
 
                             context.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
                         }
@@ -249,6 +294,86 @@ namespace AventasApi.Utils
                     }
                 }
             }catch(Exception e)
+            {
+
+            }
+        }
+        private void UpdateDocumentosEnTransito(string asesor, List<DocumentonsEnTransitoApiModel> documentos)
+        {
+            try
+            {
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    context.SP_DocumentosTransitoxFactura_UpdateSaldo(asesor);
+                    context.SP_Devoluciones_UpdateEstado(asesor);
+
+                    foreach(var datos in documentos)
+                    {
+                        DateTime dummy = new DateTime();
+
+                       
+                        string factura = null;
+                        decimal valor = 0;
+                        int tableId = 0;
+                        int? idSubFactura = null;
+                        var fFactura = context.FacturasxCliente.FirstOrDefault(x => x.Referencia == datos.REF_TRANS && x.Factura == datos.INVOICE && x.EmpresaId == datos.ENTITY.ToUpper());
+                        if (fFactura != null)
+                        {
+                            factura = fFactura.Factura;
+                        }
+
+                        var sFactura = context.SubFacturasxCliente.FirstOrDefault(x => x.Referencia == datos.REF_TRANSOPEN && x.Factura == datos.INVOICE && x.CodigoCliente == datos.ACCOUNTNUM && x.EmpresaId == datos.ENTITY.ToUpper());
+                        if (sFactura != null)
+                        {
+                            idSubFactura = sFactura.IdSubFactura;
+                        }
+
+                        DocumentosTransitoxFactura model = new DocumentosTransitoxFactura
+                        {
+                            Factura = factura,
+                            CreadoPor = datos.CREATEDBY,
+                            Estado = datos.DOCUMENT_STATUS,
+                            FechaCreacion = DateTime.TryParseExact(datos.CREATEDDATETIME, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(datos.CREATEDDATETIME, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now,
+                            IdSubFactura = idSubFactura,
+                            NumeroDocumento = datos.DOCUMENT_NUMBER,
+                            TablaId = int.TryParse(datos.SPECTABLEID, out tableId) ? tableId : 0,
+                            Tipo = datos.TYPE,
+                            Valor = Decimal.TryParse(datos.AMOUNT, out valor) ? valor : 0,
+                            CodigoCliente = datos.ACCOUNTNUM,
+                            EmpresaId = datos.ENTITY.ToUpper(),
+                            IdMoneda = datos.CURRENCY,
+                            Referencia = datos.REF_SPECTRANS,
+                            ReferenciaFacturas = datos.REF_TRANS,
+                            ReferenciaSubFactura = datos.REF_TRANSOPEN,
+                            NumeroFEL = datos.FACTURACION_FEL
+                        };
+
+                        var entityFound = context.DocumentosTransitoxFactura.FirstOrDefault(p => p.Empresa.EmpresaId == model.EmpresaId && p.Clientes.CodigoCliente == model.CodigoCliente && p.SubFacturasxCliente.IdSubFactura == model.IdSubFactura && p.FacturasxCliente.Factura == model.Factura && p.Referencia == model.Referencia);
+                        if (entityFound == null)
+                        {
+                            context.DocumentosTransitoxFactura.Add(model);
+                        }
+                        else
+                        {
+                            entityFound.Factura = model.Factura;
+                            entityFound.NumeroFEL = model.NumeroFEL;
+                            entityFound.Referencia = model.Referencia;
+                            entityFound.ReferenciaFacturas = model.ReferenciaFacturas;
+                            entityFound.CreadoPor = model.CreadoPor;
+                            entityFound.Estado = model.Estado;
+                            entityFound.FechaCreacion = model.FechaCreacion;
+                            entityFound.NumeroDocumento = model.NumeroDocumento;
+                            entityFound.TablaId = model.TablaId;
+                            entityFound.Tipo = model.Tipo;
+                            entityFound.Valor = model.Valor;
+                            entityFound.ReferenciaSubFactura = model.ReferenciaSubFactura;
+                        }
+
+                        context.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception e)
             {
 
             }
@@ -401,6 +526,29 @@ namespace AventasApi.Utils
             {
 
             }
+        }
+        public void SyncDocumentosEnTransito(string empresa, string asesor)
+        {
+            try
+            {
+                var docs = new List<DocumentonsEnTransitoApiModel>();
+                var resClient = new RestClient(Enviroment.CRMWebServiceURLApi);
+                var request = new RestRequest($"facturas/{empresa}/{asesor}/documentosentransito", Method.GET);
+                request.AddHeader("Accept", "application/json");
+                IRestResponse response = resClient.Execute(request);
+
+                if (response.IsSuccessful && response.Content != "null")
+                {
+                    docs = JsonConvert.DeserializeObject<List<DocumentonsEnTransitoApiModel>>(response.Content);
+
+                    if (docs.Count() > 0)
+                    {
+                        UpdateDocumentosEnTransito(asesor, docs);
+                    }
+                }
+                
+            }
+            catch(Exception e) { }
         }
     }
 }

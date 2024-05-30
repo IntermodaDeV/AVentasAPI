@@ -125,6 +125,90 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("descuentoactivo/{cliente}")]
+        public async Task<IHttpActionResult> ObtenerFacturasDescuentoActivo(string cliente)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var facturas = await ctx.FacturasxCliente
+                        .Include(x => x.Clientes)
+                        .Where(x => x.CodigoCliente == cliente && x.Saldo > 0 && x.IdAcuerdoxCliente == null)
+                        .ToListAsync();
+
+                    foreach (var factura in facturas)
+                    {
+                        var grupoDescuento = await ctx.Descuento.FirstOrDefaultAsync(x => x.Codigo.ToUpper() == factura.Clientes.Descuento.ToUpper() && x.EmpresaId.ToUpper() == factura.Clientes.EmpresaId.ToUpper());
+                        if (grupoDescuento == null)
+                        {
+                            continue;
+                        }
+
+                        var descuentoDetalle = ctx.DescuentoDetalle.Include(x => x.Descuento).Where(x => x.IdLinea.ToUpper() == factura.IdLinea.ToUpper() && x.Descuento.EmpresaId.ToUpper() == factura.EmpresaId.ToUpper() && x.CodigoDescuento.ToUpper() == factura.CodigoDescuento.ToUpper()).FirstOrDefault();
+                        if (descuentoDetalle == null)
+                        {
+                            continue;
+                        }
+
+                        var totalDocumentosAplicados = ctx.DocumentosAplicadosAFacturas.Where(x => x.Factura == factura.Factura).Sum(x => x.Valor) ?? 0;
+                        var subfactura = await ctx.SubFacturasxCliente.FirstOrDefaultAsync(x => x.Factura == factura.Factura && x.Flete != null);
+                        decimal? flete = 0;
+
+                        if (subfactura != null)
+                        {
+                            flete = subfactura.Flete.Value;
+                        }
+
+                        var totalFactura = factura.TotalFactura - totalDocumentosAplicados - flete;
+                        var descuento = totalFactura * (descuentoDetalle.Porcentaje / 100);
+                        var sumaDias = descuentoDetalle.DiasDescuento.Value + factura.Clientes.DiasTransporte;
+                        factura.FechaMaxDescuento = factura.FechaFactura?.AddDays(sumaDias);
+                        factura.Descuento = descuento;
+                    }
+
+                    var facturasDescuentoVencido = facturas
+                        .Where(x => x.Descuento > 0)
+                        .Select(x => new { documento = x.Tipo, numero = x.Factura, fecha = x.FechaFactura, vencimiento = x.FechaVencimiento, valor = x.TotalFactura, saldo = x.Saldo, sinDescuento = x.SinDescuento, descuento = x.Descuento, vencimientoDescuento = x.FechaMaxDescuento })
+                        .ToList();
+
+
+                    return Ok(facturasDescuentoVencido);
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpPut]
+        [Route("removerdescuento/{cliente}/{factura}")]
+        public async Task<IHttpActionResult> ActualizarSinDescuentoFactura(string cliente, string factura)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    FacturasxCliente facturaBD = await ctx.FacturasxCliente.FirstOrDefaultAsync(x => x.CodigoCliente == cliente && x.Factura == factura);
+                    if (facturaBD == null)
+                    {
+                        return NotFound();
+                    }
+
+                    facturaBD.SinDescuento = !facturaBD.SinDescuento;
+                    await ctx.SaveChangesAsync();
+
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [HttpGet]
         [Route("{cliente}")]
         public async Task<IHttpActionResult> GetFacturaCliente(string cliente)
         {
@@ -132,12 +216,26 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    var facturas = await ctx.FacturasxCliente
-                        .Where(x => x.CodigoCliente == cliente && x.Tipo.Contains("Factura") && x.NumeroPedido != null)
-                        .OrderByDescending(x => x.FechaFactura)
-                        .Select(x => new { factura = x.Factura, pedido = x.NumeroPedido, linea = x.IdLinea })
-                        .ToListAsync();
+                    var facturas = ctx.IMObtenerFacturasDevolucionCompleta(cliente).ToList();
+                    return Ok(facturas);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
 
+        }
+
+        [HttpGet]
+        [Route("abiertas/{cliente}")]
+        public async Task<IHttpActionResult> GetFacturasAbiertasCliente(string cliente)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var facturas = ctx.SP_ObtenerFacturasAbiertas(cliente).ToList();
                     return Ok(facturas);
                 }
             }

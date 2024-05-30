@@ -12,15 +12,18 @@ namespace DBData.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class DireccionesCliente
+    public partial class DetalleFacturado
     {
         public int id { get; set; }
-        public string codigoCliente { get; set; }
-        public long postalAddress { get; set; }
-        public string nombreDireccion { get; set; }
-        public string direccion { get; set; }
-        public bool activo { get; set; }
-        public bool principal { get; set; }
-        public System.DateTime fechaCreacion { get; set; }
+        public Nullable<int> productoId { get; set; }
+        public string codigoProducto { get; set; }
+        public string codigoColor { get; set; }
+        public string codigoTalla { get; set; }
+        public Nullable<decimal> cantidad { get; set; }
+        public Nullable<decimal> precioFacturado { get; set; }
+        public string factura { get; set; }
+        public string pedido { get; set; }
+        public string paquete { get; set; }
+        public string inventdim { get; set; }
     }
 }

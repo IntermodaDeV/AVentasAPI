@@ -82,6 +82,12 @@ namespace AventasApi.Controllers
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
+
+                    if (asesor == null)
+                    {
+                        return Ok();
+                    }
+
                     int numeroCorelativo = asesor.CorrelativoRecibos ?? 0;
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
@@ -871,7 +877,7 @@ namespace AventasApi.Controllers
                                         recibo.Sincronizado = true;
                                         ctx.SaveChanges();
                                     }
-
+                                    syncCuentaCorriente.SyncDocumentosEnTransito(recibos[0].COMPANY, recibos[0].ASESOR);
                                     syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                                     syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                                 }
@@ -1131,6 +1137,12 @@ namespace AventasApi.Controllers
                                                     valorCuota = Decimal.ToDouble(subfactura.Saldo.Value) - Descuento;
                                                     aplicaDescuento = true;
 
+                                                    if (Factura.SinDescuento)
+                                                    {
+                                                        Descuento = 0;
+                                                        valorCuota = Decimal.ToDouble(subfactura.Saldo.Value);
+                                                        aplicaDescuento = false;
+                                                    }
                                                 }
                                             }
                                         }
@@ -1150,6 +1162,13 @@ namespace AventasApi.Controllers
                                         {
                                             valorCuota = Decimal.ToDouble(subfactura.Saldo.Value - subfactura.Descuento.Value);
                                             Descuento = Decimal.ToDouble(subfactura.Descuento.Value);
+                                        }
+
+                                        if (Factura.SinDescuento)
+                                        {
+                                            Descuento = 0;
+                                            valorCuota = Decimal.ToDouble(subfactura.Saldo.Value);
+                                            aplicaDescuento = false;
                                         }
                                     }
 
@@ -1647,7 +1666,7 @@ namespace AventasApi.Controllers
                             recibo.Sincronizado = true;
                             await ctx.SaveChangesAsync();
                         }
-
+                        syncCuentaCorriente.SyncDocumentosEnTransito(recibos[0].COMPANY, recibos[0].ASESOR);
                         syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         return Ok($"El recibo {recibos[0].RECIBO} ha sido sincronizado exitosamente con AX.");
@@ -1695,7 +1714,7 @@ namespace AventasApi.Controllers
                             recibo.Sincronizado = true;
                             await ctx.SaveChangesAsync();
                         }
-
+                        syncCuentaCorriente.SyncDocumentosEnTransito(recibos[0].COMPANY, recibos[0].ASESOR);
                         syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                         return Ok($"El recibo {recibos[0].RECIBO} ha sido sincronizado exitosamente con AX.");
@@ -2073,7 +2092,7 @@ namespace AventasApi.Controllers
                                     reciboBDA.Sincronizado = true;
                                     await ctx.SaveChangesAsync();
                                 }
-
+                                syncCuentaCorriente.SyncDocumentosEnTransito(ReciboSincronizar[0].COMPANY, ReciboSincronizar[0].ASESOR);
                                 syncCuentaCorriente.SyncFacturas(ReciboSincronizar[0].COMPANY, ReciboSincronizar[0].CLIENTE, ReciboSincronizar[0].ASESOR);
                                 syncCuentaCorriente.SyncSubFacturas(ReciboSincronizar[0].COMPANY, ReciboSincronizar[0].CLIENTE, ReciboSincronizar[0].ASESOR);
                                 return Ok($"El recibo ha sido aprobado y sincronizado exitosamente con AX.");

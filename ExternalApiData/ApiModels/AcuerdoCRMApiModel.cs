@@ -24,5 +24,6 @@ namespace ExternalApiData.Models.ApiModels
         public string DELIVERED { get; set; }
         public string ENTITY { get; set; }
         public string CUST_DISCLINE_GROUP { get; set; }
+        public string DISC_CODE { get; set; }
     }
 }

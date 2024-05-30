@@ -26,7 +26,7 @@ namespace AventasApi.Controllers
             catch (Exception)
             {
                 throw;
-            }          
+            }
         }
 
 
@@ -43,7 +43,7 @@ namespace AventasApi.Controllers
             {
                 throw;
             }
-           
+
         }
 
         [HttpGet]
@@ -68,9 +68,9 @@ namespace AventasApi.Controllers
         {
             try
             {
-                using(var ctx=new AVentasEntities())
+                using (var ctx = new AVentasEntities())
                 {
-                    var entity = await ctx.AcuerdosxCliente.FirstOrDefaultAsync(x=>x.IdAcuerdoxCliente == acuerdo);
+                    var entity = await ctx.AcuerdosxCliente.FirstOrDefaultAsync(x => x.IdAcuerdoxCliente == acuerdo);
                     if (entity == null)
                     {
                         return NotFound();
@@ -80,7 +80,27 @@ namespace AventasApi.Controllers
 
                     return Ok();
                 }
-                
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+        [HttpGet]
+        [Route("acuerdosventa/{asesor}")]
+        public IHttpActionResult SincronizarAcuerdos(string asesor)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    new SyncAcuerdosVentas().SyncAcuerdosVenta(asesor);
+                    return Ok();
+                }
+
             }
             catch (Exception)
             {
