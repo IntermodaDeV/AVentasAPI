@@ -95,9 +95,9 @@ namespace AventasApi.Utils
         {
             try
             {
-                var asesor = await VerificarAsesor(codigoAsesor);
+                var asesores = await VerificarAsesor(codigoAsesor);
 
-                if(asesor != null)
+                foreach(var asesor in asesores)
                 {
                     var clientes = new List<ClientesCRMApiModel>();
                     var restClient = new RestClient(Enviroment.CRMWebServiceURLApi);
@@ -315,18 +315,18 @@ namespace AventasApi.Utils
             }           
         }
 
-        private async Task<Asesores> VerificarAsesor(string codigoAsesor)
+        private async Task<List<Asesores>> VerificarAsesor(string codigoAsesor)
         {
             try
             {
                 using (AVentasEntities db = new AVentasEntities())
-                {                    
-                   return await db.Asesores.FirstOrDefaultAsync(x => x.Activo == true && x.CodigoAsesor == codigoAsesor);                                  
+                {
+                    return await db.Asesores.AsNoTracking().Where(x => x.CodigoAsesor == codigoAsesor && x.Activo == true).ToListAsync();
                 }
             }
             catch (Exception e)
             {
-                return null;
+                return new List<Asesores>();
             }
         }
     }

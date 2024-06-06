@@ -619,6 +619,26 @@ namespace AventasApi.Controllers
                         {
                         }
                     }
+
+                    var codigoAsesor = cliente.CodigoAsesor;
+                    if (codigoAsesor != usuario.usuario)
+                    {
+                        if (cliente.EmpresaId.ToUpper() == "IMHN")
+                        {
+                            codigoAsesor = "ohn";
+                        }
+
+                        if (cliente.EmpresaId.ToUpper() == "IMGT")
+                        {
+                            codigoAsesor = "ogt";
+                        }
+
+                        if (cliente.EmpresaId.ToUpper() == "IMCR")
+                        {
+                            codigoAsesor = "ocr";
+                        }
+                    }
+
                     Devolucion found = null;
                     var fechaDesde = DateTime.Now.AddMinutes(Convert.ToDouble(minutosValue * -1));
                     var totalUnidades = devolucion.DetalleDevolucion.Sum(x => decimal.Parse(x.Cantidad.ToString()));
@@ -629,7 +649,7 @@ namespace AventasApi.Controllers
                                                                 && x.CodigoCliente == devolucion.CodigoCliente
                                                                 && x.Subtotal == totalPedido
                                                                 && x.TotalUnidades == totalUnidades
-                                                                && x.CodigoAsesor == user.UserAccount);
+                                                                && x.CodigoAsesor == codigoAsesor);
 
                     if (found == null)
                     {
@@ -648,7 +668,7 @@ namespace AventasApi.Controllers
                             PedidoOrigen = devolucion.PedidoOriginal,
                             FacturaOrigen = devolucion.FacturaOriginal,
                             facturaDestino = devolucion.FacturaDestino,
-                            CodigoAsesor = cliente.CodigoAsesor,
+                            CodigoAsesor = codigoAsesor,
                             UsuarioCrea = user.Id,
                             FechaCrea = DateTime.Now,
                             Sincronizado = false,
@@ -690,7 +710,7 @@ namespace AventasApi.Controllers
                                 Inventdim = detalleFacturadoBD?.inventdim
                             });
                         }
-                        bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
+                        bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, cliente.EmpresaId.ToUpper());
 
                         if (!guardadoExito)
                         {
@@ -774,6 +794,25 @@ namespace AventasApi.Controllers
                         }
                     }
 
+                    var codigoAsesor = cliente.CodigoAsesor;
+                    if (codigoAsesor != usuario.usuario)
+                    {
+                        if (cliente.EmpresaId.ToUpper() == "IMHN")
+                        {
+                            codigoAsesor = "ohn";
+                        }
+
+                        if (cliente.EmpresaId.ToUpper() == "IMGT")
+                        {
+                            codigoAsesor = "ogt";
+                        }
+
+                        if (cliente.EmpresaId.ToUpper() == "IMCR")
+                        {
+                            codigoAsesor = "ocr";
+                        }
+                    }
+
                     foreach (DevolucionPostModel devolucion in devoluciones)
                     {
                         var usuariosCorreo =  ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == usuario.Id && x.EmpresaId == devolucion.Empresa).Select(x => x.UsuarioId).ToList();
@@ -790,7 +829,7 @@ namespace AventasApi.Controllers
                                                                     && x.CodigoCliente == devolucion.CodigoCliente
                                                                     && x.Subtotal == totalPedido
                                                                     && x.TotalUnidades == totalUnidades
-                                                                    && x.CodigoAsesor == user.UserAccount);
+                                                                    && x.CodigoAsesor == codigoAsesor);
 
                         if (found == null)
                         {
@@ -810,7 +849,7 @@ namespace AventasApi.Controllers
                                 PedidoOrigen = devolucion.PedidoOriginal,
                                 facturaDestino = devolucion.FacturaDestino,
                                 FacturaOrigen = devolucion.FacturaOriginal,
-                                CodigoAsesor = cliente.CodigoAsesor,
+                                CodigoAsesor = codigoAsesor,
                                 UsuarioCrea = user.Id,
                                 FechaCrea = DateTime.Now,
                                 Sincronizado = false,
@@ -849,7 +888,7 @@ namespace AventasApi.Controllers
                                     Inventdim = detalleFacturado?.inventdim
                                 });
                             }
-                            bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, usuario.EmpresaId);
+                            bool guardadoExito = AsyncSqlInsert.IngresarDevolucion(devolucionDB, cliente.EmpresaId.ToUpper());
 
                             if (guardadoExito)
                             {
@@ -1144,12 +1183,40 @@ namespace AventasApi.Controllers
             using(var ctx = new AVentasEntities())
             {
                 var asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == usuario && ase.EmpresaId == empresa);
-                int numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
+                int numeroCorelativo = 0;
+
+                if (asesor != null)
+                {
+                    numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
+                }
+
+                if (asesor == null)
+                {
+                    if (empresa.ToUpper() == "IMHN")
+                    {
+                        asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == "ohn" && ase.EmpresaId == empresa);
+                        numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
+                    }
+
+                    if (empresa.ToUpper() == "IMGT")
+                    {
+                        asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == "ogt" && ase.EmpresaId == empresa);
+                        numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
+                    }
+
+                    if (empresa.ToUpper() == "IMCR")
+                    {
+                        asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == "ocr" && ase.EmpresaId == empresa);
+                        numeroCorelativo = asesor.CorrelativoDevolucion ?? 0;
+                    }
+                }
+
+
                 string inicialesAsesor = asesor.InicialesNombre;
                 string numeroReferencia = $"{inicialesAsesor}DEV-1{numeroCorelativo.ToString("D5")}";
 
                 var devolucionBD = await ctx.Devolucion.FirstOrDefaultAsync(x => x.NumDevolucion == numeroReferencia);
-                if(devolucionBD == null)
+                if (devolucionBD == null)
                 {
                     return numeroReferencia;
                 }
