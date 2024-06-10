@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1" ZoomLevel="72">
+      <Diagram DiagramId="97c05c8377fb4b5688a94335161aa48e" Name="Diagram1" ZoomLevel="53">
         <EntityTypeShape EntityType="AventasModel.AcuerdosxCliente" Width="1.5" PointX="3" PointY="41.125" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AcuerdosxClienteDetalle" Width="1.5" PointX="5.25" PointY="41.5" IsExpanded="true" />
         <EntityTypeShape EntityType="AventasModel.AsignacionxAsesorDetalle" Width="1.5" PointX="12.5" PointY="51.375" IsExpanded="true" />
@@ -364,6 +364,10 @@
         <EntityTypeShape EntityType="AventasModel.BaseColorImpuesto" Width="1.5" PointX="27.375" PointY="4.75" />
         <EntityTypeShape EntityType="AventasModel.DireccionesCliente" Width="1.5" PointX="27.375" PointY="14.75" />
         <EntityTypeShape EntityType="AventasModel.DetalleFacturado" Width="1.5" PointX="29.375" PointY="0.75" />
+        <EntityTypeShape EntityType="AventasModel.InventarioDetalle" Width="1.5" PointX="18.5" PointY="53.875" />
+        <EntityTypeShape EntityType="AventasModel.InventariosCliente" Width="1.5" PointX="16.25" PointY="77.875" />
+        <AssociationConnector Association="AventasModel.FK__Inventari__inven__208E6DA8" />
+        <AssociationConnector Association="AventasModel.FK__Inventari__produ__218291E1" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

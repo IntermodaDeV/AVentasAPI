@@ -281,7 +281,7 @@ namespace AventasApi.Controllers
                             Sitio = Pedido.Sitio,
                             Almacen = Pedido.Almacen,
                             Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
-                            postalAddress= postalAddress
+                            postalAddress = postalAddress
                         };
 
                         //if (numeroReferencia == "")
@@ -363,7 +363,7 @@ namespace AventasApi.Controllers
                         Sitio = Pedido.Sitio,
                         Almacen = Pedido.Almacen,
                         Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
-                        postalAddress= postalAddress
+                        postalAddress = postalAddress
                     };
 
                     //if (numeroReferencia == "")
@@ -460,6 +460,35 @@ namespace AventasApi.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpGet]
+        [Route("~/api/Inventario/correlativo/{empresa}")]
+        public async Task<IHttpActionResult> GetCorrelativoInventario(string empresa)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
+
+                    if (asesor == null)
+                    {
+                        return Ok();
+                    }
+
+                    int numeroCorelativo = asesor.CorrelativoInventario ?? 0;
+                    string inicialesAsesor = asesor.InicialesNombre;
+                    string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                    return Ok(numeroReferencia);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
 
         [HttpGet]
         [Route("~/api/reportePedidos/{asesor}/{FechaInicio}/{FechaFin}")]
@@ -1360,7 +1389,7 @@ namespace AventasApi.Controllers
                         Almacen = pedido.Almacen,
                         Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
                         SalesStatusId = 1,
-                        postalAddress=pedido.postalAddress
+                        postalAddress = pedido.postalAddress
                     };
 
                     foreach (var detalle in pedido.PedidosDetalleFlotante)
@@ -1494,7 +1523,95 @@ namespace AventasApi.Controllers
 
         }
 
+        [HttpGet]
+        [Route("~/api/ultimoInventario/{cliente}")]
+        public async Task<IHttpActionResult> GetUltimoInventario(string cliente)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var inventario = ctx.SP_ObtenerInventario(cliente).ToList();
+                    if (!inventario.Any(a => a.Cantidad > 0))
+                    {
+                        inventario.Clear();
+                    }
+                    return Ok(inventario);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 
+        [HttpGet]
+        [Route("~/api/inventarioIncompleto/{cliente}")]
+        public async Task<IHttpActionResult> GetInventario(string cliente)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var inventario = ctx.InventariosCliente.Where(a => a.codigoCliente == cliente && a.completo == false).ToList();
+                    return Ok(inventario);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/Inventario")]
+        public IHttpActionResult PostDevolucion([FromBody] InventarioPostModel inventario)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    Usuarios usuario = ctx.Usuarios.Find(user.Id);
+                    Clientes cliente = ctx.Clientes.Find(inventario.CodigoCliente);
+
+                    InventariosCliente InventarioDB = new InventariosCliente()
+                    {
+                        codigoCliente = inventario.CodigoCliente,
+                        numInventario = inventario.Correlativo,
+                        empresaId = cliente.EmpresaId,
+                        codigoAsesor = cliente.CodigoAsesor,
+                        fechaCrea = DateTime.Now,
+                        completo = inventario.Completo,
+                        activo = true
+                    };
+                    ctx.SaveChanges();
+                    int inventarioId = InventarioDB.id;
+
+                    foreach (InventarioDetallePostModel detalle in inventario.DetalleInventario)
+                    {
+                        InventarioDB.InventarioDetalle.Add(new InventarioDetalle()
+                        {
+                            inventarioId = inventarioId,
+                            productoId = detalle.IdProducto,
+                            codigoColor = detalle.CodigoColor,
+                            codigoTalla = detalle.CodigoTalla,
+                            cantidad = detalle.Cantidad
+                        });
+                    }
+                    bool guardadoExito = AsyncSqlInsert.IngresarInventaio(InventarioDB, cliente.CodigoAsesor, usuario.EmpresaId);
+                    if (!guardadoExito)
+                    {
+                        return BadRequest("No se pudo guardar el inventario.");
+                    }
+                    return Ok(InventarioDB.numInventario);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
         private async void ReducirStock(PedidosxCliente pedido)
         {
             using (var ctx = new AVentasEntities())
@@ -1561,6 +1678,5 @@ namespace AventasApi.Controllers
 
             }
         }
-
     }
 }

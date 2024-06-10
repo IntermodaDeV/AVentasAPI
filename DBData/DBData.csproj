@@ -318,6 +318,12 @@
     <Compile Include="Database\IMObtenerProductosColeccionConInventario_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\InventarioDetalle.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\InventariosCliente.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\LimiteCreditoxCliente.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -529,6 +535,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\SP_ObtenerFacturasAbiertas_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\SP_ObtenerInventario_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\SP_ObtenerProductosRMA_Result.cs">

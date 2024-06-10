@@ -114,6 +114,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="ConstanteGira" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="CorrelativoGira" Type="int" Nullable="false" />
           <Property Name="firma" Type="varbinary(max)" />
+          <Property Name="CorrelativoInventario" Type="int" />
         </EntityType>
         <EntityType Name="AsignacionxAsesor">
           <Key>
@@ -933,6 +934,30 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           </Key>
           <Property Name="CodigoGrupoTalla" Type="varchar" MaxLength="250" Nullable="false" />
           <Property Name="Descripcion" Type="varchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="InventarioDetalle">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="inventarioId" Type="int" />
+          <Property Name="productoId" Type="int" />
+          <Property Name="codigoColor" Type="nvarchar" MaxLength="50" />
+          <Property Name="codigoTalla" Type="nvarchar" MaxLength="50" />
+          <Property Name="cantidad" Type="int" />
+        </EntityType>
+        <EntityType Name="InventariosCliente">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="numInventario" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="codigoCliente" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="empresaId" Type="nvarchar" MaxLength="5" Nullable="false" />
+          <Property Name="codigoAsesor" Type="nvarchar" MaxLength="10" />
+          <Property Name="fechaCrea" Type="datetime" Nullable="false" />
+          <Property Name="activo" Type="bit" />
+          <Property Name="completo" Type="bit" />
         </EntityType>
         <EntityType Name="LimiteCreditoxCliente">
           <Key>
@@ -2756,6 +2781,30 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="GrupoOpcionesDetalle">
               <PropertyRef Name="GrupoOpcionesId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Inventari__inven__208E6DA8">
+          <End Role="InventariosCliente" Type="Self.InventariosCliente" Multiplicity="0..1" />
+          <End Role="InventarioDetalle" Type="Self.InventarioDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InventariosCliente">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="InventarioDetalle">
+              <PropertyRef Name="inventarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Inventari__produ__218291E1">
+          <End Role="ProductosxColeccion" Type="Self.ProductosxColeccion" Multiplicity="0..1" />
+          <End Role="InventarioDetalle" Type="Self.InventarioDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductosxColeccion">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="InventarioDetalle">
+              <PropertyRef Name="productoId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4676,6 +4725,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
         <Function Name="SP_ObtenerFacturasAbiertas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="cliente" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="SP_ObtenerInventario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="cliente" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SP_ObtenerProductosRMA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="rma" Type="varchar" Mode="In" />
           <Parameter Name="pais" Type="varchar" Mode="In" />
@@ -4784,6 +4836,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="GrupoOpciones" EntityType="Self.GrupoOpciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoOpcionesDetalle" EntityType="Self.GrupoOpcionesDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoTalla" EntityType="Self.GrupoTalla" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InventarioDetalle" EntityType="Self.InventarioDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InventariosCliente" EntityType="Self.InventariosCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LimiteCreditoxCliente" EntityType="Self.LimiteCreditoxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LineasxColeccion" EntityType="Self.LineasxColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ListasPreciosPaquetes" EntityType="Self.ListasPreciosPaquetes" Schema="dbo" store:Type="Tables" />
@@ -5178,6 +5232,14 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK__GrupoOpci__Grupo__5D56B96F" Association="Self.FK__GrupoOpci__Grupo__5D56B96F">
             <End Role="GrupoOpciones" EntitySet="GrupoOpciones" />
             <End Role="GrupoOpcionesDetalle" EntitySet="GrupoOpcionesDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Inventari__inven__208E6DA8" Association="Self.FK__Inventari__inven__208E6DA8">
+            <End Role="InventariosCliente" EntitySet="InventariosCliente" />
+            <End Role="InventarioDetalle" EntitySet="InventarioDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Inventari__produ__218291E1" Association="Self.FK__Inventari__produ__218291E1">
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+            <End Role="InventarioDetalle" EntitySet="InventarioDetalle" />
           </AssociationSet>
           <AssociationSet Name="FK__LimiteCre__Codig__7E57BA87" Association="Self.FK__LimiteCre__Codig__7E57BA87">
             <End Role="Clientes" EntitySet="Clientes" />
@@ -6327,6 +6389,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Nuevo" Type="Boolean" Nullable="false" />
           <Property Name="PiezaSuelta" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="DevolucionDetalle" Relationship="AventasModel.FK_tbDevolucionDetalle_Producto_idProducto" FromRole="ProductosxColeccion" ToRole="DevolucionDetalle" />
+          <NavigationProperty Name="InventarioDetalle" Relationship="AventasModel.FK__Inventari__produ__218291E1" FromRole="ProductosxColeccion" ToRole="InventarioDetalle" />
         </EntityType>
         <EntityType Name="RazonNoVentaCausa">
           <Key>
@@ -8350,6 +8413,19 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <FunctionImport Name="SP_ObtenerFacturasAbiertas" ReturnType="Collection(AventasModel.SP_ObtenerFacturasAbiertas_Result)">
           <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="SP_ObtenerInventario" ReturnType="Collection(AventasModel.SP_ObtenerInventario_Result)">
+          <Parameter Name="cliente" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="InventarioDetalle" EntityType="AventasModel.InventarioDetalle" />
+          <EntitySet Name="InventariosCliente" EntityType="AventasModel.InventariosCliente" />
+          <AssociationSet Name="FK__Inventari__inven__208E6DA8" Association="AventasModel.FK__Inventari__inven__208E6DA8">
+            <End Role="InventariosCliente" EntitySet="InventariosCliente" />
+            <End Role="InventarioDetalle" EntitySet="InventarioDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Inventari__produ__218291E1" Association="AventasModel.FK__Inventari__produ__218291E1">
+            <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
+            <End Role="InventarioDetalle" EntitySet="InventarioDetalle" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -10940,6 +11016,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="ConstanteGira" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="CorrelativoGira" Type="Int32" Nullable="false" />
           <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="CorrelativoInventario" Type="Int32" />
         </EntityType>
         <EntityType Name="UbicacionesXAlmacen">
           <Key>
@@ -12173,6 +12250,61 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="Decimal" Name="Saldo" Nullable="true" Precision="15" Scale="4" />
           <Property Type="String" Name="Abreviacion" Nullable="true" MaxLength="3" />
         </ComplexType>
+        <ComplexType Name="SP_ObtenerInventario_Result">
+          <Property Type="Int32" Name="Cantidad" Nullable="true" />
+          <Property Type="String" Name="IdLinea" Nullable="true" MaxLength="250" />
+        </ComplexType>
+        <EntityType Name="InventarioDetalle">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="inventarioId" Type="Int32" />
+          <Property Name="productoId" Type="Int32" />
+          <Property Name="codigoColor" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="codigoTalla" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="cantidad" Type="Int32" />
+          <NavigationProperty Name="InventariosCliente" Relationship="AventasModel.FK__Inventari__inven__208E6DA8" FromRole="InventarioDetalle" ToRole="InventariosCliente" />
+          <NavigationProperty Name="ProductosxColeccion" Relationship="AventasModel.FK__Inventari__produ__218291E1" FromRole="InventarioDetalle" ToRole="ProductosxColeccion" />
+        </EntityType>
+        <EntityType Name="InventariosCliente">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="numInventario" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="codigoCliente" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="empresaId" Type="String" Nullable="false" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="codigoAsesor" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="fechaCrea" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="activo" Type="Boolean" />
+          <NavigationProperty Name="InventarioDetalle" Relationship="AventasModel.FK__Inventari__inven__208E6DA8" FromRole="InventariosCliente" ToRole="InventarioDetalle" />
+          <Property Name="completo" Type="Boolean" />
+        </EntityType>
+        <Association Name="FK__Inventari__inven__208E6DA8">
+          <End Type="AventasModel.InventariosCliente" Role="InventariosCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.InventarioDetalle" Role="InventarioDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InventariosCliente">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="InventarioDetalle">
+              <PropertyRef Name="inventarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Inventari__produ__218291E1">
+          <End Type="AventasModel.ProductosxColeccion" Role="ProductosxColeccion" Multiplicity="0..1" />
+          <End Type="AventasModel.InventarioDetalle" Role="InventarioDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductosxColeccion">
+              <PropertyRef Name="IdProducto" />
+            </Principal>
+            <Dependent Role="InventarioDetalle">
+              <PropertyRef Name="productoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -13921,6 +14053,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Asesores">
             <EntityTypeMapping TypeName="AventasModel.Asesores">
               <MappingFragment StoreEntitySet="Asesores">
+                <ScalarProperty Name="CorrelativoInventario" ColumnName="CorrelativoInventario" />
                 <ScalarProperty Name="firma" ColumnName="firma" />
                 <ScalarProperty Name="CorrelativoGira" ColumnName="CorrelativoGira" />
                 <ScalarProperty Name="ConstanteGira" ColumnName="ConstanteGira" />
@@ -14691,6 +14824,40 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_ObtenerInventario" FunctionName="AventasModel.Store.SP_ObtenerInventario">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerInventario_Result">
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="InventarioDetalle">
+            <EntityTypeMapping TypeName="AventasModel.InventarioDetalle">
+              <MappingFragment StoreEntitySet="InventarioDetalle">
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+                <ScalarProperty Name="codigoTalla" ColumnName="codigoTalla" />
+                <ScalarProperty Name="codigoColor" ColumnName="codigoColor" />
+                <ScalarProperty Name="productoId" ColumnName="productoId" />
+                <ScalarProperty Name="inventarioId" ColumnName="inventarioId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InventariosCliente">
+            <EntityTypeMapping TypeName="AventasModel.InventariosCliente">
+              <MappingFragment StoreEntitySet="InventariosCliente">
+                <ScalarProperty Name="completo" ColumnName="completo" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="fechaCrea" ColumnName="fechaCrea" />
+                <ScalarProperty Name="codigoAsesor" ColumnName="codigoAsesor" />
+                <ScalarProperty Name="empresaId" ColumnName="empresaId" />
+                <ScalarProperty Name="codigoCliente" ColumnName="codigoCliente" />
+                <ScalarProperty Name="numInventario" ColumnName="numInventario" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

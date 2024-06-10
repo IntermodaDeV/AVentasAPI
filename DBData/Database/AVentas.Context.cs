@@ -20,7 +20,6 @@ namespace DBData.Database
         public AVentasEntities()
             : base("name=AVentasEntities")
         {
-            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 1440;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -174,6 +173,8 @@ namespace DBData.Database
         public virtual DbSet<BaseColorImpuesto> BaseColorImpuesto { get; set; }
         public virtual DbSet<DireccionesCliente> DireccionesCliente { get; set; }
         public virtual DbSet<DetalleFacturado> DetalleFacturado { get; set; }
+        public virtual DbSet<InventarioDetalle> InventarioDetalle { get; set; }
+        public virtual DbSet<InventariosCliente> InventariosCliente { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -652,6 +653,15 @@ namespace DBData.Database
                 new ObjectParameter("cliente", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerFacturasAbiertas_Result>("SP_ObtenerFacturasAbiertas", clienteParameter);
+        }
+    
+        public virtual ObjectResult<SP_ObtenerInventario_Result> SP_ObtenerInventario(string cliente)
+        {
+            var clienteParameter = cliente != null ?
+                new ObjectParameter("cliente", cliente) :
+                new ObjectParameter("cliente", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerInventario_Result>("SP_ObtenerInventario", clienteParameter);
         }
     }
 }
