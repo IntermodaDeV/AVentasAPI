@@ -537,6 +537,9 @@
     <Compile Include="Database\SP_ObtenerFacturasAbiertas_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\SP_ObtenerInventarioIncompleto_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\SP_ObtenerInventario_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

@@ -4728,6 +4728,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
         <Function Name="SP_ObtenerInventario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="cliente" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="SP_ObtenerInventarioIncompleto" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="cliente" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SP_ObtenerProductosRMA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="rma" Type="varchar" Mode="In" />
           <Parameter Name="pais" Type="varchar" Mode="In" />
@@ -8413,9 +8416,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <FunctionImport Name="SP_ObtenerFacturasAbiertas" ReturnType="Collection(AventasModel.SP_ObtenerFacturasAbiertas_Result)">
           <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="SP_ObtenerInventario" ReturnType="Collection(AventasModel.SP_ObtenerInventario_Result)">
-          <Parameter Name="cliente" Mode="In" Type="String" />
-          </FunctionImport>
           <EntitySet Name="InventarioDetalle" EntityType="AventasModel.InventarioDetalle" />
           <EntitySet Name="InventariosCliente" EntityType="AventasModel.InventariosCliente" />
           <AssociationSet Name="FK__Inventari__inven__208E6DA8" Association="AventasModel.FK__Inventari__inven__208E6DA8">
@@ -8426,6 +8426,12 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="ProductosxColeccion" EntitySet="ProductosxColeccion" />
             <End Role="InventarioDetalle" EntitySet="InventarioDetalle" />
           </AssociationSet>
+          <FunctionImport Name="SP_ObtenerInventario" ReturnType="Collection(AventasModel.SP_ObtenerInventario_Result)">
+          <Parameter Name="cliente" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ObtenerInventarioIncompleto" ReturnType="Collection(AventasModel.SP_ObtenerInventarioIncompleto_Result)">
+            <Parameter Name="cliente" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -12250,10 +12256,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="Decimal" Name="Saldo" Nullable="true" Precision="15" Scale="4" />
           <Property Type="String" Name="Abreviacion" Nullable="true" MaxLength="3" />
         </ComplexType>
-        <ComplexType Name="SP_ObtenerInventario_Result">
-          <Property Type="Int32" Name="Cantidad" Nullable="true" />
-          <Property Type="String" Name="IdLinea" Nullable="true" MaxLength="250" />
-        </ComplexType>
         <EntityType Name="InventarioDetalle">
           <Key>
             <PropertyRef Name="id" />
@@ -12305,6 +12307,17 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="SP_ObtenerInventario_Result">
+          <Property Type="Int32" Name="Cantidad" Nullable="true" />
+          <Property Type="String" Name="IdLinea" Nullable="false" MaxLength="250" />
+          <Property Type="DateTime" Name="fechaCrea" Nullable="true" Precision="23" />
+        </ComplexType>
+        <ComplexType Name="SP_ObtenerInventarioIncompleto_Result">
+          <Property Type="String" Name="CodigoProducto" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="codigoColor" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="codigoTalla" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="cantidad" Nullable="true" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -14824,14 +14837,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="SP_ObtenerInventario" FunctionName="AventasModel.Store.SP_ObtenerInventario">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerInventario_Result">
-                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
-                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="InventarioDetalle">
             <EntityTypeMapping TypeName="AventasModel.InventarioDetalle">
               <MappingFragment StoreEntitySet="InventarioDetalle">
@@ -14858,6 +14863,25 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_ObtenerInventario" FunctionName="AventasModel.Store.SP_ObtenerInventario">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerInventario_Result">
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
+                <ScalarProperty Name="fechaCrea" ColumnName="fechaCrea" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_ObtenerInventarioIncompleto" FunctionName="AventasModel.Store.SP_ObtenerInventarioIncompleto">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerInventarioIncompleto_Result">
+                <ScalarProperty Name="CodigoProducto" ColumnName="CodigoProducto" />
+                <ScalarProperty Name="codigoColor" ColumnName="codigoColor" />
+                <ScalarProperty Name="codigoTalla" ColumnName="codigoTalla" />
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

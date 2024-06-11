@@ -663,5 +663,14 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerInventario_Result>("SP_ObtenerInventario", clienteParameter);
         }
+    
+        public virtual ObjectResult<SP_ObtenerInventarioIncompleto_Result> SP_ObtenerInventarioIncompleto(string cliente)
+        {
+            var clienteParameter = cliente != null ?
+                new ObjectParameter("cliente", cliente) :
+                new ObjectParameter("cliente", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerInventarioIncompleto_Result>("SP_ObtenerInventarioIncompleto", clienteParameter);
+        }
     }
 }

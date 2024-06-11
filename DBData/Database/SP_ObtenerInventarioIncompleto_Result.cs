@@ -11,10 +11,11 @@ namespace DBData.Database
 {
     using System;
     
-    public partial class SP_ObtenerInventario_Result
+    public partial class SP_ObtenerInventarioIncompleto_Result
     {
-        public Nullable<int> Cantidad { get; set; }
-        public string IdLinea { get; set; }
-        public Nullable<System.DateTime> fechaCrea { get; set; }
+        public string CodigoProducto { get; set; }
+        public string codigoColor { get; set; }
+        public string codigoTalla { get; set; }
+        public Nullable<int> cantidad { get; set; }
     }
 }

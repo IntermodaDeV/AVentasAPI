@@ -1553,7 +1553,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var inventario = ctx.InventariosCliente.Where(a => a.codigoCliente == cliente && a.completo == false).ToList();
+                    var inventario = ctx.SP_ObtenerInventarioIncompleto(cliente).ToList();
                     return Ok(inventario);
                 }
             }
