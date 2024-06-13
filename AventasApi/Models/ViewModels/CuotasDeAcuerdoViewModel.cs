@@ -20,6 +20,7 @@ namespace AventasApi.Models.ViewModels
         public Nullable<DateTime> FechaVencimiento { get; set; }
 
         public List<FacturasEnCuotasAcuerdoViewModel> FacturasCuotas { get; set; }
+        public double Descuento { get; set; }
 
         public CuotasDeAcuerdoViewModel()
         {

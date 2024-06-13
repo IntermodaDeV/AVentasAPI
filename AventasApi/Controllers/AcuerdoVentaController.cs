@@ -32,11 +32,14 @@ namespace AventasApi.Controllers
                         Linea = x.IdLinea,
                         Desde = x.Desde,
                         Hasta = x.Hasta,
+                        CodigoDescuento = x.GrupoDescuento,
+                        EmpresaId = x.EmpresaId,
                         CuotasDeAcuerdo = ctx.CuotasXAcuerdo.Where(a => a.IdAcuerdoVenta == x.IdAcuerdoxCliente).Select(a => new CuotasDeAcuerdoViewModel { 
                             NumCuota = a.NumCuota,
                             ValorCuota = a.ValorCuota,
                             SaldoDisponible = a.SaldoDiponible,
                             FechaVencimiento = a.FechaVencimiento,
+                            Descuento = 0,
                             FacturasCuotas = ctx.FacturasEnCuotasAcuerdos.Where(f => f.idCuotaXAcuerdo == a.IdCuotasXAcuerdoVenta).Select(f => new FacturasEnCuotasAcuerdoViewModel { 
                                 IdCuotaXAcuerdo = f.idCuotaXAcuerdo,
                                 Factura = f.Factura,
@@ -54,6 +57,33 @@ namespace AventasApi.Controllers
                             }).ToList(),
                         }).OrderBy(a => a.NumCuota).ToList(),
                     }).ToListAsync();
+
+                    foreach (var acuerdo in AcuerdosVenta)
+                    {
+                        var GrupoDescuentoAcuerdo = ctx.DescuentoEnAcuerdo.FirstOrDefault(x => x.CodigoDescuento == acuerdo.CodigoDescuento && x.empresaId == acuerdo.EmpresaId);
+                        if (GrupoDescuentoAcuerdo == null)
+                        {
+                            continue;
+                        }
+
+                        var asesor = ctx.Clientes.FirstOrDefault(x => x.CodigoCliente == codigoCliente);
+                        if (asesor == null)
+                        {
+                            continue;
+                        }
+
+                        foreach (var cuota in acuerdo.CuotasDeAcuerdo)
+                        {
+                            var documentosAplicados = ctx.SP_DocumentosAplicadosXCuotas(asesor.CodigoAsesor).FirstOrDefault(x => x.NumeroCuota == cuota.NumCuota && x.CodigoCliente == acuerdo.CodigoCliente && x.IdAcuerdoxCliente == acuerdo.IdAcuerdoxCliente);
+                            var FletePorCuota = documentosAplicados == null ? 0 : documentosAplicados.Flete;
+                            var NotasAplicadasCuota = documentosAplicados == null ? 0 : documentosAplicados.Valor;
+                            decimal consumidoCuota = cuota.ValorCuota - (cuota.SaldoDisponible ?? 0);
+                            var valoCuota = consumidoCuota - FletePorCuota - NotasAplicadasCuota;
+                            var DescuentoCuota = Math.Round(Convert.ToDouble(valoCuota * (GrupoDescuentoAcuerdo.Porcentaje / 100)), 2, MidpointRounding.AwayFromZero);
+                            cuota.Descuento = DescuentoCuota;
+                        }
+                    }
+
                     return Ok(AcuerdosVenta);
                 }
             }
