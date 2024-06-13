@@ -26,9 +26,11 @@ namespace DBData.Database
         public string empresaId { get; set; }
         public string codigoAsesor { get; set; }
         public System.DateTime fechaCrea { get; set; }
-        public Nullable<bool> activo { get; set; }
-        public Nullable<bool> completo { get; set; }
+        public System.DateTime fechaModificado { get; set; }
+        public bool completo { get; set; }
     
+        public virtual Clientes Clientes { get; set; }
+        public virtual Empresa Empresa { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<InventarioDetalle> InventarioDetalle { get; set; }
     }

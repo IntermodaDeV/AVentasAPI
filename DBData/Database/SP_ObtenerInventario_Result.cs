@@ -16,5 +16,6 @@ namespace DBData.Database
         public Nullable<int> Cantidad { get; set; }
         public string IdLinea { get; set; }
         public Nullable<System.DateTime> fechaCrea { get; set; }
+        public Nullable<System.DateTime> fechaModificado { get; set; }
     }
 }

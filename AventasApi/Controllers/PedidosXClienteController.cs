@@ -1574,35 +1574,65 @@ namespace AventasApi.Controllers
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     Usuarios usuario = ctx.Usuarios.Find(user.Id);
                     Clientes cliente = ctx.Clientes.Find(inventario.CodigoCliente);
-
-                    InventariosCliente InventarioDB = new InventariosCliente()
+                    var existeInventario = ctx.InventariosCliente.FirstOrDefault(x => x.numInventario == inventario.Correlativo && x.completo == false);
+                    int inventarioId = 0;
+                    int rowAffected = 0;
+                    InventariosCliente InventarioDB = new InventariosCliente();
+                    if (existeInventario != null)
                     {
-                        codigoCliente = inventario.CodigoCliente,
-                        numInventario = inventario.Correlativo,
-                        empresaId = cliente.EmpresaId,
-                        codigoAsesor = cliente.CodigoAsesor,
-                        fechaCrea = DateTime.Now,
-                        completo = inventario.Completo,
-                        activo = true
-                    };
-                    ctx.SaveChanges();
-                    int inventarioId = InventarioDB.id;
+                        existeInventario.fechaModificado = DateTime.Now;
+                        existeInventario.completo = inventario.Completo;
+                        inventarioId = existeInventario.id;
+                        var detalle = ctx.InventarioDetalle.Where(x => x.inventarioId == inventarioId).ToList();
+                        ctx.InventarioDetalle.RemoveRange(detalle);
+                        InventarioDB = existeInventario;
 
-                    foreach (InventarioDetallePostModel detalle in inventario.DetalleInventario)
-                    {
-                        InventarioDB.InventarioDetalle.Add(new InventarioDetalle()
+
+                        foreach (var inv in inventario.DetalleInventario)
                         {
-                            inventarioId = inventarioId,
-                            productoId = detalle.IdProducto,
-                            codigoColor = detalle.CodigoColor,
-                            codigoTalla = detalle.CodigoTalla,
-                            cantidad = detalle.Cantidad
-                        });
+                            ctx.InventarioDetalle.Add(new InventarioDetalle()
+                            {
+                                inventarioId = inventarioId,
+                                productoId = inv.IdProducto,
+                                codigoColor = inv.CodigoColor,
+                                codigoTalla = inv.CodigoTalla,
+                                cantidad = inv.Cantidad
+                            });
+                        }
+
+                        ctx.SaveChanges();
                     }
-                    bool guardadoExito = AsyncSqlInsert.IngresarInventaio(InventarioDB, cliente.CodigoAsesor, usuario.EmpresaId);
-                    if (!guardadoExito)
+                    else
                     {
-                        return BadRequest("No se pudo guardar el inventario.");
+                        // Create new inventory
+                        var nuevoInventario = new InventariosCliente()
+                        {
+                            codigoCliente = inventario.CodigoCliente,
+                            numInventario = inventario.Correlativo,
+                            empresaId = cliente.EmpresaId,
+                            codigoAsesor = cliente.CodigoAsesor,
+                            fechaCrea = DateTime.Now,
+                            fechaModificado = DateTime.Now,
+                            completo = inventario.Completo
+                        };
+
+                        foreach (var detalle in inventario.DetalleInventario)
+                        {
+                            nuevoInventario.InventarioDetalle.Add(new InventarioDetalle()
+                            {
+                                productoId = detalle.IdProducto,
+                                codigoColor = detalle.CodigoColor,
+                                codigoTalla = detalle.CodigoTalla,
+                                cantidad = detalle.Cantidad
+                            });
+                        }
+
+                        bool guardadoExito = AsyncSqlInsert.IngresarInventaio(nuevoInventario, cliente.CodigoAsesor, usuario.EmpresaId);
+
+                        if (!guardadoExito)
+                        {
+                            return BadRequest("No se pudo guardar el inventario.");
+                        }
                     }
                     return Ok(InventarioDB.numInventario);
                 }

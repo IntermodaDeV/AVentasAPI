@@ -17,5 +17,6 @@ namespace DBData.Database
         public string codigoColor { get; set; }
         public string codigoTalla { get; set; }
         public Nullable<int> cantidad { get; set; }
+        public string numInventario { get; set; }
     }
 }

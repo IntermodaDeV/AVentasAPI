@@ -364,10 +364,12 @@
         <EntityTypeShape EntityType="AventasModel.BaseColorImpuesto" Width="1.5" PointX="27.375" PointY="4.75" />
         <EntityTypeShape EntityType="AventasModel.DireccionesCliente" Width="1.5" PointX="27.375" PointY="14.75" />
         <EntityTypeShape EntityType="AventasModel.DetalleFacturado" Width="1.5" PointX="29.375" PointY="0.75" />
-        <EntityTypeShape EntityType="AventasModel.InventarioDetalle" Width="1.5" PointX="18.5" PointY="53.875" />
-        <EntityTypeShape EntityType="AventasModel.InventariosCliente" Width="1.5" PointX="16.25" PointY="77.875" />
-        <AssociationConnector Association="AventasModel.FK__Inventari__inven__208E6DA8" />
-        <AssociationConnector Association="AventasModel.FK__Inventari__produ__218291E1" />
+        <EntityTypeShape EntityType="AventasModel.InventarioDetalle" Width="1.5" PointX="30.5" PointY="48.125" />
+        <EntityTypeShape EntityType="AventasModel.InventariosCliente" Width="1.5" PointX="23.25" PointY="45.625" />
+        <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Clientes_CodigoCliente" />
+        <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Empresa_EmpresaId" />
+        <AssociationConnector Association="AventasModel.FK_InventarioDetalle_InventariosCliente_id" />
+        <AssociationConnector Association="AventasModel.FK_InventarioDetalle_ProductosxColeccion_IdProducto" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

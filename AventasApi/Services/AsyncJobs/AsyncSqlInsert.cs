@@ -87,7 +87,7 @@ namespace AventasApi.Services.AsyncJobs
                 return false;
             }
         }
-         public static bool IngresarInventaio(InventariosCliente inventario, string asesor, string empresa)
+        public static bool IngresarInventaio(InventariosCliente inventario, string asesor, string empresa)
         {
             try
             {
