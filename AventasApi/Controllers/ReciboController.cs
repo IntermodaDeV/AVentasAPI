@@ -2355,12 +2355,12 @@ namespace AventasApi.Controllers
 
                     if (reciboAnular != null)
                     {
-                        reciboAnular.Anulado = true;
+                        reciboAnular.Anulado = !reciboAnular.Anulado;
                     }
 
                     if (anticipoAnular != null)
                     {
-                        anticipoAnular.Anulado = true;
+                        anticipoAnular.Anulado = !anticipoAnular.Anulado;
                     }
 
                     ctx.SaveChanges();
