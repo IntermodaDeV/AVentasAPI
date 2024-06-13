@@ -401,11 +401,6 @@ namespace AventasApi.Controllers
                         return BadRequest("No se pudo eliminar la asignación,porque no existe.");
                     }
 
-                    if(asignacion.BloqueoCheckin)
-                    {
-                        return BadRequest("No se puede eliminar asignación, ya se ha registrado el checkin.");
-                    }
-
                     ctx.AsignacionxAsesor.Remove(asignacion);
                     int resultado = await ctx.SaveChangesAsync();
 
