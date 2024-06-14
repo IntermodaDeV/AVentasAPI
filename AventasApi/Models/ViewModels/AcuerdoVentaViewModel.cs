@@ -15,6 +15,7 @@ namespace AventasApi.Models.ViewModels
         public string Tipo { get; set; }
         public string TipoPago { get; set; }
         public string Linea { get; set; }
+        public string CodigoDescuento { get; set; }
         public Nullable<decimal> Total { get; set; }
         public Nullable<decimal> Saldo { get; set; }
         public Nullable<decimal> Liberado { get; set; }
