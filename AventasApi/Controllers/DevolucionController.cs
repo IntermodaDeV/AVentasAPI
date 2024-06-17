@@ -665,7 +665,6 @@ namespace AventasApi.Controllers
                             IdLinea = devolucion.Linea,
                             IdMotivoDevDetalle = devolucion.MotivoDevolucionDetalle,
                             EmpresaId = devolucion.Empresa,
-                            PedidoOrigen = devolucion.PedidoOriginal,
                             FacturaOrigen = devolucion.FacturaOriginal,
                             facturaDestino = devolucion.FacturaDestino,
                             CodigoAsesor = codigoAsesor,
@@ -683,15 +682,11 @@ namespace AventasApi.Controllers
 
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
                         {
-                            var factura = detalleFacturado?.factura;
-                            var pedido = detalleFacturado?.pedido;
-
                             var detalleFacturadoBD = ctx.DetalleFacturado.FirstOrDefault(x =>
                                     x.productoId == detalle.IdProducto
                                     && x.codigoColor.ToUpper() == detalle.CodigoColor.ToUpper()
                                     && x.codigoTalla.ToUpper() == detalle.CodigoTalla.ToUpper()
-                                    && x.factura == factura
-                                    && x.pedido == pedido
+                                    && x.factura == devolucion.FacturaOriginal
                                 );
                             devolucionDB.TotalUnidades += detalle.Cantidad;
 
@@ -704,9 +699,8 @@ namespace AventasApi.Controllers
                                 Cantidad = detalle.Cantidad,
                                 PrecioUnitario = detalle.PrecioUnitario,
                                 MontoLinea = detalle.Cantidad * detalle.PrecioUnitario,
-                                Factura = detalleFacturado?.factura,
-                                Pedido = detalleFacturado?.pedido,
-                                Paquete = detalleFacturado?.paquete,
+                                Factura = detalleFacturadoBD?.factura,
+                                Paquete = detalleFacturadoBD?.paquete,
                                 Inventdim = detalleFacturadoBD?.inventdim
                             });
                         }
@@ -869,7 +863,6 @@ namespace AventasApi.Controllers
                                     && x.codigoColor.ToUpper() == detalle.CodigoColor.ToUpper()
                                     && x.codigoTalla.ToUpper() == detalle.CodigoTalla.ToUpper()
                                     && x.factura == detalle.Factura
-                                    && x.pedido == detalle.Pedido
                                 );
                                 devolucionDB.TotalUnidades += detalle.Cantidad;
 
@@ -882,9 +875,8 @@ namespace AventasApi.Controllers
                                     Cantidad = detalle.Cantidad,
                                     PrecioUnitario = detalle.PrecioUnitario,
                                     MontoLinea = detalle.Cantidad * detalle.PrecioUnitario,
-                                    Factura = detalle.Factura,
-                                    Paquete = detalle.Paquete,
-                                    Pedido = detalle.Pedido,
+                                    Factura = detalleFacturado?.factura,
+                                    Paquete = detalleFacturado?.paquete,
                                     Inventdim = detalleFacturado?.inventdim
                                 });
                             }
@@ -939,8 +931,7 @@ namespace AventasApi.Controllers
                     {
                         var talla = linea.CodigoTalla.ToUpper();
                         var fisico = ctx.DetalleFacturado.FirstOrDefault(x =>
-                        x.pedido.ToUpper() == linea.Pedido.ToUpper()
-                        && x.factura.ToUpper() == linea.Factura.ToUpper()
+                        x.factura.ToUpper() == linea.Factura.ToUpper()
                         && x.paquete.ToUpper() == linea.Paquete.ToUpper()
                         && x.codigoColor == linea.CodigoColor
                         && x.codigoTalla.ToUpper() == talla
