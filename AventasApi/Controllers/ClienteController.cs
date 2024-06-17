@@ -286,6 +286,9 @@ namespace AventasApi.Controllers
                         GrupoCliente = cli.GrupoCliente,
                         Descuento = cli.Descuento,
                         DiasTransporte=cli.DiasTransporte,
+                        Departamento=cli.Departamento,
+                        Ciudad=cli.Municipio,
+                        Alias=cli.Alias,
                         MaestroDescuento = context.Descuento.Where(x => x.Codigo.ToUpper() == cli.Descuento.ToUpper() && x.EmpresaId.ToUpper() == cli.EmpresaId.ToUpper() && x.activo == true).Select(x => new DescuentoViewModel
                         {
                             Codigo = x.Codigo,
@@ -801,6 +804,9 @@ namespace AventasApi.Controllers
                             GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
                             ModoEntrega = cli.ModoEntrega,
                             FacturacionEntrega = cli.FacturacionEntrega,
+                            Departamento = cli.Departamento,
+                            Ciudad = cli.Municipio,
+                            Alias = cli.Alias,
                             CuentaCorriente = ctx.LimiteCreditoxCliente.Where(lcc => lcc.CodigoCliente == cli.CodigoCliente).Select(lcc => new CuentaCorrienteViewModel
                             {
                                 Descripcion = lcc.Descripcion,

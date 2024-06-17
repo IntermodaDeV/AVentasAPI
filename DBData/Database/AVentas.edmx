@@ -330,6 +330,9 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IncluyeImpuesto" Type="bit" />
           <Property Name="FlagClienteEspecial" Type="bit" Nullable="false" />
           <Property Name="DiasTransporte" Type="int" Nullable="false" />
+          <Property Name="Departamento" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Municipio" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Alias" Type="nvarchar" MaxLength="150" Nullable="false" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -6024,6 +6027,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="FlagClienteEspecial" Type="Boolean" Nullable="false" />
           <Property Name="DiasTransporte" Type="Int32" Nullable="false" />
           <NavigationProperty Name="InventariosCliente" Relationship="AventasModel.FK_tbInventariosCliente_Clientes_CodigoCliente" FromRole="Clientes" ToRole="InventariosCliente" />
+          <Property Name="Departamento" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Municipio" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Alias" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ClientesxRuta">
           <Key>
@@ -8472,7 +8478,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_ObtenerInventario" ReturnType="Collection(AventasModel.SP_ObtenerInventario_Result)">
-            <Parameter Name="cliente" Mode="In" Type="String" />
+          <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -12475,6 +12481,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="Clientes">
             <EntityTypeMapping TypeName="AventasModel.Clientes">
               <MappingFragment StoreEntitySet="Clientes">
+                <ScalarProperty Name="Alias" ColumnName="Alias" />
+                <ScalarProperty Name="Municipio" ColumnName="Municipio" />
+                <ScalarProperty Name="Departamento" ColumnName="Departamento" />
                 <ScalarProperty Name="DiasTransporte" ColumnName="DiasTransporte" />
                 <ScalarProperty Name="FlagClienteEspecial" ColumnName="FlagClienteEspecial" />
                 <ScalarProperty Name="IncluyeImpuesto" ColumnName="IncluyeImpuesto" />

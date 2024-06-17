@@ -43,6 +43,9 @@ namespace AventasApi.Models
 
         public string NombreGrupoPrecio { get; set; }
         public int DiasTransporte { get; set; }
+        public string Departamento { get; set; }
+        public string Ciudad { get; set; }
+        public string Alias { get; set; }
 
         public double NumeroFacturasVencidas { get; set; }
         public decimal MontoFacturasVencidas { get; set; }
@@ -92,6 +95,10 @@ namespace AventasApi.Models
         public string FacturacionEntrega { get; set; }
         public string GrupoImpuesto { get; set; }
         public string ModoEntrega { get; set; }
+        public string Departamento { get; set; }
+        public string Ciudad { get; set; }
+        public string Alias { get; set; }
+
         public List<CuentaCorrienteViewModel> CuentaCorriente;
 
         public List<AcuerdoVentaViewModel> AcuerdosVenta;
