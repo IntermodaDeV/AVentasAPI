@@ -327,8 +327,10 @@
     <Compile Include="Models\ViewModels\DetallePedidoPostViewModel.cs" />
     <Compile Include="Models\ViewModels\DetalleXPedidoViewModel.cs" />
     <Compile Include="Models\ViewModels\DetPedTempViewModel.cs" />
+    <Compile Include="Models\ViewModels\InventarioDetallePostModel.cs" />
     <Compile Include="Models\ViewModels\DevolucionDetallePostModel.cs" />
     <Compile Include="Models\ViewModels\DevolucionesViewModel.cs" />
+    <Compile Include="Models\ViewModels\InventarioPostModel.cs" />
     <Compile Include="Models\ViewModels\DevolucionPostModel.cs" />
     <Compile Include="Models\ViewModels\DistribucionXTallaViewModel.cs" />
     <Compile Include="Models\ViewModels\DocumentoFiscalViewModel.cs" />

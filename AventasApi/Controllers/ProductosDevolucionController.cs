@@ -77,7 +77,7 @@ namespace AventasApi.Controllers
                             IdLinea = pxc.MaestroLinea.IdLinea,
                             Linea = pxc.MaestroLinea.Linea,
                         },
-                        ListaTalla = ctx.GrupoTalla.FirstOrDefault(x=>x.CodigoGrupoTalla == pxc.CodigoGrupoTalla).TallasXGrupo.Where(t => tallas.Contains(t.CodigoTalla)).Select(txp => new TallaViewModel
+                        ListaTalla = ctx.GrupoTalla.FirstOrDefault(x=>x.CodigoGrupoTalla == pxc.CodigoGrupoTalla).TallasXGrupo.Select(txp => new TallaViewModel
                         {
                             Talla = txp.CodigoTalla.ToUpper(),
                             GrupoTallaId = txp.CodigoGrupoTalla,

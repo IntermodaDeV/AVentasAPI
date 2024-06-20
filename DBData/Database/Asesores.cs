@@ -29,5 +29,6 @@ namespace DBData.Database
         public string ConstanteGira { get; set; }
         public int CorrelativoGira { get; set; }
         public byte[] firma { get; set; }
+        public Nullable<int> CorrelativoInventario { get; set; }
     }
 }

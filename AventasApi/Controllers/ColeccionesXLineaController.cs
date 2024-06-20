@@ -571,6 +571,68 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/productoInventario/{pais}/{producto}/{color}")]
+        public async Task<IHttpActionResult> GetProductoInventario(string pais, string producto, string color)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var prod = ctx.ProductosxColeccion.Where(pxc => pxc.EmpresaId == pais.ToUpper() && pxc.CodigoProducto == producto).Select(pxc => new ProductoXColeccionViewModel
+                    {
+                        ProductoId = pxc.CodigoProducto,
+                        idColeccion = pxc.IdColeccion,
+                        CantidadMinima = pxc.CantidadMinima == null ? 0 : pxc.CantidadMinima,
+                        CodigoProducto = pxc.IdProducto,
+                        NombreProducto = pxc.NombreProducto,
+                        StockVisible = pxc.StockVisible,
+                        InOut = pxc.InOut,
+                        Deshabilitado = pxc.Deshabilitado,
+                        Prioridad = pxc.Prioridad,
+                        Nuevo = pxc.Nuevo,
+                        PiezaSuelta = pxc.PiezaSuelta,
+                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),                     
+                        GrupoTalla = pxc.CodigoGrupoTalla,
+                        Linea = new LineaViewModel
+                        {
+                            IdLinea = pxc.MaestroLinea.IdLinea,
+                            Linea = pxc.MaestroLinea.Linea,
+                        },
+                        ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo != null).Select(txp => txp.TallasXGrupo)
+                                             .Select(txp => new TallaViewModel
+                                             {
+                                                 Talla = txp.CodigoTalla.ToUpper(),
+                                                 GrupoTallaId = txp.CodigoGrupoTalla,
+                                                 Orden = txp.Orden ?? 0,
+                                                 Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                                 {
+                                                     IdDistribucion = dis.IdDistribucion,
+                                                     IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                     NombreDistribucion = dis.NombreDistribucion,
+                                                     NombreTalla = dis.NombreTalla,
+                                                     Cantidad = dis.Cantidad,
+                                                     Orden = dis.Orden,
+                                                 }).OrderBy(or => or.Orden).ToList(),
+
+                                             }).OrderBy(txp => txp.Orden).ToList(),
+                        ListaColores = ctx.Colores.Where(x => x.CodigoColor == color).Select(cpp => new ColorViewModel
+                        {
+                            CodigoColor = cpp.CodigoColor,
+                            NombreColor = cpp.Color,
+                            Color = cpp.Rgb
+                        }).ToList()
+                    }).OrderByDescending(x => x.ListaTalla.Count()).ToList();
+                    return Ok(prod.First());
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+
+        [HttpGet]
         [Route("~/api/colecciones/productos/{coleccion}/{grupoprecio}/{pais}/{sitio}/{almacen}")]
         public async Task<IHttpActionResult> GetProductosPorColeccionBodega(string coleccion, string grupoprecio, string pais, string sitio, string almacen)
         {

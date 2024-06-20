@@ -164,7 +164,11 @@ namespace AventasApi.Utils
                         CodigoAsesor = cliente.VENDOR,
                         Habilitado = true,
                         IgnorarSeqFact = cliente.FLAG_SEQFACT == "Sí" ? true : false,
-                        FlagClienteEspecial = cliente.SPECIALCUSTOMER == "Sí" ? true : false
+                        FlagClienteEspecial = cliente.SPECIALCUSTOMER == "Sí" ? true : false,
+                        Departamento = cliente.COUNTY,
+                        Municipio=cliente.CITY,
+                        Alias=cliente.ALIAS,
+                        DiasTransporte=cliente.TRANSPORTDAY
                     };
                      await SincronizarClientes(clientesModel);
 
@@ -257,6 +261,10 @@ namespace AventasApi.Utils
                         entity.Habilitado = cliente.Habilitado;
                         entity.IgnorarSeqFact = cliente.IgnorarSeqFact;
                         entity.IncluyeImpuesto = cliente.IncluyeImpuesto;
+                        entity.Departamento = cliente.Departamento;
+                        entity.Municipio = cliente.Municipio;
+                        entity.Alias = cliente.Alias;
+                        entity.DiasTransporte = cliente.DiasTransporte;
                     }
                     await db.SaveChangesAsync();
 

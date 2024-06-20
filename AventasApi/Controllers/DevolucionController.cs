@@ -683,7 +683,7 @@ namespace AventasApi.Controllers
                         foreach (DevolucionDetallePostModel detalle in devolucion.DetalleDevolucion)
                         {
                             var detalleFacturadoBD = ctx.DetalleFacturado.FirstOrDefault(x =>
-                                    x.productoId == detalle.IdProducto
+                                    x.codigoProducto == detalle.CodigoProducto
                                     && x.codigoColor.ToUpper() == detalle.CodigoColor.ToUpper()
                                     && x.codigoTalla.ToUpper() == detalle.CodigoTalla.ToUpper()
                                     && x.factura == devolucion.FacturaOriginal

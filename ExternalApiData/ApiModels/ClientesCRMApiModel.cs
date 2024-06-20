@@ -31,5 +31,9 @@ namespace ExternalApiData.Models.ApiModels
         public string DISCOUNT_GROUP { get; set; }
         public string INCLUDE_TAX { get; set; }
         public string SPECIALCUSTOMER { get; set; }
+        public string CITY { get; set; }
+        public string COUNTY { get; set; }
+        public string ALIAS { get; set; }
+        public int TRANSPORTDAY { get; set; }
     }
 }

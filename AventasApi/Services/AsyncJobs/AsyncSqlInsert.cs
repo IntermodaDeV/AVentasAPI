@@ -87,6 +87,34 @@ namespace AventasApi.Services.AsyncJobs
                 return false;
             }
         }
+        public static bool IngresarInventaio(InventariosCliente inventario, string asesor, string empresa)
+        {
+            try
+            {
+                bool value = true;
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    context.InventariosCliente.Add(inventario);
+                    int rowAffected = context.SaveChanges();
+                    if (rowAffected > 0)
+                    {
+                        ValidarCorrelativoInventario(asesor, empresa);
+                    }
+                    else
+                    {
+                        value = false;
+                    }
+                    
+                    value = true;
+                }
+
+                return value;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
 
         private static void ValidarCorrelativoPedido(string CodigoAsesor,string empresa)
         {
@@ -136,6 +164,35 @@ namespace AventasApi.Services.AsyncJobs
                     else
                     {
                         ValidarCorrelativoDevolucion(CodigoAsesor, empresa);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+        }
+        
+        private static void ValidarCorrelativoInventario(string CodigoAsesor, string empresa)
+        {
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                try
+                {
+                    var asesor = context.Asesores.FirstOrDefault(x => x.CodigoAsesor == CodigoAsesor && x.EmpresaId == empresa);
+                    asesor.CorrelativoInventario = (asesor.CorrelativoInventario != null ? asesor.CorrelativoInventario : 0) + 1;
+                    context.SaveChanges();
+
+                    var correlativo = $"{asesor.InicialesNombre}-{100000 + (asesor.CorrelativoInventario != null ? asesor.CorrelativoInventario : 0)}";
+
+                    if (context.Devolucion.FirstOrDefault(x => x.NumDevolucion == correlativo) == null)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        ValidarCorrelativoInventario(CodigoAsesor, empresa);
                     }
 
                 }
