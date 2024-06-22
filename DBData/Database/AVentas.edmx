@@ -4666,6 +4666,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
         <Function Name="IMClasificacionDevolucion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="numdevolucion" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="IMEliminarAsignacionesRangoFecha" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="asesor" Type="varchar" Mode="In" />
+          <Parameter Name="inicio" Type="varchar" Mode="In" />
+          <Parameter Name="fin" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="IMObtenerBasesProductos" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="IMObtenerColeccionesInventarioEspecifico" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="IMObtenerDetalleDescuento" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -8479,6 +8484,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           </FunctionImport>
           <FunctionImport Name="SP_ObtenerInventario" ReturnType="Collection(AventasModel.SP_ObtenerInventario_Result)">
           <Parameter Name="cliente" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="IMEliminarAsignacionesRangoFecha">
+            <Parameter Name="asesor" Mode="In" Type="String" />
+            <Parameter Name="inicio" Mode="In" Type="String" />
+            <Parameter Name="fin" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -14963,6 +14973,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="IMEliminarAsignacionesRangoFecha" FunctionName="AventasModel.Store.IMEliminarAsignacionesRangoFecha" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -836,9 +836,30 @@ namespace AventasApi.Controllers
 
                 return BadRequest(e.ToString());
             }
-
-           
         }
-    
+
+        [HttpDelete]
+        [Route("~/api/asignaciones/eliminarasignaciones/{inicio}/{fin}/{asesor}")]
+        public IHttpActionResult EliminarAsignacionesRangoFecha(string inicio,string fin,string asesor)
+        {
+
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var asignaciones = ctx.IMEliminarAsignacionesRangoFecha(asesor,inicio,fin);
+
+                    return Ok(asignaciones);
+                }
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
+
+
+        }
+
     }
 }

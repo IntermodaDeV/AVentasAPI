@@ -673,5 +673,22 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerInventario_Result>("SP_ObtenerInventario", clienteParameter);
         }
+    
+        public virtual int IMEliminarAsignacionesRangoFecha(string asesor, string inicio, string fin)
+        {
+            var asesorParameter = asesor != null ?
+                new ObjectParameter("asesor", asesor) :
+                new ObjectParameter("asesor", typeof(string));
+    
+            var inicioParameter = inicio != null ?
+                new ObjectParameter("inicio", inicio) :
+                new ObjectParameter("inicio", typeof(string));
+    
+            var finParameter = fin != null ?
+                new ObjectParameter("fin", fin) :
+                new ObjectParameter("fin", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("IMEliminarAsignacionesRangoFecha", asesorParameter, inicioParameter, finParameter);
+        }
     }
 }
