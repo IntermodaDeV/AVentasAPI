@@ -549,6 +549,12 @@
     <Compile Include="Database\SP_POST_LISTA_EJECUCION_MANUAL_Result.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\SP_ReservadoClienteColeccionesLineas_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\SP_ReservadoClientePorLinea_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\SP_VISITASPORMES_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

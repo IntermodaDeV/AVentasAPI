@@ -690,5 +690,27 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("IMEliminarAsignacionesRangoFecha", asesorParameter, inicioParameter, finParameter);
         }
+    
+        public virtual ObjectResult<SP_ReservadoClienteColeccionesLineas_Result> SP_ReservadoClienteColeccionesLineas(string cLIENTE, string lINEA)
+        {
+            var cLIENTEParameter = cLIENTE != null ?
+                new ObjectParameter("CLIENTE", cLIENTE) :
+                new ObjectParameter("CLIENTE", typeof(string));
+    
+            var lINEAParameter = lINEA != null ?
+                new ObjectParameter("LINEA", lINEA) :
+                new ObjectParameter("LINEA", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ReservadoClienteColeccionesLineas_Result>("SP_ReservadoClienteColeccionesLineas", cLIENTEParameter, lINEAParameter);
+        }
+    
+        public virtual ObjectResult<SP_ReservadoClientePorLinea_Result> SP_ReservadoClientePorLinea(string cLIENTE)
+        {
+            var cLIENTEParameter = cLIENTE != null ?
+                new ObjectParameter("CLIENTE", cLIENTE) :
+                new ObjectParameter("CLIENTE", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ReservadoClientePorLinea_Result>("SP_ReservadoClientePorLinea", cLIENTEParameter);
+        }
     }
 }

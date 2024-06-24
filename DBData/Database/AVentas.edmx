@@ -4772,6 +4772,13 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="owner_id" Type="int" Mode="In" />
           <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="SP_ReservadoClienteColeccionesLineas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
+          <Parameter Name="LINEA" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_ReservadoClientePorLinea" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SP_SubFacturasxCliente_UpdateSaldoXCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
           <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
@@ -8489,6 +8496,13 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <Parameter Name="asesor" Mode="In" Type="String" />
             <Parameter Name="inicio" Mode="In" Type="String" />
             <Parameter Name="fin" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ReservadoClienteColeccionesLineas" ReturnType="Collection(AventasModel.SP_ReservadoClienteColeccionesLineas_Result)">
+            <Parameter Name="CLIENTE" Mode="In" Type="String" />
+            <Parameter Name="LINEA" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ReservadoClientePorLinea" ReturnType="Collection(AventasModel.SP_ReservadoClientePorLinea_Result)">
+            <Parameter Name="CLIENTE" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -12404,6 +12418,17 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="DateTime" Name="fechaCrea" Nullable="true" Precision="23" />
           <Property Type="DateTime" Name="fechaModificado" Nullable="true" Precision="23" />
         </ComplexType>
+        <ComplexType Name="SP_ReservadoClienteColeccionesLineas_Result">
+          <Property Type="String" Name="Coleccion" Nullable="false" MaxLength="250" />
+          <Property Type="Int32" Name="UnidadesPendientes" Nullable="false" />
+          <Property Type="Decimal" Name="MontoPendiente" Nullable="false" Precision="15" Scale="4" />
+          <Property Type="String" Name="Linea" Nullable="true" MaxLength="250" />
+        </ComplexType>
+        <ComplexType Name="SP_ReservadoClientePorLinea_Result">
+          <Property Type="String" Name="Linea" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="UnidadesPendientes" Nullable="true" />
+          <Property Type="Decimal" Name="MontoPendiente" Nullable="true" Precision="38" Scale="4" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -14974,6 +14999,25 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="IMEliminarAsignacionesRangoFecha" FunctionName="AventasModel.Store.IMEliminarAsignacionesRangoFecha" />
+          <FunctionImportMapping FunctionImportName="SP_ReservadoClienteColeccionesLineas" FunctionName="AventasModel.Store.SP_ReservadoClienteColeccionesLineas">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_ReservadoClienteColeccionesLineas_Result">
+                <ScalarProperty Name="Coleccion" ColumnName="Coleccion" />
+                <ScalarProperty Name="UnidadesPendientes" ColumnName="UnidadesPendientes" />
+                <ScalarProperty Name="MontoPendiente" ColumnName="MontoPendiente" />
+                <ScalarProperty Name="Linea" ColumnName="Linea" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_ReservadoClientePorLinea" FunctionName="AventasModel.Store.SP_ReservadoClientePorLinea">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_ReservadoClientePorLinea_Result">
+                <ScalarProperty Name="Linea" ColumnName="Linea" />
+                <ScalarProperty Name="UnidadesPendientes" ColumnName="UnidadesPendientes" />
+                <ScalarProperty Name="MontoPendiente" ColumnName="MontoPendiente" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
