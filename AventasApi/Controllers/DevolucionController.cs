@@ -200,6 +200,9 @@ namespace AventasApi.Controllers
                     Devolucion.Sincronizado = true;
                  
                     var result = db.SaveChanges();
+
+                    db.IMReestablecerUnidadesDevolucion(body.numero.ToUpper());
+
                     return Ok(result);
                 }
 

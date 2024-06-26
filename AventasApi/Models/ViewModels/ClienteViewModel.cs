@@ -56,6 +56,7 @@ namespace AventasApi.Models
         public List<PResumenCredito_Result> Credito { get; set; }
         public bool? IgnorarSecuenciaFactura { get; internal set; }
         public List<SP_DocumentosAplicadosXCuotas_Result> DocumentosAplicadosxCuotas { get; set; }
+        public List<ReservadoClientePorLineaViewModel> ReservadoClientePorLinea { get; set; }
 
         public ClienteViewModel()
         {
@@ -109,6 +110,7 @@ namespace AventasApi.Models
         public decimal? Latitud { get; internal set; }
         public bool IncluyeImpuesto { get; internal set; }
         public List<DireccionesClienteViewModel> Direcciones;
+        public List<ReservadoClientePorLineaViewModel> ReservadoClientePorLinea { get; set; }
         public ClientePedidoViewModel()
         {
             this.Credito = new List<PResumenCredito_Result>();

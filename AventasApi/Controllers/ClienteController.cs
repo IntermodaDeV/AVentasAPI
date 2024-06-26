@@ -445,6 +445,33 @@ namespace AventasApi.Controllers
                     cliente.DocumentosAplicadosxCuotas = documentoXCuota.Where(x => x.CodigoCliente == cliente.Codigo).ToList();
 
                     cliente.Credito = creditos.Where(resCred => resCred.codigocliente == cliente.Codigo).ToList();
+
+                   
+                    List<ReservadoClientePorLineaViewModel> reservadoClienteLineas = new List<ReservadoClientePorLineaViewModel>();
+
+                    var lineas = context.SP_ReservadoClientePorLinea(cliente.Codigo).Select(c => new ReservadoClientePorLineaViewModel
+                    {
+                        Linea = c.Linea,
+                        UnidadesPendientes = 0,
+                        MontoPendiente = 0
+                    }).ToList();
+
+                    foreach (var linea in lineas)
+                    {
+                        linea.ReservadoClienteColeccionesLineas = context.SP_ReservadoClienteColeccionesLineas(cliente.Codigo, linea.Linea).Select(a => new ReservadoClienteColeccionesLineas
+                        {
+                            Coleccion = a.Coleccion,
+                            UnidadesPendientes = a.UnidadesPendientes,
+                            MontoPendiente = a.MontoPendiente,
+                            Linea = a.Linea,
+
+                        }).ToList();
+                        linea.UnidadesPendientes = linea.ReservadoClienteColeccionesLineas.Sum(e => e.UnidadesPendientes);
+                        linea.MontoPendiente = linea.ReservadoClienteColeccionesLineas.Sum(e => e.MontoPendiente);
+                        reservadoClienteLineas.Add(linea);
+                    }
+
+                    cliente.ReservadoClientePorLinea = reservadoClienteLineas;
                 }              
                 return Ok(clientesSinFiltrar);
 
@@ -842,6 +869,37 @@ namespace AventasApi.Controllers
                             }).ToList();
 
                             cliente.Credito = creditos.Where(resCred => resCred.codigocliente == cliente.Codigo).ToList();
+
+                            ///Reservado 
+                            ///
+                            List<ReservadoClientePorLineaViewModel> reservadoClienteLineas = new List<ReservadoClientePorLineaViewModel>();
+
+                            var lineas = ctx.SP_ReservadoClientePorLinea(cliente.Codigo).Select(c => new ReservadoClientePorLineaViewModel
+                            {
+                                Linea = c.Linea,
+                                UnidadesPendientes = 0,
+                                MontoPendiente = 0
+                            }).ToList();
+
+                            foreach (var linea in lineas)
+                            {
+                                linea.ReservadoClienteColeccionesLineas = ctx.SP_ReservadoClienteColeccionesLineas(cliente.Codigo, linea.Linea).Select(a => new ReservadoClienteColeccionesLineas
+                                {
+                                    Coleccion = a.Coleccion,
+                                    UnidadesPendientes = a.UnidadesPendientes,
+                                    MontoPendiente = a.MontoPendiente,
+                                    Linea = a.Linea,
+
+                                }).ToList();
+                                linea.UnidadesPendientes = linea.ReservadoClienteColeccionesLineas.Sum(e => e.UnidadesPendientes);
+                                linea.MontoPendiente = linea.ReservadoClienteColeccionesLineas.Sum(e => e.MontoPendiente);
+                                reservadoClienteLineas.Add(linea);
+                            }
+
+                            cliente.ReservadoClientePorLinea = reservadoClienteLineas;
+
+                            ///Reservado
+
                         }
 
                         listaClientes.AddRange(clientes);
