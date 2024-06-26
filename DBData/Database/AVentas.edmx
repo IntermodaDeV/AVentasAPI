@@ -501,6 +501,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="codigoColor" Type="varchar" MaxLength="50" />
           <Property Name="codigoTalla" Type="varchar" MaxLength="50" />
           <Property Name="cantidad" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="cantidadFacturado" Type="decimal" Precision="18" Scale="2" />
           <Property Name="precioFacturado" Type="decimal" Precision="18" Scale="2" />
           <Property Name="factura" Type="nvarchar" MaxLength="250" />
           <Property Name="pedido" Type="nvarchar" MaxLength="150" />
@@ -4692,6 +4693,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="empresa" Type="varchar" Mode="In" />
           <Parameter Name="coleccion" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="IMReestablecerUnidadesDevolucion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Devolucion" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="PResumenCredito" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="PRODUCTOSDEFACTURA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="numFactura" Type="varchar" Mode="In" />
@@ -8465,9 +8469,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <Parameter Name="ACTIVAR" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="IMObtenerColeccionesInventarioEspecifico" ReturnType="Collection(AventasModel.IMObtenerColeccionesInventarioEspecifico_Result)" />
-          <FunctionImport Name="SP_ObtenerFacturasAbiertas" ReturnType="Collection(AventasModel.SP_ObtenerFacturasAbiertas_Result)">
-          <Parameter Name="cliente" Mode="In" Type="String" />
-          </FunctionImport>
           <EntitySet Name="InventarioDetalle" EntityType="AventasModel.InventarioDetalle" />
           <EntitySet Name="InventariosCliente" EntityType="AventasModel.InventariosCliente" />
           <AssociationSet Name="FK_tbInventariosCliente_Clientes_CodigoCliente" Association="AventasModel.FK_tbInventariosCliente_Clientes_CodigoCliente">
@@ -8502,7 +8503,13 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <Parameter Name="LINEA" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_ReservadoClientePorLinea" ReturnType="Collection(AventasModel.SP_ReservadoClientePorLinea_Result)">
-            <Parameter Name="CLIENTE" Mode="In" Type="String" />
+          <Parameter Name="CLIENTE" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="IMReestablecerUnidadesDevolucion">
+            <Parameter Name="Devolucion" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ObtenerFacturasAbiertas" ReturnType="Collection(AventasModel.SP_ObtenerFacturasAbiertas_Result1)">
+            <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -12317,6 +12324,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="pedido" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="paquete" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="inventdim" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="cantidadFacturado" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <ComplexType Name="IMObtenerColeccionesInventarioEspecifico_Result">
           <Property Type="String" Name="codigo" Nullable="true" MaxLength="250" />
@@ -12428,6 +12436,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="String" Name="Linea" Nullable="true" MaxLength="250" />
           <Property Type="Int32" Name="UnidadesPendientes" Nullable="true" />
           <Property Type="Decimal" Name="MontoPendiente" Nullable="true" Precision="38" Scale="4" />
+        </ComplexType>
+        <ComplexType Name="SP_ObtenerFacturasAbiertas_Result1">
+          <Property Type="String" Name="Factura" Nullable="true" MaxLength="250" />
+          <Property Type="Decimal" Name="Saldo" Nullable="true" Precision="15" Scale="4" />
+          <Property Type="String" Name="Abreviacion" Nullable="true" MaxLength="3" />
         </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
@@ -14915,6 +14928,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="DetalleFacturado">
             <EntityTypeMapping TypeName="AventasModel.DetalleFacturado">
               <MappingFragment StoreEntitySet="DetalleFacturado">
+                <ScalarProperty Name="cantidadFacturado" ColumnName="cantidadFacturado" />
                 <ScalarProperty Name="inventdim" ColumnName="inventdim" />
                 <ScalarProperty Name="paquete" ColumnName="paquete" />
                 <ScalarProperty Name="pedido" ColumnName="pedido" />
@@ -14939,15 +14953,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="codigo" ColumnName="codigo" />
                 <ScalarProperty Name="nombre" ColumnName="nombre" />
                 <ScalarProperty Name="inventarioEspecifico" ColumnName="inventarioEspecifico" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="SP_ObtenerFacturasAbiertas" FunctionName="AventasModel.Store.SP_ObtenerFacturasAbiertas">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerFacturasAbiertas_Result">
-                <ScalarProperty Name="Factura" ColumnName="Factura" />
-                <ScalarProperty Name="Saldo" ColumnName="Saldo" />
-                <ScalarProperty Name="Abreviacion" ColumnName="Abreviacion" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -15015,6 +15020,16 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="Linea" ColumnName="Linea" />
                 <ScalarProperty Name="UnidadesPendientes" ColumnName="UnidadesPendientes" />
                 <ScalarProperty Name="MontoPendiente" ColumnName="MontoPendiente" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="IMReestablecerUnidadesDevolucion" FunctionName="AventasModel.Store.IMReestablecerUnidadesDevolucion" />
+          <FunctionImportMapping FunctionImportName="SP_ObtenerFacturasAbiertas" FunctionName="AventasModel.Store.SP_ObtenerFacturasAbiertas">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerFacturasAbiertas_Result1">
+                <ScalarProperty Name="Factura" ColumnName="Factura" />
+                <ScalarProperty Name="Saldo" ColumnName="Saldo" />
+                <ScalarProperty Name="Abreviacion" ColumnName="Abreviacion" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

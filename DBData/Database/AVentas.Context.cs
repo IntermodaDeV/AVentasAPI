@@ -647,15 +647,6 @@ namespace DBData.Database
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<IMObtenerColeccionesInventarioEspecifico_Result>("IMObtenerColeccionesInventarioEspecifico");
         }
     
-        public virtual ObjectResult<SP_ObtenerFacturasAbiertas_Result> SP_ObtenerFacturasAbiertas(string cliente)
-        {
-            var clienteParameter = cliente != null ?
-                new ObjectParameter("cliente", cliente) :
-                new ObjectParameter("cliente", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerFacturasAbiertas_Result>("SP_ObtenerFacturasAbiertas", clienteParameter);
-        }
-    
         public virtual ObjectResult<SP_ObtenerInventarioIncompleto_Result> SP_ObtenerInventarioIncompleto(string cliente)
         {
             var clienteParameter = cliente != null ?
@@ -711,6 +702,24 @@ namespace DBData.Database
                 new ObjectParameter("CLIENTE", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ReservadoClientePorLinea_Result>("SP_ReservadoClientePorLinea", cLIENTEParameter);
+        }
+    
+        public virtual int IMReestablecerUnidadesDevolucion(string devolucion)
+        {
+            var devolucionParameter = devolucion != null ?
+                new ObjectParameter("Devolucion", devolucion) :
+                new ObjectParameter("Devolucion", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("IMReestablecerUnidadesDevolucion", devolucionParameter);
+        }
+    
+        public virtual ObjectResult<SP_ObtenerFacturasAbiertas_Result1> SP_ObtenerFacturasAbiertas(string cliente)
+        {
+            var clienteParameter = cliente != null ?
+                new ObjectParameter("cliente", cliente) :
+                new ObjectParameter("cliente", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerFacturasAbiertas_Result1>("SP_ObtenerFacturasAbiertas", clienteParameter);
         }
     }
 }

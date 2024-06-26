@@ -25,5 +25,6 @@ namespace DBData.Database
         public string pedido { get; set; }
         public string paquete { get; set; }
         public string inventdim { get; set; }
+        public Nullable<decimal> cantidadFacturado { get; set; }
     }
 }
