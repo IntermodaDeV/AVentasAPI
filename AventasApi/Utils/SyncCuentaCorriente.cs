@@ -87,7 +87,7 @@ namespace AventasApi.Utils
                                 entityFound.Saldo = entityFound.Saldo - entityFound.PendienteFactura - (entityFound.FechaMaxDescuento < DateTime.Today ? 0 : entityFound.Descuento);
                             }
 
-                            var existeFacturaEnDocumentosEnTransito = context.DocumentosTransitoxFactura.FirstOrDefault(x => x.Factura.ToUpper() == factura.INVOICE.ToUpper() && x.Valor > 0);
+                            var existeFacturaEnDocumentosEnTransito = context.DocumentosTransitoxFactura.FirstOrDefault(x => x.Factura.ToUpper() == factura.INVOICE.ToUpper() && x.Valor > 0 && x.Tipo != "Diario de Pagos");
                             if (existeFacturaEnDocumentosEnTransito != null)
                             {
                                 entityFound.Saldo = saldoActualFactura;
@@ -202,7 +202,7 @@ namespace AventasApi.Utils
                             entityFound.FechaVencimientoDescuento = DateTime.TryParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dummy) ? DateTime.ParseExact(subFactura.DISC_DATE, "dd/MM/yyyy", CultureInfo.InvariantCulture) : DateTime.Now;
                             entityFound.Saldo = Decimal.TryParse(subFactura.AMOUNT_CUR, out ssFactura) ? ssFactura : 0;
 
-                            var existeFacturaEnDocumentosEnTransito = context.DocumentosTransitoxFactura.FirstOrDefault(x => x.Factura.ToUpper() == fFactura.Factura.ToUpper() && x.Valor > 0);
+                            var existeFacturaEnDocumentosEnTransito = context.DocumentosTransitoxFactura.FirstOrDefault(x => x.Factura.ToUpper() == fFactura.Factura.ToUpper() && x.Valor > 0 && x.Tipo != "Diario de Pagos");
                             if (existeFacturaEnDocumentosEnTransito != null)
                             {
                                 entityFound.Saldo = saldoActualFactura;
