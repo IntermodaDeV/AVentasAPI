@@ -330,6 +330,7 @@
     <Compile Include="Models\ViewModels\InventarioDetallePostModel.cs" />
     <Compile Include="Models\ViewModels\DevolucionDetallePostModel.cs" />
     <Compile Include="Models\ViewModels\DevolucionesViewModel.cs" />
+    <Compile Include="Models\ViewModels\InventarioDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\InventarioPostModel.cs" />
     <Compile Include="Models\ViewModels\DevolucionPostModel.cs" />
     <Compile Include="Models\ViewModels\DistribucionXTallaViewModel.cs" />
@@ -349,6 +350,7 @@
     <Compile Include="Models\ViewModels\HistorialViewModel.cs" />
     <Compile Include="Models\ViewModels\HistoricoViewModel.cs" />
     <Compile Include="Models\ViewModels\HistorilDetalleViewModel.cs" />
+    <Compile Include="Models\ViewModels\InventariosViewModel.cs" />
     <Compile Include="Models\ViewModels\LogProformaViewModel.cs" />
     <Compile Include="Models\ViewModels\LogRecibosViewModel.cs" />
     <Compile Include="Models\ViewModels\MotivosDevolucionViewModel.cs" />

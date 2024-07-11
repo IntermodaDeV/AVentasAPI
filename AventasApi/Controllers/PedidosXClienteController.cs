@@ -1565,7 +1565,7 @@ namespace AventasApi.Controllers
 
         [HttpPost]
         [Route("~/api/Inventario")]
-        public IHttpActionResult PostDevolucion([FromBody] InventarioPostModel inventario)
+        public IHttpActionResult PostInventario([FromBody] InventarioPostModel inventario)
         {
             try
             {
@@ -1641,6 +1641,95 @@ namespace AventasApi.Controllers
             {
                 return BadRequest(e.ToString());
             }
+        }
+
+
+
+        [HttpGet]
+        [Route("~/api/Inventario/{codigoAsesor}")]
+        public IHttpActionResult GetInventarios(string codigoAsesor)
+        {
+            try
+            {
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    List<InventariosViewModel> inventarios = context.InventariosCliente.Where(p => p.codigoAsesor == codigoAsesor).Select(inv => new InventariosViewModel
+                    {
+                        numInventario = inv.numInventario,
+                        cliente = inv.codigoCliente,
+                        empresa = inv.empresaId,
+                        creado = inv.fechaCrea,
+                        modificado = inv.fechaModificado,
+                        completado = inv.completo,
+                        unidades = inv.InventarioDetalle.Sum(x => x.cantidad) ?? 0
+                    }).ToList();
+                    return Ok(inventarios);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/detalleInventario/{numInventario}")]
+        public IHttpActionResult GetInventarioDetalle(string numInventario)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    List<InventarioDetalleViewModel> inventario = ctx.InventariosCliente.Where(x => x.numInventario == numInventario).Select(inv => new InventarioDetalleViewModel
+                    {
+                        gruposXDetPed = inv.InventarioDetalle.GroupBy(gruposXDetPed => gruposXDetPed.ProductosxColeccion.CodigoGrupoTalla)
+                        .Select(gruposXDetPed => new GruposTallaXDetPed
+                        {
+                            GrupoTalla = gruposXDetPed.Key,
+                            ListaTalla = gruposXDetPed.GroupBy(pedDet => pedDet.codigoTalla).Select(pedDet => pedDet.Key).SelectMany(pedDet => ctx.TallasXGrupo.Where(txp => txp.CodigoTalla.ToUpper().Trim() == pedDet.ToUpper().Trim() && txp.CodigoGrupoTalla.ToUpper().Trim() == gruposXDetPed.Key.ToUpper().Trim())).Select(txp => new TallaViewModel
+                            {
+                                GrupoTallaId = txp.CodigoGrupoTalla.ToUpper(),
+                                Talla = txp.CodigoTalla.ToUpper(),
+                                Orden = txp.Orden ?? 0,
+                            }).OrderBy(txp => txp.Orden).ToList(),
+                            prodsXDetPed = gruposXDetPed.GroupBy(pedDet => pedDet.productoId)
+                            .Select(pedDet => new ProductosXDetPed
+                            {
+                                IdProducto = pedDet.Key,
+                                CodigoProducto = pedDet.FirstOrDefault().ProductosxColeccion.CodigoProducto,
+                                NombreProducto = pedDet.FirstOrDefault().ProductosxColeccion.NombreProducto,
+                                CantidadXProducto = pedDet.Sum(cant => cant.cantidad),
+                                coloresXProdXDetPed = pedDet.GroupBy(colXprod => colXprod.codigoColor).Where(colXprod => colXprod.Sum(det => det.cantidad) > 0).Select(colXprod =>
+                                         new ColoresXProdXDetPed
+                                         {
+                                             CantidadXColor = colXprod.Sum(cant => cant.cantidad),
+                                             IdColor = colXprod.Key,
+                                             NombreColor = ctx.Colores.FirstOrDefault(color => color.CodigoColor == colXprod.Key).Color,
+                                             DetallesXPedido = colXprod.Select(detPed => new DetalleXPedidoViewModel
+                                             {
+                                                 Talla = detPed.codigoTalla.ToUpper(),
+                                                 Cantidad = detPed.cantidad,
+                                                 TallaObject = ctx.TallasXGrupo.Where(txp => txp.CodigoGrupoTalla == detPed.ProductosxColeccion.CodigoGrupoTalla && txp.CodigoTalla == detPed.codigoTalla).Select(txp => new TallaViewModel
+                                                 {
+                                                     GrupoTallaId = txp.CodigoGrupoTalla,
+                                                     Talla = txp.CodigoTalla.ToUpper(),
+                                                     Orden = txp.Orden ?? 0,
+                                                 }).FirstOrDefault()
+                                             }).ToList()
+
+                                         }).ToList()
+                            }).ToList()
+                        }).ToList()
+                    }).ToList();
+
+                    return Ok(inventario[0].gruposXDetPed);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+
         }
         private async void ReducirStock(PedidosxCliente pedido)
         {
