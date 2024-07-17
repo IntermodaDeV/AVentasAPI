@@ -1,6 +1,8 @@
 ﻿using DBData.Database;
 using ExternalApiData.Enviroments;
 using ExternalApiData.Models.ApiModels;
+using ExternalApiData.ApiModels;
+using AventasApi.Models;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -281,6 +283,95 @@ namespace AventasApi.Utils
             }
 
             
+        }
+
+
+        public async Task SincronizarDirecciones(string empresa)
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+                {
+                    var clientes = db.Clientes.Where(p => p.EmpresaId.ToUpper() == empresa.ToUpper() && p.Habilitado).ToList();
+                    foreach (var cliente in clientes)
+                    {
+                        var direcciones = new List<DireccionesCRMApiModel>();
+                        var restClient = new RestClient(Enviroment.CRMWebServiceURLApi);
+                        var request = new RestRequest($"clientes/direcciones/{cliente.CodigoCliente}", Method.GET);
+                        request.Timeout = 5 * 60000;
+                        request.AddHeader("Accept", "application/json");
+                        IRestResponse response = restClient.Execute(request);
+
+                        if (response.IsSuccessful && response.Content != "null")
+                        {
+                            direcciones = JsonConvert.DeserializeObject<List<DireccionesCRMApiModel>>(response.Content);
+                            if (direcciones.Count > 0)
+                            {
+                                db.SPDesactivarDireccionesCliente(cliente.CodigoCliente);
+                            }
+                            foreach (var direccion in direcciones)
+                            {
+                                DireccionesxClienteViewModel reservadoClienteModel = new DireccionesxClienteViewModel
+                                {
+                                    codigoCliente = cliente.CodigoCliente,
+                                    nombreDireccion = direccion.LOCATIONNAME,
+                                    direccion = direccion.ADDRESS,
+                                    postalAddress = direccion.POSTALADDRESS,
+                                    principal = direccion.ISPRIMARY == 1,
+                                };
+                                await SyncDireccionCliente(reservadoClienteModel);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+
+        }
+
+        private async Task SyncDireccionCliente(DireccionesxClienteViewModel direccion)
+        {
+            try
+            {
+                using (AVentasEntities db = new AVentasEntities())
+                {
+
+                    var entityFound = db.DireccionesCliente.FirstOrDefault(p => p.postalAddress == direccion.postalAddress && p.codigoCliente.ToUpper() == direccion.codigoCliente.ToUpper());
+
+                    if (entityFound == null)
+                    {
+                        var newEntity = new DireccionesCliente
+                        {
+                            codigoCliente = direccion.codigoCliente,
+                            postalAddress = direccion.postalAddress,
+                            activo = true,
+                            principal = direccion.principal,
+                            fechaCreacion = DateTime.Now,
+                            direccion = direccion.direccion,
+                            nombreDireccion = direccion.nombreDireccion,
+                        };
+
+                        db.DireccionesCliente.Add(newEntity);
+                    }
+                    else
+                    {
+                        entityFound.activo = true;
+                        entityFound.principal = direccion.principal;
+                        entityFound.direccion = direccion.direccion;
+                        entityFound.nombreDireccion = direccion.nombreDireccion;
+
+                        db.Entry(entityFound).State = System.Data.Entity.EntityState.Modified;
+                    }
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
         }
 
         private async Task SincronizarMaestroGrupoPrecio(MaestroGrupoPrecio maestroGrupoPrecio)

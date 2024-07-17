@@ -22,7 +22,7 @@ namespace DBData.Database
         {
             var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 1440;
         }
-    
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
@@ -720,6 +720,15 @@ namespace DBData.Database
                 new ObjectParameter("cliente", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerFacturasAbiertas_Result1>("SP_ObtenerFacturasAbiertas", clienteParameter);
+        }
+    
+        public virtual int SPDesactivarDireccionesCliente(string cLIENTE)
+        {
+            var cLIENTEParameter = cLIENTE != null ?
+                new ObjectParameter("CLIENTE", cLIENTE) :
+                new ObjectParameter("CLIENTE", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SPDesactivarDireccionesCliente", cLIENTEParameter);
         }
     }
 }

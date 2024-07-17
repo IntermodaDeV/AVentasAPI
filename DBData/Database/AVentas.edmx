@@ -4800,6 +4800,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="User" Type="varchar" Mode="In" />
         </Function>
         <Function Name="SPActualizarSubFacturasCuotaCero" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="SPDesactivarDireccionesCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SPObtenerSaldoCuotaCero" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="SPObtenerTiemposFueraDelDia" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="asesor" Type="varchar" Mode="In" />
@@ -8506,10 +8509,13 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="CLIENTE" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IMReestablecerUnidadesDevolucion">
-            <Parameter Name="Devolucion" Mode="In" Type="String" />
+          <Parameter Name="Devolucion" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_ObtenerFacturasAbiertas" ReturnType="Collection(AventasModel.SP_ObtenerFacturasAbiertas_Result1)">
-            <Parameter Name="cliente" Mode="In" Type="String" />
+          <Parameter Name="cliente" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SPDesactivarDireccionesCliente">
+            <Parameter Name="CLIENTE" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -15033,6 +15039,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SPDesactivarDireccionesCliente" FunctionName="AventasModel.Store.SPDesactivarDireccionesCliente" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -109,5 +109,19 @@ namespace AventasApi.Controllers
 
         }
 
+        [HttpGet]
+        [Route("direcciones/{empresa}")]
+        public async Task<IHttpActionResult> SincronizarDireccionesCliente(string empresa)
+        {
+            try
+            {
+                await new SyncClientes().SincronizarDirecciones(empresa);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
