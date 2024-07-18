@@ -699,6 +699,14 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IdEstado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="30" Nullable="false" />
         </EntityType>
+        <EntityType Name="EstadosIncidencia">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Estado" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="EstadosPedido">
           <Key>
             <PropertyRef Name="IdEstado" />
@@ -938,6 +946,29 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           </Key>
           <Property Name="CodigoGrupoTalla" Type="varchar" MaxLength="250" Nullable="false" />
           <Property Name="Descripcion" Type="varchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="IncidenciaVisita">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdAsignacionxAsesor" Type="int" Nullable="false" />
+          <Property Name="Observacion" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="IdEstadosIncidencia" Type="int" Nullable="false" />
+          <Property Name="IdTipoIncidencia" Type="int" Nullable="false" />
+          <Property Name="UsuarioResponsable" Type="nvarchar" MaxLength="50" />
+          <Property Name="FechaCreacion" Type="datetime" />
+          <Property Name="UsuarioModifica" Type="nvarchar" MaxLength="50" />
+          <Property Name="FechaModificacion" Type="datetime" />
+        </EntityType>
+        <EntityType Name="IncidenciaVisitaDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdIncidenciaVisita" Type="int" Nullable="false" />
+          <Property Name="Fecha" Type="datetime" />
+          <Property Name="Fotografia" Type="nvarchar" MaxLength="500" Nullable="false" />
         </EntityType>
         <EntityType Name="InventarioDetalle">
           <Key>
@@ -1829,6 +1860,15 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Diario" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Empresa" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Activo" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TipoIncidencia">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Descripcion" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="Activo" Type="bit" />
+          <Property Name="GeneraIncidencia" Type="bit" />
         </EntityType>
         <EntityType Name="TiposdeColeccion">
           <Key>
@@ -3856,6 +3896,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AsignacionxAsesor">
+          <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="1" />
+          <End Role="IncidenciaVisita" Type="Self.IncidenciaVisita" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AsignacionxAsesor">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Principal>
+            <Dependent Role="IncidenciaVisita">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_AsignacionXAsesor_IdAsignacionXAsesor">
           <End Role="AsignacionxAsesor" Type="Self.AsignacionxAsesor" Multiplicity="1" />
           <End Role="BitacoraNoVentaEnVisitas" Type="Self.BitacoraNoVentaEnVisitas" Multiplicity="*" />
@@ -3916,6 +3968,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_EstadosIncidencia">
+          <End Role="EstadosIncidencia" Type="Self.EstadosIncidencia" Multiplicity="1" />
+          <End Role="IncidenciaVisita" Type="Self.IncidenciaVisita" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EstadosIncidencia">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IncidenciaVisita">
+              <PropertyRef Name="IdEstadosIncidencia" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_FacturasEnAcuerdos_IdCuotaXAcuerdo">
           <End Role="CuotasXAcuerdo" Type="Self.CuotasXAcuerdo" Multiplicity="1" />
           <End Role="FacturasEnCuotasAcuerdos" Type="Self.FacturasEnCuotasAcuerdos" Multiplicity="*" />
@@ -3961,6 +4025,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="GastosViajeDetalle">
               <PropertyRef Name="CombustibleID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IncidenciaVisita">
+          <End Role="IncidenciaVisita" Type="Self.IncidenciaVisita" Multiplicity="1" />
+          <End Role="IncidenciaVisitaDetalle" Type="Self.IncidenciaVisitaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IncidenciaVisita">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IncidenciaVisitaDetalle">
+              <PropertyRef Name="IdIncidenciaVisita" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4516,6 +4592,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_TipoIncidencia">
+          <End Role="TipoIncidencia" Type="Self.TipoIncidencia" Multiplicity="1" />
+          <End Role="IncidenciaVisita" Type="Self.IncidenciaVisita" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TipoIncidencia">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IncidenciaVisita">
+              <PropertyRef Name="IdTipoIncidencia" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_USUARIO">
           <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
           <End Role="Usuario_Rol" Type="Self.Usuario_Rol" Multiplicity="*" />
@@ -4864,6 +4952,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="Encuesta" EntityType="Self.Encuesta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Errores" EntityType="Self.Errores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Estado" EntityType="Self.Estado" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EstadosIncidencia" EntityType="Self.EstadosIncidencia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EstadosPedido" EntityType="Self.EstadosPedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FacturasEnCuotasAcuerdos" EntityType="Self.FacturasEnCuotasAcuerdos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FacturasxCliente" EntityType="Self.FacturasxCliente" Schema="dbo" store:Type="Tables" />
@@ -4882,6 +4971,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="GrupoOpciones" EntityType="Self.GrupoOpciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoOpcionesDetalle" EntityType="Self.GrupoOpcionesDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoTalla" EntityType="Self.GrupoTalla" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="IncidenciaVisita" EntityType="Self.IncidenciaVisita" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="IncidenciaVisitaDetalle" EntityType="Self.IncidenciaVisitaDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="InventarioDetalle" EntityType="Self.InventarioDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="InventariosCliente" EntityType="Self.InventariosCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LimiteCreditoxCliente" EntityType="Self.LimiteCreditoxCliente" Schema="dbo" store:Type="Tables" />
@@ -4945,6 +5036,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="TallasxProducto" EntityType="Self.TallasxProducto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiempoFueraAgenda" EntityType="Self.TiempoFueraAgenda" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TipoGastoViaje" EntityType="Self.TipoGastoViaje" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TipoIncidencia" EntityType="Self.TipoIncidencia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdeColeccion" EntityType="Self.TiposdeColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdePago" EntityType="Self.TiposdePago" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdePagoDetalle" EntityType="Self.TiposdePagoDetalle" Schema="dbo" store:Type="Tables" />
@@ -5635,6 +5727,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
             <End Role="PromesaPago" EntitySet="PromesaPago" />
           </AssociationSet>
+          <AssociationSet Name="FK_AsignacionxAsesor" Association="Self.FK_AsignacionxAsesor">
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
+          </AssociationSet>
           <AssociationSet Name="FK_AsignacionXAsesor_IdAsignacionXAsesor" Association="Self.FK_AsignacionXAsesor_IdAsignacionXAsesor">
             <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
             <End Role="BitacoraNoVentaEnVisitas" EntitySet="BitacoraNoVentaEnVisitas" />
@@ -5655,6 +5751,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="Encuesta" EntitySet="Encuesta" />
             <End Role="Respuestas" EntitySet="Respuestas" />
           </AssociationSet>
+          <AssociationSet Name="FK_EstadosIncidencia" Association="Self.FK_EstadosIncidencia">
+            <End Role="EstadosIncidencia" EntitySet="EstadosIncidencia" />
+            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
+          </AssociationSet>
           <AssociationSet Name="FK_FacturasEnAcuerdos_IdCuotaXAcuerdo" Association="Self.FK_FacturasEnAcuerdos_IdCuotaXAcuerdo">
             <End Role="CuotasXAcuerdo" EntitySet="CuotasXAcuerdo" />
             <End Role="FacturasEnCuotasAcuerdos" EntitySet="FacturasEnCuotasAcuerdos" />
@@ -5670,6 +5770,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK_GastosViajeDetalle_Combustibles" Association="Self.FK_GastosViajeDetalle_Combustibles">
             <End Role="Combustibles" EntitySet="Combustibles" />
             <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IncidenciaVisita" Association="Self.FK_IncidenciaVisita">
+            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
+            <End Role="IncidenciaVisitaDetalle" EntitySet="IncidenciaVisitaDetalle" />
           </AssociationSet>
           <AssociationSet Name="FK_InventarioDetalle_InventariosCliente_id" Association="Self.FK_InventarioDetalle_InventariosCliente_id">
             <End Role="InventariosCliente" EntitySet="InventariosCliente" />
@@ -5854,6 +5958,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK_tbInventariosCliente_Empresa_EmpresaId" Association="Self.FK_tbInventariosCliente_Empresa_EmpresaId">
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="InventariosCliente" EntitySet="InventariosCliente" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TipoIncidencia" Association="Self.FK_TipoIncidencia">
+            <End Role="TipoIncidencia" EntitySet="TipoIncidencia" />
+            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
           </AssociationSet>
           <AssociationSet Name="FK_USUARIO" Association="Self.FK_USUARIO">
             <End Role="Usuarios" EntitySet="Usuarios" />
@@ -8506,11 +8614,31 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="CLIENTE" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="IMReestablecerUnidadesDevolucion">
-            <Parameter Name="Devolucion" Mode="In" Type="String" />
+          <Parameter Name="Devolucion" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="SP_ObtenerFacturasAbiertas" ReturnType="Collection(AventasModel.SP_ObtenerFacturasAbiertas_Result1)">
-            <Parameter Name="cliente" Mode="In" Type="String" />
+          <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="EstadosIncidencia" EntityType="AventasModel.EstadosIncidencia" />
+          <EntitySet Name="IncidenciaVisita" EntityType="AventasModel.IncidenciaVisita" />
+          <EntitySet Name="IncidenciaVisitaDetalle" EntityType="AventasModel.IncidenciaVisitaDetalle" />
+          <EntitySet Name="TipoIncidencia" EntityType="AventasModel.TipoIncidencia" />
+          <AssociationSet Name="FK_AsignacionxAsesor" Association="AventasModel.FK_AsignacionxAsesor">
+            <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
+            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EstadosIncidencia" Association="AventasModel.FK_EstadosIncidencia">
+            <End Role="EstadosIncidencia" EntitySet="EstadosIncidencia" />
+            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IncidenciaVisita" Association="AventasModel.FK_IncidenciaVisita">
+            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
+            <End Role="IncidenciaVisitaDetalle" EntitySet="IncidenciaVisitaDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TipoIncidencia" Association="AventasModel.FK_TipoIncidencia">
+            <End Role="TipoIncidencia" EntitySet="TipoIncidencia" />
+            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -10578,6 +10706,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PromesaPago" Relationship="AventasModel.FK_AsignacionesXAsesor_IdAsignacionxAsesor" FromRole="AsignacionxAsesor" ToRole="PromesaPago" />
           <NavigationProperty Name="BitacoraNoVentaEnVisitas" Relationship="AventasModel.FK_AsignacionXAsesor_IdAsignacionXAsesor" FromRole="AsignacionxAsesor" ToRole="BitacoraNoVentaEnVisitas" />
           <Property Name="EsPromesaPago" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="IncidenciaVisita" Relationship="AventasModel.FK_AsignacionxAsesor" FromRole="AsignacionxAsesor" ToRole="IncidenciaVisita" />
         </EntityType>
         <EntityType Name="BitacoraGeoposicion">
           <Key>
@@ -12442,6 +12571,101 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Type="Decimal" Name="Saldo" Nullable="true" Precision="15" Scale="4" />
           <Property Type="String" Name="Abreviacion" Nullable="true" MaxLength="3" />
         </ComplexType>
+        <EntityType Name="EstadosIncidencia">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Estado" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="IncidenciaVisita" Relationship="AventasModel.FK_EstadosIncidencia" FromRole="EstadosIncidencia" ToRole="IncidenciaVisita" />
+        </EntityType>
+        <EntityType Name="IncidenciaVisita">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdAsignacionxAsesor" Type="Int32" Nullable="false" />
+          <Property Name="Observacion" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IdEstadosIncidencia" Type="Int32" Nullable="false" />
+          <Property Name="IdTipoIncidencia" Type="Int32" Nullable="false" />
+          <Property Name="UsuarioResponsable" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="UsuarioModifica" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AsignacionxAsesor" Relationship="AventasModel.FK_AsignacionxAsesor" FromRole="IncidenciaVisita" ToRole="AsignacionxAsesor" />
+          <NavigationProperty Name="EstadosIncidencia" Relationship="AventasModel.FK_EstadosIncidencia" FromRole="IncidenciaVisita" ToRole="EstadosIncidencia" />
+          <NavigationProperty Name="IncidenciaVisitaDetalle" Relationship="AventasModel.FK_IncidenciaVisita" FromRole="IncidenciaVisita" ToRole="IncidenciaVisitaDetalle" />
+          <NavigationProperty Name="TipoIncidencia" Relationship="AventasModel.FK_TipoIncidencia" FromRole="IncidenciaVisita" ToRole="TipoIncidencia" />
+        </EntityType>
+        <EntityType Name="IncidenciaVisitaDetalle">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdIncidenciaVisita" Type="Int32" Nullable="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="Fotografia" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="IncidenciaVisita" Relationship="AventasModel.FK_IncidenciaVisita" FromRole="IncidenciaVisitaDetalle" ToRole="IncidenciaVisita" />
+        </EntityType>
+        <EntityType Name="TipoIncidencia">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Descripcion" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="Activo" Type="Boolean" />
+          <Property Name="GeneraIncidencia" Type="Boolean" />
+          <NavigationProperty Name="IncidenciaVisita" Relationship="AventasModel.FK_TipoIncidencia" FromRole="TipoIncidencia" ToRole="IncidenciaVisita" />
+        </EntityType>
+        <Association Name="FK_AsignacionxAsesor">
+          <End Type="AventasModel.AsignacionxAsesor" Role="AsignacionxAsesor" Multiplicity="1" />
+          <End Type="AventasModel.IncidenciaVisita" Role="IncidenciaVisita" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AsignacionxAsesor">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Principal>
+            <Dependent Role="IncidenciaVisita">
+              <PropertyRef Name="IdAsignacionxAsesor" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EstadosIncidencia">
+          <End Type="AventasModel.EstadosIncidencia" Role="EstadosIncidencia" Multiplicity="1" />
+          <End Type="AventasModel.IncidenciaVisita" Role="IncidenciaVisita" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EstadosIncidencia">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IncidenciaVisita">
+              <PropertyRef Name="IdEstadosIncidencia" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IncidenciaVisita">
+          <End Type="AventasModel.IncidenciaVisita" Role="IncidenciaVisita" Multiplicity="1" />
+          <End Type="AventasModel.IncidenciaVisitaDetalle" Role="IncidenciaVisitaDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IncidenciaVisita">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IncidenciaVisitaDetalle">
+              <PropertyRef Name="IdIncidenciaVisita" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TipoIncidencia">
+          <End Type="AventasModel.TipoIncidencia" Role="TipoIncidencia" Multiplicity="1" />
+          <End Type="AventasModel.IncidenciaVisita" Role="IncidenciaVisita" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TipoIncidencia">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="IncidenciaVisita">
+              <PropertyRef Name="IdTipoIncidencia" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -15033,6 +15257,50 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="EstadosIncidencia">
+            <EntityTypeMapping TypeName="AventasModel.EstadosIncidencia">
+              <MappingFragment StoreEntitySet="EstadosIncidencia">
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="IncidenciaVisita">
+            <EntityTypeMapping TypeName="AventasModel.IncidenciaVisita">
+              <MappingFragment StoreEntitySet="IncidenciaVisita">
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="UsuarioModifica" ColumnName="UsuarioModifica" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="UsuarioResponsable" ColumnName="UsuarioResponsable" />
+                <ScalarProperty Name="IdTipoIncidencia" ColumnName="IdTipoIncidencia" />
+                <ScalarProperty Name="IdEstadosIncidencia" ColumnName="IdEstadosIncidencia" />
+                <ScalarProperty Name="Observacion" ColumnName="Observacion" />
+                <ScalarProperty Name="IdAsignacionxAsesor" ColumnName="IdAsignacionxAsesor" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="IncidenciaVisitaDetalle">
+            <EntityTypeMapping TypeName="AventasModel.IncidenciaVisitaDetalle">
+              <MappingFragment StoreEntitySet="IncidenciaVisitaDetalle">
+                <ScalarProperty Name="Fotografia" ColumnName="Fotografia" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="IdIncidenciaVisita" ColumnName="IdIncidenciaVisita" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TipoIncidencia">
+            <EntityTypeMapping TypeName="AventasModel.TipoIncidencia">
+              <MappingFragment StoreEntitySet="TipoIncidencia">
+                <ScalarProperty Name="GeneraIncidencia" ColumnName="GeneraIncidencia" />
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

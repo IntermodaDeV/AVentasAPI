@@ -370,6 +370,14 @@
         <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Empresa_EmpresaId" />
         <AssociationConnector Association="AventasModel.FK_InventarioDetalle_InventariosCliente_id" />
         <AssociationConnector Association="AventasModel.FK_InventarioDetalle_ProductosxColeccion_IdProducto" />
+        <EntityTypeShape EntityType="AventasModel.EstadosIncidencia" Width="1.5" PointX="19.625" PointY="72.75" />
+        <EntityTypeShape EntityType="AventasModel.IncidenciaVisita" Width="1.5" PointX="21.875" PointY="58.5" />
+        <EntityTypeShape EntityType="AventasModel.IncidenciaVisitaDetalle" Width="1.5" PointX="24.125" PointY="62.25" />
+        <EntityTypeShape EntityType="AventasModel.TipoIncidencia" Width="1.5" PointX="19.625" PointY="66" />
+        <AssociationConnector Association="AventasModel.FK_AsignacionxAsesor" />
+        <AssociationConnector Association="AventasModel.FK_EstadosIncidencia" />
+        <AssociationConnector Association="AventasModel.FK_IncidenciaVisita" />
+        <AssociationConnector Association="AventasModel.FK_TipoIncidencia" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
