@@ -8,5 +8,6 @@ namespace AventasApi.Services.CloudinaryService
     public class CloudinaryFunciones
     {
 
+
     }
 }

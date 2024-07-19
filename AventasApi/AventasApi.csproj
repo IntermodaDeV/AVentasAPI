@@ -419,6 +419,7 @@
     <Compile Include="Properties\Settings.Designer.cs" />
     <Compile Include="Services\AsyncJobs\AsyncSqlInsert.cs" />
     <Compile Include="Services\Authentication\AuthenticationAppService.cs" />
+    <Compile Include="Services\CloudinaryService\CloudinaryFunciones.cs" />
     <Compile Include="Singleton\GestorManager.cs" />
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
     <Compile Include="Utils\Email.cs" />
@@ -451,6 +452,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Pruebas\" />
+    <Folder Include="Services\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
