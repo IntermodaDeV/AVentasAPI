@@ -8620,9 +8620,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="cliente" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="EstadosIncidencia" EntityType="AventasModel.EstadosIncidencia" />
+          <EntitySet Name="TipoIncidencia" EntityType="AventasModel.TipoIncidencia" />
           <EntitySet Name="IncidenciaVisita" EntityType="AventasModel.IncidenciaVisita" />
           <EntitySet Name="IncidenciaVisitaDetalle" EntityType="AventasModel.IncidenciaVisitaDetalle" />
-          <EntitySet Name="TipoIncidencia" EntityType="AventasModel.TipoIncidencia" />
           <AssociationSet Name="FK_AsignacionxAsesor" Association="AventasModel.FK_AsignacionxAsesor">
             <End Role="AsignacionxAsesor" EntitySet="AsignacionxAsesor" />
             <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
@@ -12580,6 +12580,16 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Activo" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="IncidenciaVisita" Relationship="AventasModel.FK_EstadosIncidencia" FromRole="EstadosIncidencia" ToRole="IncidenciaVisita" />
         </EntityType>
+        <EntityType Name="TipoIncidencia">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Descripcion" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="Activo" Type="Boolean" />
+          <Property Name="GeneraIncidencia" Type="Boolean" />
+          <NavigationProperty Name="IncidenciaVisita" Relationship="AventasModel.FK_TipoIncidencia" FromRole="TipoIncidencia" ToRole="IncidenciaVisita" />
+        </EntityType>
         <EntityType Name="IncidenciaVisita">
           <Key>
             <PropertyRef Name="Id" />
@@ -12607,16 +12617,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Fecha" Type="DateTime" Precision="3" />
           <Property Name="Fotografia" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="IncidenciaVisita" Relationship="AventasModel.FK_IncidenciaVisita" FromRole="IncidenciaVisitaDetalle" ToRole="IncidenciaVisita" />
-        </EntityType>
-        <EntityType Name="TipoIncidencia">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Descripcion" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
-          <Property Name="Activo" Type="Boolean" />
-          <Property Name="GeneraIncidencia" Type="Boolean" />
-          <NavigationProperty Name="IncidenciaVisita" Relationship="AventasModel.FK_TipoIncidencia" FromRole="TipoIncidencia" ToRole="IncidenciaVisita" />
         </EntityType>
         <Association Name="FK_AsignacionxAsesor">
           <End Type="AventasModel.AsignacionxAsesor" Role="AsignacionxAsesor" Multiplicity="1" />
@@ -15266,6 +15266,16 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="TipoIncidencia">
+            <EntityTypeMapping TypeName="AventasModel.TipoIncidencia">
+              <MappingFragment StoreEntitySet="TipoIncidencia">
+                <ScalarProperty Name="GeneraIncidencia" ColumnName="GeneraIncidencia" />
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="IncidenciaVisita">
             <EntityTypeMapping TypeName="AventasModel.IncidenciaVisita">
               <MappingFragment StoreEntitySet="IncidenciaVisita">
@@ -15287,16 +15297,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
                 <ScalarProperty Name="Fotografia" ColumnName="Fotografia" />
                 <ScalarProperty Name="Fecha" ColumnName="Fecha" />
                 <ScalarProperty Name="IdIncidenciaVisita" ColumnName="IdIncidenciaVisita" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TipoIncidencia">
-            <EntityTypeMapping TypeName="AventasModel.TipoIncidencia">
-              <MappingFragment StoreEntitySet="TipoIncidencia">
-                <ScalarProperty Name="GeneraIncidencia" ColumnName="GeneraIncidencia" />
-                <ScalarProperty Name="Activo" ColumnName="Activo" />
-                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

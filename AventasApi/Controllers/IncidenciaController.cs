@@ -41,9 +41,11 @@ namespace AventasApi.Controllers
                     {
                         IdAsignacionxAsesor = body.IdAsignacionAsesor,
                         Observacion = body.Observacion,
-                        IdEstadosIncidencia = body.IdEstadoIncidencia,
-                        IdTipoIncidencia = body.IdTipoIncidencia
+                        IdEstadosIncidencia = body.IdTipoIncidencia == 1 ? 3 : 1,
+                        IdTipoIncidencia = body.IdTipoIncidencia,
+                        FechaCreacion = DateTime.Now
                     };
+
 
                     using (var ctx = new AVentasEntities())
                     {
@@ -63,7 +65,7 @@ namespace AventasApi.Controllers
                                         Folder = "Incidencias"
                                     };
 
-                                    var uploadResult = _cloudinary.Upload(uploadParams);
+                                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
                                     IncidenciaVisitaDetalle incidenciaVisitaDetalle = new IncidenciaVisitaDetalle
                                     {
@@ -73,11 +75,12 @@ namespace AventasApi.Controllers
                                     };
 
                                     ctx.IncidenciaVisitaDetalle.Add(incidenciaVisitaDetalle);
+                                    ctx.SaveChanges();
                                 }
                             }
                         }
 
-                        ctx.SaveChanges();
+                       
                     }
                 }
 
@@ -149,7 +152,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var incidencia = await ctx.IncidenciaVisita.Select(a => new {id = a.Id, asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia }).ToListAsync();
+                    var incidencia = await ctx.IncidenciaVisita.Select(a => new {id = a.Id, asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia, fecha = a.FechaCreacion }).ToListAsync();
                              
                     return Ok(incidencia);
                 }
