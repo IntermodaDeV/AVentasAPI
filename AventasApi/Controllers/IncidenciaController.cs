@@ -41,7 +41,7 @@ namespace AventasApi.Controllers
                     {
                         IdAsignacionxAsesor = body.IdAsignacionAsesor,
                         Observacion = body.Observacion,
-                        IdEstadosIncidencia = body.GeneraIncidencia ? 3 : 1,
+                        IdEstadosIncidencia = body.GeneraIncidencia ? 1 : 3,
                         IdTipoIncidencia = body.IdTipoIncidencia,
                         FechaCreacion = DateTime.Now
                     };
