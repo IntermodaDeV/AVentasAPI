@@ -32,8 +32,8 @@ namespace DBData.Database
     
         public virtual AsignacionxAsesor AsignacionxAsesor { get; set; }
         public virtual EstadosIncidencia EstadosIncidencia { get; set; }
+        public virtual TipoIncidencia TipoIncidencia { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<IncidenciaVisitaDetalle> IncidenciaVisitaDetalle { get; set; }
-        public virtual TipoIncidencia TipoIncidencia { get; set; }
     }
 }

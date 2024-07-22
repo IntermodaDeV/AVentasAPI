@@ -18,6 +18,7 @@ namespace DBData.Database
         public int IdIncidenciaVisita { get; set; }
         public Nullable<System.DateTime> Fecha { get; set; }
         public string Fotografia { get; set; }
+        public bool Eliminada { get; set; }
     
         public virtual IncidenciaVisita IncidenciaVisita { get; set; }
     }

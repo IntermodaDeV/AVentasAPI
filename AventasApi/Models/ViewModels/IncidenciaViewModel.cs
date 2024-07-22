@@ -20,4 +20,10 @@ namespace AventasApi.Models.ViewModels
         public int IdEstado { get; set; }
     }
 
+    public class IncidenciaUrlImg
+    {
+        public int Id { get; set; }
+        public string Url { get; set; }
+    }
+
 }

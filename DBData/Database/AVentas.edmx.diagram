@@ -373,11 +373,11 @@
         <EntityTypeShape EntityType="AventasModel.EstadosIncidencia" Width="1.5" PointX="19.625" PointY="72.75" />
         <EntityTypeShape EntityType="AventasModel.TipoIncidencia" Width="1.5" PointX="19.625" PointY="66" />
         <EntityTypeShape EntityType="AventasModel.IncidenciaVisita" Width="1.5" PointX="21.875" PointY="59.375" />
-        <EntityTypeShape EntityType="AventasModel.IncidenciaVisitaDetalle" Width="1.5" PointX="24.125" PointY="62.125" />
         <AssociationConnector Association="AventasModel.FK_AsignacionxAsesor" />
         <AssociationConnector Association="AventasModel.FK_EstadosIncidencia" />
-        <AssociationConnector Association="AventasModel.FK_IncidenciaVisita" />
         <AssociationConnector Association="AventasModel.FK_TipoIncidencia" />
+        <EntityTypeShape EntityType="AventasModel.IncidenciaVisitaDetalle" Width="1.5" PointX="24.125" PointY="62" />
+        <AssociationConnector Association="AventasModel.FK_IncidenciaVisita" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

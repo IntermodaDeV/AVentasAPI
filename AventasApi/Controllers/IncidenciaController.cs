@@ -1,4 +1,5 @@
 ﻿using AventasApi.Models.ViewModels;
+using AventasApi.Services.CloudinaryService;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using DBData.Database;
@@ -16,19 +17,6 @@ namespace AventasApi.Controllers
 {
     public class IncidenciaController : ApiController
     {
-        private readonly Cloudinary _cloudinary;
-        public IncidenciaController()
-        {
-            var account = new Account(
-                "dh6wzspfy",
-                "884694477656148",
-                "M74wSS1dcGm6IyK10YJYBb9QW_o");
-
-            _cloudinary = new Cloudinary(account);
-        }
-
-
-
         [HttpPost]
         [Route("api/incidencia/registrarIncidencia")]
         public async Task<IHttpActionResult> RegistrarIncidencia([FromBody] IncidenciaViewModel body)
@@ -52,35 +40,33 @@ namespace AventasApi.Controllers
                         ctx.IncidenciaVisita.Add(incidenciaVisita);
                         ctx.SaveChanges();
 
+                        var cloud = ctx.Configuraciones.FirstOrDefault(a => a.CodigoConfiguracion == "Cloud_Cloudinary").Valor;
+                        var apiKey = ctx.Configuraciones.FirstOrDefault(a => a.CodigoConfiguracion == "ApiKey_Cloudinary").Valor;
+                        var apiSecret = ctx.Configuraciones.FirstOrDefault(a => a.CodigoConfiguracion == "ApiSecret_Cloudinary").Valor;
+
+                        CloudinaryFunciones cloudinaryFunciones = new CloudinaryFunciones(cloud, apiKey, apiSecret);
+
                         foreach (var base64Image in body.Imagenes)
                         {
                             if (!string.IsNullOrEmpty(base64Image))
                             {
-                                byte[] imageBytes = Convert.FromBase64String(base64Image);
-                                using (var ms = new MemoryStream(imageBytes))
+
+                                var url = await cloudinaryFunciones.Upload(base64Image);
+
+                                if (url != null)
                                 {
-                                    var uploadParams = new ImageUploadParams()
-                                    {
-                                        File = new FileDescription("image", ms),
-                                        Folder = "Incidencias"
-                                    };
-
-                                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
                                     IncidenciaVisitaDetalle incidenciaVisitaDetalle = new IncidenciaVisitaDetalle
                                     {
                                         Fecha = DateTime.Now,
                                         IdIncidenciaVisita = incidenciaVisita.Id,
-                                        Fotografia = uploadResult.Url.AbsoluteUri
+                                        Fotografia = url
                                     };
 
                                     ctx.IncidenciaVisitaDetalle.Add(incidenciaVisitaDetalle);
-                                    ctx.SaveChanges();
                                 }
                             }
                         }
-
-                       
+                        ctx.SaveChanges();
                     }
                 }
 
@@ -132,7 +118,7 @@ namespace AventasApi.Controllers
                               .Select(t => new
                               {
                                   t.Id,
-                                  t.Estado                                
+                                  t.Estado
                               })
                               .ToListAsync();
                     return Ok(tipoIncidencia);
@@ -152,8 +138,8 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var incidencia = await ctx.IncidenciaVisita.Select(a => new {id = a.Id, asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia, fecha = a.FechaCreacion }).ToListAsync();
-                             
+                    var incidencia = await ctx.IncidenciaVisita.Select(a => new { id = a.Id, asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia, fecha = a.FechaCreacion }).ToListAsync();
+
                     return Ok(incidencia);
                 }
             }
@@ -171,7 +157,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var incidenciaDetalle = await ctx.IncidenciaVisitaDetalle.Where(x => x.IdIncidenciaVisita == idIncidencia).Select(a => new {fecha = a.Fecha, fotografia = a.Fotografia }).ToListAsync();
+                    var incidenciaDetalle = await ctx.IncidenciaVisitaDetalle.Where(x => x.IdIncidenciaVisita == idIncidencia).Select(a => new { fecha = a.Fecha, fotografia = a.Fotografia }).ToListAsync();
 
                     return Ok(incidenciaDetalle);
                 }
@@ -184,7 +170,7 @@ namespace AventasApi.Controllers
 
         [HttpPut]
         [Route("api/incidencia/actualizarIncidencia")]
-        public async Task<IHttpActionResult> ActualizarIncidencia([FromBody] IncidenciaPut inc)
+        public IHttpActionResult ActualizarIncidencia([FromBody] IncidenciaPut inc)
         {
             try
             {
@@ -192,14 +178,68 @@ namespace AventasApi.Controllers
                 {
                     var incidencia = ctx.IncidenciaVisita.FirstOrDefault(a => a.Id == inc.Id);
                     incidencia.IdEstadosIncidencia = inc.IdEstado;
+                    incidencia.FechaModificacion = DateTime.Now;
                     ctx.SaveChanges();
 
-                
                 }
+                return Ok(new { success = true });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpDelete]
+        [Route("~/api/incidencia/eliminarImagenes")]
+        public async Task<IHttpActionResult> EliminarImagenes()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+
+                    var cloud = ctx.Configuraciones.FirstOrDefault(a => a.CodigoConfiguracion == "Cloud_Cloudinary").Valor;
+                    var apiKey = ctx.Configuraciones.FirstOrDefault(a => a.CodigoConfiguracion == "ApiKey_Cloudinary").Valor;
+                    var apiSecret = ctx.Configuraciones.FirstOrDefault(a => a.CodigoConfiguracion == "ApiSecret_Cloudinary").Valor;
+                    var dias = Convert.ToInt32(ctx.Configuraciones.FirstOrDefault(a => a.CodigoConfiguracion == "Dias_Cloudinary").Valor);
+
+                    var A = await ctx.IncidenciaVisitaDetalle.Where(a => a.Eliminada == false && a.IncidenciaVisita.IdEstadosIncidencia == 3 && DbFunctions.DiffDays(a.IncidenciaVisita.FechaModificacion, DateTime.Now) > dias).ToListAsync();
+
+                    CloudinaryFunciones cloudinaryFunciones = new CloudinaryFunciones(cloud, apiKey, apiSecret);
+
+                    foreach (var item in A)
+                    {
+                        var eliminada = await cloudinaryFunciones.DeleteImageByUrl(item.Fotografia);
+
+                        if (eliminada)
+                        {
+                            item.Eliminada = true;
+                            ctx.SaveChanges();
+                        }
+                    }
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
 
 
-
-                    return Ok(new { success = true });
+        [HttpGet]
+        [Route("~/api/incidencia/obtenerCantidadFotosPermitidas")]
+        public IHttpActionResult ObtenerCantidadFotosPermitidas()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var cantidad = Convert.ToInt32(ctx.Configuraciones.FirstOrDefaultAsync(a => a.CodigoConfiguracion == "CantImagenes").Result.Valor);
+                    return Ok(cantidad);
+                }
             }
             catch (Exception e)
             {

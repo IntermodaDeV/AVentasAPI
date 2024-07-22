@@ -424,6 +424,7 @@
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
     <Compile Include="Utils\Email.cs" />
     <Compile Include="Utils\logicValidation.cs" />
+    <Compile Include="Utils\ProcesarImagenes.cs" />
     <Compile Include="Utils\SendEmail.cs" />
     <Compile Include="Utils\SyncAcuerdosVentas.cs" />
     <Compile Include="Utils\SyncAsesores.cs" />
@@ -452,7 +453,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Pruebas\" />
-    <Folder Include="Services\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
