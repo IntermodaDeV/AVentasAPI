@@ -138,7 +138,7 @@ namespace AventasApi.Controllers
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var incidencia = await ctx.IncidenciaVisita.Select(a => new { id = a.Id, asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia, fecha = a.FechaCreacion }).ToListAsync();
+                    var incidencia = await ctx.IncidenciaVisita.Select(a => new { id = a.Id, asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia, fecha = a.FechaCreacion }).OrderBy(s=> s.fecha).ToListAsync();
 
                     return Ok(incidencia);
                 }
@@ -238,7 +238,7 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var cantidad = Convert.ToInt32(ctx.Configuraciones.FirstOrDefaultAsync(a => a.CodigoConfiguracion == "CantImagenes").Result.Valor);
-                    return Ok(cantidad);
+                    return Ok( new { cantidad = cantidad });
                 }
             }
             catch (Exception e)
