@@ -6,9 +6,11 @@ using DBData.Database;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using System.Web.Http;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
@@ -131,14 +133,20 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/incidencia/obtenerIncidencias")]
-        public async Task<IHttpActionResult> ObtenerIncidencias()
+        [Route("~/api/incidencia/obtenerIncidencias/{fechaInicio}/{fechaFin}")]
+        public async Task<IHttpActionResult> ObtenerIncidencias(DateTime fechaInicio, DateTime fechaFin)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var incidencia = await ctx.IncidenciaVisita.Select(a => new { id = a.Id, asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia, fecha = a.FechaCreacion }).OrderBy(s=> s.fecha).ToListAsync();
+                  
+
+                    var incidencia = await ctx.IncidenciaVisita
+                                     .Where(a => a.FechaCreacion >= fechaInicio && a.FechaCreacion <= fechaFin)
+                                     .Select(a => new { id = a.Id, cliente = a.AsignacionxAsesor.Clientes.Nombre , asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia, fecha = a.FechaCreacion, color = a.EstadosIncidencia.color })
+                                     .OrderBy(s=> s.fecha)
+                                     .ToListAsync();
 
                     return Ok(incidencia);
                 }
@@ -238,7 +246,29 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var cantidad = Convert.ToInt32(ctx.Configuraciones.FirstOrDefaultAsync(a => a.CodigoConfiguracion == "CantImagenes").Result.Valor);
-                    return Ok( new { cantidad = cantidad });
+                   
+                    return Ok(new { cantidad = cantidad }); ;
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/incidencia/incidenciaReportadaVisita/{id}")]
+        public async Task<IHttpActionResult> IncidenciaReportadaVisita(int id)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    bool reportada = await ctx.IncidenciaVisita
+                      .Where(a => a.IdAsignacionxAsesor == id)
+                      .AnyAsync();
+
+                    return Ok(new { reportada = reportada });
                 }
             }
             catch (Exception e)

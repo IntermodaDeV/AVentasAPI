@@ -23,6 +23,7 @@ namespace DBData.Database
         public int Id { get; set; }
         public string Estado { get; set; }
         public bool Activo { get; set; }
+        public string color { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<IncidenciaVisita> IncidenciaVisita { get; set; }

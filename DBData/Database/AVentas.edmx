@@ -706,6 +706,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Estado" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Activo" Type="bit" Nullable="false" />
+          <Property Name="color" Type="nvarchar" MaxLength="500" Nullable="false" />
         </EntityType>
         <EntityType Name="EstadosPedido">
           <Key>
@@ -4821,7 +4822,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
         </Function>
-        
         <Function Name="SP_FacturasxCliente_UpdateSaldoXCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
           <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
@@ -12581,6 +12581,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="Estado" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Activo" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="IncidenciaVisita" Relationship="AventasModel.FK_EstadosIncidencia" FromRole="EstadosIncidencia" ToRole="IncidenciaVisita" />
+          <Property Name="color" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="TipoIncidencia">
           <Key>
@@ -15263,6 +15264,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="EstadosIncidencia">
             <EntityTypeMapping TypeName="AventasModel.EstadosIncidencia">
               <MappingFragment StoreEntitySet="EstadosIncidencia">
+                <ScalarProperty Name="color" ColumnName="color" />
                 <ScalarProperty Name="Activo" ColumnName="Activo" />
                 <ScalarProperty Name="Estado" ColumnName="Estado" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
