@@ -21,6 +21,7 @@ namespace DBData.Database
             this.BitacoraGeoposicion = new HashSet<BitacoraGeoposicion>();
             this.PromesaPago = new HashSet<PromesaPago>();
             this.BitacoraNoVentaEnVisitas = new HashSet<BitacoraNoVentaEnVisitas>();
+            this.IncidenciaVisita = new HashSet<IncidenciaVisita>();
         }
     
         public int IdAsignacionxAsesor { get; set; }
@@ -58,5 +59,7 @@ namespace DBData.Database
         public virtual ICollection<PromesaPago> PromesaPago { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BitacoraNoVentaEnVisitas> BitacoraNoVentaEnVisitas { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<IncidenciaVisita> IncidenciaVisita { get; set; }
     }
 }
