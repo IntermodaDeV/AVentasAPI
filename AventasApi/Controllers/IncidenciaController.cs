@@ -133,19 +133,28 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/incidencia/obtenerIncidencias/{fechaInicio}/{fechaFin}")]
-        public async Task<IHttpActionResult> ObtenerIncidencias(DateTime fechaInicio, DateTime fechaFin)
+        [Route("~/api/incidencia/obtenerIncidencias/{fechaInicio}/{fechaFin}/{asesor}/{idEstado}")]
+        public async Task<IHttpActionResult> ObtenerIncidencias(DateTime fechaInicio, DateTime fechaFin, string asesor, int idEstado)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                  
+                    if (idEstado == 0)
+                    {
+                        var data = await ctx.IncidenciaVisita
+                                    .Where(a => a.FechaCreacion >= fechaInicio && a.FechaCreacion <= fechaFin && a.AsignacionxAsesor.CodigoAsesor == asesor)
+                                    .Select(a => new { id = a.Id, cliente = a.AsignacionxAsesor.Clientes.Nombre, asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia, fecha = a.FechaCreacion, color = a.EstadosIncidencia.color, fotos = a.IncidenciaVisitaDetalle.Select(e => e.Fotografia).ToList() })
+                                    .OrderBy(s => s.fecha)
+                                    .ToListAsync();
+
+                        return Ok(data);
+                    }
 
                     var incidencia = await ctx.IncidenciaVisita
-                                     .Where(a => a.FechaCreacion >= fechaInicio && a.FechaCreacion <= fechaFin)
-                                     .Select(a => new { id = a.Id, cliente = a.AsignacionxAsesor.Clientes.Nombre , asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia, fecha = a.FechaCreacion, color = a.EstadosIncidencia.color })
-                                     .OrderBy(s=> s.fecha)
+                                     .Where(a => a.FechaCreacion >= fechaInicio && a.FechaCreacion <= fechaFin && a.AsignacionxAsesor.CodigoAsesor == asesor && a.IdEstadosIncidencia == idEstado)
+                                     .Select(a => new { id = a.Id, cliente = a.AsignacionxAsesor.Clientes.Nombre, asesor = a.AsignacionxAsesor.CodigoAsesor, observacion = a.Observacion, estado = a.EstadosIncidencia.Estado, tipoIncidencia = a.TipoIncidencia.Descripcion, idEstado = a.IdEstadosIncidencia, fecha = a.FechaCreacion, color = a.EstadosIncidencia.color, fotos = a.IncidenciaVisitaDetalle.Select(e => e.Fotografia).ToList() })
+                                     .OrderBy(s => s.fecha)
                                      .ToListAsync();
 
                     return Ok(incidencia);
@@ -246,7 +255,7 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var cantidad = Convert.ToInt32(ctx.Configuraciones.FirstOrDefaultAsync(a => a.CodigoConfiguracion == "CantImagenes").Result.Valor);
-                   
+
                     return Ok(new { cantidad = cantidad }); ;
                 }
             }
