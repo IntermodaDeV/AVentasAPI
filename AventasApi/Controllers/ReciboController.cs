@@ -606,6 +606,7 @@ namespace AventasApi.Controllers
                 var clienteAsesor = context.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == anticipoPost.CodigoCliente.ToUpper() && x.CodigoAsesor.ToUpper() == asesor.CodigoAsesor.ToUpper());
                 if (clienteAsesor == null)
                 {
+                    ////AQUIIIIIIIIIIIII
                     return BadRequest("El usuario no tiene permiso para realizar recibos al cliente seleccionado.");
                 }
 
@@ -1009,11 +1010,12 @@ namespace AventasApi.Controllers
                 var existeRecibo = 0;
                 var asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
 
-                var clienteAsesor = context.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == reciboPost.CodigoCliente.ToUpper() && x.CodigoAsesor.ToUpper() == asesor.CodigoAsesor.ToUpper());
+                /*var clienteAsesor = context.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == reciboPost.CodigoCliente.ToUpper() && x.CodigoAsesor.ToUpper() == asesor.CodigoAsesor.ToUpper());
                 if (clienteAsesor == null)
                 {
+                  ////AQUIIIIIIIIIIIII
                     return BadRequest("El usuario no tiene permiso para realizar recibos al cliente seleccionado.");
-                }
+                }*/
 
                 var PagosBD = context.TiposdePago.AsNoTracking().ToList();
                 var BancosBD = context.Bancos.AsNoTracking().ToList();
