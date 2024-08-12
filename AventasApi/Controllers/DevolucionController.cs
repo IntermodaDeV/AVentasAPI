@@ -278,6 +278,7 @@ namespace AventasApi.Controllers
                              UNIT = "Und",
                              UBICATION = ubicacion.CodigoUbicacion,
                              INVENTDIM = detalle.Inventdim == null ? "" : detalle.Inventdim,
+                             INVOICEID = detalle.Factura != null ? detalle.Factura : devolucionDB.FacturaOrigen != null ? devolucionDB.FacturaOrigen : ""
                          });
                     }
 

@@ -11,5 +11,6 @@
         public string UNIT { get; set; }
         public string UBICATION { get; set; }
         public string INVENTDIM { get; set; }
+        public string INVOICEID { get; set; }
     }
 }
