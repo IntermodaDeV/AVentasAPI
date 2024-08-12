@@ -240,6 +240,9 @@
     <Compile Include="Database\Estado.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\EstadosIncidencia.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\EstadosPedido.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -316,6 +319,12 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\IMObtenerProductosColeccionConInventario_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\IncidenciaVisita.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\IncidenciaVisitaDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\InventarioDetalle.cs">
@@ -580,6 +589,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\TipoGastoViaje.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\TipoIncidencia.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\TiposdeColeccion.cs">
