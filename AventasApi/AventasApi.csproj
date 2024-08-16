@@ -15,7 +15,8 @@
     <AssemblyName>AventasApi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress>false</Use64BitIISExpress>
+    <Use64BitIISExpress>
+    </Use64BitIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -263,6 +264,7 @@
     <Compile Include="Models\BitacoraVisitasClienteViewModel.cs" />
     <Compile Include="Models\CheckInViewModel.cs" />
     <Compile Include="Models\ClienteImpuestoModel.cs" />
+    <Compile Include="Models\CodigoBarrasViewModel.cs" />
     <Compile Include="Models\ComunidadAutonoma.cs" />
     <Compile Include="Models\Coordenada.cs" />
     <Compile Include="Models\Coordenadas.cs" />

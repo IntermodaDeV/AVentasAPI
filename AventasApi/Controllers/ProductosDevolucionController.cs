@@ -12,6 +12,7 @@ namespace AventasApi.Controllers
 {
     public class ProductoBarra
     {
+        public string codigoBarra { get; set; }
         public string productoId { get; set; }
         public string colorId { get; set; }
         public string tallaId { get; set; }

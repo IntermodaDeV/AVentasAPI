@@ -489,7 +489,6 @@ namespace AventasApi.Controllers
             }
         }
 
-
         [HttpGet]
         [Route("~/api/reportePedidos/{asesor}/{FechaInicio}/{FechaFin}")]
         public async Task<IHttpActionResult> ListadoPedidoReporte(string Asesor, DateTime FechaInicio, DateTime FechaFin)
@@ -1576,7 +1575,6 @@ namespace AventasApi.Controllers
                     Clientes cliente = ctx.Clientes.Find(inventario.CodigoCliente);
                     var existeInventario = ctx.InventariosCliente.FirstOrDefault(x => x.numInventario == inventario.Correlativo && x.completo == false);
                     int inventarioId = 0;
-                    int rowAffected = 0;
                     InventariosCliente InventarioDB = new InventariosCliente();
                     if (existeInventario != null)
                     {
@@ -1599,7 +1597,6 @@ namespace AventasApi.Controllers
                                 cantidad = inv.Cantidad
                             });
                         }
-
                         ctx.SaveChanges();
                     }
                     else
@@ -1610,7 +1607,7 @@ namespace AventasApi.Controllers
                             codigoCliente = inventario.CodigoCliente,
                             numInventario = inventario.Correlativo,
                             empresaId = cliente.EmpresaId,
-                            codigoAsesor = cliente.CodigoAsesor,
+                            codigoAsesor = usuario.usuario,
                             fechaCrea = DateTime.Now,
                             fechaModificado = DateTime.Now,
                             completo = inventario.Completo
@@ -1627,7 +1624,7 @@ namespace AventasApi.Controllers
                             });
                         }
 
-                        bool guardadoExito = AsyncSqlInsert.IngresarInventaio(nuevoInventario, cliente.CodigoAsesor, usuario.EmpresaId);
+                        bool guardadoExito = AsyncSqlInsert.IngresarInventaio(nuevoInventario, usuario.usuario, usuario.EmpresaId);
 
                         if (!guardadoExito)
                         {
@@ -1642,8 +1639,6 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
-
-
 
         [HttpGet]
         [Route("~/api/Inventario/{codigoAsesor}")]
@@ -1670,6 +1665,141 @@ namespace AventasApi.Controllers
             {
                 return BadRequest(e.ToString());
             }
+        }
+
+        [HttpPost]
+        [Route("~/api/inventario/cargar/{empresa}")]
+        public async Task<IHttpActionResult> CargarInventario([FromBody] IEnumerable<CodigoBarrasViewModel> model, string empresa)
+        {
+            try
+            {
+                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+
+                if (model == null || model.Count() == 0)
+                {
+                    return BadRequest("No se puede registrar una lista vacia.");
+                }
+
+                using (var ctx = new AVentasEntities())
+                {
+                    List<ProductoBarra> listaProductos = new List<ProductoBarra>();
+                    Dictionary<int, double> pagadoMemory = new Dictionary<int, double>();
+                    foreach (var bar in model)
+                    {
+                        var producto = GetProductoBarra(bar.CodBarra);
+                        if (producto == null)
+                        {
+                            return BadRequest($"Producto con código de barra {bar.CodBarra} no encontrado.");
+                        }
+                        producto.codigoBarra = bar.CodBarra;
+                        if (!pagadoMemory.ContainsKey(cuotaAcuerdo.NumCuota))
+                        {
+                            pagadoMemory.Add(cuotaAcuerdo.NumCuota, 0);
+                        }
+                        GetProductoInventario(empresa, producto.productoId, producto.colorId);
+
+                        listaProductos.Add(producto);
+                    }
+
+                    return Ok(listaProductos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Ha ocurrido un error y no se pudo registar las asignaciones.");
+            }
+        }
+
+        public ProductoBarra GetProductoBarra(string codigo)
+        {
+            try
+            {
+                var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}productos/imhn/{codigo}/codigobarra");
+                client.Timeout = 480 * 1000;  // Tiempo de espera en milisegundos
+                var request = new RestRequest(Method.GET);
+                request.AddHeader("Accept", "application/json");
+                var response = client.Execute<List<ProductoBarra>>(request);
+
+                if (response.Data == null || response.Data.Count == 0)
+                {
+                    return null;
+                }
+                return response.Data[0];
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/productoInventario/{pais}/{producto}/{color}")]
+        public async Task<IHttpActionResult> GetProductoInventario(string pais, string producto, string color)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var prod = ctx.ProductosxColeccion.Where(pxc => pxc.EmpresaId == pais.ToUpper() && pxc.CodigoProducto == producto).Select(pxc => new ProductoXColeccionViewModel
+                    {
+
+                        ProductoId = pxc.CodigoProducto,
+                        idColeccion = pxc.IdColeccion,
+                        CantidadMinima = pxc.CantidadMinima == null ? 0 : pxc.CantidadMinima,
+                        CodigoProducto = pxc.IdProducto,
+                        NombreProducto = pxc.NombreProducto,
+                        StockVisible = pxc.StockVisible,
+                        InOut = pxc.InOut,
+                        Deshabilitado = pxc.Deshabilitado,
+                        Prioridad = pxc.Prioridad,
+                        Nuevo = pxc.Nuevo,
+                        PiezaSuelta = pxc.PiezaSuelta,
+                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
+                        GrupoTalla = pxc.CodigoGrupoTalla,
+                        Linea = new LineaViewModel
+                        {
+                            IdLinea = pxc.MaestroLinea.IdLinea,
+                            Linea = pxc.MaestroLinea.Linea,
+                        },
+                        ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo != null).Select(txp => txp.TallasXGrupo)
+                                             .Select(txp => new TallaViewModel
+                                             {
+                                                 Talla = txp.CodigoTalla.ToUpper(),
+                                                 GrupoTallaId = txp.CodigoGrupoTalla,
+                                                 Orden = txp.Orden ?? 0,
+                                                 Distribucion = txp.DistribucionxTalla.Where(dis => dis.IdTallaxGrupo == txp.IdTallaxGrupo && dis.Cantidad != ".00").Select(dis => new DistribucionXTallaViewModel
+                                                 {
+                                                     IdDistribucion = dis.IdDistribucion,
+                                                     IdTallaxGrupo = dis.IdTallaxGrupo,
+                                                     NombreDistribucion = dis.NombreDistribucion,
+                                                     NombreTalla = dis.NombreTalla,
+                                                     Cantidad = dis.Cantidad,
+                                                     Orden = dis.Orden,
+                                                 }).OrderBy(or => or.Orden).ToList(),
+
+                                             }).OrderBy(txp => txp.Orden).ToList(),
+                        ListaColores = ctx.Colores.Where(x => x.CodigoColor == color).Select(cpp => new ColorViewModel
+                        {
+                            CodigoColor = cpp.CodigoColor,
+                            NombreColor = cpp.Color,
+                            Color = cpp.Rgb
+                        }).ToList()
+                    }).OrderByDescending(x => x.ListaTalla.Count()).ToList();
+                    return Ok(prod.First());
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        private List<AsignacionxAsesor> ConvertirListaAsignacion(IEnumerable<AsignacionViewModel> model)
+        {
+            return model.Select(x => new AsignacionxAsesor()
+            {
+
+            }).ToList();
         }
 
         [HttpGet]
