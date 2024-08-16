@@ -1610,7 +1610,7 @@ namespace AventasApi.Controllers
                             codigoCliente = inventario.CodigoCliente,
                             numInventario = inventario.Correlativo,
                             empresaId = cliente.EmpresaId,
-                            codigoAsesor = cliente.CodigoAsesor,
+                            codigoAsesor = usuario.usuario,
                             fechaCrea = DateTime.Now,
                             fechaModificado = DateTime.Now,
                             completo = inventario.Completo
@@ -1627,7 +1627,7 @@ namespace AventasApi.Controllers
                             });
                         }
 
-                        bool guardadoExito = AsyncSqlInsert.IngresarInventaio(nuevoInventario, cliente.CodigoAsesor, usuario.EmpresaId);
+                        bool guardadoExito = AsyncSqlInsert.IngresarInventaio(nuevoInventario, usuario.usuario, usuario.EmpresaId);
 
                         if (!guardadoExito)
                         {
