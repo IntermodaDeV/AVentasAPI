@@ -22,7 +22,7 @@ namespace DBData.Database
         {
             var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 1440;
         }
-    
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
@@ -176,6 +176,10 @@ namespace DBData.Database
         public virtual DbSet<DetalleFacturado> DetalleFacturado { get; set; }
         public virtual DbSet<InventarioDetalle> InventarioDetalle { get; set; }
         public virtual DbSet<InventariosCliente> InventariosCliente { get; set; }
+        public virtual DbSet<EstadosIncidencia> EstadosIncidencia { get; set; }
+        public virtual DbSet<TipoIncidencia> TipoIncidencia { get; set; }
+        public virtual DbSet<IncidenciaVisita> IncidenciaVisita { get; set; }
+        public virtual DbSet<IncidenciaVisitaDetalle> IncidenciaVisitaDetalle { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -720,6 +724,15 @@ namespace DBData.Database
                 new ObjectParameter("cliente", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerFacturasAbiertas_Result1>("SP_ObtenerFacturasAbiertas", clienteParameter);
+        }
+    
+        public virtual int SPDesactivarDireccionesCliente(string cLIENTE)
+        {
+            var cLIENTEParameter = cLIENTE != null ?
+                new ObjectParameter("CLIENTE", cLIENTE) :
+                new ObjectParameter("CLIENTE", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SPDesactivarDireccionesCliente", cLIENTEParameter);
         }
     }
 }
