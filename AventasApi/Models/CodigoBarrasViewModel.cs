@@ -3,5 +3,6 @@
     public class CodigoBarrasViewModel
     {
         public string CodBarra { get; set; }
+        public int Cantidad { get; set; }
     }
 }

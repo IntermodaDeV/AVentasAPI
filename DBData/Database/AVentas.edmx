@@ -699,9 +699,14 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="IdEstado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="30" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.EstadosIncidencia' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="EstadosIncidencia">
           <Key>
             <PropertyRef Name="Id" />
+            
+            
+            
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Estado" Type="nvarchar" MaxLength="100" Nullable="false" />
@@ -948,9 +953,15 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="CodigoGrupoTalla" Type="varchar" MaxLength="250" Nullable="false" />
           <Property Name="Descripcion" Type="varchar" MaxLength="1000" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.IncidenciaVisita' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="IncidenciaVisita">
           <Key>
             <PropertyRef Name="Id" />
+            
+            
+            
+            
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdAsignacionxAsesor" Type="int" Nullable="false" />
@@ -962,9 +973,14 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="UsuarioModifica" Type="nvarchar" MaxLength="50" />
           <Property Name="FechaModificacion" Type="datetime" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.IncidenciaVisitaDetalle' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="IncidenciaVisitaDetalle">
           <Key>
             <PropertyRef Name="Id" />
+            
+            
+            
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="IdIncidenciaVisita" Type="int" Nullable="false" />
@@ -995,6 +1011,9 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="fechaCrea" Type="datetime" Nullable="false" />
           <Property Name="fechaModificado" Type="datetime" Nullable="false" />
           <Property Name="completo" Type="bit" Nullable="false" />
+          <Property Name="fechaDesactivado" Type="datetime" />
+          <Property Name="activo" Type="bit" />
+          <Property Name="eliminadoPor" Type="int" />
         </EntityType>
         <EntityType Name="LimiteCreditoxCliente">
           <Key>
@@ -1477,6 +1496,15 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="ColorBorde" Type="varchar" MaxLength="100" />
           <Property Name="ColorRelleno" Type="varchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="ProductosNoEncontrados">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="inventarioId" Type="int" />
+          <Property Name="codigoBarra" Type="nvarchar" MaxLength="50" />
+          <Property Name="cantidad" Type="int" />
+        </EntityType>
         <EntityType Name="ProductosxColeccion">
           <Key>
             <PropertyRef Name="IdProducto" />
@@ -1863,9 +1891,12 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Empresa" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Activo" Type="bit" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'AVentas.dbo.TipoIncidencia' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="TipoIncidencia">
           <Key>
             <PropertyRef Name="Id" />
+            
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Descripcion" Type="nvarchar" MaxLength="300" Nullable="false" />
@@ -3970,18 +4001,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_EstadosIncidencia">
-          <End Role="EstadosIncidencia" Type="Self.EstadosIncidencia" Multiplicity="1" />
-          <End Role="IncidenciaVisita" Type="Self.IncidenciaVisita" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="EstadosIncidencia">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="IncidenciaVisita">
-              <PropertyRef Name="IdEstadosIncidencia" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_FacturasEnAcuerdos_IdCuotaXAcuerdo">
           <End Role="CuotasXAcuerdo" Type="Self.CuotasXAcuerdo" Multiplicity="1" />
           <End Role="FacturasEnCuotasAcuerdos" Type="Self.FacturasEnCuotasAcuerdos" Multiplicity="*" />
@@ -4027,18 +4046,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="GastosViajeDetalle">
               <PropertyRef Name="CombustibleID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_IncidenciaVisita">
-          <End Role="IncidenciaVisita" Type="Self.IncidenciaVisita" Multiplicity="1" />
-          <End Role="IncidenciaVisitaDetalle" Type="Self.IncidenciaVisitaDetalle" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="IncidenciaVisita">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="IncidenciaVisitaDetalle">
-              <PropertyRef Name="IdIncidenciaVisita" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4291,6 +4298,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="RespuestaAnidadaDetalle">
               <PropertyRef Name="PreguntaOpcionesAnidadasId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductosNoEncontrados_InventariosCliente_id">
+          <End Role="InventariosCliente" Type="Self.InventariosCliente" Multiplicity="0..1" />
+          <End Role="ProductosNoEncontrados" Type="Self.ProductosNoEncontrados" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InventariosCliente">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ProductosNoEncontrados">
+              <PropertyRef Name="inventarioId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4594,15 +4613,15 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_TipoIncidencia">
-          <End Role="TipoIncidencia" Type="Self.TipoIncidencia" Multiplicity="1" />
-          <End Role="IncidenciaVisita" Type="Self.IncidenciaVisita" Multiplicity="*" />
+        <Association Name="FK_tbInventariosCliente_Usuarios_Id">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="InventariosCliente" Type="Self.InventariosCliente" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="TipoIncidencia">
+            <Principal Role="Usuarios">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="IncidenciaVisita">
-              <PropertyRef Name="IdTipoIncidencia" />
+            <Dependent Role="InventariosCliente">
+              <PropertyRef Name="eliminadoPor" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4822,6 +4841,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
         </Function>
+        <Function Name="SP_EliminarInvenario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="numInventario" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="SP_FacturasxCliente_UpdateSaldoXCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
           <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
@@ -4957,7 +4979,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="Encuesta" EntityType="Self.Encuesta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Errores" EntityType="Self.Errores" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Estado" EntityType="Self.Estado" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="EstadosIncidencia" EntityType="Self.EstadosIncidencia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EstadosPedido" EntityType="Self.EstadosPedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FacturasEnCuotasAcuerdos" EntityType="Self.FacturasEnCuotasAcuerdos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FacturasxCliente" EntityType="Self.FacturasxCliente" Schema="dbo" store:Type="Tables" />
@@ -4976,8 +4997,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="GrupoOpciones" EntityType="Self.GrupoOpciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoOpcionesDetalle" EntityType="Self.GrupoOpcionesDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GrupoTalla" EntityType="Self.GrupoTalla" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="IncidenciaVisita" EntityType="Self.IncidenciaVisita" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="IncidenciaVisitaDetalle" EntityType="Self.IncidenciaVisitaDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="InventarioDetalle" EntityType="Self.InventarioDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="InventariosCliente" EntityType="Self.InventariosCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LimiteCreditoxCliente" EntityType="Self.LimiteCreditoxCliente" Schema="dbo" store:Type="Tables" />
@@ -5014,6 +5033,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="PreguntasOpciones" EntityType="Self.PreguntasOpciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PreguntasOpcionesAnidadas" EntityType="Self.PreguntasOpcionesAnidadas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PrioridadAsignacion" EntityType="Self.PrioridadAsignacion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductosNoEncontrados" EntityType="Self.ProductosNoEncontrados" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductosxColeccion" EntityType="Self.ProductosxColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PromesaPago" EntityType="Self.PromesaPago" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RazonesNoVenta" EntityType="Self.RazonesNoVenta" Schema="dbo" store:Type="Tables" />
@@ -5041,7 +5061,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="TallasxProducto" EntityType="Self.TallasxProducto" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiempoFueraAgenda" EntityType="Self.TiempoFueraAgenda" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TipoGastoViaje" EntityType="Self.TipoGastoViaje" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="TipoIncidencia" EntityType="Self.TipoIncidencia" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdeColeccion" EntityType="Self.TiposdeColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdePago" EntityType="Self.TiposdePago" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TiposdePagoDetalle" EntityType="Self.TiposdePagoDetalle" Schema="dbo" store:Type="Tables" />
@@ -5063,6 +5082,44 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
     [Acciones].[Estado] AS [Estado], 
     [Acciones].[Orden] AS [Orden]
     FROM [dbo].[Acciones] AS [Acciones]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="EstadosIncidencia" EntityType="Self.EstadosIncidencia" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [EstadosIncidencia].[Id] AS [Id], 
+    [EstadosIncidencia].[Estado] AS [Estado], 
+    [EstadosIncidencia].[Activo] AS [Activo], 
+    [EstadosIncidencia].[color] AS [color]
+    FROM [dbo].[EstadosIncidencia] AS [EstadosIncidencia]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="IncidenciaVisita" EntityType="Self.IncidenciaVisita" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [IncidenciaVisita].[Id] AS [Id], 
+    [IncidenciaVisita].[IdAsignacionxAsesor] AS [IdAsignacionxAsesor], 
+    [IncidenciaVisita].[Observacion] AS [Observacion], 
+    [IncidenciaVisita].[IdEstadosIncidencia] AS [IdEstadosIncidencia], 
+    [IncidenciaVisita].[IdTipoIncidencia] AS [IdTipoIncidencia], 
+    [IncidenciaVisita].[UsuarioResponsable] AS [UsuarioResponsable], 
+    [IncidenciaVisita].[FechaCreacion] AS [FechaCreacion], 
+    [IncidenciaVisita].[UsuarioModifica] AS [UsuarioModifica], 
+    [IncidenciaVisita].[FechaModificacion] AS [FechaModificacion]
+    FROM [dbo].[IncidenciaVisita] AS [IncidenciaVisita]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="IncidenciaVisitaDetalle" EntityType="Self.IncidenciaVisitaDetalle" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [IncidenciaVisitaDetalle].[Id] AS [Id], 
+    [IncidenciaVisitaDetalle].[IdIncidenciaVisita] AS [IdIncidenciaVisita], 
+    [IncidenciaVisitaDetalle].[Fecha] AS [Fecha], 
+    [IncidenciaVisitaDetalle].[Fotografia] AS [Fotografia], 
+    [IncidenciaVisitaDetalle].[Eliminada] AS [Eliminada]
+    FROM [dbo].[IncidenciaVisitaDetalle] AS [IncidenciaVisitaDetalle]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="TipoIncidencia" EntityType="Self.TipoIncidencia" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [TipoIncidencia].[Id] AS [Id], 
+    [TipoIncidencia].[Descripcion] AS [Descripcion], 
+    [TipoIncidencia].[Activo] AS [Activo], 
+    [TipoIncidencia].[GeneraIncidencia] AS [GeneraIncidencia]
+    FROM [dbo].[TipoIncidencia] AS [TipoIncidencia]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="vw_AtributosxColeccion" EntityType="Self.vw_AtributosxColeccion" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -5756,10 +5813,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="Encuesta" EntitySet="Encuesta" />
             <End Role="Respuestas" EntitySet="Respuestas" />
           </AssociationSet>
-          <AssociationSet Name="FK_EstadosIncidencia" Association="Self.FK_EstadosIncidencia">
-            <End Role="EstadosIncidencia" EntitySet="EstadosIncidencia" />
-            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
-          </AssociationSet>
           <AssociationSet Name="FK_FacturasEnAcuerdos_IdCuotaXAcuerdo" Association="Self.FK_FacturasEnAcuerdos_IdCuotaXAcuerdo">
             <End Role="CuotasXAcuerdo" EntitySet="CuotasXAcuerdo" />
             <End Role="FacturasEnCuotasAcuerdos" EntitySet="FacturasEnCuotasAcuerdos" />
@@ -5775,10 +5828,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK_GastosViajeDetalle_Combustibles" Association="Self.FK_GastosViajeDetalle_Combustibles">
             <End Role="Combustibles" EntitySet="Combustibles" />
             <End Role="GastosViajeDetalle" EntitySet="GastosViajeDetalle" />
-          </AssociationSet>
-          <AssociationSet Name="FK_IncidenciaVisita" Association="Self.FK_IncidenciaVisita">
-            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
-            <End Role="IncidenciaVisitaDetalle" EntitySet="IncidenciaVisitaDetalle" />
           </AssociationSet>
           <AssociationSet Name="FK_InventarioDetalle_InventariosCliente_id" Association="Self.FK_InventarioDetalle_InventariosCliente_id">
             <End Role="InventariosCliente" EntitySet="InventariosCliente" />
@@ -5863,6 +5912,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID" Association="Self.FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID">
             <End Role="PreguntasOpcionesAnidadas" EntitySet="PreguntasOpcionesAnidadas" />
             <End Role="RespuestaAnidadaDetalle" EntitySet="RespuestaAnidadaDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductosNoEncontrados_InventariosCliente_id" Association="Self.FK_ProductosNoEncontrados_InventariosCliente_id">
+            <End Role="InventariosCliente" EntitySet="InventariosCliente" />
+            <End Role="ProductosNoEncontrados" EntitySet="ProductosNoEncontrados" />
           </AssociationSet>
           <AssociationSet Name="FK_RazonesNoVenta_IdRazonNoVenta" Association="Self.FK_RazonesNoVenta_IdRazonNoVenta">
             <End Role="RazonesNoVenta" EntitySet="RazonesNoVenta" />
@@ -5964,9 +6017,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="InventariosCliente" EntitySet="InventariosCliente" />
           </AssociationSet>
-          <AssociationSet Name="FK_TipoIncidencia" Association="Self.FK_TipoIncidencia">
-            <End Role="TipoIncidencia" EntitySet="TipoIncidencia" />
-            <End Role="IncidenciaVisita" EntitySet="IncidenciaVisita" />
+          <AssociationSet Name="FK_tbInventariosCliente_Usuarios_Id" Association="Self.FK_tbInventariosCliente_Usuarios_Id">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="InventariosCliente" EntitySet="InventariosCliente" />
           </AssociationSet>
           <AssociationSet Name="FK_USUARIO" Association="Self.FK_USUARIO">
             <End Role="Usuarios" EntitySet="Usuarios" />
@@ -8645,7 +8698,19 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="IncidenciaVisitaDetalle" EntitySet="IncidenciaVisitaDetalle" />
           </AssociationSet>
           <FunctionImport Name="SPDesactivarDireccionesCliente">
-            <Parameter Name="CLIENTE" Mode="In" Type="String" />
+          <Parameter Name="CLIENTE" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="ProductosNoEncontrados" EntityType="AventasModel.ProductosNoEncontrados" />
+          <AssociationSet Name="FK_ProductosNoEncontrados_InventariosCliente_id" Association="AventasModel.FK_ProductosNoEncontrados_InventariosCliente_id">
+            <End Role="InventariosCliente" EntitySet="InventariosCliente" />
+            <End Role="ProductosNoEncontrados" EntitySet="ProductosNoEncontrados" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tbInventariosCliente_Usuarios_Id" Association="AventasModel.FK_tbInventariosCliente_Usuarios_Id">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="InventariosCliente" EntitySet="InventariosCliente" />
+          </AssociationSet>
+          <FunctionImport Name="SP_EliminarInvenario">
+            <Parameter Name="numInventario" Mode="In" Type="String" />
           </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
@@ -9324,6 +9389,7 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="PromesaPago" Relationship="AventasModel.FK_Usuarios_IdUsuario" FromRole="Usuarios" ToRole="PromesaPago" />
           <NavigationProperty Name="BitacoraNoVentaEnVisitas" Relationship="AventasModel.FK_Usuario_UsuarioCrea" FromRole="Usuarios" ToRole="BitacoraNoVentaEnVisitas" />
           <NavigationProperty Name="UsuarioLinea" Relationship="AventasModel.FK__UsuarioLi__Usuar__22ABC044" FromRole="Usuarios" ToRole="UsuarioLinea" />
+          <NavigationProperty Name="InventariosCliente" Relationship="AventasModel.FK_tbInventariosCliente_Usuarios_Id" FromRole="Usuarios" ToRole="InventariosCliente" />
         </EntityType>
         <Association Name="FK__Usuarios__Empres__28E2F130">
           <End Type="AventasModel.Empresa" Role="Empresa" Multiplicity="1" />
@@ -12501,6 +12567,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <NavigationProperty Name="Clientes" Relationship="AventasModel.FK_tbInventariosCliente_Clientes_CodigoCliente" FromRole="InventariosCliente" ToRole="Clientes" />
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK_tbInventariosCliente_Empresa_EmpresaId" FromRole="InventariosCliente" ToRole="Empresa" />
           <NavigationProperty Name="InventarioDetalle" Relationship="AventasModel.FK_InventarioDetalle_InventariosCliente_id" FromRole="InventariosCliente" ToRole="InventarioDetalle" />
+          <Property Name="fechaDesactivado" Type="DateTime" Precision="3" />
+          <Property Name="activo" Type="Boolean" />
+          <Property Name="eliminadoPor" Type="Int32" />
+          <NavigationProperty Name="ProductosNoEncontrados" Relationship="AventasModel.FK_ProductosNoEncontrados_InventariosCliente_id" FromRole="InventariosCliente" ToRole="ProductosNoEncontrados" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_tbInventariosCliente_Usuarios_Id" FromRole="InventariosCliente" ToRole="Usuarios" />
         </EntityType>
         <Association Name="FK_tbInventariosCliente_Clientes_CodigoCliente">
           <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="1" />
@@ -12673,6 +12744,40 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="IncidenciaVisitaDetalle">
               <PropertyRef Name="IdIncidenciaVisita" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ProductosNoEncontrados">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="inventarioId" Type="Int32" />
+          <Property Name="codigoBarra" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="cantidad" Type="Int32" />
+          <NavigationProperty Name="InventariosCliente" Relationship="AventasModel.FK_ProductosNoEncontrados_InventariosCliente_id" FromRole="ProductosNoEncontrados" ToRole="InventariosCliente" />
+        </EntityType>
+        <Association Name="FK_ProductosNoEncontrados_InventariosCliente_id">
+          <End Type="AventasModel.InventariosCliente" Role="InventariosCliente" Multiplicity="0..1" />
+          <End Type="AventasModel.ProductosNoEncontrados" Role="ProductosNoEncontrados" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InventariosCliente">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="ProductosNoEncontrados">
+              <PropertyRef Name="inventarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tbInventariosCliente_Usuarios_Id">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="AventasModel.InventariosCliente" Role="InventariosCliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="InventariosCliente">
+              <PropertyRef Name="eliminadoPor" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -15205,6 +15310,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySetMapping Name="InventariosCliente">
             <EntityTypeMapping TypeName="AventasModel.InventariosCliente">
               <MappingFragment StoreEntitySet="InventariosCliente">
+                <ScalarProperty Name="eliminadoPor" ColumnName="eliminadoPor" />
+                <ScalarProperty Name="activo" ColumnName="activo" />
+                <ScalarProperty Name="fechaDesactivado" ColumnName="fechaDesactivado" />
                 <ScalarProperty Name="completo" ColumnName="completo" />
                 <ScalarProperty Name="fechaModificado" ColumnName="fechaModificado" />
                 <ScalarProperty Name="fechaCrea" ColumnName="fechaCrea" />
@@ -15314,6 +15422,17 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SPDesactivarDireccionesCliente" FunctionName="AventasModel.Store.SPDesactivarDireccionesCliente" />
+          <EntitySetMapping Name="ProductosNoEncontrados">
+            <EntityTypeMapping TypeName="AventasModel.ProductosNoEncontrados">
+              <MappingFragment StoreEntitySet="ProductosNoEncontrados">
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+                <ScalarProperty Name="codigoBarra" ColumnName="codigoBarra" />
+                <ScalarProperty Name="inventarioId" ColumnName="inventarioId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_EliminarInvenario" FunctionName="AventasModel.Store.SP_EliminarInvenario" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

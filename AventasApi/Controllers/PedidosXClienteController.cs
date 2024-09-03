@@ -1561,6 +1561,31 @@ namespace AventasApi.Controllers
                 return BadRequest(e.Message);
             }
         }
+        
+        [HttpGet]
+        [Route("~/api/eliminarInventario/{numInventario}")]
+        public async Task<IHttpActionResult> EliminarInventario(string numInventario)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    Usuarios usuario = ctx.Usuarios.Find(user.Id);
+                    ctx.SP_EliminarInvenario(numInventario);
+                    var existeInventario = ctx.InventariosCliente.FirstOrDefault(x => x.numInventario == numInventario);
+                    existeInventario.activo = false;
+                    existeInventario.fechaDesactivado = DateTime.Now;
+                    existeInventario.eliminadoPor = user.Id;
+                    ctx.SaveChanges();
+                    return Ok("Se elimino correctamente");
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 
         [HttpPost]
         [Route("~/api/Inventario")]
@@ -1609,6 +1634,7 @@ namespace AventasApi.Controllers
                             empresaId = cliente.EmpresaId,
                             codigoAsesor = usuario.usuario,
                             fechaCrea = DateTime.Now,
+                            activo = true,
                             fechaModificado = DateTime.Now,
                             completo = inventario.Completo
                         };
@@ -1620,6 +1646,15 @@ namespace AventasApi.Controllers
                                 productoId = detalle.IdProducto,
                                 codigoColor = detalle.CodigoColor,
                                 codigoTalla = detalle.CodigoTalla,
+                                cantidad = detalle.Cantidad
+                            });
+                        }
+
+                        foreach (var detalle in inventario.ProductosNoEncontrados)
+                        {
+                            nuevoInventario.ProductosNoEncontrados.Add(new ProductosNoEncontrados()
+                            {
+                                codigoBarra = detalle.CodBarra,
                                 cantidad = detalle.Cantidad
                             });
                         }
@@ -1648,7 +1683,7 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities context = new AVentasEntities())
                 {
-                    List<InventariosViewModel> inventarios = context.InventariosCliente.Where(p => p.codigoAsesor == codigoAsesor).Select(inv => new InventariosViewModel
+                    List<InventariosViewModel> inventarios = context.InventariosCliente.Where(p => p.codigoAsesor == codigoAsesor && p.activo == true).Select(inv => new InventariosViewModel
                     {
                         numInventario = inv.numInventario,
                         cliente = inv.codigoCliente,
@@ -1682,25 +1717,45 @@ namespace AventasApi.Controllers
 
                 using (var ctx = new AVentasEntities())
                 {
-                    List<ProductoBarra> listaProductos = new List<ProductoBarra>();
-                    Dictionary<int, double> pagadoMemory = new Dictionary<int, double>();
-                    foreach (var bar in model)
+                    List<ProductoXColeccionViewModel> listaProductos = new List<ProductoXColeccionViewModel>();
+
+                    var agrupadosPorCodigoBarra = model.GroupBy(m => m.CodBarra).Select(g => new CodigoBarrasViewModel
+                    {
+                        CodBarra = g.Key,
+                        Cantidad = g.Count()
+                    }).ToList();
+                    foreach (var bar in agrupadosPorCodigoBarra)
                     {
                         var producto = GetProductoBarra(bar.CodBarra);
                         if (producto == null)
                         {
-                            return BadRequest($"Producto con código de barra {bar.CodBarra} no encontrado.");
+                            ProductoXColeccionViewModel noEncontrado = new ProductoXColeccionViewModel();
+                            noEncontrado.CodBarra = bar.CodBarra;
+                            noEncontrado.cantidad = bar.Cantidad;
+                            noEncontrado.encontrado = false;
+                            listaProductos.Add(noEncontrado);
                         }
-                        producto.codigoBarra = bar.CodBarra;
-                        if (!pagadoMemory.ContainsKey(cuotaAcuerdo.NumCuota))
+                        else
                         {
-                            pagadoMemory.Add(cuotaAcuerdo.NumCuota, 0);
+                            var prod = GetProductoInventario(empresa, producto.productoId, producto.colorId);
+                            if (prod != null)
+                            {
+                                prod.colorId = producto.colorId;
+                                prod.tallaId = producto.tallaId;
+                                prod.cantidad = bar.Cantidad;
+                                prod.encontrado = true;
+                                listaProductos.Add(prod);
+                            }
+                            else
+                            {
+                                ProductoXColeccionViewModel noEncontrado = new ProductoXColeccionViewModel();
+                                noEncontrado.CodBarra = bar.CodBarra;
+                                noEncontrado.cantidad = bar.Cantidad;
+                                noEncontrado.encontrado = false;
+                                listaProductos.Add(noEncontrado);
+                            }
                         }
-                        GetProductoInventario(empresa, producto.productoId, producto.colorId);
-
-                        listaProductos.Add(producto);
                     }
-
                     return Ok(listaProductos);
                 }
             }
@@ -1709,8 +1764,7 @@ namespace AventasApi.Controllers
                 return BadRequest("Ha ocurrido un error y no se pudo registar las asignaciones.");
             }
         }
-
-        public ProductoBarra GetProductoBarra(string codigo)
+        public Producto GetProductoBarra(string codigo)
         {
             try
             {
@@ -1718,7 +1772,7 @@ namespace AventasApi.Controllers
                 client.Timeout = 480 * 1000;  // Tiempo de espera en milisegundos
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("Accept", "application/json");
-                var response = client.Execute<List<ProductoBarra>>(request);
+                var response = client.Execute<List<Producto>>(request);
 
                 if (response.Data == null || response.Data.Count == 0)
                 {
@@ -1731,10 +1785,7 @@ namespace AventasApi.Controllers
                 return null;
             }
         }
-
-        [HttpGet]
-        [Route("~/api/productoInventario/{pais}/{producto}/{color}")]
-        public async Task<IHttpActionResult> GetProductoInventario(string pais, string producto, string color)
+        public ProductoXColeccionViewModel GetProductoInventario(string pais, string producto, string color)
         {
             try
             {
@@ -1745,22 +1796,10 @@ namespace AventasApi.Controllers
 
                         ProductoId = pxc.CodigoProducto,
                         idColeccion = pxc.IdColeccion,
-                        CantidadMinima = pxc.CantidadMinima == null ? 0 : pxc.CantidadMinima,
                         CodigoProducto = pxc.IdProducto,
                         NombreProducto = pxc.NombreProducto,
-                        StockVisible = pxc.StockVisible,
-                        InOut = pxc.InOut,
-                        Deshabilitado = pxc.Deshabilitado,
                         Prioridad = pxc.Prioridad,
-                        Nuevo = pxc.Nuevo,
-                        PiezaSuelta = pxc.PiezaSuelta,
-                        GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
                         GrupoTalla = pxc.CodigoGrupoTalla,
-                        Linea = new LineaViewModel
-                        {
-                            IdLinea = pxc.MaestroLinea.IdLinea,
-                            Linea = pxc.MaestroLinea.Linea,
-                        },
                         ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo != null).Select(txp => txp.TallasXGrupo)
                                              .Select(txp => new TallaViewModel
                                              {
@@ -1785,21 +1824,13 @@ namespace AventasApi.Controllers
                             Color = cpp.Rgb
                         }).ToList()
                     }).OrderByDescending(x => x.ListaTalla.Count()).ToList();
-                    return Ok(prod.First());
+                    return prod.First();
                 }
             }
             catch (Exception e)
             {
-                return BadRequest();
+                return null;
             }
-        }
-
-        private List<AsignacionxAsesor> ConvertirListaAsignacion(IEnumerable<AsignacionViewModel> model)
-        {
-            return model.Select(x => new AsignacionxAsesor()
-            {
-
-            }).ToList();
         }
 
         [HttpGet]
@@ -1926,6 +1957,12 @@ namespace AventasApi.Controllers
             {
 
             }
+        }
+        public class Producto
+        {
+            public string productoId { get; set; }
+            public string colorId { get; set; }
+            public string tallaId { get; set; }
         }
     }
 }

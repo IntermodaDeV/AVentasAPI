@@ -18,7 +18,7 @@ namespace DBData.Database
     public partial class AVentasEntities : DbContext
     {
         public AVentasEntities()
-            : base("name=AVentasEntities")
+           : base("name=AVentasEntities")
         {
             var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 1440;
         }
@@ -180,6 +180,7 @@ namespace DBData.Database
         public virtual DbSet<TipoIncidencia> TipoIncidencia { get; set; }
         public virtual DbSet<IncidenciaVisita> IncidenciaVisita { get; set; }
         public virtual DbSet<IncidenciaVisitaDetalle> IncidenciaVisitaDetalle { get; set; }
+        public virtual DbSet<ProductosNoEncontrados> ProductosNoEncontrados { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -733,6 +734,15 @@ namespace DBData.Database
                 new ObjectParameter("CLIENTE", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SPDesactivarDireccionesCliente", cLIENTEParameter);
+        }
+    
+        public virtual int SP_EliminarInvenario(string numInventario)
+        {
+            var numInventarioParameter = numInventario != null ?
+                new ObjectParameter("numInventario", numInventario) :
+                new ObjectParameter("numInventario", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_EliminarInvenario", numInventarioParameter);
         }
     }
 }

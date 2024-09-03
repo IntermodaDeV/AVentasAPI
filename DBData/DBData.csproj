@@ -459,6 +459,9 @@
     <Compile Include="Database\PRODUCTOSDEFACTURA_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ProductosNoEncontrados.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\ProductosxColeccion.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
