@@ -692,18 +692,6 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Error" Type="varchar(max)" />
           <Property Name="timeStamp" Type="datetime" />
         </EntityType>
-        <EntityType Name="ErroresLog">
-          <Key>
-            <PropertyRef Name="ErrorID" />
-          </Key>
-          <Property Name="ErrorID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ErrorCode" Type="nvarchar" MaxLength="50" />
-          <Property Name="Controlador" Type="nvarchar" MaxLength="50" />
-          <Property Name="Ruta" Type="nvarchar" MaxLength="250" />
-          <Property Name="Usuario" Type="nvarchar" MaxLength="50" />
-          <Property Name="fecha" Type="datetime" />
-          <Property Name="mensaje" Type="nvarchar(max)" />
-        </EntityType>
         <EntityType Name="Estado">
           <Key>
             <PropertyRef Name="IdEstado" />
@@ -1154,6 +1142,70 @@ warning 6002: The table/view 'AVentas.dbo.IncidenciaVisitaDetalle' does not have
           <Property Name="Moneda" Type="varchar" MaxLength="250" />
           <Property Name="Abreviacion" Type="varchar" MaxLength="3" />
         </EntityType>
+        <EntityType Name="MailModulos">
+          <Key>
+            <PropertyRef Name="ModuloId" />
+          </Key>
+          <Property Name="ModuloId" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="FechaCreacion" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MailProExe">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ServicioID" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ProximaEjecucion" Type="datetime" Nullable="false" />
+          <Property Name="FechaCreacion" Type="datetime" Nullable="false" />
+          <Property Name="UsuarioCreacion" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="IntervalType" Type="nvarchar" MaxLength="10" />
+          <Property Name="IntervalValue" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MailReceptors">
+          <Key>
+            <PropertyRef Name="ServicioID" />
+            <PropertyRef Name="EmpresaId" />
+            <PropertyRef Name="CorreoElectronico" />
+          </Key>
+          <Property Name="ServicioID" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="EmpresaId" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="CorreoElectronico" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FechaCreacion" Type="datetime" Nullable="false" />
+          <Property Name="UsuarioCreacion" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Estado" Type="nchar" MaxLength="1" />
+          <Property Name="FechaModifiacion" Type="date" />
+        </EntityType>
+        <EntityType Name="MailServicios">
+          <Key>
+            <PropertyRef Name="Modulo" />
+            <PropertyRef Name="ServicioID" />
+          </Key>
+          <Property Name="Modulo" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ServicioID" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="250" />
+          <Property Name="FechaCreacion" Type="datetime" Nullable="false" />
+          <Property Name="UsuarioCreacion" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Header" Type="nvarchar(max)" />
+          <Property Name="ValidaType" Type="nvarchar" MaxLength="1" />
+          <Property Name="Consulta" Type="nvarchar(max)" />
+          <Property Name="Footer" Type="nvarchar(max)" />
+          <Property Name="Estado" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="valida_empresaid" Type="nchar" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="MailSpConfig">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="ServicioID" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ServicioID" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="StoreProcedureName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ParamName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ParamValue" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="FechaCreacion" Type="datetime" />
+          <Property Name="ParamType" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
         <EntityType Name="MonedasxEmpresa">
           <Key>
             <PropertyRef Name="IdMonedaxEmpresa" />
@@ -1511,15 +1563,6 @@ warning 6002: The table/view 'AVentas.dbo.IncidenciaVisitaDetalle' does not have
           <Property Name="Estatus" Type="bit" />
           <Property Name="ColorBorde" Type="varchar" MaxLength="100" />
           <Property Name="ColorRelleno" Type="varchar" MaxLength="100" />
-        </EntityType>
-        <EntityType Name="ProductosNoEncontrados">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="inventarioId" Type="int" />
-          <Property Name="codigoBarra" Type="nvarchar" MaxLength="50" />
-          <Property Name="cantidad" Type="int" />
         </EntityType>
         <EntityType Name="ProductosxColeccion">
           <Key>
@@ -4125,6 +4168,23 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <!--Errors Found During Generation:
+warning 6035: The relationship 'FK_MailReceptors_ServiciosCorreo' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
+        <Association Name="FK_MailReceptors_ServiciosCorreo" />-->
+        <Association Name="FK_MailServicios_Modulo">
+          <End Role="MailModulos" Type="Self.MailModulos" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="MailServicios" Type="Self.MailServicios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MailModulos">
+              <PropertyRef Name="ModuloId" />
+            </Principal>
+            <Dependent Role="MailServicios">
+              <PropertyRef Name="Modulo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_MOTIVOSDEVOLUCION_EMPRESAID">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="0..1" />
           <End Role="MotivosDevolucion" Type="Self.MotivosDevolucion" Multiplicity="*" />
@@ -4314,18 +4374,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="RespuestaAnidadaDetalle">
               <PropertyRef Name="PreguntaOpcionesAnidadasId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_ProductosNoEncontrados_InventariosCliente_id">
-          <End Role="InventariosCliente" Type="Self.InventariosCliente" Multiplicity="0..1" />
-          <End Role="ProductosNoEncontrados" Type="Self.ProductosNoEncontrados" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="InventariosCliente">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="ProductosNoEncontrados">
-              <PropertyRef Name="inventarioId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -4749,6 +4797,9 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <!--Errors Found During Generation:
+warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the key of the table on the primary side of the relationship. The relationship was excluded.
+        <Association Name="FkMSP_MS" />-->
         <Association Name="GrupoImpuestoArticulo_Empresa">
           <End Role="Empresa" Type="Self.Empresa" Multiplicity="1" />
           <End Role="GrupoImpuestoArticulo" Type="Self.GrupoImpuestoArticulo" Multiplicity="*" />
@@ -4857,9 +4908,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
         </Function>
-        <Function Name="SP_EliminarInvenario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="numInventario" Type="nvarchar" Mode="In" />
-        </Function>
         <Function Name="SP_FacturasxCliente_UpdateSaldoXCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
           <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
@@ -4881,6 +4929,13 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
         <Function Name="SP_LimpiarInventarioFactura" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="FACTURA" Type="varchar" Mode="In" />
         </Function>
+        
+        
+        
+        
+        
+        
+        
         <Function Name="SP_ObtencionFacturas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="codigoProducto" Type="varchar" Mode="In" />
           <Parameter Name="color" Type="varchar" Mode="In" />
@@ -4894,12 +4949,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
         </Function>
         <Function Name="SP_ObtenerInventarioIncompleto" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="cliente" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="SP_ObtenerProducto" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="producto" Type="nvarchar" Mode="In" />
-          <Parameter Name="talla" Type="nvarchar" Mode="In" />
-          <Parameter Name="color" Type="nvarchar" Mode="In" />
-          <Parameter Name="empresa" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="SP_ObtenerProductosRMA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="rma" Type="varchar" Mode="In" />
@@ -5000,7 +5049,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="EmpresaTransporte" EntityType="Self.EmpresaTransporte" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Encuesta" EntityType="Self.Encuesta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Errores" EntityType="Self.Errores" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ErroresLog" EntityType="Self.ErroresLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Estado" EntityType="Self.Estado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EstadosPedido" EntityType="Self.EstadosPedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FacturasEnCuotasAcuerdos" EntityType="Self.FacturasEnCuotasAcuerdos" Schema="dbo" store:Type="Tables" />
@@ -5034,6 +5082,11 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="MaestroGrupoPrecio" EntityType="Self.MaestroGrupoPrecio" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaestroLinea" EntityType="Self.MaestroLinea" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MaestroMoneda" EntityType="Self.MaestroMoneda" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MailModulos" EntityType="Self.MailModulos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MailProExe" EntityType="Self.MailProExe" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MailReceptors" EntityType="Self.MailReceptors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MailServicios" EntityType="Self.MailServicios" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MailSpConfig" EntityType="Self.MailSpConfig" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MonedasxEmpresa" EntityType="Self.MonedasxEmpresa" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MotivosDevConAprobacion" EntityType="Self.MotivosDevConAprobacion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MotivosDevolucion" EntityType="Self.MotivosDevolucion" Schema="dbo" store:Type="Tables" />
@@ -5056,7 +5109,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <EntitySet Name="PreguntasOpciones" EntityType="Self.PreguntasOpciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PreguntasOpcionesAnidadas" EntityType="Self.PreguntasOpcionesAnidadas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PrioridadAsignacion" EntityType="Self.PrioridadAsignacion" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ProductosNoEncontrados" EntityType="Self.ProductosNoEncontrados" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductosxColeccion" EntityType="Self.ProductosxColeccion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PromesaPago" EntityType="Self.PromesaPago" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RazonesNoVenta" EntityType="Self.RazonesNoVenta" Schema="dbo" store:Type="Tables" />
@@ -5872,6 +5924,10 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="LogSesion" EntitySet="LogSesion" />
           </AssociationSet>
+          <AssociationSet Name="FK_MailServicios_Modulo" Association="Self.FK_MailServicios_Modulo">
+            <End Role="MailModulos" EntitySet="MailModulos" />
+            <End Role="MailServicios" EntitySet="MailServicios" />
+          </AssociationSet>
           <AssociationSet Name="FK_MOTIVOSDEVOLUCION_EMPRESAID" Association="Self.FK_MOTIVOSDEVOLUCION_EMPRESAID">
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="MotivosDevolucion" EntitySet="MotivosDevolucion" />
@@ -5935,10 +5991,6 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <AssociationSet Name="FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID" Association="Self.FK_PREGUNTAOPCIONESANIDADA_ID_RESPUESTADETALLE_PREGUNTAOPCIONESID">
             <End Role="PreguntasOpcionesAnidadas" EntitySet="PreguntasOpcionesAnidadas" />
             <End Role="RespuestaAnidadaDetalle" EntitySet="RespuestaAnidadaDetalle" />
-          </AssociationSet>
-          <AssociationSet Name="FK_ProductosNoEncontrados_InventariosCliente_id" Association="Self.FK_ProductosNoEncontrados_InventariosCliente_id">
-            <End Role="InventariosCliente" EntitySet="InventariosCliente" />
-            <End Role="ProductosNoEncontrados" EntitySet="ProductosNoEncontrados" />
           </AssociationSet>
           <AssociationSet Name="FK_RazonesNoVenta_IdRazonNoVenta" Association="Self.FK_RazonesNoVenta_IdRazonNoVenta">
             <End Role="RazonesNoVenta" EntitySet="RazonesNoVenta" />
@@ -8723,25 +8775,19 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <FunctionImport Name="SPDesactivarDireccionesCliente">
           <Parameter Name="CLIENTE" Mode="In" Type="String" />
           </FunctionImport>
-          <EntitySet Name="ProductosNoEncontrados" EntityType="AventasModel.ProductosNoEncontrados" />
-          <AssociationSet Name="FK_ProductosNoEncontrados_InventariosCliente_id" Association="AventasModel.FK_ProductosNoEncontrados_InventariosCliente_id">
-            <End Role="InventariosCliente" EntitySet="InventariosCliente" />
-            <End Role="ProductosNoEncontrados" EntitySet="ProductosNoEncontrados" />
-          </AssociationSet>
+          <EntitySet Name="MailModulos" EntityType="AventasModel.MailModulos" />
+          <EntitySet Name="MailProExe" EntityType="AventasModel.MailProExe" />
+          <EntitySet Name="MailReceptors" EntityType="AventasModel.MailReceptors" />
+          <EntitySet Name="MailServicios" EntityType="AventasModel.MailServicios" />
+          <EntitySet Name="MailSpConfig" EntityType="AventasModel.MailSpConfig" />
           <AssociationSet Name="FK_tbInventariosCliente_Usuarios_Id" Association="AventasModel.FK_tbInventariosCliente_Usuarios_Id">
             <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="InventariosCliente" EntitySet="InventariosCliente" />
           </AssociationSet>
-          <FunctionImport Name="SP_EliminarInvenario">
-          <Parameter Name="numInventario" Mode="In" Type="String" />
-          </FunctionImport>
-          <FunctionImport Name="SP_ObtenerProducto" ReturnType="Collection(AventasModel.SP_ObtenerProducto_Result)">
-            <Parameter Name="producto" Mode="In" Type="String" />
-            <Parameter Name="talla" Mode="In" Type="String" />
-            <Parameter Name="color" Mode="In" Type="String" />
-            <Parameter Name="empresa" Mode="In" Type="String" />
-          </FunctionImport>
-          <EntitySet Name="ErroresLog" EntityType="AventasModel.ErroresLog" />
+          <AssociationSet Name="FK_MailServicios_Modulo" Association="AventasModel.FK_MailServicios_Modulo">
+            <End Role="MailModulos" EntitySet="MailModulos" />
+            <End Role="MailServicios" EntitySet="MailServicios" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -12603,9 +12649,8 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
           <Property Name="fechaDesactivado" Type="DateTime" Precision="3" />
           <Property Name="activo" Type="Boolean" />
           <Property Name="eliminadoPor" Type="Int32" />
-          <NavigationProperty Name="ProductosNoEncontrados" Relationship="AventasModel.FK_ProductosNoEncontrados_InventariosCliente_id" FromRole="InventariosCliente" ToRole="ProductosNoEncontrados" />
-          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_tbInventariosCliente_Usuarios_Id" FromRole="InventariosCliente" ToRole="Usuarios" />
           <Property Name="cantidadProductos" Type="Int32" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_tbInventariosCliente_Usuarios_Id" FromRole="InventariosCliente" ToRole="Usuarios" />
         </EntityType>
         <Association Name="FK_tbInventariosCliente_Clientes_CodigoCliente">
           <End Type="AventasModel.Clientes" Role="Clientes" Multiplicity="1" />
@@ -12781,28 +12826,72 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="ProductosNoEncontrados">
+        <EntityType Name="MailModulos">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="ModuloId" />
           </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="inventarioId" Type="Int32" />
-          <Property Name="codigoBarra" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="cantidad" Type="Int32" />
-          <NavigationProperty Name="InventariosCliente" Relationship="AventasModel.FK_ProductosNoEncontrados_InventariosCliente_id" FromRole="ProductosNoEncontrados" ToRole="InventariosCliente" />
+          <Property Name="ModuloId" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="MailServicios" Relationship="AventasModel.FK_MailServicios_Modulo" FromRole="MailModulos" ToRole="MailServicios" />
         </EntityType>
-        <Association Name="FK_ProductosNoEncontrados_InventariosCliente_id">
-          <End Type="AventasModel.InventariosCliente" Role="InventariosCliente" Multiplicity="0..1" />
-          <End Type="AventasModel.ProductosNoEncontrados" Role="ProductosNoEncontrados" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="InventariosCliente">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="ProductosNoEncontrados">
-              <PropertyRef Name="inventarioId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
+        <EntityType Name="MailProExe">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServicioID" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ProximaEjecucion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="FechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UsuarioCreacion" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IntervalType" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="IntervalValue" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MailReceptors">
+          <Key>
+            <PropertyRef Name="ServicioID" />
+            <PropertyRef Name="EmpresaId" />
+            <PropertyRef Name="CorreoElectronico" />
+          </Key>
+          <Property Name="ServicioID" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="EmpresaId" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="CorreoElectronico" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="FechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UsuarioCreacion" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Estado" Type="String" MaxLength="1" FixedLength="true" Unicode="true" />
+          <Property Name="FechaModifiacion" Type="DateTime" Precision="0" />
+        </EntityType>
+        <EntityType Name="MailServicios">
+          <Key>
+            <PropertyRef Name="Modulo" />
+            <PropertyRef Name="ServicioID" />
+          </Key>
+          <Property Name="Modulo" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ServicioID" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UsuarioCreacion" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Header" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ValidaType" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+          <Property Name="Consulta" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Footer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Estado" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="valida_empresaid" Type="String" MaxLength="1" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="MailModulos" Relationship="AventasModel.FK_MailServicios_Modulo" FromRole="MailServicios" ToRole="MailModulos" />
+        </EntityType>
+        <EntityType Name="MailSpConfig">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="ServicioID" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ServicioID" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="StoreProcedureName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ParamName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ParamValue" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+          <Property Name="ParamType" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+        </EntityType>
         <Association Name="FK_tbInventariosCliente_Usuarios_Id">
           <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
           <End Type="AventasModel.InventariosCliente" Role="InventariosCliente" Multiplicity="*" />
@@ -12815,40 +12904,20 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <ComplexType Name="SP_ObtenerProducto_Result">
-          <Property Type="Int32" Name="IdProducto" Nullable="false" />
-          <Property Type="String" Name="CodigoProducto" Nullable="true" MaxLength="250" />
-          <Property Type="Int32" Name="IdColeccion" Nullable="true" />
-          <Property Type="String" Name="NombreProducto" Nullable="true" />
-          <Property Type="String" Name="IdLinea" Nullable="true" MaxLength="250" />
-          <Property Type="String" Name="CodigoGrupoTalla" Nullable="true" MaxLength="250" />
-          <Property Type="Boolean" Name="BackOrder" Nullable="true" />
-          <Property Type="Decimal" Name="Multiplo" Nullable="true" Precision="18" Scale="2" />
-          <Property Type="String" Name="IdEdad" Nullable="true" MaxLength="250" />
-          <Property Type="String" Name="GrupoImpuesto" Nullable="true" MaxLength="150" />
-          <Property Type="String" Name="EmpresaId" Nullable="true" MaxLength="250" />
-          <Property Type="Boolean" Name="VisibleParaVentas" Nullable="false" />
-          <Property Type="Decimal" Name="CantidadMinima" Nullable="true" Precision="18" Scale="2" />
-          <Property Type="Boolean" Name="StockVisible" Nullable="false" />
-          <Property Type="Boolean" Name="InOut" Nullable="false" />
-          <Property Type="Boolean" Name="Deshabilitado" Nullable="false" />
-          <Property Type="Int32" Name="Prioridad" Nullable="false" />
-          <Property Type="Boolean" Name="TieneVentaMaxima" Nullable="false" />
-          <Property Type="Boolean" Name="Nuevo" Nullable="false" />
-          <Property Type="Boolean" Name="PiezaSuelta" Nullable="false" />
-        </ComplexType>
-        <EntityType Name="ErroresLog">
-          <Key>
-            <PropertyRef Name="ErrorID" />
-          </Key>
-          <Property Name="ErrorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ErrorCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Controlador" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Ruta" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="Usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="fecha" Type="DateTime" Precision="3" />
-          <Property Name="mensaje" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
+        <Association Name="FK_MailServicios_Modulo">
+          <End Type="AventasModel.MailModulos" Role="MailModulos" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="AventasModel.MailServicios" Role="MailServicios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MailModulos">
+              <PropertyRef Name="ModuloId" />
+            </Principal>
+            <Dependent Role="MailServicios">
+              <PropertyRef Name="Modulo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -15494,53 +15563,68 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SPDesactivarDireccionesCliente" FunctionName="AventasModel.Store.SPDesactivarDireccionesCliente" />
-          <EntitySetMapping Name="ProductosNoEncontrados">
-            <EntityTypeMapping TypeName="AventasModel.ProductosNoEncontrados">
-              <MappingFragment StoreEntitySet="ProductosNoEncontrados">
-                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
-                <ScalarProperty Name="codigoBarra" ColumnName="codigoBarra" />
-                <ScalarProperty Name="inventarioId" ColumnName="inventarioId" />
-                <ScalarProperty Name="id" ColumnName="id" />
+          <EntitySetMapping Name="MailModulos">
+            <EntityTypeMapping TypeName="AventasModel.MailModulos">
+              <MappingFragment StoreEntitySet="MailModulos">
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="ModuloId" ColumnName="ModuloId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="SP_EliminarInvenario" FunctionName="AventasModel.Store.SP_EliminarInvenario" />
-          <FunctionImportMapping FunctionImportName="SP_ObtenerProducto" FunctionName="AventasModel.Store.SP_ObtenerProducto">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerProducto_Result">
-                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
-                <ScalarProperty Name="CodigoProducto" ColumnName="CodigoProducto" />
-                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
-                <ScalarProperty Name="NombreProducto" ColumnName="NombreProducto" />
-                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
-                <ScalarProperty Name="CodigoGrupoTalla" ColumnName="CodigoGrupoTalla" />
-                <ScalarProperty Name="BackOrder" ColumnName="BackOrder" />
-                <ScalarProperty Name="Multiplo" ColumnName="Multiplo" />
-                <ScalarProperty Name="IdEdad" ColumnName="IdEdad" />
-                <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />
+          <EntitySetMapping Name="MailProExe">
+            <EntityTypeMapping TypeName="AventasModel.MailProExe">
+              <MappingFragment StoreEntitySet="MailProExe">
+                <ScalarProperty Name="IntervalValue" ColumnName="IntervalValue" />
+                <ScalarProperty Name="IntervalType" ColumnName="IntervalType" />
+                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="ProximaEjecucion" ColumnName="ProximaEjecucion" />
+                <ScalarProperty Name="ServicioID" ColumnName="ServicioID" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MailReceptors">
+            <EntityTypeMapping TypeName="AventasModel.MailReceptors">
+              <MappingFragment StoreEntitySet="MailReceptors">
+                <ScalarProperty Name="FechaModifiacion" ColumnName="FechaModifiacion" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="CorreoElectronico" ColumnName="CorreoElectronico" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
-                <ScalarProperty Name="VisibleParaVentas" ColumnName="VisibleParaVentas" />
-                <ScalarProperty Name="CantidadMinima" ColumnName="CantidadMinima" />
-                <ScalarProperty Name="StockVisible" ColumnName="StockVisible" />
-                <ScalarProperty Name="InOut" ColumnName="InOut" />
-                <ScalarProperty Name="Deshabilitado" ColumnName="Deshabilitado" />
-                <ScalarProperty Name="Prioridad" ColumnName="Prioridad" />
-                <ScalarProperty Name="TieneVentaMaxima" ColumnName="TieneVentaMaxima" />
-                <ScalarProperty Name="Nuevo" ColumnName="Nuevo" />
-                <ScalarProperty Name="PiezaSuelta" ColumnName="PiezaSuelta" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <EntitySetMapping Name="ErroresLog">
-            <EntityTypeMapping TypeName="AventasModel.ErroresLog">
-              <MappingFragment StoreEntitySet="ErroresLog">
-                <ScalarProperty Name="mensaje" ColumnName="mensaje" />
-                <ScalarProperty Name="fecha" ColumnName="fecha" />
-                <ScalarProperty Name="Usuario" ColumnName="Usuario" />
-                <ScalarProperty Name="Ruta" ColumnName="Ruta" />
-                <ScalarProperty Name="Controlador" ColumnName="Controlador" />
-                <ScalarProperty Name="ErrorCode" ColumnName="ErrorCode" />
-                <ScalarProperty Name="ErrorID" ColumnName="ErrorID" />
+                <ScalarProperty Name="ServicioID" ColumnName="ServicioID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MailServicios">
+            <EntityTypeMapping TypeName="AventasModel.MailServicios">
+              <MappingFragment StoreEntitySet="MailServicios">
+                <ScalarProperty Name="valida_empresaid" ColumnName="valida_empresaid" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Footer" ColumnName="Footer" />
+                <ScalarProperty Name="Consulta" ColumnName="Consulta" />
+                <ScalarProperty Name="ValidaType" ColumnName="ValidaType" />
+                <ScalarProperty Name="Header" ColumnName="Header" />
+                <ScalarProperty Name="UsuarioCreacion" ColumnName="UsuarioCreacion" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="ServicioID" ColumnName="ServicioID" />
+                <ScalarProperty Name="Modulo" ColumnName="Modulo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MailSpConfig">
+            <EntityTypeMapping TypeName="AventasModel.MailSpConfig">
+              <MappingFragment StoreEntitySet="MailSpConfig">
+                <ScalarProperty Name="ParamType" ColumnName="ParamType" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="ParamValue" ColumnName="ParamValue" />
+                <ScalarProperty Name="ParamName" ColumnName="ParamName" />
+                <ScalarProperty Name="StoreProcedureName" ColumnName="StoreProcedureName" />
+                <ScalarProperty Name="ServicioID" ColumnName="ServicioID" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

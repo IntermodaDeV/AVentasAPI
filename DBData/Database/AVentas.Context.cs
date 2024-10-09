@@ -20,9 +20,8 @@ namespace DBData.Database
         public AVentasEntities()
             : base("name=AVentasEntities")
         {
-            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 1440;
         }
-
+    
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
@@ -180,8 +179,11 @@ namespace DBData.Database
         public virtual DbSet<TipoIncidencia> TipoIncidencia { get; set; }
         public virtual DbSet<IncidenciaVisita> IncidenciaVisita { get; set; }
         public virtual DbSet<IncidenciaVisitaDetalle> IncidenciaVisitaDetalle { get; set; }
-        public virtual DbSet<ProductosNoEncontrados> ProductosNoEncontrados { get; set; }
-        public virtual DbSet<ErroresLog> ErroresLog { get; set; }
+        public virtual DbSet<MailModulos> MailModulos { get; set; }
+        public virtual DbSet<MailProExe> MailProExe { get; set; }
+        public virtual DbSet<MailReceptors> MailReceptors { get; set; }
+        public virtual DbSet<MailServicios> MailServicios { get; set; }
+        public virtual DbSet<MailSpConfig> MailSpConfig { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -735,36 +737,6 @@ namespace DBData.Database
                 new ObjectParameter("CLIENTE", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SPDesactivarDireccionesCliente", cLIENTEParameter);
-        }
-    
-        public virtual int SP_EliminarInvenario(string numInventario)
-        {
-            var numInventarioParameter = numInventario != null ?
-                new ObjectParameter("numInventario", numInventario) :
-                new ObjectParameter("numInventario", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_EliminarInvenario", numInventarioParameter);
-        }
-    
-        public virtual ObjectResult<SP_ObtenerProducto_Result> SP_ObtenerProducto(string producto, string talla, string color, string empresa)
-        {
-            var productoParameter = producto != null ?
-                new ObjectParameter("producto", producto) :
-                new ObjectParameter("producto", typeof(string));
-    
-            var tallaParameter = talla != null ?
-                new ObjectParameter("talla", talla) :
-                new ObjectParameter("talla", typeof(string));
-    
-            var colorParameter = color != null ?
-                new ObjectParameter("color", color) :
-                new ObjectParameter("color", typeof(string));
-    
-            var empresaParameter = empresa != null ?
-                new ObjectParameter("empresa", empresa) :
-                new ObjectParameter("empresa", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerProducto_Result>("SP_ObtenerProducto", productoParameter, tallaParameter, colorParameter, empresaParameter);
         }
     }
 }

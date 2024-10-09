@@ -1333,8 +1333,9 @@ namespace AventasApi.Controllers
                 var usuario = ctx.Usuarios.FirstOrDefault(x => x.usuario == imagen.UsuarioAsesor);
                 var moneda = ctx.MonedasxEmpresa.FirstOrDefault(x => x.EmpresaId == usuario.EmpresaId && x.IdMoneda != "USD");
 
-                string emailOrigen = "intermodagiraasesores@hotmail.com";
-                string contrasena = "1n73rm0d4_2022";
+                string emailOrigen = "sistema@intermoda.com.hn";
+                string contrasena = "&odRad!=PlW7Iga";
+
 
                 string htmlBody = @"
                     <!DOCTYPE html>
@@ -1516,8 +1517,9 @@ namespace AventasApi.Controllers
                 var documento = ctx.Empresa.FirstOrDefault(x => x.EmpresaId == usuario.EmpresaId);
                 var moneda = ctx.MonedasxEmpresa.FirstOrDefault(x => x.EmpresaId == usuario.EmpresaId && x.IdMoneda != "USD");
 
-                string emailOrigen = "intermodagiraasesores@hotmail.com";
-                string contrasena = "1n73rm0d4_2022";
+
+                string emailOrigen = "sistema@intermoda.com.hn";
+                string contrasena = "&odRad!=PlW7Iga";
 
                 string htmlBody = @"
                     <!DOCTYPE html>

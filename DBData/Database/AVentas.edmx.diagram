@@ -365,10 +365,6 @@
         <EntityTypeShape EntityType="AventasModel.DireccionesCliente" Width="1.5" PointX="27.375" PointY="14.75" />
         <EntityTypeShape EntityType="AventasModel.DetalleFacturado" Width="1.5" PointX="29.375" PointY="0.75" />
         <EntityTypeShape EntityType="AventasModel.InventarioDetalle" Width="1.5" PointX="30.5" PointY="48.125" />
-        <EntityTypeShape EntityType="AventasModel.InventariosCliente" Width="1.5" PointX="23.25" PointY="45.625" />
-        <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Clientes_CodigoCliente" />
-        <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Empresa_EmpresaId" />
-        <AssociationConnector Association="AventasModel.FK_InventarioDetalle_InventariosCliente_id" />
         <AssociationConnector Association="AventasModel.FK_InventarioDetalle_ProductosxColeccion_IdProducto" />
         <EntityTypeShape EntityType="AventasModel.EstadosIncidencia" Width="1.5" PointX="19.625" PointY="72.75" />
         <EntityTypeShape EntityType="AventasModel.TipoIncidencia" Width="1.5" PointX="19.625" PointY="66" />
@@ -378,10 +374,19 @@
         <AssociationConnector Association="AventasModel.FK_TipoIncidencia" />
         <EntityTypeShape EntityType="AventasModel.IncidenciaVisitaDetalle" Width="1.5" PointX="24.125" PointY="62" />
         <AssociationConnector Association="AventasModel.FK_IncidenciaVisita" />
-        <EntityTypeShape EntityType="AventasModel.ProductosNoEncontrados" Width="1.5" PointX="25.5" PointY="65.625" />
-        <AssociationConnector Association="AventasModel.FK_ProductosNoEncontrados_InventariosCliente_id" />
+        <EntityTypeShape EntityType="AventasModel.MailProExe" Width="1.5" PointX="29.375" PointY="5.75" />
+        <EntityTypeShape EntityType="AventasModel.MailReceptors" Width="1.5" PointX="29.375" PointY="9.75" />
+        <EntityTypeShape EntityType="AventasModel.MailServicios" Width="1.5" PointX="29.375" PointY="12.75" />
+        <EntityTypeShape EntityType="AventasModel.MailModulos" Width="1.5" PointX="27.125" PointY="56.5" />
+        <AssociationConnector Association="AventasModel.FK_MailServicios_Modulo" />
+        <EntityTypeShape EntityType="AventasModel.MailSpConfig" Width="1.5" PointX="29.375" PointY="17.75" />
+        <EntityTypeShape EntityType="AventasModel.InventariosCliente" Width="1.5" PointX="30.25" PointY="28.375" />
+        <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Clientes_CodigoCliente" />
+        <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Empresa_EmpresaId" />
+        <AssociationConnector Association="AventasModel.FK_InventarioDetalle_InventariosCliente_id" />
         <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Usuarios_Id" />
-        <EntityTypeShape EntityType="AventasModel.ErroresLog" Width="1.5" PointX="30.375" PointY="5.75" />
+        <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Usuarios_Id" />
+        <AssociationConnector Association="AventasModel.FK_MailServicios_Modulo" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
