@@ -19,6 +19,8 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.IO;
 using AventasApi.Utils;
+using System.Net;
+
 namespace AventasApi.Controllers
 {
     //[Auth]
@@ -1526,6 +1528,7 @@ namespace AventasApi.Controllers
         [Route("~/api/ultimoInventario/{cliente}")]
         public async Task<IHttpActionResult> GetUltimoInventario(string cliente)
         {
+            //Método para obtener la información del último inventario para el cliente seleccionado.
             try
             {
                 using (var ctx = new AVentasEntities())
@@ -1540,7 +1543,8 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                await ErrorLogger.LogErrorAsync(errorCode: "IT01", controlador: "PedidosXClienteController", ruta: "api/ultimoInventario/{cliente}", usuario: "", mensaje: e.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT01", Message = "Ocurrió un error al procesar la solicitud." });
             }
         }
 
@@ -1548,6 +1552,7 @@ namespace AventasApi.Controllers
         [Route("~/api/inventarioIncompleto/{cliente}")]
         public async Task<IHttpActionResult> GetInventario(string cliente)
         {
+           
             try
             {
                 using (var ctx = new AVentasEntities())
@@ -1558,38 +1563,86 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                await ErrorLogger.LogErrorAsync(errorCode: "IT02", controlador: "PedidosXClienteController", ruta: "api/inventarioIncompleto/{cliente}", usuario: "", mensaje: e.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT02", Message = "Ocurrió un error al procesar la solicitud." });
             }
         }
-        
+
         [HttpGet]
-        [Route("~/api/eliminarInventario/{numInventario}")]
-        public async Task<IHttpActionResult> EliminarInventario(string numInventario)
+        [Route("~/api/pendienteProcesar/{cliente}")]
+        public async Task<IHttpActionResult> GetInventarioPendienteProcesar(string cliente)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    Usuarios usuario = ctx.Usuarios.Find(user.Id);
-                    ctx.SP_EliminarInvenario(numInventario);
-                    var existeInventario = ctx.InventariosCliente.FirstOrDefault(x => x.numInventario == numInventario);
-                    existeInventario.activo = false;
-                    existeInventario.fechaDesactivado = DateTime.Now;
-                    existeInventario.eliminadoPor = user.Id;
-                    ctx.SaveChanges();
-                    return Ok("Se elimino correctamente");
+                    var respuesta = ctx.InventariosCliente
+                                    .Where(x => x.codigoCliente == cliente && x.InventarioDetalle.Any(a => a.procesado == false))
+                                    .Select(inventario => new
+                                    {
+                                        NumInventario = inventario.numInventario,
+                                        Procesados = inventario.InventarioDetalle.Count(x => x.procesado == true),
+                                        NoProcesados = inventario.InventarioDetalle.Count(x => x.procesado == false),
+                                        Encontrados = inventario.InventarioDetalle.Count(x => x.encontrado == true),
+                                        NoEncontrados = inventario.InventarioDetalle.Count(x => x.encontrado == false),
+                                        CodigosBarrasAgrupados = inventario.cantidadProductos,
+                                        TotalCodigos = inventario.InventarioDetalle.Sum(x => x.cantidad)
+                                    })
+                                    .FirstOrDefault();
+
+                    if (respuesta == null)
+                    {
+                        return Ok();
+                    }
+
+                    return Ok(new[] { respuesta });
                 }
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                await ErrorLogger.LogErrorAsync(errorCode: "IT03", controlador: "PedidosXClienteController", ruta: "api/pendienteProcesar/{cliente}", usuario: "", mensaje: e.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT03", Message = "Ocurrió un error al procesar la solicitud." });
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/eliminarInventario/{numInventario}")]
+        public async Task<IHttpActionResult> EliminarInventario(string numInventario)
+        {
+            //Método para eliminar el detalle del inventario seleccionado.
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var usuario = await ctx.Usuarios.FindAsync(user.Id); 
+                
+                    var existeInventario = await ctx.InventariosCliente.FirstOrDefaultAsync(x => x.numInventario == numInventario);
+                    if (existeInventario != null)
+                    {
+                        existeInventario.activo = false;
+                        existeInventario.fechaDesactivado = DateTime.Now;
+                        existeInventario.eliminadoPor = user.Id;
+                        ctx.SP_EliminarInvenario(numInventario);
+                        await ctx.SaveChangesAsync();
+                        return Ok("Se eliminó correctamente");
+                    }
+                    else
+                    {
+                        return BadRequest("Inventario no encontrado");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await ErrorLogger.LogErrorAsync(errorCode: "IT04", controlador: "PedidosXClienteController", ruta: "api/eliminarInventario/{numInventario}", usuario: "", mensaje: e.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT04", Message = "Ocurrió un error al procesar la solicitud." });
             }
         }
 
         [HttpPost]
         [Route("~/api/Inventario")]
-        public IHttpActionResult PostInventario([FromBody] InventarioPostModel inventario)
+        public async Task<IHttpActionResult> PostInventario([FromBody] InventarioPostModel inventario)
         {
             try
             {
@@ -1605,11 +1658,11 @@ namespace AventasApi.Controllers
                     {
                         existeInventario.fechaModificado = DateTime.Now;
                         existeInventario.completo = inventario.Completo;
+                        existeInventario.cantidadProductos = inventario.DetalleInventario.Count();
                         inventarioId = existeInventario.id;
                         var detalle = ctx.InventarioDetalle.Where(x => x.inventarioId == inventarioId).ToList();
                         ctx.InventarioDetalle.RemoveRange(detalle);
                         InventarioDB = existeInventario;
-
 
                         foreach (var inv in inventario.DetalleInventario)
                         {
@@ -1619,7 +1672,9 @@ namespace AventasApi.Controllers
                                 productoId = inv.IdProducto,
                                 codigoColor = inv.CodigoColor,
                                 codigoTalla = inv.CodigoTalla,
-                                cantidad = inv.Cantidad
+                                cantidad = inv.Cantidad,
+                                procesado = true,
+                                encontrado = true
                             });
                         }
                         ctx.SaveChanges();
@@ -1635,6 +1690,7 @@ namespace AventasApi.Controllers
                             codigoAsesor = usuario.usuario,
                             fechaCrea = DateTime.Now,
                             activo = true,
+                            cantidadProductos = inventario.DetalleInventario.Count(),
                             fechaModificado = DateTime.Now,
                             completo = inventario.Completo
                         };
@@ -1646,16 +1702,9 @@ namespace AventasApi.Controllers
                                 productoId = detalle.IdProducto,
                                 codigoColor = detalle.CodigoColor,
                                 codigoTalla = detalle.CodigoTalla,
-                                cantidad = detalle.Cantidad
-                            });
-                        }
-
-                        foreach (var detalle in inventario.ProductosNoEncontrados)
-                        {
-                            nuevoInventario.ProductosNoEncontrados.Add(new ProductosNoEncontrados()
-                            {
-                                codigoBarra = detalle.CodBarra,
-                                cantidad = detalle.Cantidad
+                                cantidad = detalle.Cantidad,
+                                procesado = true,
+                                encontrado = true
                             });
                         }
 
@@ -1671,13 +1720,14 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.ToString());
+                await ErrorLogger.LogErrorAsync(errorCode: "IT05", controlador: "PedidosXClienteController", ruta: "api/Inventario", usuario: "", mensaje: e.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT05", Message = "Ocurrió un error al procesar la solicitud." });
             }
         }
 
         [HttpGet]
         [Route("~/api/Inventario/{codigoAsesor}")]
-        public IHttpActionResult GetInventarios(string codigoAsesor)
+        public async Task<IHttpActionResult> GetInventarios(string codigoAsesor)
         {
             try
             {
@@ -1698,18 +1748,17 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.ToString());
+                await ErrorLogger.LogErrorAsync(errorCode: "IT06", controlador: "PedidosXClienteController", ruta: "api/Inventario/{codigoAsesor}", usuario: "", mensaje: e.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT06", Message = "Ocurrió un error al procesar la solicitud." });
             }
         }
 
         [HttpPost]
-        [Route("~/api/inventario/cargar/{empresa}")]
-        public async Task<IHttpActionResult> CargarInventario([FromBody] IEnumerable<CodigoBarrasViewModel> model, string empresa)
+        [Route("~/api/inventario/cargar/{codAsesor}/{codCliente}/{fecha}")]
+        public async Task<IHttpActionResult> CargarInventarioExcel([FromBody] IEnumerable<CodigoBarrasViewModel> model, string codCliente, string codAsesor, DateTime fecha)
         {
             try
             {
-                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-
                 if (model == null || model.Count() == 0)
                 {
                     return BadRequest("No se puede registrar una lista vacia.");
@@ -1717,51 +1766,70 @@ namespace AventasApi.Controllers
 
                 using (var ctx = new AVentasEntities())
                 {
-                    List<ProductoXColeccionViewModel> listaProductos = new List<ProductoXColeccionViewModel>();
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var usuario = await ctx.Usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.Id == user.Id);
+                    var cliente = await ctx.Clientes.AsNoTracking().FirstOrDefaultAsync(c => c.CodigoCliente == codCliente);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(a => a.CodigoAsesor == codAsesor);
+                    var correlativo = $"{asesor.InicialesNombre}-1{(asesor.CorrelativoInventario ?? 0).ToString("D5")}";
 
                     var agrupadosPorCodigoBarra = model.GroupBy(m => m.CodBarra).Select(g => new CodigoBarrasViewModel
                     {
                         CodBarra = g.Key,
                         Cantidad = g.Count()
                     }).ToList();
+
+                    var nuevoInventario = new InventariosCliente()
+                    {
+                        codigoCliente = cliente.CodigoCliente,
+                        numInventario = correlativo,
+                        empresaId = cliente.EmpresaId,
+                        codigoAsesor = codAsesor,
+                        fechaCrea = fecha,
+                        activo = true,
+                        fechaModificado = DateTime.Now,
+                        completo = true,
+                        cantidadProductos = agrupadosPorCodigoBarra.Count()
+                    };
+
+                    ctx.InventariosCliente.Add(nuevoInventario);
+                    int rowAffected = ctx.SaveChanges();
+                    if (rowAffected > 0)
+                    {
+                        AsyncSqlInsert.ValidarCorrelativoInventario(codAsesor, asesor.EmpresaId);
+                    }
+
+
                     foreach (var bar in agrupadosPorCodigoBarra)
                     {
-                        var producto = GetProductoBarra(bar.CodBarra);
-                        if (producto == null)
+                        nuevoInventario.InventarioDetalle.Add(new InventarioDetalle()
                         {
-                            ProductoXColeccionViewModel noEncontrado = new ProductoXColeccionViewModel();
-                            noEncontrado.CodBarra = bar.CodBarra;
-                            noEncontrado.cantidad = bar.Cantidad;
-                            noEncontrado.encontrado = false;
-                            listaProductos.Add(noEncontrado);
-                        }
-                        else
-                        {
-                            var prod = GetProductoInventario(empresa, producto.productoId, producto.colorId);
-                            if (prod != null)
-                            {
-                                prod.colorId = producto.colorId;
-                                prod.tallaId = producto.tallaId;
-                                prod.cantidad = bar.Cantidad;
-                                prod.encontrado = true;
-                                listaProductos.Add(prod);
-                            }
-                            else
-                            {
-                                ProductoXColeccionViewModel noEncontrado = new ProductoXColeccionViewModel();
-                                noEncontrado.CodBarra = bar.CodBarra;
-                                noEncontrado.cantidad = bar.Cantidad;
-                                noEncontrado.encontrado = false;
-                                listaProductos.Add(noEncontrado);
-                            }
-                        }
+                            codigoBarra = bar.CodBarra,
+                            cantidad = bar.Cantidad,
+                            procesado = false,
+                            encontrado = false
+                        });
                     }
-                    return Ok(listaProductos);
+                    ctx.InventarioDetalle.AddRange(nuevoInventario.InventarioDetalle);
+                    ctx.SaveChanges();
+
+                    var respuesta = new
+                    {
+                        NumInventario = nuevoInventario.numInventario,
+                        Procesados = nuevoInventario.InventarioDetalle.Where(x => x.procesado == true).Count(),
+                        NoProcesados = nuevoInventario.InventarioDetalle.Where(x => x.procesado == false).Count(),
+                        Encontrados = nuevoInventario.InventarioDetalle.Where(x => x.encontrado == true).Count(),
+                        NoEncontrados = nuevoInventario.InventarioDetalle.Where(x => x.encontrado == false).Count(),
+                        CodigosBarrasAgrupados = agrupadosPorCodigoBarra.Count(),
+                        TotalCodigos = model.Count()
+                    };
+
+                    return Ok(new[] { respuesta });
                 }
             }
             catch (Exception e)
             {
-                return BadRequest("Ha ocurrido un error y no se pudo registar las asignaciones.");
+                await ErrorLogger.LogErrorAsync(errorCode: "IT07", controlador: "PedidosXClienteController", ruta: "api/inventario/cargar/{codAsesor}/{codCliente}/{fecha}", usuario: "", mensaje: e.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT07", Message = "Ocurrió un error al procesar la solicitud." });
             }
         }
         public Producto GetProductoBarra(string codigo)
@@ -1783,6 +1851,70 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return null;
+            }
+        }
+
+        [HttpGet]
+        [Route("~/api/inventario/sincronizarInventario/{codCliente}")]
+        public async Task<IHttpActionResult> CargarInventarioExcel(string codCliente)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var cliente = await ctx.Clientes.AsNoTracking().FirstOrDefaultAsync(c => c.CodigoCliente == codCliente);
+                    var productos = await ctx.InventarioDetalle.Where(x => x.procesado == false && x.InventariosCliente.codigoCliente == codCliente).ToListAsync();
+
+                    foreach (var detalle in productos)
+                    {
+                        var producto = GetProductoBarra(detalle.codigoBarra);
+                        if (producto == null)
+                        {
+                            detalle.procesado = true;
+                            detalle.encontrado = false;
+                        }
+                        else
+                        {
+                            var getProducto = ctx.SP_ObtenerProducto(producto.productoId, producto.tallaId, producto.colorId, cliente.EmpresaId).FirstOrDefault();
+                            if (getProducto == null)
+                            {
+                                detalle.procesado = true;
+                                detalle.encontrado = false;
+                            }
+                            else
+                            {
+                                detalle.productoId = getProducto.IdProducto;
+                                detalle.codigoColor = producto.colorId;
+                                detalle.codigoTalla = producto.tallaId;
+                                detalle.procesado = true;
+                                detalle.encontrado = true;
+                            }
+                        }
+                    }
+                    await ctx.SaveChangesAsync();
+
+                    var idInventario = productos.FirstOrDefault().inventarioId;
+                    var respuesta = await ctx.InventariosCliente
+                        .Where(x => x.codigoCliente == codCliente && x.id == idInventario)
+                        .Select(inventario => new
+                        {
+                            NumInventario = inventario.numInventario,
+                            Procesados = inventario.InventarioDetalle.Count(x => x.procesado == true),
+                            NoProcesados = inventario.InventarioDetalle.Count(x => x.procesado == false),
+                            Encontrados = inventario.InventarioDetalle.Count(x => x.encontrado == true),
+                            NoEncontrados = inventario.InventarioDetalle.Count(x => x.encontrado == false),
+                            CodigosBarrasAgrupados = inventario.cantidadProductos,
+                            TotalCodigos = inventario.InventarioDetalle.Sum(x => x.cantidad)
+                        })
+                        .FirstOrDefaultAsync();
+                    return Ok(new[] { respuesta });
+
+                }
+            }
+            catch (Exception e)
+            {
+                await ErrorLogger.LogErrorAsync(errorCode: "IT08", controlador: "PedidosXClienteController", ruta: "api/inventario/sincronizarInventario/{codCliente}", usuario: "", mensaje: e.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT08", Message = "Ocurrió un error al procesar la solicitud." });
             }
         }
         public ProductoXColeccionViewModel GetProductoInventario(string pais, string producto, string color)
@@ -1835,7 +1967,7 @@ namespace AventasApi.Controllers
 
         [HttpGet]
         [Route("~/api/detalleInventario/{numInventario}")]
-        public IHttpActionResult GetInventarioDetalle(string numInventario)
+        public async Task<IHttpActionResult> GetInventarioDetalle(string numInventario)
         {
             try
             {
@@ -1888,10 +2020,13 @@ namespace AventasApi.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e.ToString());
+                await ErrorLogger.LogErrorAsync(errorCode: "IT08", controlador: "PedidosXClienteController", ruta: "api/detalleInventario/{numInventario}", usuario: "", mensaje: e.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT08", Message = "Ocurrió un error al procesar la solicitud." });
             }
-
         }
+
+
+
         private async void ReducirStock(PedidosxCliente pedido)
         {
             using (var ctx = new AVentasEntities())

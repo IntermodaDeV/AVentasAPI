@@ -425,6 +425,7 @@
     <Compile Include="Singleton\GestorManager.cs" />
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
     <Compile Include="Utils\Email.cs" />
+    <Compile Include="Utils\ErrorLogger.cs" />
     <Compile Include="Utils\logicValidation.cs" />
     <Compile Include="Utils\ProcesarImagenes.cs" />
     <Compile Include="Utils\SendEmail.cs" />

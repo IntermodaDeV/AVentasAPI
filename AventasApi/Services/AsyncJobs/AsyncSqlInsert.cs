@@ -174,7 +174,7 @@ namespace AventasApi.Services.AsyncJobs
             }
         }
         
-        private static void ValidarCorrelativoInventario(string CodigoAsesor, string empresa)
+        public static void ValidarCorrelativoInventario(string CodigoAsesor, string empresa)
         {
             using (AVentasEntities context = new AVentasEntities())
             {

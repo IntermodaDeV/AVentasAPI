@@ -18,7 +18,7 @@ namespace DBData.Database
     public partial class AVentasEntities : DbContext
     {
         public AVentasEntities()
-           : base("name=AVentasEntities")
+            : base("name=AVentasEntities")
         {
             var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 1440;
         }
@@ -181,6 +181,7 @@ namespace DBData.Database
         public virtual DbSet<IncidenciaVisita> IncidenciaVisita { get; set; }
         public virtual DbSet<IncidenciaVisitaDetalle> IncidenciaVisitaDetalle { get; set; }
         public virtual DbSet<ProductosNoEncontrados> ProductosNoEncontrados { get; set; }
+        public virtual DbSet<ErroresLog> ErroresLog { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
@@ -743,6 +744,27 @@ namespace DBData.Database
                 new ObjectParameter("numInventario", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_EliminarInvenario", numInventarioParameter);
+        }
+    
+        public virtual ObjectResult<SP_ObtenerProducto_Result> SP_ObtenerProducto(string producto, string talla, string color, string empresa)
+        {
+            var productoParameter = producto != null ?
+                new ObjectParameter("producto", producto) :
+                new ObjectParameter("producto", typeof(string));
+    
+            var tallaParameter = talla != null ?
+                new ObjectParameter("talla", talla) :
+                new ObjectParameter("talla", typeof(string));
+    
+            var colorParameter = color != null ?
+                new ObjectParameter("color", color) :
+                new ObjectParameter("color", typeof(string));
+    
+            var empresaParameter = empresa != null ?
+                new ObjectParameter("empresa", empresa) :
+                new ObjectParameter("empresa", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerProducto_Result>("SP_ObtenerProducto", productoParameter, tallaParameter, colorParameter, empresaParameter);
         }
     }
 }

@@ -234,6 +234,9 @@
     <Compile Include="Database\Errores.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ErroresLog.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\EstadisticaVisita_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
@@ -559,6 +562,9 @@
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\SP_ObtenerProductosRMA_Result.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\SP_ObtenerProducto_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\SP_POST_LISTA_EJECUCION_MANUAL_Result.cs">
