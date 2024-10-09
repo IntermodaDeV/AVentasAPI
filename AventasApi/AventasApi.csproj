@@ -360,6 +360,10 @@
     <Compile Include="Models\ViewModels\InventariosViewModel.cs" />
     <Compile Include="Models\ViewModels\LogProformaViewModel.cs" />
     <Compile Include="Models\ViewModels\LogRecibosViewModel.cs" />
+    <Compile Include="Models\ViewModels\MailModulosViewModel.cs" />
+    <Compile Include="Models\ViewModels\MailProExeViewModel.cs" />
+    <Compile Include="Models\ViewModels\MailReceptorsViewModel.cs" />
+    <Compile Include="Models\ViewModels\MailServiciosViewModel.cs" />
     <Compile Include="Models\ViewModels\MotivosDevolucionViewModel.cs" />
     <Compile Include="Models\ViewModels\noSyncViewModel.cs" />
     <Compile Include="Models\ViewModels\PagosAFacturasXCuotaViewModel.cs" />
