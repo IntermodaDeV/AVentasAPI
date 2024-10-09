@@ -385,8 +385,7 @@
         <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Empresa_EmpresaId" />
         <AssociationConnector Association="AventasModel.FK_InventarioDetalle_InventariosCliente_id" />
         <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Usuarios_Id" />
-        <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Usuarios_Id" />
-        <AssociationConnector Association="AventasModel.FK_MailServicios_Modulo" />
+        <EntityTypeShape EntityType="AventasModel.ErroresLog" Width="1.5" PointX="30.375" PointY="21.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

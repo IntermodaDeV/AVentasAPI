@@ -692,6 +692,18 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="Error" Type="varchar(max)" />
           <Property Name="timeStamp" Type="datetime" />
         </EntityType>
+        <EntityType Name="ErroresLog">
+          <Key>
+            <PropertyRef Name="ErrorID" />
+          </Key>
+          <Property Name="ErrorID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ErrorCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="Controlador" Type="nvarchar" MaxLength="50" />
+          <Property Name="Ruta" Type="nvarchar" MaxLength="250" />
+          <Property Name="Usuario" Type="nvarchar" MaxLength="50" />
+          <Property Name="fecha" Type="datetime" />
+          <Property Name="mensaje" Type="nvarchar(max)" />
+        </EntityType>
         <EntityType Name="Estado">
           <Key>
             <PropertyRef Name="IdEstado" />
@@ -4908,6 +4920,9 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
         </Function>
+        <Function Name="SP_EliminarInvenario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="numInventario" Type="nvarchar" Mode="In" />
+        </Function>
         <Function Name="SP_FacturasxCliente_UpdateSaldoXCliente" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CLIENTE" Type="varchar" Mode="In" />
           <Parameter Name="EMPRESA" Type="varchar" Mode="In" />
@@ -4929,13 +4944,6 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
         <Function Name="SP_LimpiarInventarioFactura" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="FACTURA" Type="varchar" Mode="In" />
         </Function>
-        
-        
-        
-        
-        
-        
-        
         <Function Name="SP_ObtencionFacturas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="codigoProducto" Type="varchar" Mode="In" />
           <Parameter Name="color" Type="varchar" Mode="In" />
@@ -4949,6 +4957,12 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
         </Function>
         <Function Name="SP_ObtenerInventarioIncompleto" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="cliente" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_ObtenerProducto" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="producto" Type="nvarchar" Mode="In" />
+          <Parameter Name="talla" Type="nvarchar" Mode="In" />
+          <Parameter Name="color" Type="nvarchar" Mode="In" />
+          <Parameter Name="empresa" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="SP_ObtenerProductosRMA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="rma" Type="varchar" Mode="In" />
@@ -5049,6 +5063,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySet Name="EmpresaTransporte" EntityType="Self.EmpresaTransporte" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Encuesta" EntityType="Self.Encuesta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Errores" EntityType="Self.Errores" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ErroresLog" EntityType="Self.ErroresLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Estado" EntityType="Self.Estado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EstadosPedido" EntityType="Self.EstadosPedido" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FacturasEnCuotasAcuerdos" EntityType="Self.FacturasEnCuotasAcuerdos" Schema="dbo" store:Type="Tables" />
@@ -8788,6 +8803,16 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             <End Role="MailModulos" EntitySet="MailModulos" />
             <End Role="MailServicios" EntitySet="MailServicios" />
           </AssociationSet>
+          <EntitySet Name="ErroresLog" EntityType="AventasModel.ErroresLog" />
+          <FunctionImport Name="SP_EliminarInvenario">
+            <Parameter Name="numInventario" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ObtenerProducto" ReturnType="Collection(AventasModel.SP_ObtenerProducto_Result)">
+            <Parameter Name="producto" Mode="In" Type="String" />
+            <Parameter Name="talla" Mode="In" Type="String" />
+            <Parameter Name="color" Mode="In" Type="String" />
+            <Parameter Name="empresa" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -12918,6 +12943,40 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ErroresLog">
+          <Key>
+            <PropertyRef Name="ErrorID" />
+          </Key>
+          <Property Name="ErrorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ErrorCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Controlador" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Ruta" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Usuario" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="fecha" Type="DateTime" Precision="3" />
+          <Property Name="mensaje" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <ComplexType Name="SP_ObtenerProducto_Result">
+          <Property Type="Int32" Name="IdProducto" Nullable="false" />
+          <Property Type="String" Name="CodigoProducto" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="IdColeccion" Nullable="true" />
+          <Property Type="String" Name="NombreProducto" Nullable="true" />
+          <Property Type="String" Name="IdLinea" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="CodigoGrupoTalla" Nullable="true" MaxLength="250" />
+          <Property Type="Boolean" Name="BackOrder" Nullable="true" />
+          <Property Type="Decimal" Name="Multiplo" Nullable="true" Precision="18" Scale="2" />
+          <Property Type="String" Name="IdEdad" Nullable="true" MaxLength="250" />
+          <Property Type="String" Name="GrupoImpuesto" Nullable="true" MaxLength="150" />
+          <Property Type="String" Name="EmpresaId" Nullable="true" MaxLength="250" />
+          <Property Type="Boolean" Name="VisibleParaVentas" Nullable="false" />
+          <Property Type="Decimal" Name="CantidadMinima" Nullable="true" Precision="18" Scale="2" />
+          <Property Type="Boolean" Name="StockVisible" Nullable="false" />
+          <Property Type="Boolean" Name="InOut" Nullable="false" />
+          <Property Type="Boolean" Name="Deshabilitado" Nullable="false" />
+          <Property Type="Int32" Name="Prioridad" Nullable="false" />
+          <Property Type="Boolean" Name="TieneVentaMaxima" Nullable="false" />
+          <Property Type="Boolean" Name="Nuevo" Nullable="false" />
+          <Property Type="Boolean" Name="PiezaSuelta" Nullable="false" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -15628,6 +15687,46 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ErroresLog">
+            <EntityTypeMapping TypeName="AventasModel.ErroresLog">
+              <MappingFragment StoreEntitySet="ErroresLog">
+                <ScalarProperty Name="mensaje" ColumnName="mensaje" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="Usuario" ColumnName="Usuario" />
+                <ScalarProperty Name="Ruta" ColumnName="Ruta" />
+                <ScalarProperty Name="Controlador" ColumnName="Controlador" />
+                <ScalarProperty Name="ErrorCode" ColumnName="ErrorCode" />
+                <ScalarProperty Name="ErrorID" ColumnName="ErrorID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_EliminarInvenario" FunctionName="AventasModel.Store.SP_EliminarInvenario" />
+          <FunctionImportMapping FunctionImportName="SP_ObtenerProducto" FunctionName="AventasModel.Store.SP_ObtenerProducto">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="AventasModel.SP_ObtenerProducto_Result">
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="CodigoProducto" ColumnName="CodigoProducto" />
+                <ScalarProperty Name="IdColeccion" ColumnName="IdColeccion" />
+                <ScalarProperty Name="NombreProducto" ColumnName="NombreProducto" />
+                <ScalarProperty Name="IdLinea" ColumnName="IdLinea" />
+                <ScalarProperty Name="CodigoGrupoTalla" ColumnName="CodigoGrupoTalla" />
+                <ScalarProperty Name="BackOrder" ColumnName="BackOrder" />
+                <ScalarProperty Name="Multiplo" ColumnName="Multiplo" />
+                <ScalarProperty Name="IdEdad" ColumnName="IdEdad" />
+                <ScalarProperty Name="GrupoImpuesto" ColumnName="GrupoImpuesto" />
+                <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="VisibleParaVentas" ColumnName="VisibleParaVentas" />
+                <ScalarProperty Name="CantidadMinima" ColumnName="CantidadMinima" />
+                <ScalarProperty Name="StockVisible" ColumnName="StockVisible" />
+                <ScalarProperty Name="InOut" ColumnName="InOut" />
+                <ScalarProperty Name="Deshabilitado" ColumnName="Deshabilitado" />
+                <ScalarProperty Name="Prioridad" ColumnName="Prioridad" />
+                <ScalarProperty Name="TieneVentaMaxima" ColumnName="TieneVentaMaxima" />
+                <ScalarProperty Name="Nuevo" ColumnName="Nuevo" />
+                <ScalarProperty Name="PiezaSuelta" ColumnName="PiezaSuelta" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
