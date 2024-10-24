@@ -3,6 +3,8 @@ using DBData.Database;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net;
+using AventasApi.Utils;
 using System.Web.Http;
 
 namespace AventasApi.Controllers
@@ -17,22 +19,44 @@ namespace AventasApi.Controllers
             {
                 using (var db = new AVentasEntities())
                 {
-                    var reciboId = db.RecibosxCliente.FirstOrDefault(r => r.NumeroRecibo == logRecibos.numRecibo).ReciboId;
+                    var recibo = db.RecibosxCliente.FirstOrDefault(r => r.NumeroRecibo == logRecibos.numRecibo);
+                    var anticipo = db.AnticiposxCliente.FirstOrDefault(r => r.NumeroRecibo == logRecibos.numRecibo);
+
+                    if (recibo == null && anticipo == null)
+                    {
+                        return NotFound();
+                    }
+
+                    int idRecibo = 0;
+                    if (recibo != null)
+                    {
+                        recibo.Reimpresion = false;
+                        idRecibo = recibo.ReciboId;
+                    }
+
+                    if (anticipo != null)
+                    {
+                        idRecibo = anticipo.AnticipoId;
+                        anticipo.Reimpresion = false;
+                    }
+                    await db.SaveChangesAsync();
+
                     var LogRecibos = new LogRecibo() { 
-                        ReciboId = reciboId,
+                        ReciboId = idRecibo,
                         Usuario = logRecibos.Usuario,
                         Fecha = DateTime.Now,
                         Latitude = logRecibos.Latitude,
                         Longitude = logRecibos.longitude
                      };
-                    db.LogRecibo.Add(LogRecibos);
+                    db.LogRecibo.Add(LogRecibos);                 
                     var result = await db.SaveChangesAsync();
                     return Ok(result);
                 }
             }
             catch (Exception e)
             {
-                return BadRequest(e.ToString());
+                await ErrorLogger.LogErrorAsync(errorCode: "LIMPT01", controlador: "LogsImpresionesController", ruta: "api/logImpresionRecibo", usuario: "", mensaje: e.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "LIMPT01", Message = "Ocurrió un error al procesar la solicitud." });
             }
         }
 

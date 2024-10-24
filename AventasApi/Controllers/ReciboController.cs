@@ -133,6 +133,7 @@ namespace AventasApi.Controllers
                     {
                         depositos = context.DepositoRecibo.Where(x => x.recibo == rec.NumeroRecibo).Select(x => new { id = x.id, deposito = x.depositoUrl, dpi = x.dpi, fecha = x.FechaModificacion }).ToList(),
                         NumeroCopia = context.LogRecibo.Where(x => x.ReciboId == rec.ReciboId).Count() + 1,
+                        Reimpresion = rec.Reimpresion ?? false,
                         Anticipo = false,
                         NombreAsesor = "",
                         Asesor = rec.CodigoAsesor,
@@ -228,6 +229,7 @@ namespace AventasApi.Controllers
                         NumeroRecibo = ant.NumeroRecibo,
                         CodigoCliente = ant.CodigoCliente,
                         Fecha = ant.Fecha,
+                        Reimpresion = ant.Reimpresion ?? false,
                         IdTipoPago = ant.IdTipoPago,
                         Referencia = ant.Referencia,
                         FechaPago = ant.FechaCheque,
@@ -695,7 +697,8 @@ namespace AventasApi.Controllers
                                     FechaCreacion = DateTime.Now,
                                     Descuento = 0,
                                     Origen = "Web",
-                                    firma = asesor.firma
+                                    firma = asesor.firma,
+                                    Reimpresion =  false
                                 };
                                 context.AnticiposxCliente.Add(anticipo);
                             }
@@ -742,6 +745,7 @@ namespace AventasApi.Controllers
                                     FechaCreacion = DateTime.Now,
                                     Descuento = 0,
                                     Origen = "Web",
+                                    Reimpresion = false
                                     //firma = asesor.firma
                                 };
                                 context.AnticiposxCliente.Add(anticipo);
@@ -1269,6 +1273,7 @@ namespace AventasApi.Controllers
                                         FechaCreacion = DateTime.Now,
                                         EmpresaUsuario = reciboPost.EmpresaUsuario,
                                         firmaByte = asesor.firma,
+                                        Reimpresion = false
                                     };
                                     recibosxCliente.Add(reciboXCliente);
                                 }
@@ -2375,6 +2380,43 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("~/api/recibo/reimpresion/{numero}")]
+        public async Task<IHttpActionResult> HabilitarReimpresion(string numero)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var reciboHabilitar = ctx.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                    var anticipoHabilitar = ctx.AnticiposxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                    if (reciboHabilitar == null && anticipoHabilitar == null)
+                    {
+                        return NotFound();
+                    }
+
+                    if (reciboHabilitar != null)
+                    {
+                        reciboHabilitar.Reimpresion = !reciboHabilitar.Reimpresion;
+                    }
+
+                    if (anticipoHabilitar != null)
+                    {
+                        anticipoHabilitar.Reimpresion = !anticipoHabilitar.Reimpresion;
+                    }
+
+                    ctx.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                await ErrorLogger.LogErrorAsync(errorCode: "RT01", controlador: "ReciboController", ruta: "api/recibo/reimpresion/{numero}", usuario: "", mensaje: ex.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "RT01", Message = "Ocurrió un error al procesar la solicitud." });
+
+            }
+        }
+
         [HttpGet]
         [Route("~/api/recibo/sindepoosito/{asesor}")]
         public IHttpActionResult ExisteReciboSinDeposito(string asesor)
@@ -2481,6 +2523,7 @@ namespace AventasApi.Controllers
                 Longitude = reciboFlotante.Longitude,
                 Sincronizado = false,
                 firma = asesor.firma,
+                Reimpresion = false,
                 RecibosDetalle = reciboFlotante.RecibosDetalleFlotante.Select(d => new RecibosDetalle()
                 {
                     IdReciboDetalle = d.IdReciboDetalle,
@@ -2521,7 +2564,8 @@ namespace AventasApi.Controllers
                 Tipo = reciboFlotante.Tipo,
                 EsContado = reciboFlotante.EsContado.Value,
                 NumPedido = reciboFlotante.NumPedido,
-                firma = asesor.firma
+                firma = asesor.firma,
+                Reimpresion = false
             };
 
             return reciboBD;
