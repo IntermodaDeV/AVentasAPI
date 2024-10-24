@@ -522,6 +522,9 @@
     <Compile Include="Database\Secciones_Usuarios.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\Servicio.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\SPObtenerSaldoCuotaCero_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

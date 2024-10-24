@@ -192,6 +192,7 @@
     <Compile Include="Controllers\AsesorXClienteController.cs" />
     <Compile Include="Controllers\AsignacionesController.cs" />
     <Compile Include="Controllers\Authentication\AuthController.cs" />
+    <Compile Include="Controllers\ServiciosTareasController.cs" />
     <Compile Include="Controllers\BancoController.cs" />
     <Compile Include="Controllers\BaseColorImpuestoController.cs" />
     <Compile Include="Controllers\BitacoraVisitasClienteController.cs" />
@@ -373,6 +374,7 @@
     <Compile Include="Models\ViewModels\RespuestasViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasViewModel.cs" />
     <Compile Include="Models\ViewModels\logSesionViewModel.cs" />
+    <Compile Include="Models\ViewModels\ServicioViewModel.cs" />
     <Compile Include="Models\ViewModels\TipoGastoViewModel.cs" />
     <Compile Include="Models\ViewModels\TiposIngresosViewModel.cs" />
     <Compile Include="Models\ViewModels\SeccionEncuestaViewModel.cs" />

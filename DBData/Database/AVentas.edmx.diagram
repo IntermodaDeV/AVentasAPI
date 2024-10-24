@@ -378,6 +378,8 @@
         <AssociationConnector Association="AventasModel.FK_TipoIncidencia" />
         <EntityTypeShape EntityType="AventasModel.IncidenciaVisitaDetalle" Width="1.5" PointX="24.125" PointY="62" />
         <AssociationConnector Association="AventasModel.FK_IncidenciaVisita" />
+        <EntityTypeShape EntityType="AventasModel.Servicio" Width="1.5" PointX="29.375" PointY="5.75" />
+        <AssociationConnector Association="AventasModel.FK_tbInventariosCliente_Usuarios_Id" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -20,6 +20,9 @@ namespace DBData.Database
         public string codigoColor { get; set; }
         public string codigoTalla { get; set; }
         public Nullable<int> cantidad { get; set; }
+        public string codigoBarra { get; set; }
+        public Nullable<bool> procesado { get; set; }
+        public Nullable<bool> encontrado { get; set; }
     
         public virtual InventariosCliente InventariosCliente { get; set; }
         public virtual ProductosxColeccion ProductosxColeccion { get; set; }

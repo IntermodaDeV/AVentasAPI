@@ -22,7 +22,7 @@ namespace DBData.Database
         {
             var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 1440;
         }
-
+    
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
@@ -180,6 +180,7 @@ namespace DBData.Database
         public virtual DbSet<TipoIncidencia> TipoIncidencia { get; set; }
         public virtual DbSet<IncidenciaVisita> IncidenciaVisita { get; set; }
         public virtual DbSet<IncidenciaVisitaDetalle> IncidenciaVisitaDetalle { get; set; }
+        public virtual DbSet<Servicio> Servicio { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
