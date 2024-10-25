@@ -1882,6 +1882,26 @@ warning 6002: The table/view 'AVentas.dbo.IncidenciaVisitaDetalle' does not have
           <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="ModifiedDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="Servicio">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Codigo" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="TipoServicio" Type="nvarchar" MaxLength="100" />
+          <Property Name="Descripcion" Type="nvarchar" MaxLength="200" />
+          <Property Name="ProximaEjecucionEnvio" Type="datetime" Nullable="false" />
+          <Property Name="UltimaEjecucionEnvio" Type="datetime" />
+          <Property Name="ProximaEjecucionGenerarArchivo" Type="datetime" Nullable="false" />
+          <Property Name="UltimaEjecucionGenerarArchivo" Type="datetime" />
+          <Property Name="Automatico" Type="bit" Nullable="false" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
+          <Property Name="ReIniciar" Type="bit" Nullable="false" />
+          <Property Name="ReIniciarGenerarcionArchivo" Type="bit" Nullable="false" />
+          <Property Name="NumeroEjecucion" Type="int" />
+          <Property Name="UsuarioModificion" Type="nvarchar" MaxLength="50" />
+          <Property Name="FechaModificacion" Type="datetime" />
+        </EntityType>
         <EntityType Name="SubFacturasxCliente">
           <Key>
             <PropertyRef Name="IdSubFactura" />
@@ -5147,6 +5167,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySet Name="Secciones" EntityType="Self.Secciones" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Secciones_Encuesta" EntityType="Self.Secciones_Encuesta" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Secciones_Usuarios" EntityType="Self.Secciones_Usuarios" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Servicio" EntityType="Self.Servicio" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SubFacturasxCliente" EntityType="Self.SubFacturasxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TallasXGrupo" EntityType="Self.TallasXGrupo" Schema="dbo" store:Type="Tables" />
