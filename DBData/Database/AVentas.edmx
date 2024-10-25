@@ -8836,6 +8836,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             <Parameter Name="color" Mode="In" Type="String" />
             <Parameter Name="empresa" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Servicio" EntityType="AventasModel.Servicio" />
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -13002,6 +13003,26 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <Property Type="Boolean" Name="Nuevo" Nullable="false" />
           <Property Type="Boolean" Name="PiezaSuelta" Nullable="false" />
         </ComplexType>
+        <EntityType Name="Servicio">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Codigo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TipoServicio" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Descripcion" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ProximaEjecucionEnvio" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UltimaEjecucionEnvio" Type="DateTime" Precision="3" />
+          <Property Name="ProximaEjecucionGenerarArchivo" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UltimaEjecucionGenerarArchivo" Type="DateTime" Precision="3" />
+          <Property Name="Automatico" Type="Boolean" Nullable="false" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <Property Name="ReIniciar" Type="Boolean" Nullable="false" />
+          <Property Name="ReIniciarGenerarcionArchivo" Type="Boolean" Nullable="false" />
+          <Property Name="NumeroEjecucion" Type="Int32" />
+          <Property Name="UsuarioModificion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -15754,6 +15775,27 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="Servicio">
+            <EntityTypeMapping TypeName="AventasModel.Servicio">
+              <MappingFragment StoreEntitySet="Servicio">
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="UsuarioModificion" ColumnName="UsuarioModificion" />
+                <ScalarProperty Name="NumeroEjecucion" ColumnName="NumeroEjecucion" />
+                <ScalarProperty Name="ReIniciarGenerarcionArchivo" ColumnName="ReIniciarGenerarcionArchivo" />
+                <ScalarProperty Name="ReIniciar" ColumnName="ReIniciar" />
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="Automatico" ColumnName="Automatico" />
+                <ScalarProperty Name="UltimaEjecucionGenerarArchivo" ColumnName="UltimaEjecucionGenerarArchivo" />
+                <ScalarProperty Name="ProximaEjecucionGenerarArchivo" ColumnName="ProximaEjecucionGenerarArchivo" />
+                <ScalarProperty Name="UltimaEjecucionEnvio" ColumnName="UltimaEjecucionEnvio" />
+                <ScalarProperty Name="ProximaEjecucionEnvio" ColumnName="ProximaEjecucionEnvio" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="TipoServicio" ColumnName="TipoServicio" />
+                <ScalarProperty Name="Codigo" ColumnName="Codigo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
