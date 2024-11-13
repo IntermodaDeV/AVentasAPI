@@ -168,6 +168,9 @@
     <Compile Include="Database\Configuraciones.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ContactoServicio.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\CuentaCorriente2_Result.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>

@@ -14,6 +14,12 @@ namespace DBData.Database
     
     public partial class Servicio
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Servicio()
+        {
+            this.ContactoServicio = new HashSet<ContactoServicio>();
+        }
+    
         public int Id { get; set; }
         public string Codigo { get; set; }
         public string TipoServicio { get; set; }
@@ -29,5 +35,9 @@ namespace DBData.Database
         public Nullable<int> NumeroEjecucion { get; set; }
         public string UsuarioModificion { get; set; }
         public Nullable<System.DateTime> FechaModificacion { get; set; }
+        public bool EstadoEjecucionSW { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ContactoServicio> ContactoServicio { get; set; }
     }
 }

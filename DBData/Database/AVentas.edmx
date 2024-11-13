@@ -417,6 +417,18 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="UsuarioModificacion" Type="varchar" MaxLength="250" />
           <Property Name="Activo" Type="bit" />
         </EntityType>
+        <EntityType Name="ContactoServicio">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdEmpresa" Type="nvarchar" MaxLength="50" />
+          <Property Name="Telefono" Type="nvarchar" MaxLength="100" />
+          <Property Name="Whatsapp" Type="nvarchar(max)" />
+          <Property Name="UrlQRWhatsapp" Type="nvarchar" MaxLength="500" />
+          <Property Name="IdServicio" Type="int" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="CuentasBancarias">
           <Key>
             <PropertyRef Name="IdCuentaBancaria" />
@@ -1901,6 +1913,7 @@ warning 6002: The table/view 'AVentas.dbo.IncidenciaVisitaDetalle' does not have
           <Property Name="NumeroEjecucion" Type="int" />
           <Property Name="UsuarioModificion" Type="nvarchar" MaxLength="50" />
           <Property Name="FechaModificacion" Type="datetime" />
+          <Property Name="EstadoEjecucionSW" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="SubFacturasxCliente">
           <Key>
@@ -4070,6 +4083,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ContactoServicio_Servicio">
+          <End Role="Servicio" Type="Self.Servicio" Multiplicity="0..1" />
+          <End Role="ContactoServicio" Type="Self.ContactoServicio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Servicio">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ContactoServicio">
+              <PropertyRef Name="IdServicio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Documentos_IdSubFactura">
           <End Role="SubFacturasxCliente" Type="Self.SubFacturasxCliente" Multiplicity="0..1" />
           <End Role="DocumentosAplicadosAFacturas" Type="Self.DocumentosAplicadosAFacturas" Multiplicity="*" />
@@ -5065,6 +5090,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySet Name="Combustibles" EntityType="Self.Combustibles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ComunidadAutonoma" EntityType="Self.ComunidadAutonoma" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Configuraciones" EntityType="Self.Configuraciones" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ContactoServicio" EntityType="Self.ContactoServicio" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CuentasBancarias" EntityType="Self.CuentasBancarias" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CuotasXAcuerdo" EntityType="Self.CuotasXAcuerdo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DefectoDevolucion" EntityType="Self.DefectoDevolucion" Schema="dbo" store:Type="Tables" />
@@ -5917,6 +5943,10 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <AssociationSet Name="FK_Clientes_Empresa" Association="Self.FK_Clientes_Empresa">
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="Clientes" EntitySet="Clientes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ContactoServicio_Servicio" Association="Self.FK_ContactoServicio_Servicio">
+            <End Role="Servicio" EntitySet="Servicio" />
+            <End Role="ContactoServicio" EntitySet="ContactoServicio" />
           </AssociationSet>
           <AssociationSet Name="FK_Documentos_IdSubFactura" Association="Self.FK_Documentos_IdSubFactura">
             <End Role="SubFacturasxCliente" EntitySet="SubFacturasxCliente" />
@@ -8837,6 +8867,11 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             <Parameter Name="empresa" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Servicio" EntityType="AventasModel.Servicio" />
+          <EntitySet Name="ContactoServicio" EntityType="AventasModel.ContactoServicio" />
+          <AssociationSet Name="FK_ContactoServicio_Servicio" Association="AventasModel.FK_ContactoServicio_Servicio">
+            <End Role="Servicio" EntitySet="Servicio" />
+            <End Role="ContactoServicio" EntitySet="ContactoServicio" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -13022,7 +13057,34 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <Property Name="NumeroEjecucion" Type="Int32" />
           <Property Name="UsuarioModificion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ContactoServicio" Relationship="AventasModel.FK_ContactoServicio_Servicio" FromRole="Servicio" ToRole="ContactoServicio" />
+          <Property Name="EstadoEjecucionSW" Type="Boolean" Nullable="false" />
         </EntityType>
+        <EntityType Name="ContactoServicio">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdEmpresa" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Telefono" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Whatsapp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UrlQRWhatsapp" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IdServicio" Type="Int32" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Servicio" Relationship="AventasModel.FK_ContactoServicio_Servicio" FromRole="ContactoServicio" ToRole="Servicio" />
+        </EntityType>
+        <Association Name="FK_ContactoServicio_Servicio">
+          <End Type="AventasModel.Servicio" Role="Servicio" Multiplicity="0..1" />
+          <End Type="AventasModel.ContactoServicio" Role="ContactoServicio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Servicio">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ContactoServicio">
+              <PropertyRef Name="IdServicio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -15778,6 +15840,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySetMapping Name="Servicio">
             <EntityTypeMapping TypeName="AventasModel.Servicio">
               <MappingFragment StoreEntitySet="Servicio">
+                <ScalarProperty Name="EstadoEjecucionSW" ColumnName="EstadoEjecucionSW" />
                 <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
                 <ScalarProperty Name="UsuarioModificion" ColumnName="UsuarioModificion" />
                 <ScalarProperty Name="NumeroEjecucion" ColumnName="NumeroEjecucion" />
@@ -15792,6 +15855,19 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
                 <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
                 <ScalarProperty Name="TipoServicio" ColumnName="TipoServicio" />
                 <ScalarProperty Name="Codigo" ColumnName="Codigo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ContactoServicio">
+            <EntityTypeMapping TypeName="AventasModel.ContactoServicio">
+              <MappingFragment StoreEntitySet="ContactoServicio">
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="IdServicio" ColumnName="IdServicio" />
+                <ScalarProperty Name="UrlQRWhatsapp" ColumnName="UrlQRWhatsapp" />
+                <ScalarProperty Name="Whatsapp" ColumnName="Whatsapp" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="IdEmpresa" ColumnName="IdEmpresa" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
