@@ -24,7 +24,7 @@ namespace AventasApi.Controllers
     }
     public class GeoposicionController : ApiController
     {
-        AVentasEntities context = new AVentasEntities();
+         AVentasEntities context = new AVentasEntities();
         private readonly AuthenticationAppService _authenticationAppService;
         public GeoposicionController()
         {

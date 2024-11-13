@@ -36,6 +36,7 @@ namespace DBData.Database
             this.PromesaPago = new HashSet<PromesaPago>();
             this.BitacoraNoVentaEnVisitas = new HashSet<BitacoraNoVentaEnVisitas>();
             this.UsuarioLinea = new HashSet<UsuarioLinea>();
+            this.InventariosCliente = new HashSet<InventariosCliente>();
         }
     
         public int Id { get; set; }
@@ -96,5 +97,7 @@ namespace DBData.Database
         public virtual ICollection<BitacoraNoVentaEnVisitas> BitacoraNoVentaEnVisitas { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UsuarioLinea> UsuarioLinea { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<InventariosCliente> InventariosCliente { get; set; }
     }
 }

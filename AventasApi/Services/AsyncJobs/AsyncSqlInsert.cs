@@ -174,7 +174,7 @@ namespace AventasApi.Services.AsyncJobs
             }
         }
         
-        private static void ValidarCorrelativoInventario(string CodigoAsesor, string empresa)
+        public static void ValidarCorrelativoInventario(string CodigoAsesor, string empresa)
         {
             using (AVentasEntities context = new AVentasEntities())
             {
@@ -285,6 +285,7 @@ namespace AventasApi.Services.AsyncJobs
                         Origen = "Web",
                         //firma = rec.firmaByte,
                         Anulado=false,
+                        Reimpresion = false,
                         RecibosDetalle = rec.DetalleRecibo.Select(recDet => new RecibosDetalle
                         {
                             IdReciboDetalle = recDet.IdReciboDetalle,

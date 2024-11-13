@@ -15,7 +15,8 @@ namespace AventasApi.Models.ViewModels
         public string NumeroRecibo { get; set; }
         public string CodigoCliente { get; set; }
         public Nullable<System.DateTime> Fecha { get; set; }
-        public Nullable<int> IdTipoPago { get; set; }
+        public Nullable<int> IdTipoPago { get; set; } 
+        public Nullable<bool> Reimpresion { get; set; }
         public string Referencia { get; set; }
         public string DescripcionBanco { get; set; }
         public Nullable<System.DateTime> FechaPago { get; set; }

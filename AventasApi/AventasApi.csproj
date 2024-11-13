@@ -192,6 +192,7 @@
     <Compile Include="Controllers\AsesorXClienteController.cs" />
     <Compile Include="Controllers\AsignacionesController.cs" />
     <Compile Include="Controllers\Authentication\AuthController.cs" />
+    <Compile Include="Controllers\ServiciosTareasController.cs" />
     <Compile Include="Controllers\BancoController.cs" />
     <Compile Include="Controllers\BaseColorImpuestoController.cs" />
     <Compile Include="Controllers\BitacoraVisitasClienteController.cs" />
@@ -263,6 +264,7 @@
     <Compile Include="Models\BitacoraVisitasClienteViewModel.cs" />
     <Compile Include="Models\CheckInViewModel.cs" />
     <Compile Include="Models\ClienteImpuestoModel.cs" />
+    <Compile Include="Models\CodigoBarrasViewModel.cs" />
     <Compile Include="Models\ComunidadAutonoma.cs" />
     <Compile Include="Models\Coordenada.cs" />
     <Compile Include="Models\Coordenadas.cs" />
@@ -321,6 +323,7 @@
     <Compile Include="Models\ViewModels\ColorSinStock.cs" />
     <Compile Include="Models\ViewModels\ColorViewModel.cs" />
     <Compile Include="Models\ViewModels\ConfiguracionViewModel.cs" />
+    <Compile Include="Models\ViewModels\ContactoServicioViewModel.cs" />
     <Compile Include="Models\ViewModels\CreditoXClienteViewModel.cs" />
     <Compile Include="Models\ViewModels\CuentaCorrienteViewModel.cs" />
     <Compile Include="Models\ViewModels\CuentaBancariaViewModel.cs" />
@@ -360,6 +363,10 @@
     <Compile Include="Models\ViewModels\InventariosViewModel.cs" />
     <Compile Include="Models\ViewModels\LogProformaViewModel.cs" />
     <Compile Include="Models\ViewModels\LogRecibosViewModel.cs" />
+    <Compile Include="Models\ViewModels\MailModulosViewModel.cs" />
+    <Compile Include="Models\ViewModels\MailProExeViewModel.cs" />
+    <Compile Include="Models\ViewModels\MailReceptorsViewModel.cs" />
+    <Compile Include="Models\ViewModels\MailServiciosViewModel.cs" />
     <Compile Include="Models\ViewModels\MotivosDevolucionViewModel.cs" />
     <Compile Include="Models\ViewModels\noSyncViewModel.cs" />
     <Compile Include="Models\ViewModels\PagosAFacturasXCuotaViewModel.cs" />
@@ -373,6 +380,8 @@
     <Compile Include="Models\ViewModels\RespuestasViewModel.cs" />
     <Compile Include="Models\ViewModels\PreguntasViewModel.cs" />
     <Compile Include="Models\ViewModels\logSesionViewModel.cs" />
+    <Compile Include="Models\ViewModels\ServicioViewModel.cs" />
+    <Compile Include="Models\ViewModels\ServicioWEstadoViewModel.cs" />
     <Compile Include="Models\ViewModels\TipoGastoViewModel.cs" />
     <Compile Include="Models\ViewModels\TiposIngresosViewModel.cs" />
     <Compile Include="Models\ViewModels\SeccionEncuestaViewModel.cs" />
@@ -423,6 +432,7 @@
     <Compile Include="Singleton\GestorManager.cs" />
     <Compile Include="Utils\ByteArrayImageConversion.cs" />
     <Compile Include="Utils\Email.cs" />
+    <Compile Include="Utils\ErrorLogger.cs" />
     <Compile Include="Utils\logicValidation.cs" />
     <Compile Include="Utils\ProcesarImagenes.cs" />
     <Compile Include="Utils\SendEmail.cs" />
