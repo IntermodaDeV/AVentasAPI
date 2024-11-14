@@ -47,6 +47,7 @@ namespace DBData.Database
         public Nullable<System.DateTime> FechaCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
         public Nullable<System.DateTime> FechaModificacion { get; set; }
+        public string RazonFlotante { get; set; }
     
         public virtual FacturasxCliente FacturasxCliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
