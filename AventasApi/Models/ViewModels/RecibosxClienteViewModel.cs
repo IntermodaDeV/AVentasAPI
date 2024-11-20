@@ -14,6 +14,7 @@ namespace AventasApi.Models.ViewModels
         public int ReciboId { get; set; }
         public string NumeroRecibo { get; set; }
         public string CodigoCliente { get; set; }
+        public string RazonFlotante { get; set; }
         public Nullable<System.DateTime> Fecha { get; set; }
         public Nullable<int> IdTipoPago { get; set; } 
         public Nullable<bool> Reimpresion { get; set; }
