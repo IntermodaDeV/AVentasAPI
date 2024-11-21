@@ -718,9 +718,10 @@ namespace AventasApi.Controllers
                             }
                             else
                             {
-                                existeAnticipo = context.RecibosxCliente.Where(x => x.Referencia == pago.Referencia && x.IdBanco == codigobanco && x.Anulado == false).Count();
-                                if (existeAnticipo>0)
+                                bool existeReferencia = context.RecibosxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == codigobanco && x.Anulado == false) || context.AnticiposxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == codigobanco && x.Anulado == false);
+                                if (existeReferencia)
                                 {
+                                    existeAnticipo = 1;
                                     razonFlotante = "Referencia encontrada";
                                 }
                             }
@@ -1223,9 +1224,10 @@ namespace AventasApi.Controllers
                                 }
                                 else
                                 {
-                                    existeRecibo = context.RecibosxCliente.Where(x => x.Referencia == pago.Referencia && x.IdBanco == bank.IdBanco && x.Anulado == false).Count();
-                                    if (existeRecibo > 0)
+                                    bool existeCorrelativo = context.RecibosxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == bank.IdBanco && x.Anulado == false) || context.AnticiposxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == bank.IdBanco && x.Anulado == false);
+                                    if (existeCorrelativo)
                                     {
+                                        existeRecibo = 1;
                                         razonFlotante = "Referencia encontrada";
                                     }
                                 }
