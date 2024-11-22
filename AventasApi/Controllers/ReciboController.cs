@@ -716,7 +716,7 @@ namespace AventasApi.Controllers
                                 existeAnticipo = 1;
                                 razonFlotante = "Banco o referencia vacía";
                             }
-                            else
+                            /*else
                             {
                                 bool existeReferencia = context.RecibosxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == codigobanco && x.Anulado == false) || context.AnticiposxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == codigobanco && x.Anulado == false);
                                 if (existeReferencia)
@@ -724,7 +724,7 @@ namespace AventasApi.Controllers
                                     existeAnticipo = 1;
                                     razonFlotante = "Referencia encontrada";
                                 }
-                            }
+                            }*/
 
                             if (existeAnticipo == 0)
                             {
@@ -1222,7 +1222,7 @@ namespace AventasApi.Controllers
                                     existeRecibo = 1;
                                     razonFlotante = "Banco o referencia vacía";
                                 }
-                                else
+                                /*else
                                 {
                                     bool existeCorrelativo = context.RecibosxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == bank.IdBanco && x.Anulado == false) || context.AnticiposxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == bank.IdBanco && x.Anulado == false);
                                     if (existeCorrelativo)
@@ -1230,7 +1230,7 @@ namespace AventasApi.Controllers
                                         existeRecibo = 1;
                                         razonFlotante = "Referencia encontrada";
                                     }
-                                }
+                                }*/
 
                                 if (existeRecibo == 0)
                                 {
