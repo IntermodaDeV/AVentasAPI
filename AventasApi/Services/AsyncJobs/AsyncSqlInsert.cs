@@ -389,6 +389,7 @@ namespace AventasApi.Services.AsyncJobs
                     SpecPago = rec.SpecPago,
                     UsuarioCreacion = rec.UsuarioCreacion,
                     FechaCreacion = rec.FechaCreacion,
+                    RazonFlotante = rec.RazonFlotante,
                     RecibosDetalleFlotante = rec.DetalleRecibo.Select(recDet => new RecibosDetalleFlotante
                     {
                         IdReciboDetalle = recDet.IdReciboDetalle,

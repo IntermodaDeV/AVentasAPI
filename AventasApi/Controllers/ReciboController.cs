@@ -134,6 +134,7 @@ namespace AventasApi.Controllers
                         depositos = context.DepositoRecibo.Where(x => x.recibo == rec.NumeroRecibo).Select(x => new { id = x.id, deposito = x.depositoUrl, dpi = x.dpi, fecha = x.FechaModificacion }).ToList(),
                         NumeroCopia = context.LogRecibo.Where(x => x.ReciboId == rec.ReciboId).Count() + 1,
                         Reimpresion = rec.Reimpresion ?? false,
+                        Original = rec.Original,
                         Anticipo = false,
                         NombreAsesor = "",
                         Asesor = rec.CodigoAsesor,
@@ -230,6 +231,7 @@ namespace AventasApi.Controllers
                         CodigoCliente = ant.CodigoCliente,
                         Fecha = ant.Fecha,
                         Reimpresion = ant.Reimpresion ?? false,
+                        Original = ant.Original,
                         IdTipoPago = ant.IdTipoPago,
                         Referencia = ant.Referencia,
                         FechaPago = ant.FechaCheque,
@@ -587,7 +589,7 @@ namespace AventasApi.Controllers
 
         [Route("api/Recibo/Anticipo")]
         [HttpPost]
-        public IHttpActionResult PostAnticipo(ReciboPostViewModel anticipoPost)
+        public async Task<IHttpActionResult> PostAnticipo(ReciboPostViewModel anticipoPost)
         {
             try
             {
@@ -616,6 +618,7 @@ namespace AventasApi.Controllers
                 if (anticipoPost.Pagos != null)
                 {
                     var existeAnticipo = 0;
+                    var razonFlotante = "";
                     var existeProforma = 0;
                     List<ReciboApiModel> recibos = new List<ReciboApiModel>();
                     foreach (var pag in anticipoPost.Pagos)
@@ -645,6 +648,7 @@ namespace AventasApi.Controllers
                         {
                             existeProforma = context.RecibosProforma.Where(x => x.CodigoCliente == anticipoPost.CodigoCliente
                                                                            && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
+                                                                           && x.Referencia == pago.Referencia
                                                                            && x.IdTipoPago == TipoPago
                                                                            && x.SpecPago == pago.TipoPagoDetalle
                                                                            && x.Valor == valorPago).Count();
@@ -698,28 +702,40 @@ namespace AventasApi.Controllers
                                     Descuento = 0,
                                     Origen = "Web",
                                     firma = asesor.firma,
-                                    Reimpresion =  false
+                                    Reimpresion = false,
+                                    Original = false
                                 };
                                 context.AnticiposxCliente.Add(anticipo);
                             }
                         }
                         else
                         {
-                            existeAnticipo = context.AnticiposxCliente.Where(x => x.NumeroRecibo == anticipoPost.NumeroRecibo).Count();
+
+                            if (codigobanco == 0 || (pago.Referencia == "" || pago.Referencia == null))
+                            {
+                                existeAnticipo = 1;
+                                razonFlotante = "Banco o referencia vacía";
+                            }
+                            /*else
+                            {
+                                bool existeReferencia = context.RecibosxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == codigobanco && x.Anulado == false) || context.AnticiposxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == codigobanco && x.Anulado == false);
+                                if (existeReferencia)
+                                {
+                                    existeAnticipo = 1;
+                                    razonFlotante = "Referencia encontrada";
+                                }
+                            }*/
 
                             if (existeAnticipo == 0)
                             {
-                                existeAnticipo = context.RecibosxCliente.Where(x => x.NumeroRecibo == anticipoPost.NumeroRecibo).Count();
+                                bool existeCorrelativo = context.AnticiposxCliente.Any(x => x.NumeroRecibo == anticipoPost.NumeroRecibo) || context.RecibosxCliente.Any(x => x.NumeroRecibo == anticipoPost.NumeroRecibo);
+                                if (existeCorrelativo)
+                                {
+                                    await ErrorLogger.LogErrorAsync(errorCode: "IT05", controlador: "ReciboController", ruta: "/api/Recibo/Anticipo", usuario: asesor.Usuario, mensaje: "Se encontro el correlativo dublicado en recibos/anticipo.");
+                                    return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT05", Message = "Se encontro un recibo/anticipo con el mismo correlativo.Por favor, comuníquese con el departamento de IT para recibir apoyo." });
+                                }
                             }
 
-                            if (existeAnticipo == 0)
-                            {
-                                existeAnticipo = context.AnticiposxCliente.Where(x => x.CodigoCliente == anticipoPost.CodigoCliente
-                                                                             && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
-                                                                             && x.IdTipoPago == TipoPago
-                                                                             && x.SpecPago == pago.TipoPagoDetalle
-                                                                             && x.Valor == valorPago).Count();
-                            }
                             if (existeAnticipo == 0)
                             {
                                 var anticipo = new AnticiposxCliente
@@ -745,7 +761,8 @@ namespace AventasApi.Controllers
                                     FechaCreacion = DateTime.Now,
                                     Descuento = 0,
                                     Origen = "Web",
-                                    Reimpresion = false
+                                    Reimpresion = false,
+                                    Original = false
                                     //firma = asesor.firma
                                 };
                                 context.AnticiposxCliente.Add(anticipo);
@@ -775,6 +792,7 @@ namespace AventasApi.Controllers
                                     Tipo = anticipoPost.Tipo,
                                     UsuarioCreacion = user.UserAccount,
                                     FechaCreacion = DateTime.Now,
+                                    RazonFlotante = razonFlotante,
                                     Estado = 0  ///0: Pendiente, 1: Sincronizado, 2:Cancelado
                                 };
                                 context.RecibosxClienteFlotante.Add(reciboXClienteFlotante);
@@ -810,13 +828,12 @@ namespace AventasApi.Controllers
                         };
                         respuestaPagoRecibo.Total = pago.Valor;
                         respuestaPagoRecibo.CodigoUltimoRecibo = anticipoPost.NumeroRecibo;
-                        respuestaPagoRecibo.Facturas.Add(pagoAplicado);
-
+                        respuestaPagoRecibo.Facturas.Add(pagoAplicado);                        
 
                         if (existeAnticipo > 0)
                         {
-                            respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
-                            return Ok(respuestaPagoRecibo);
+                            context.SaveChanges();
+                            return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IF02", Message = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Por favor, comuníquese con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.", resultado = respuestaPagoRecibo });
                         }
 
                         ReciboApiModel anticipoAX = new ReciboApiModel
@@ -898,7 +915,8 @@ namespace AventasApi.Controllers
                     }
                     else
                     {
-                        return BadRequest("Error al guardar el recibo");
+                        await ErrorLogger.LogErrorAsync(errorCode: "IT06", controlador: "ReciboController", ruta: "/api/Recibo/Anticipo", usuario: asesor.Usuario, mensaje: "Ocurrió un error al tratar de registrar el recibo en la base de datos de Eva (Linea 1480).");
+                        return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT06", Message = "Ocurrió un error al procesar la solicitud. Por favor, comuníquese con el departamento de IT para recibir apoyo.", resultado = respuestaPagoRecibo });
                     }
                 }
                 return BadRequest();
@@ -989,7 +1007,7 @@ namespace AventasApi.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult PostRecibo(ReciboPostViewModel reciboPost)
+        public async Task<IHttpActionResult> PostRecibo(ReciboPostViewModel reciboPost)
         {
             try
             {
@@ -1012,6 +1030,7 @@ namespace AventasApi.Controllers
                 RecibosxClienteFlotanteViewModel reciboXClienteFlotante = new RecibosxClienteFlotanteViewModel();
                 reciboPost.FechaPago = new DateTime(reciboPost.FechaPago.Year, reciboPost.FechaPago.Month, reciboPost.FechaPago.Day);
                 var existeRecibo = 0;
+                var razonFlotante = "";
                 var asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
 
                 /*var clienteAsesor = context.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == reciboPost.CodigoCliente.ToUpper() && x.CodigoAsesor.ToUpper() == asesor.CodigoAsesor.ToUpper());
@@ -1197,22 +1216,30 @@ namespace AventasApi.Controllers
                                 var fechaDesde = DateTime.Now.AddMinutes(minutosValue * -1).AddSeconds(-30);
                                 var recibo = recibosXPago.FirstOrDefault(rec => rec.TIPO_PAGO == pagoBD.Codigo && rec.REFERENCIA == pago.Referencia && rec.FACTURA == subfactura.Factura && rec.REF_TRANSOPEN == subfactura.Referencia);
                                 RecibosxClienteViewModel reciboXCliente = recibosxCliente.FirstOrDefault(recXCli => recXCli.IdTipoPago.ToString() == pago.CodigoTipoPago && recXCli.Referencia == pago.Referencia);
-                                existeRecibo = context.RecibosxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
 
-                                if (existeRecibo == 0)
+                                if (bank == null || (pago.Referencia == "" || pago.Referencia == null))
                                 {
-                                    existeRecibo = context.AnticiposxCliente.Where(x => x.NumeroRecibo == reciboPost.NumeroRecibo).Count();
+                                    existeRecibo = 1;
+                                    razonFlotante = "Banco o referencia vacía";
                                 }
+                                /*else
+                                {
+                                    bool existeCorrelativo = context.RecibosxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == bank.IdBanco && x.Anulado == false) || context.AnticiposxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == bank.IdBanco && x.Anulado == false);
+                                    if (existeCorrelativo)
+                                    {
+                                        existeRecibo = 1;
+                                        razonFlotante = "Referencia encontrada";
+                                    }
+                                }*/
 
                                 if (existeRecibo == 0)
                                 {
-                                    existeRecibo = context.RecibosxCliente.Where(x => x.CodigoCliente == subfactura.CodigoCliente
-                                                                                 && (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
-                                                                                 && x.IdTipoPago == pagoBD.IdTipoPago
-                                                                                 && x.Referencia == pago.Referencia
-                                                                                 && x.SpecPago == pago.TipoPagoDetalle
-                                                                                 && x.Valor == pagoValor
-                                                                                 && x.IdFactura == subfactura.IdFactura).Count();
+                                    bool existeCorrelativo = context.AnticiposxCliente.Any(x => x.NumeroRecibo == reciboPost.NumeroRecibo) || context.RecibosxCliente.Any(x => x.NumeroRecibo == reciboPost.NumeroRecibo);
+                                    if (existeCorrelativo)
+                                    {
+                                        await ErrorLogger.LogErrorAsync(errorCode: "IT01", controlador: "ReciboController", ruta: "/api/Recibo/PostRecibo", usuario: asesor.Usuario, mensaje: "Se encontro el correlativo dublicado en recibos/anticipo (Línea 1220).");
+                                        return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT01", Message = "Se encontro un recibo/anticipo con el mismo correlativo.Por favor, comuníquese con el departamento de IT para recibir apoyo." });
+                                    }
                                 }
                                 if (recibo == null)
                                 {
@@ -1273,7 +1300,8 @@ namespace AventasApi.Controllers
                                         FechaCreacion = DateTime.Now,
                                         EmpresaUsuario = reciboPost.EmpresaUsuario,
                                         firmaByte = asesor.firma,
-                                        Reimpresion = false
+                                        Reimpresion = false,
+                                        Original = false
                                     };
                                     recibosxCliente.Add(reciboXCliente);
                                 }
@@ -1300,6 +1328,7 @@ namespace AventasApi.Controllers
                                         SpecPago = pago.TipoPagoDetalle,
                                         UsuarioCreacion = user.UserAccount,
                                         FechaCreacion = DateTime.Now,
+                                        RazonFlotante =  razonFlotante,
                                         Estado = 0  ///0: Pendiente, 1: Sincronizado, 2:Cancelado
                                     };
                                     recibosxClienteFlotante.Add(reciboXClienteFlotante);
@@ -1465,18 +1494,18 @@ namespace AventasApi.Controllers
                                     SpecPago = recibo.SpecPago,
                                     UsuarioCreacion = recibo.UsuarioCreacion,
                                     FechaCreacion = DateTime.Now,
+                                    RazonFlotante = "Conectividad a internet",
                                     Estado = 0, ///0: Pendiente, 1: Sincronizado, 2:Cancelado
                                     DetalleRecibo = recibo.DetalleRecibo
                                 };
                                 recibosxClienteFlotante.Add(reciboXClienteFlotante);
                             }
                             AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
-                            respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
-                            return Ok(respuestaPagoRecibo);
+                            await ErrorLogger.LogErrorAsync(errorCode: "IT02", controlador: "ReciboController", ruta: "/api/Recibo/PostRecibo", usuario: asesor.Usuario, mensaje: "Ocurrió un error al tratar de registrar el recibo en la base de datos de Eva (Linea 1480).");
+                            return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT02", Message = "Ocurrió un error al procesar la solicitud. Por favor, comuníquese con el departamento de IT para recibir apoyo.", resultado = respuestaPagoRecibo});
                         }
                         else
                         {
-
                             if (reciboPost.SaldoFavor > 0)
                             {
                                 string ultimoValor = recibos[recibos.Count() - 1].APLICADO;
@@ -1537,8 +1566,8 @@ namespace AventasApi.Controllers
                             }
                             else
                             {
-                                return BadRequest(respuesta.Content);
-
+                                await ErrorLogger.LogErrorAsync(errorCode: "IT03", controlador: "ReciboController", ruta: "/api/Recibo/PostRecibo", usuario: asesor.Usuario, mensaje: "Ocurrio un error al tratar de sincronizar el recibo con Ax (Linea 1546).");
+                                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT03", Message = "Ocurrió un error al intentar sincronizar el recibo con AX. Por favor, comuníquese con el departamento de IT para recibir apoyo."});
                             }
                             string empresa = codigoCliente.Substring(0, 4);
                             // syncCuentaCorriente.SyncFacturas(empresa, codigoCliente);
@@ -1551,7 +1580,6 @@ namespace AventasApi.Controllers
                     catch (Exception)
                     {
                         return BadRequest(Newtonsoft.Json.JsonConvert.SerializeObject(recibos));
-
                     }
                 }
                 else
@@ -1559,8 +1587,7 @@ namespace AventasApi.Controllers
                     if (existeRecibo > 0)
                     {
                         AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
-                        respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
-                        return Ok(respuestaPagoRecibo);
+                        return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IF01", Message = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Por favor, comuníquese con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.", resultado = respuestaPagoRecibo });
                     }
 
                     var Esduplicado = AsyncSqlInsert.IngresarRecibos(recibosxCliente, false);
@@ -1590,13 +1617,14 @@ namespace AventasApi.Controllers
                                 UsuarioCreacion = recibo.UsuarioCreacion,
                                 FechaCreacion = DateTime.Now,
                                 Estado = 0, ///0: Pendiente, 1: Sincronizado, 2:Cancelado
+                                RazonFlotante = "Conectividad a internet",
                                 DetalleRecibo = recibo.DetalleRecibo
                             };
                             recibosxClienteFlotante.Add(reciboXClienteFlotante);
                         }
                         AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
-                        respuestaPagoRecibo.Mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de recibos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.";
-                        return Ok(respuestaPagoRecibo);
+                        await ErrorLogger.LogErrorAsync(errorCode: "IT04", controlador: "ReciboController", ruta: "/api/Recibo/PostRecibo", usuario: asesor.Usuario, mensaje: "Ocurrió un error al tratar de registrar el recibo en la base de datos de Eva (Linea 1601).");
+                        return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT04", Message = "Ocurrió un error al procesar la solicitud. Por favor, comuníquese con el departamento de IT para recibir apoyo.", resultado = respuestaPagoRecibo });
                     }
                     else
                     {
@@ -1769,6 +1797,7 @@ namespace AventasApi.Controllers
                         ReciboGenerado = rec.ReciboIdGenerado == null ? "No Disponible" : rec.ReciboIdGenerado,
                         Anticipo = false,
                         Estado = rec.Estado,
+                        RazonFlotante = rec.RazonFlotante ?? "",
                         NombreAsesor = ctx.Asesores.FirstOrDefault(x => x.CodigoAsesor == rec.CodigoAsesor).Nombre,
                         Asesor = rec.CodigoAsesor,
                         NumeroRecibo = rec.NumeroRecibo,
@@ -1854,7 +1883,7 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/Recibo/flotante/{FechaInicio}/{FechaFin}/{estado}/{asesor}")]
+        [Route("~/api/Recibo/flotante/{FechaInicio}/{FechaFin}/{estado}")]
         public async Task<IHttpActionResult> GetFlotantesAsesores(DateTime FechaInicio, DateTime FechaFin, int estado)
         {
             try
@@ -2417,6 +2446,43 @@ namespace AventasApi.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("~/api/recibo/original/{numeroRecibo}")]
+        public async Task<IHttpActionResult> HabilitarReimpresionOriginal(string numeroRecibo)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var reciboHabilitar = ctx.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numeroRecibo.ToUpper());
+                    var anticipoHabilitar = ctx.AnticiposxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numeroRecibo.ToUpper());
+                    if (reciboHabilitar == null && anticipoHabilitar == null)
+                    {
+                        return NotFound();
+                    }
+
+                    if (reciboHabilitar != null)
+                    {
+                        reciboHabilitar.Original = !reciboHabilitar.Original;
+                    }
+
+                    if (anticipoHabilitar != null)
+                    {
+                        anticipoHabilitar.Original = !anticipoHabilitar.Original;
+                    }
+
+                    ctx.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                await ErrorLogger.LogErrorAsync(errorCode: "RT02", controlador: "ReciboController", ruta: "api/recibo/original/{numero}", usuario: "", mensaje: ex.Message);
+                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "RT02", Message = "Ocurrió un error al procesar la solicitud." });
+
+            }
+        }
+
         [HttpGet]
         [Route("~/api/recibo/sindepoosito/{asesor}")]
         public IHttpActionResult ExisteReciboSinDeposito(string asesor)
@@ -2523,7 +2589,8 @@ namespace AventasApi.Controllers
                 Longitude = reciboFlotante.Longitude,
                 Sincronizado = false,
                 firma = asesor.firma,
-                Reimpresion = false,
+                Reimpresion = true,
+                Original = true,
                 RecibosDetalle = reciboFlotante.RecibosDetalleFlotante.Select(d => new RecibosDetalle()
                 {
                     IdReciboDetalle = d.IdReciboDetalle,
@@ -2565,7 +2632,8 @@ namespace AventasApi.Controllers
                 EsContado = reciboFlotante.EsContado.Value,
                 NumPedido = reciboFlotante.NumPedido,
                 firma = asesor.firma,
-                Reimpresion = false
+                Reimpresion = true,
+                Original = true
             };
 
             return reciboBD;
@@ -2687,7 +2755,6 @@ namespace AventasApi.Controllers
 
             }
         }
-
     }
     public class RespuestaRecibo
     {

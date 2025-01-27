@@ -80,6 +80,7 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="firma" Type="varbinary(max)" />
           <Property Name="Anulado" Type="bit" Nullable="false" />
           <Property Name="Reimpresion" Type="bit" />
+          <Property Name="Original" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="AprobacionDevoluciones">
           <Key>
@@ -1741,6 +1742,7 @@ warning 6002: The table/view 'AVentas.dbo.IncidenciaVisitaDetalle' does not have
           <Property Name="firma" Type="varbinary(max)" />
           <Property Name="Anulado" Type="bit" Nullable="false" />
           <Property Name="Reimpresion" Type="bit" />
+          <Property Name="Original" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="RecibosxClienteFlotante">
           <Key>
@@ -1773,6 +1775,7 @@ warning 6002: The table/view 'AVentas.dbo.IncidenciaVisitaDetalle' does not have
           <Property Name="FechaCreacion" Type="datetime" />
           <Property Name="UsuarioModificacion" Type="varchar" MaxLength="250" />
           <Property Name="FechaModificacion" Type="datetime" />
+          <Property Name="RazonFlotante" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="RespuestaAnidadaDetalle">
           <Key>
@@ -8979,6 +8982,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="Anulado" Type="Boolean" Nullable="false" />
           <Property Name="Reimpresion" Type="Boolean" />
+          <Property Name="Original" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK__RecibosxC__IdFac__00EA0E6F">
           <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
@@ -10301,6 +10305,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
           <NavigationProperty Name="FacturasxCliente" Relationship="AventasModel.FK_ReciboXClienteFlotante___FacturaXCliente" FromRole="RecibosxClienteFlotante" ToRole="FacturasxCliente" />
           <NavigationProperty Name="RecibosDetalleFlotante" Relationship="AventasModel.FK__RecibosDetalle__Recibo" FromRole="RecibosxClienteFlotante" ToRole="RecibosDetalleFlotante" />
+          <Property Name="RazonFlotante" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_ReciboXClienteFlotante___FacturaXCliente">
           <End Type="AventasModel.FacturasxCliente" Role="FacturasxCliente" Multiplicity="0..1" />
@@ -12322,6 +12327,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <Property Name="firma" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="Anulado" Type="Boolean" Nullable="false" />
           <Property Name="Reimpresion" Type="Boolean" />
+          <Property Name="Original" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Combustibles">
           <Key>
@@ -13860,6 +13866,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySetMapping Name="RecibosxCliente">
             <EntityTypeMapping TypeName="AventasModel.RecibosxCliente">
               <MappingFragment StoreEntitySet="RecibosxCliente">
+                <ScalarProperty Name="Original" ColumnName="Original" />
                 <ScalarProperty Name="Reimpresion" ColumnName="Reimpresion" />
                 <ScalarProperty Name="Anulado" ColumnName="Anulado" />
                 <ScalarProperty Name="firma" ColumnName="firma" />
@@ -14432,6 +14439,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySetMapping Name="RecibosxClienteFlotante">
             <EntityTypeMapping TypeName="AventasModel.RecibosxClienteFlotante">
               <MappingFragment StoreEntitySet="RecibosxClienteFlotante">
+                <ScalarProperty Name="RazonFlotante" ColumnName="RazonFlotante" />
                 <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
                 <ScalarProperty Name="UsuarioModificacion" ColumnName="UsuarioModificacion" />
                 <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
@@ -15264,6 +15272,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySetMapping Name="AnticiposxCliente">
             <EntityTypeMapping TypeName="AventasModel.AnticiposxCliente">
               <MappingFragment StoreEntitySet="AnticiposxCliente">
+                <ScalarProperty Name="Original" ColumnName="Original" />
                 <ScalarProperty Name="Reimpresion" ColumnName="Reimpresion" />
                 <ScalarProperty Name="Anulado" ColumnName="Anulado" />
                 <ScalarProperty Name="firma" ColumnName="firma" />

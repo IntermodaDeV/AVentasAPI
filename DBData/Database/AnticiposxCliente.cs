@@ -42,5 +42,6 @@ namespace DBData.Database
         public byte[] firma { get; set; }
         public bool Anulado { get; set; }
         public Nullable<bool> Reimpresion { get; set; }
+        public bool Original { get; set; }
     }
 }
