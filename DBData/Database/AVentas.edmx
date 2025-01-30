@@ -5002,6 +5002,9 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
         <Function Name="SP_ObtenerFacturasAbiertas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="cliente" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="SP_ObtenerFechaDescuentoBot" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="factura" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SP_ObtenerInventario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="cliente" Type="varchar" Mode="In" />
         </Function>
@@ -8875,6 +8878,9 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             <End Role="Servicio" EntitySet="Servicio" />
             <End Role="ContactoServicio" EntitySet="ContactoServicio" />
           </AssociationSet>
+          <FunctionImport Name="SP_ObtenerFechaDescuentoBot" ReturnType="Collection(String)">
+            <Parameter Name="factura" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -15881,6 +15887,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_ObtenerFechaDescuentoBot" FunctionName="AventasModel.Store.SP_ObtenerFechaDescuentoBot" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

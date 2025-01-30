@@ -772,5 +772,14 @@ namespace DBData.Database
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<SP_ObtenerProducto_Result>("SP_ObtenerProducto", productoParameter, tallaParameter, colorParameter, empresaParameter);
         }
+    
+        public virtual ObjectResult<string> SP_ObtenerFechaDescuentoBot(string factura)
+        {
+            var facturaParameter = factura != null ?
+                new ObjectParameter("factura", factura) :
+                new ObjectParameter("factura", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("SP_ObtenerFechaDescuentoBot", facturaParameter);
+        }
     }
 }
