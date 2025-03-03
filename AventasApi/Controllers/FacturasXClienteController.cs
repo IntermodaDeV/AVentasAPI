@@ -277,5 +277,29 @@ namespace AventasApi.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("fechaDescueto/{factura}")]
+        public async Task<IHttpActionResult> GetFechaDescuentoFactura(string factura)
+        {
+            try
+            {
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    var fechaDescuento = ctx.SP_ObtenerFechaDescuentoBot(factura).FirstOrDefault();
+
+                    if (fechaDescuento != null)
+                    {
+                        return Ok(fechaDescuento);
+                    }
+
+                    return BadRequest("No se encontró la fecha calculada para la factura proporcionada.");
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
     }
 }
