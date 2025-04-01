@@ -439,58 +439,58 @@ namespace AventasApi.Controllers
         {
             dateFin = dateFin.AddHours(23);
             dateFin = dateFin.AddMinutes(59);
-            
-             try
-             {
-                 using (var ctx = new AVentasEntities())
-                 {
 
-                     var pendientes = await ctx.GastosViajeDetalle
-                         .Join(ctx.CategoriaTipoGastoViaje,
-                             gasto => gasto.IdCategoriaTipoGastoViaje,
-                             categoria => categoria.IdCategoriaTipoGastoViaje,
-                             (gasto, categoria) => new { Gasto = gasto, Categoria = categoria })
-                         .Join(ctx.TipoGastoViaje,
-                             gastocategoria => gastocategoria.Categoria.IdTipoGastoViaje,
-                             tipo => tipo.IdTipoGastoViaje,
-                             (gastocategoria, tipo) => new { GastoCategoria = gastocategoria, Tipo = tipo }
-                         )
-                         .Join(ctx.Estado,
-                             gastoEstado => gastoEstado.GastoCategoria.Gasto.IdEstado,
-                             estado => estado.IdEstado,
-                             (gastoEstado, Estado) => new { GastoEstado = gastoEstado, Estado = Estado }
-                             )
-                         .Where(x => x.GastoEstado.GastoCategoria.Gasto.UsuarioAsesor == usuario &&
-                           x.GastoEstado.GastoCategoria.Gasto.FechaFactura <= dateFin &&
-                         x.GastoEstado.GastoCategoria.Gasto.FechaFactura >= dateIni
-                         && x.GastoEstado.GastoCategoria.Gasto.IdEstado != 1)
-                         .Select(x => new HistorialGastosViewModel
-                         {
-                             IdGastoViajeDetalle = x.GastoEstado.GastoCategoria.Gasto.IdGastoViajeDetalle,
-                             tipo = x.GastoEstado.Tipo.Nombre,
-                             categoria = x.GastoEstado.GastoCategoria.Categoria.Nombre,
-                             UsuarioAsesor = x.GastoEstado.GastoCategoria.Gasto.UsuarioAsesor,
-                             NoFactura = x.GastoEstado.GastoCategoria.Gasto.NoFactura,
-                             Descripcion = x.GastoEstado.GastoCategoria.Gasto.Descripcion,
-                             DescripcionAdmin = x.GastoEstado.GastoCategoria.Gasto.DescripcionAdmin,
-                             importeExento = x.GastoEstado.GastoCategoria.Gasto.importeExento != null ? x.GastoEstado.GastoCategoria.Gasto.importeExento : 0,
-                             importeGravado = x.GastoEstado.GastoCategoria.Gasto.importeGravado != null ? x.GastoEstado.GastoCategoria.Gasto.importeGravado : 0,
-                             ValorFactura = x.GastoEstado.GastoCategoria.Gasto.ValorFactura,
-                             FechaFactura = x.GastoEstado.GastoCategoria.Gasto.FechaFactura,
-                             FechaCreacion = x.GastoEstado.GastoCategoria.Gasto.FechaCreacion,
-                             Estado = x.Estado.Nombre,
-                             serie = x.GastoEstado.GastoCategoria.Gasto.serie,
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
 
-                         }).ToListAsync();
+                    var pendientes = await ctx.GastosViajeDetalle
+                        .Join(ctx.CategoriaTipoGastoViaje,
+                            gasto => gasto.IdCategoriaTipoGastoViaje,
+                            categoria => categoria.IdCategoriaTipoGastoViaje,
+                            (gasto, categoria) => new { Gasto = gasto, Categoria = categoria })
+                        .Join(ctx.TipoGastoViaje,
+                            gastocategoria => gastocategoria.Categoria.IdTipoGastoViaje,
+                            tipo => tipo.IdTipoGastoViaje,
+                            (gastocategoria, tipo) => new { GastoCategoria = gastocategoria, Tipo = tipo }
+                        )
+                        .Join(ctx.Estado,
+                            gastoEstado => gastoEstado.GastoCategoria.Gasto.IdEstado,
+                            estado => estado.IdEstado,
+                            (gastoEstado, Estado) => new { GastoEstado = gastoEstado, Estado = Estado }
+                            )
+                        .Where(x => x.GastoEstado.GastoCategoria.Gasto.UsuarioAsesor == usuario &&
+                          x.GastoEstado.GastoCategoria.Gasto.FechaFactura <= dateFin &&
+                        x.GastoEstado.GastoCategoria.Gasto.FechaFactura >= dateIni
+                        && x.GastoEstado.GastoCategoria.Gasto.IdEstado != 1)
+                        .Select(x => new HistorialGastosViewModel
+                        {
+                            IdGastoViajeDetalle = x.GastoEstado.GastoCategoria.Gasto.IdGastoViajeDetalle,
+                            tipo = x.GastoEstado.Tipo.Nombre,
+                            categoria = x.GastoEstado.GastoCategoria.Categoria.Nombre,
+                            UsuarioAsesor = x.GastoEstado.GastoCategoria.Gasto.UsuarioAsesor,
+                            NoFactura = x.GastoEstado.GastoCategoria.Gasto.NoFactura,
+                            Descripcion = x.GastoEstado.GastoCategoria.Gasto.Descripcion,
+                            DescripcionAdmin = x.GastoEstado.GastoCategoria.Gasto.DescripcionAdmin,
+                            importeExento = x.GastoEstado.GastoCategoria.Gasto.importeExento != null ? x.GastoEstado.GastoCategoria.Gasto.importeExento : 0,
+                            importeGravado = x.GastoEstado.GastoCategoria.Gasto.importeGravado != null ? x.GastoEstado.GastoCategoria.Gasto.importeGravado : 0,
+                            ValorFactura = x.GastoEstado.GastoCategoria.Gasto.ValorFactura,
+                            FechaFactura = x.GastoEstado.GastoCategoria.Gasto.FechaFactura,
+                            FechaCreacion = x.GastoEstado.GastoCategoria.Gasto.FechaCreacion,
+                            Estado = x.Estado.Nombre,
+                            serie = x.GastoEstado.GastoCategoria.Gasto.serie,
+
+                        }).ToListAsync();
 
 
-                     return Ok(pendientes);
-                 }
-             }
-             catch (Exception e)
-             {
-                 return BadRequest(e.ToString());
-             }
+                    return Ok(pendientes);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
 
         [HttpGet]
@@ -526,7 +526,7 @@ namespace AventasApi.Controllers
                 nombreAsesor = ctx.Usuarios.FirstOrDefault(x => x.usuario == usuario).nombre;
                 empresa = ctx.Usuarios.FirstOrDefault(x => x.usuario == usuario).EmpresaId;
 
-                Tipo =  ctx.TipoGastoViaje.FirstOrDefault(x => x.IdTipoGastoViaje == tipoGasto).Nombre;
+                Tipo = ctx.TipoGastoViaje.FirstOrDefault(x => x.IdTipoGastoViaje == tipoGasto).Nombre;
                 //obtener el nombre del proveedor
 
             }
@@ -538,8 +538,8 @@ namespace AventasApi.Controllers
                 //using (ExcelPackage package = new ExcelPackage(@"\\10.100.2.17\Gira Asesores\Plantilla\" + empresa + @".xlsx"))
                 using (ExcelPackage package = new ExcelPackage(stream))
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Hoja1");                   
-                    
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Hoja1");
+
                     //tamaño de las columnas
                     worksheet.Column(2).Width = 16;
                     worksheet.Column(3).Width = 56;
@@ -552,7 +552,7 @@ namespace AventasApi.Controllers
                     string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
                     // Construir la ruta completa de la imagen dentro del directorio del controlador
-                    string imagePath ;
+                    string imagePath;
                     //encabezado
                     worksheet.Cells["B2:F2"].Merge = true;
                     switch (empresa)
@@ -565,7 +565,7 @@ namespace AventasApi.Controllers
                             worksheet.Cells[2, 2].Value = "MODINTER";
                             imagePath = Path.Combine(baseDirectory, "Logos", "Logo_IMGT.jpg");
                             break;
-                        default:                        
+                        default:
                             worksheet.Cells[2, 2].Value = "INTERMODA S.A DE C.V";
                             imagePath = Path.Combine(baseDirectory, "Controllers", "Logos", "Logo_IMHN.png");
                             break;
@@ -578,7 +578,7 @@ namespace AventasApi.Controllers
 
                     worksheet.Cells[2, 2].Style.Font.Bold = true;
                     worksheet.Cells["B4:F4"].Merge = true;
-                    worksheet.Cells[4, 2].Value = "Reporte de "+ Tipo;
+                    worksheet.Cells[4, 2].Value = "Reporte de " + Tipo;
                     worksheet.Cells[4, 2].Style.Font.Bold = true;
 
 
@@ -644,7 +644,7 @@ namespace AventasApi.Controllers
                     table.TableStyle = OfficeOpenXml.Table.TableStyles.Custom;
 
 
-                    package.Save(); 
+                    package.Save();
                 }
 
                 string date1 = dateIni.Year + "-" + dateIni.Month + "-" + dateIni.Day;
@@ -665,7 +665,7 @@ namespace AventasApi.Controllers
                 return InternalServerError(e);
             }
 
-            
+
 
             //aqui
             /*dateFin = dateFin.AddHours(23);
@@ -1004,7 +1004,7 @@ namespace AventasApi.Controllers
                 return BadRequest(e.ToString());
             }
         }
-        
+
         [HttpGet]
         [Route("GrupoImpuesto/{empresa}")]
         public async Task<IHttpActionResult> obtenerGrupoImpuestosEmpresa(string empresa)
@@ -1333,9 +1333,8 @@ namespace AventasApi.Controllers
                 var usuario = ctx.Usuarios.FirstOrDefault(x => x.usuario == imagen.UsuarioAsesor);
                 var moneda = ctx.MonedasxEmpresa.FirstOrDefault(x => x.EmpresaId == usuario.EmpresaId && x.IdMoneda != "USD");
 
-                string emailOrigen = "sistema@intermoda.com.hn";
-                string contrasena = "&odRad!=PlW7Iga";
-
+                string emailOrigen = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "CorreoGira").Valor;
+                string contrasena = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "PasswordCorreoGira").Valor;
 
                 string htmlBody = @"
                     <!DOCTYPE html>
@@ -1517,10 +1516,8 @@ namespace AventasApi.Controllers
                 var documento = ctx.Empresa.FirstOrDefault(x => x.EmpresaId == usuario.EmpresaId);
                 var moneda = ctx.MonedasxEmpresa.FirstOrDefault(x => x.EmpresaId == usuario.EmpresaId && x.IdMoneda != "USD");
 
-
-                string emailOrigen = "sistema@intermoda.com.hn";
-                string contrasena = "&odRad!=PlW7Iga";
-
+                string emailOrigen = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "CorreoGira").Valor;
+                string contrasena = ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "PasswordCorreoGira").Valor;
                 string htmlBody = @"
                     <!DOCTYPE html>
                     <html>
