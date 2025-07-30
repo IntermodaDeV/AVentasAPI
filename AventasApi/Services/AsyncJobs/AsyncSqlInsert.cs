@@ -245,7 +245,7 @@ namespace AventasApi.Services.AsyncJobs
 
                         FirmasxPedido firmaAGuardar = new FirmasxPedido
                         {
-                            PedidoId = pedido.PedidoId,
+                            PedidoFlotanteId = pedido.Id,
                             Firma = firmaConversion.ContentByteArray
                         };
                         context.FirmasxPedido.Add(firmaAGuardar);

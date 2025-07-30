@@ -585,6 +585,9 @@ warning 6002: The table/view 'AVentas.dbo.Acciones' does not have a primary key 
           <Property Name="activo" Type="bit" Nullable="false" />
           <Property Name="principal" Type="bit" Nullable="false" />
           <Property Name="fechaCreacion" Type="datetime" Nullable="false" />
+          <Property Name="latitud" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="longitud" Type="decimal" Precision="18" Scale="15" />
+          <Property Name="habilitado" Type="bit" />
         </EntityType>
         <EntityType Name="DistribucionxTalla">
           <Key>
@@ -797,6 +800,7 @@ warning 6002: The table/view 'AVentas.dbo.EstadosIncidencia' does not have a pri
           <Property Name="IdFirmaxPedido" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Firma" Type="varbinary(max)" />
           <Property Name="PedidoId" Type="varchar" MaxLength="250" />
+          <Property Name="PedidoFlotanteId" Type="int" />
         </EntityType>
         <EntityType Name="FisicoDisponible">
           <Key>
@@ -1493,6 +1497,9 @@ warning 6002: The table/view 'AVentas.dbo.IncidenciaVisitaDetalle' does not have
           <Property Name="Almacen" Type="varchar" MaxLength="50" />
           <Property Name="Ubicacion" Type="varchar" MaxLength="100" />
           <Property Name="postalAddress" Type="bigint" />
+          <Property Name="PinEnviado" Type="bit" />
+          <Property Name="AprobacionVentas" Type="bit" />
+          <Property Name="AprobacionCliente" Type="bit" />
         </EntityType>
         <EntityType Name="PrecioEspecifico">
           <Key>
@@ -2835,6 +2842,18 @@ warning 6002: The table/view 'AVentas.dbo.vw_TallasxProducto' does not have a pr
             </Principal>
             <Dependent Role="FacturasxCliente">
               <PropertyRef Name="IdTipoPedido" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FirmasxPe__Pedid__458AE82D">
+          <End Role="PedidosxClienteFlotante" Type="Self.PedidosxClienteFlotante" Multiplicity="0..1" />
+          <End Role="FirmasxPedido" Type="Self.FirmasxPedido" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PedidosxClienteFlotante">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FirmasxPedido">
+              <PropertyRef Name="PedidoFlotanteId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -5534,6 +5553,10 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             <End Role="TiposdePedido" EntitySet="TiposdePedido" />
             <End Role="FacturasxCliente" EntitySet="FacturasxCliente" />
           </AssociationSet>
+          <AssociationSet Name="FK__FirmasxPe__Pedid__458AE82D" Association="Self.FK__FirmasxPe__Pedid__458AE82D">
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+            <End Role="FirmasxPedido" EntitySet="FirmasxPedido" />
+          </AssociationSet>
           <AssociationSet Name="FK__FirmasxPe__Pedid__75C27486" Association="Self.FK__FirmasxPe__Pedid__75C27486">
             <End Role="PedidosxCliente" EntitySet="PedidosxCliente" />
             <End Role="FirmasxPedido" EntitySet="FirmasxPedido" />
@@ -6563,6 +6586,8 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <Property Name="Firma" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="PedidoId" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PedidosxCliente" Relationship="AventasModel.FK__FirmasxPe__Pedid__75C27486" FromRole="FirmasxPedido" ToRole="PedidosxCliente" />
+          <Property Name="PedidoFlotanteId" Type="Int32" />
+          <NavigationProperty Name="PedidosxClienteFlotante" Relationship="AventasModel.FK__FirmasxPe__Pedid__458AE82D" FromRole="FirmasxPedido" ToRole="PedidosxClienteFlotante" />
         </EntityType>
         <EntityType Name="FormularioIntroDetalle">
           <Key>
@@ -8879,8 +8904,12 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             <End Role="ContactoServicio" EntitySet="ContactoServicio" />
           </AssociationSet>
           <FunctionImport Name="SP_ObtenerFechaDescuentoBot" ReturnType="Collection(String)">
-            <Parameter Name="factura" Mode="In" Type="String" />
+          <Parameter Name="factura" Mode="In" Type="String" />
           </FunctionImport>
+          <AssociationSet Name="FK__FirmasxPe__Pedid__458AE82D" Association="AventasModel.FK__FirmasxPe__Pedid__458AE82D">
+            <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
+            <End Role="FirmasxPedido" EntitySet="FirmasxPedido" />
+          </AssociationSet>
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -11097,6 +11126,10 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <NavigationProperty Name="TiposdePedido" Relationship="AventasModel.FK__PedidosxC__IdTip__6A50C1DA1" FromRole="PedidosxClienteFlotante" ToRole="TiposdePedido" />
           <Property Name="Ubicacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="postalAddress" Type="Int64" />
+          <Property Name="PinEnviado" Type="Boolean" />
+          <Property Name="AprobacionVentas" Type="Boolean" />
+          <Property Name="AprobacionCliente" Type="Boolean" />
+          <NavigationProperty Name="FirmasxPedido" Relationship="AventasModel.FK__FirmasxPe__Pedid__458AE82D" FromRole="PedidosxClienteFlotante" ToRole="FirmasxPedido" />
         </EntityType>
         <EntityType Name="RutasxAsesor">
           <Key>
@@ -12680,6 +12713,9 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <Property Name="activo" Type="Boolean" Nullable="false" />
           <Property Name="principal" Type="Boolean" Nullable="false" />
           <Property Name="fechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="latitud" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="longitud" Type="Decimal" Precision="18" Scale="15" />
+          <Property Name="habilitado" Type="Boolean" />
         </EntityType>
         <ComplexType Name="IMObtenerFacturasDevolucionCompleta_Result">
           <Property Type="String" Name="factura" Nullable="true" MaxLength="250" />
@@ -13097,6 +13133,18 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__FirmasxPe__Pedid__458AE82D">
+          <End Type="AventasModel.PedidosxClienteFlotante" Role="PedidosxClienteFlotante" Multiplicity="0..1" />
+          <End Type="AventasModel.FirmasxPedido" Role="FirmasxPedido" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PedidosxClienteFlotante">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="FirmasxPedido">
+              <PropertyRef Name="PedidoFlotanteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -13370,6 +13418,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySetMapping Name="FirmasxPedido">
             <EntityTypeMapping TypeName="AventasModel.FirmasxPedido">
               <MappingFragment StoreEntitySet="FirmasxPedido">
+                <ScalarProperty Name="PedidoFlotanteId" ColumnName="PedidoFlotanteId" />
                 <ScalarProperty Name="IdFirmaxPedido" ColumnName="IdFirmaxPedido" />
                 <ScalarProperty Name="Firma" ColumnName="Firma" />
                 <ScalarProperty Name="PedidoId" ColumnName="PedidoId" />
@@ -14780,6 +14829,9 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySetMapping Name="PedidosxClienteFlotante">
             <EntityTypeMapping TypeName="AventasModel.PedidosxClienteFlotante">
               <MappingFragment StoreEntitySet="PedidosxClienteFlotante">
+                <ScalarProperty Name="AprobacionCliente" ColumnName="AprobacionCliente" />
+                <ScalarProperty Name="AprobacionVentas" ColumnName="AprobacionVentas" />
+                <ScalarProperty Name="PinEnviado" ColumnName="PinEnviado" />
                 <ScalarProperty Name="postalAddress" ColumnName="postalAddress" />
                 <ScalarProperty Name="Ubicacion" ColumnName="Ubicacion" />
                 <ScalarProperty Name="Almacen" ColumnName="Almacen" />
@@ -15565,6 +15617,9 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySetMapping Name="DireccionesCliente">
             <EntityTypeMapping TypeName="AventasModel.DireccionesCliente">
               <MappingFragment StoreEntitySet="DireccionesCliente">
+                <ScalarProperty Name="habilitado" ColumnName="habilitado" />
+                <ScalarProperty Name="longitud" ColumnName="longitud" />
+                <ScalarProperty Name="latitud" ColumnName="latitud" />
                 <ScalarProperty Name="fechaCreacion" ColumnName="fechaCreacion" />
                 <ScalarProperty Name="principal" ColumnName="principal" />
                 <ScalarProperty Name="activo" ColumnName="activo" />

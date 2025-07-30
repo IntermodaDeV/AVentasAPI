@@ -17,7 +17,9 @@ namespace DBData.Database
         public int IdFirmaxPedido { get; set; }
         public byte[] Firma { get; set; }
         public string PedidoId { get; set; }
+        public Nullable<int> PedidoFlotanteId { get; set; }
     
         public virtual PedidosxCliente PedidosxCliente { get; set; }
+        public virtual PedidosxClienteFlotante PedidosxClienteFlotante { get; set; }
     }
 }

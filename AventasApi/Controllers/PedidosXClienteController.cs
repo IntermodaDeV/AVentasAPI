@@ -96,16 +96,19 @@ namespace AventasApi.Controllers
                         }
                     }
 
-                    var fechaDesde = DateTime.Now.AddMinutes(Convert.ToDouble(minutosValue * -1));
+                    DateTime fechaHasta = DateTime.Now;
+                    DateTime fechaDesde = fechaHasta.AddHours(-7);
+                                       
                     var totalUnidades = Pedido.DetallePedido.Sum(x => decimal.Parse(x.Cantidad));
                     var totalPedido = Pedido.subtotal + decimal.Parse(Pedido.Impuesto.ToString()) + Pedido.Flete;
 
-                    found = ctx.PedidosxCliente.FirstOrDefault(x => (x.Fecha >= fechaDesde && x.Fecha <= DateTime.Now)
-                                                                && x.CodigoCliente == Pedido.CodigoCliente
-                                                                && x.Colecciones.CodigoColeccion == Pedido.CodigoColeccion
-                                                                && x.TotalPedido == totalPedido
-                                                                && x.TotalUnidades == totalUnidades
-                                                                && x.CodigoAsesor == user.UserAccount);
+                    found = ctx.PedidosxCliente.FirstOrDefault(x =>
+                        x.Fecha >= fechaDesde && x.Fecha < fechaHasta &&
+                        x.CodigoCliente == Pedido.CodigoCliente &&
+                        x.Colecciones.CodigoColeccion == Pedido.CodigoColeccion &&
+                        x.TotalPedido == totalPedido &&
+                        x.TotalUnidades == totalUnidades &&
+                        x.CodigoAsesor == user.UserAccount);
 
                     if (found == null)
                     {
@@ -121,7 +124,7 @@ namespace AventasApi.Controllers
                 Asesores asesor;
                 Colecciones coleccion;
                 AcuerdosxCliente acuerdoVenta;
-                TiposdePedido tipoPedido;
+                int? tipoPedido;
                 Clientes cliente;
                 UbicacionesXAlmacen ubicacion;
                 ClienteContado clienteContado;
@@ -140,7 +143,7 @@ namespace AventasApi.Controllers
                     clienteContado = context.ClienteContado.Find(Pedido.ClienteContadoId);
                     asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
                     acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
-                    tipoPedido = acuerdoVenta?.TiposdePedido;
+                    tipoPedido = acuerdoVenta == null ? Pedido.ModoVenta == "Contado" ? 5 : 1 : acuerdoVenta?.TiposdePedido?.IdTipoPedido;
                     cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
                     coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
                     ubicacion = context.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == Pedido.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == cliente.EmpresaId && x.Estatus == true);
@@ -172,7 +175,7 @@ namespace AventasApi.Controllers
                 {
                     PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
                     {
-                        IdTipoPedido = tipoPedido?.IdTipoPedido,
+                        IdTipoPedido = tipoPedido,
                         IdColeccion = coleccion.IdColeccion,
                         CodigoCliente = cliente.CodigoCliente,
                         AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
@@ -259,7 +262,7 @@ namespace AventasApi.Controllers
                     {
                         PedidosxClienteFlotante PedidoFlotante = new PedidosxClienteFlotante
                         {
-                            IdTipoPedido = tipoPedido?.IdTipoPedido,
+                            IdTipoPedido = tipoPedido,
                             IdColeccion = coleccion.IdColeccion,
                             CodigoCliente = cliente.CodigoCliente,
                             AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
@@ -341,7 +344,7 @@ namespace AventasApi.Controllers
                 {
                     PedidosxClienteFlotante PedidoBDAGuardar = new PedidosxClienteFlotante
                     {
-                        IdTipoPedido = tipoPedido?.IdTipoPedido,
+                        IdTipoPedido = tipoPedido,
                         IdColeccion = coleccion.IdColeccion,
                         CodigoCliente = cliente.CodigoCliente,
                         AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
@@ -565,7 +568,7 @@ namespace AventasApi.Controllers
                         FechaFin = FechaFin.AddDays(1);
                     }
 
-                    List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => clientes.Contains(p.CodigoCliente) && p.Fecha >= FechaInicio && p.Fecha < FechaFin).OrderByDescending(ped => ped.Fecha).Select(ped => new PedidosXClienteViewModel
+                    List<PedidosXClienteViewModel> pedidos = context.PedidosxCliente.Where(p => (clientes.Contains(p.CodigoCliente) || p.CodigoAsesor.ToUpper() == Asesor.ToUpper()) && p.Fecha >= FechaInicio && p.Fecha < FechaFin).OrderByDescending(ped => ped.Fecha).Select(ped => new PedidosXClienteViewModel
                     {
                         Asesor = ped.CodigoAsesor,
                         PedidoId = ped.PedidoId,
@@ -1416,7 +1419,7 @@ namespace AventasApi.Controllers
                         await ctx.SaveChangesAsync();
                     }
 
-                    var firma = await ctx.FirmasxPedido.FirstOrDefaultAsync(fir => pedido.PedidoId == fir.PedidoId);
+                    var firma = await ctx.FirmasxPedido.FirstOrDefaultAsync(fir => fir.PedidoFlotanteId == id);
                     if (firma != null)
                     {
                         firma.PedidoId = numeroReferencia;

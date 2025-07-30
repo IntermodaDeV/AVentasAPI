@@ -22,5 +22,8 @@ namespace DBData.Database
         public bool activo { get; set; }
         public bool principal { get; set; }
         public System.DateTime fechaCreacion { get; set; }
+        public Nullable<decimal> latitud { get; set; }
+        public Nullable<decimal> longitud { get; set; }
+        public Nullable<bool> habilitado { get; set; }
     }
 }

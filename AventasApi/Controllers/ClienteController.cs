@@ -1389,6 +1389,49 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/cliente/activos")]
+        public async Task<IHttpActionResult> GetClientesActivos()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    List<ClienteViewModel> clientes = await ctx.Clientes.Where(cli => cli.Habilitado == true).Select(cli => new ClienteViewModel
+                    {
+                        EmpresaId = cli.EmpresaId,
+                        Codigo = cli.CodigoCliente,
+                        Nombre = cli.Nombre,
+                        Telefono = cli.Telefono,
+                        Zona = cli.Zona,
+                        ComunidadAutonoma = cli.ComunidadAutonoma,
+                        GrupoPrecio = cli.GrupoPrecio,
+                        GrupoCliente = cli.GrupoCliente,
+                        Descuento = cli.Descuento,
+                        Direccion = cli.Direccion,
+                        Moneda = cli.IdMoneda,
+                        Asesor = cli.CodigoAsesor,
+                        Ruta = cli.ClientesxRuta.FirstOrDefault().Rutas.Nombre,
+                        CodigoRuta = cli.ClientesxRuta.FirstOrDefault().CodigoRuta,
+                        Latitud = cli.Latitud,
+                        Longitud = cli.Longitud,
+                        //Correo = ctx.CorreoCliente.FirstOrDefault(x => x.CodigoCliente == cli.CodigoCliente && x.activo).Correo,
+                        LimiteCredito = cli.LimiteCredito ?? 0,
+                        IgnorarSecuenciaFactura = cli.IgnorarSeqFact,
+                        CreditoDisponible = cli.CreditoDisponible ?? 0,
+                        GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
+                        ModoEntrega = cli.ModoEntrega,
+                        FacturacionEntrega = cli.FacturacionEntrega
+                    }).ToListAsync();
+                    return Ok(clientes);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
         [Route("~/api/cliente/activos/{asesor}")]
         public async Task<IHttpActionResult> GetClientesActivos(string asesor)
         {
