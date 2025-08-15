@@ -198,19 +198,15 @@ public class AsesorController : ApiController
         {
             using (var ctx = new AVentasEntities())
             {
-                var resultado = await (
-                    from a in ctx.Asesores
-                    join u in ctx.Usuarios on a.CodigoAsesor equals u.usuario
-                    where a.CodigoAsesor == codigo
-                    select new
-                    {
-                        CodigoAsesor = a.CodigoAsesor,
-                        NombreAsesor = a.Nombre,  
-                        CorreoUsuario = u.Correo 
-                    }
-                ).FirstOrDefaultAsync();
+               
+                var resultado = await ctx.Usuarios.FirstOrDefaultAsync(x => x.usuario == codigo);
 
-                return Ok(resultado);
+                return Ok(new
+                {
+                    CodigoAsesor = codigo,
+                    NombreAsesor = resultado.nombre,
+                    CorreoUsuario = resultado.Correo
+                });
             }
         }
         catch (Exception e)

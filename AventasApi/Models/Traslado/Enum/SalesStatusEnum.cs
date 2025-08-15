@@ -6,5 +6,7 @@ namespace ApiTrasladoService.Traslado.Models.Enum
     {
         [Description("PedidoAbierto")]
         PedidoAbierto = 1,
+        [Description("Cancelado")]
+        Cancelado = 4,
     }
 }

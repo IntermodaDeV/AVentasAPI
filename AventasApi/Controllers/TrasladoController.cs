@@ -1,23 +1,28 @@
-﻿using System;
+﻿using ApiTrasladoService.Shared.Utils;
 using ApiTrasladoService.Traslado.Models.DTOs;
-using System.Threading.Tasks;
-using OfficeOpenXml;
-using System.Collections.Generic;
-using System.Net.Mail;
-using System.IO;
-using System.Net;
-using ApiTrasladoService.Shared.Utils;
-using OfficeOpenXml.Style;
-using ExternalApiData.Enviroments;
 using ApiTrasladoService.Traslado.Models.Enum;
-using OfficeOpenXml.ConditionalFormatting;
 using ApiTrasladoService.Traslado.Models.XmlDtos;
-using System.Linq;
-using RestSharp;
-using System.Web.Http;
 using AventasApi.Models.Traslado.DTOs;
-using System.Web;
+using AventasApi.Models.Traslado.XmlDtos;
+using DBData.Database;
+using ExternalApiData.Enviroments;
+using OfficeOpenXml;
+using OfficeOpenXml.ConditionalFormatting;
+using OfficeOpenXml.Style;
+using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Xml.Serialization;
 
 namespace AventasApi.Controllers
 {
@@ -440,6 +445,15 @@ namespace AventasApi.Controllers
             var lote = hoja.Cells["C2"].Text;
             var motivo = hoja.Cells["C3"].Text;
 
+            //Validar pedidos de traslado ya fueron creados.
+            var isExistTraslados = await this.ExisteTrasladoParaPedido(salesId, request.Company);
+            if (isExistTraslados)
+            {
+                response.isComplete = false;
+                response.message = $"Ya existen pedidos de traslado para {salesId}";
+                return response;
+            }
+
             //Comparasion del pedido actual con la BD a ver si se parecen.
 
             //Lineas en el excel
@@ -632,6 +646,23 @@ namespace AventasApi.Controllers
             {
                 response.isComplete = responseExec.Data.Contains("OK:");
                 response.message = responseExec.Data.Replace("OK:","").Trim();
+
+                if (response.isComplete)
+                {
+
+                    try
+                    {
+
+                       await this.NewRegistroDeTraslado(salesId, response.message, request.Company, request.CodigoDelVendedor );
+                       await this.EnvioDeCoreoDeTraslados(xmlFinal, salesId, request.Company, response.message);
+                    }
+                    catch (Exception)
+                    {
+                        response.message = response.message + "\n Traslados creados correctamente, pero hubo un problema al enviar el correo de notificacion.";
+                        return response;
+                    }
+
+                }
                 return response;
             }
             else
@@ -704,5 +735,261 @@ namespace AventasApi.Controllers
 
             return response.Data;
         }
+
+        private async Task<IHttpActionResult> NewRegistroDeTraslado(string pedidoBase, string msgSucces, string dataAreaId, string codigoDelVendedor)
+        {
+
+            var listaDeTraslados = Regex.Matches(msgSucces, @"'(?<pv>PV-\d+)'")
+                                    .Cast<Match>()
+                                    .Select(m => m.Groups["pv"].Value)
+                                    .ToList();
+
+
+            try
+            {
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    for (int i = 0; i < listaDeTraslados.Count(); i++)
+                    {
+                        string itemTraslado = listaDeTraslados[i];
+
+                        var nuevoRegistro = new RegistroDeTraslado
+                        {
+                            PedidoBase = pedidoBase,
+                            PedidoTraslado = itemTraslado,
+                            CreadoPor = codigoDelVendedor,
+                            FechaDeCreacion = DateTime.Now,
+                            Company = dataAreaId
+                        };
+
+                        context.RegistroDeTraslado.Add(nuevoRegistro);
+                        await context.SaveChangesAsync();
+                    }
+
+                    return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
+            
+        }
+
+        private async Task<bool> ExisteTrasladoParaPedido(string pedidoBase, string company)
+        {
+            using (var context = new AVentasEntities())
+            {
+
+                var traslados = await context.RegistroDeTraslado
+                                             .AsNoTracking()
+                                             .Where(x => x.PedidoBase == pedidoBase && x.Company == company)
+                                             .Select(x => new { x.PedidoTraslado, x.Company })
+                                             .ToListAsync();
+
+                // Si no hay más de uno no bloquea
+                if (traslados.Count <= 0)
+                    return false;
+                bool todosCancelados = false;
+
+                // Recorre y corta en cuanto encuentre uno NO cancelado
+                foreach (var t in traslados)
+                {
+                    var pedido = await this.TrasladoPedidoEncabezado(t.PedidoTraslado, t.Company);
+
+                    // BLOQUEA
+                    if (pedido == null || pedido.SALESSTATUS != (int)SalesStatusEnum.Cancelado)
+                    {
+                        todosCancelados = true;
+                        break;
+                    }
+                }
+
+
+                return todosCancelados;
+            }
+        }
+
+        private async Task EnvioDeCoreoDeTraslados(string xmlFinal, string pedidoBase, string company, string messageResponse)
+        {
+            // 1. Deserializar el XML a objetos
+            XmlSerializer serializer = new XmlSerializer(typeof(ClientesDto));
+            ClientesDto clientes;
+            using (StringReader reader = new StringReader(xmlFinal))
+            {
+                clientes = (ClientesDto)serializer.Deserialize(reader);
+            }
+
+            // 2. Obtener líneas del pedido base
+
+            List<IMTrasladoPedidoLineaDto> lineasPedidoBase = await this.TrasladoPedidolLineas(pedidoBase, company);
+            IMTrasladoPedidoEncabezadoDto encabezadoPedidoBase = await this.TrasladoPedidoEncabezado(pedidoBase, company);
+
+            List<ExtraerPedidosDto> listaPedidosMsg = ExtraerPedidos(messageResponse);
+
+            // 3. Construir HTML
+            var sb = new StringBuilder();
+            sb.Append(@"
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; font-size: 14px; color: #333; }
+                        h2 { margin-bottom: 0; }
+                        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        .section { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 6px; }
+                        .small { color: #777; font-size: 12px; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Notificación de Traslado de Pedido</h2>
+            ");
+
+            //Resumen
+            sb.Append("<div class='section'>");
+            sb.Append("<h3>Resumen</h3>");
+            sb.Append("<table><tr><th>Tipo</th><th>Número de Pedido</th><th>Cuenta Cliente</th><th>Total Cantidad</th></tr>");
+            sb.Append("<tr>");
+            sb.Append("<td>Base</td>");
+            sb.Append("<td>" + pedidoBase + "</td>");
+            sb.Append("<td>" + encabezadoPedidoBase.CUSTACCOUNT + "</td>");
+            
+            int sumaBase = 0;
+            foreach (var l in lineasPedidoBase)
+            {
+                sumaBase = sumaBase + (int)l.REMAININVENTPHYSICAL;
+            }
+
+            sb.Append("<td>" + sumaBase + "</td>");
+            sb.Append("</tr>");
+
+            foreach (var cliente in clientes.Cliente)
+            {
+
+                int sumaQty = 0;
+
+                foreach (var linea in cliente.Lineas.Lineas)
+                {
+                    sumaQty = sumaQty + linea.qty;
+                }
+                sb.Append("<tr>");
+                sb.Append("<td>Traslado</td>");
+                sb.Append("<td>" + listaPedidosMsg.Find(x => x.Cuenta == cliente.Encabezado.CuentaDeCliente).PV + "</td>");
+                sb.Append("<td>" + cliente.Encabezado.CuentaDeCliente + "</td>");
+                sb.Append("<td>" + sumaQty + "</td>");
+                sb.Append("</tr>");
+
+            }
+            sb.Append("</table>");
+            sb.Append("</div>");
+
+
+            // Pedido Base
+            sb.Append("<div class='section'>");
+            sb.Append("<h3>Pedido Base</h3>");
+            sb.Append("<p><strong>Número de Pedido:</strong> " + pedidoBase + "</p>");
+            sb.Append("<p><strong>Cuenta Cliente:</strong> " + encabezadoPedidoBase.CUSTACCOUNT + "</p>");
+            sb.Append("<p><strong>Lote:</strong> " + encabezadoPedidoBase.BFPSEASONID + "</p>");
+            sb.Append("<table><tr><th>Código Artículo</th><th>Color</th><th>Talla</th><th>Cantidad</th></tr>");
+            foreach (var l in lineasPedidoBase)
+            {
+                sb.Append("<tr>");
+                sb.Append("<td>" + l.ITEMID + "</td>");
+                sb.Append("<td>" + l.INVENTCOLORID + "</td>");
+                sb.Append("<td>" + l.INVENTSIZEID + "</td>");
+                sb.Append("<td>" + l.REMAININVENTPHYSICAL + "</td>");
+                sb.Append("</tr>");
+            }
+            sb.Append("</table>");
+            sb.Append("</div>");
+
+
+            // Traslados realizados
+            int trasladoNum = 1;
+            foreach (var cliente in clientes.Cliente) 
+            {
+                sb.Append("<div class='section'>");
+                sb.Append("<h3>Traslado #" + trasladoNum + "</h3>");
+                sb.Append("<p><strong>Pedido Destino:</strong> " + listaPedidosMsg.Find(x=> x.Cuenta == cliente.Encabezado.CuentaDeCliente).PV + "</p>");
+                sb.Append("<p><strong>Cliente Destino:</strong> " + cliente.Encabezado.CuentaDeCliente + "</p>");
+                sb.Append("<p><strong>Lote:</strong> " + encabezadoPedidoBase.BFPSEASONID + "</p>");
+                sb.Append("<table><tr><th>Código Artículo</th><th>Color</th><th>Talla</th><th>Cantidad</th></tr>");
+                foreach (var linea in cliente.Lineas.Lineas)
+                {
+                    sb.Append("<tr>");
+                    sb.Append("<td>" + linea.ItemId + "</td>");
+                    sb.Append("<td>" + linea.InventColorId + "</td>");
+                    sb.Append("<td>" + linea.InventSizeId + "</td>");
+                    sb.Append("<td>" + linea.qty + "</td>");
+                    sb.Append("</tr>");
+                }
+                sb.Append("</table>");
+                sb.Append("</div>");
+                trasladoNum++;
+            }
+            sb.Append("<p style='font-size:12px; color:#777; margin-top:20px;'>");
+            sb.Append("Este es un mensaje automático del Sistema. Para consultas, contacte al departamento de créditos.");
+            sb.Append("</p>");
+            sb.Append("</body></html>");
+
+            string htmlBody = sb.ToString();
+
+            // 4. Enviar correo
+            MailMessage mail = new MailMessage();
+            mail.From = new MailAddress(Enviroment.Correo);
+
+            using (AVentasEntities context = new AVentasEntities())
+            {
+
+                var correos = context.Usuarios
+                .Where(u => u.Usuario_Rol.Any(ur => ur.Roles.Nombre == "Seguimiento de traslado"))
+                .Select(u => new { u.Id, u.Correo })
+                .ToList();
+
+                foreach (var correo in correos)
+                {
+                    if (!string.IsNullOrWhiteSpace(correo.Correo))
+                        mail.To.Add(correo.Correo);
+                }
+
+            }
+
+
+            mail.Subject = $"Traslado de Pedido {pedidoBase}";
+            mail.Body = htmlBody;
+            mail.IsBodyHtml = true;
+
+            SmtpClient smtp = new SmtpClient("smtp.office365.com", 587)
+            {
+                EnableSsl = true,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(Enviroment.Correo, Enviroment.CorreoPassword)
+            };
+            smtp.Send(mail);
+        }
+
+        private static List<ExtraerPedidosDto> ExtraerPedidos(string mensaje)
+        {
+            var pedidos = new List<ExtraerPedidosDto>();
+
+            // Regex para capturar PV y cualquier cuenta
+            var patron = @"'(?<pv>PV-\d+)' para '(?<cuenta>[A-Z0-9\-]+)'";
+            var matches = Regex.Matches(mensaje, patron);
+
+            foreach (Match match in matches)
+            {
+                pedidos.Add(new ExtraerPedidosDto
+                {
+                    PV = match.Groups["pv"].Value,
+                    Cuenta = match.Groups["cuenta"].Value
+                });
+            }
+
+            return pedidos;
+        }
+
+
     }
 }

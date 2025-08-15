@@ -13,6 +13,7 @@ namespace ApiTrasladoService.Traslado.Models.DTOs
         public int SALESSTATUS { get; set; } 
 
         public string BFPSEASONID { get; set; } = string.Empty;
+        public string CUSTACCOUNT { get; set; } = string.Empty;
 
         public string NAME { get; set; } = string.Empty;
     }

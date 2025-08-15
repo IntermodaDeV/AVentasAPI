@@ -293,6 +293,7 @@
     <Compile Include="Models\RolModificarModel.cs" />
     <Compile Include="Models\TransportePrecioCaja.cs" />
     <Compile Include="Models\Traslado\DTOs\DetallePedidoDto.cs" />
+    <Compile Include="Models\Traslado\DTOs\ExtraerPedidosDto.cs" />
     <Compile Include="Models\Traslado\DTOs\IMTrasladoPedidoCustomerDto.cs" />
     <Compile Include="Models\Traslado\DTOs\IMTrasladoPedidoDto.cs" />
     <Compile Include="Models\Traslado\DTOs\IMTrasladoPedidoEncabezadoDto.cs" />
@@ -303,6 +304,7 @@
     <Compile Include="Models\Traslado\DTOs\SendTrasladoResponseDto.cs" />
     <Compile Include="Models\Traslado\DTOs\SincronizarPlantillaAXRequestDto.cs" />
     <Compile Include="Models\Traslado\Enum\SalesStatusEnum.cs" />
+    <Compile Include="Models\Traslado\XmlDtos\ClientesXmlDto.cs" />
     <Compile Include="Models\Traslado\XmlDtos\TrasladoEncabezadoDto.cs" />
     <Compile Include="Models\Traslado\XmlDtos\TrasladoLineasDto.cs" />
     <Compile Include="Models\UsuarioModel.cs" />

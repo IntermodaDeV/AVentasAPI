@@ -20,9 +20,8 @@ namespace DBData.Database
         public AVentasEntities()
             : base("name=AVentasEntities")
         {
-            var objectContext = (this as IObjectContextAdapter).ObjectContext; objectContext.CommandTimeout = 1440;
         }
-
+    
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
@@ -188,6 +187,7 @@ namespace DBData.Database
         public virtual DbSet<ErroresLog> ErroresLog { get; set; }
         public virtual DbSet<Servicio> Servicio { get; set; }
         public virtual DbSet<ContactoServicio> ContactoServicio { get; set; }
+        public virtual DbSet<RegistroDeTraslado> RegistroDeTraslado { get; set; }
     
         public virtual ObjectResult<CuentaCorriente_Result> CuentaCorriente(string codigoCliente)
         {
