@@ -82,13 +82,18 @@ namespace AventasApi.Controllers
                 .FirstOrDefault(c => c.Headers.ContentDisposition.Name.Trim('\"') == "company")
                 ?.ReadAsStringAsync();
 
+            var correoUsuario = await provider.Contents
+                .FirstOrDefault(c => c.Headers.ContentDisposition.Name.Trim('\"') == "correoUsuario")
+                ?.ReadAsStringAsync();
+
             // Armo el DTO manualmente
             var request = new SincronizarPlantillaAXRequestDto
             {
                 Archivo = new MemoryPostedFile(bytes, fileName, fileContent.Headers.ContentType?.MediaType ?? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
                 NombreDelVendedor = nombreDelVendedor,
                 CodigoDelVendedor = codigoDelVendedor,
-                Company = company
+                Company = company,
+                CorreoUsuario = correoUsuario
             };
 
 
@@ -653,8 +658,8 @@ namespace AventasApi.Controllers
                     try
                     {
 
-                       await this.NewRegistroDeTraslado(salesId, response.message, request.Company, request.CodigoDelVendedor );
-                       await this.EnvioDeCoreoDeTraslados(xmlFinal, salesId, request.Company, response.message);
+                       await this.NewRegistroDeTraslado(salesId, response.message, request.Company, request.CodigoDelVendedor);
+                       await this.EnvioDeCoreoDeTraslados(xmlFinal, salesId, request.Company, response.message, request.CorreoUsuario);
                     }
                     catch (Exception)
                     {
@@ -811,7 +816,7 @@ namespace AventasApi.Controllers
             }
         }
 
-        private async Task EnvioDeCoreoDeTraslados(string xmlFinal, string pedidoBase, string company, string messageResponse)
+        private async Task EnvioDeCoreoDeTraslados(string xmlFinal, string pedidoBase, string company, string messageResponse, string emailAsesor)
         {
             // 1. Deserializar el XML a objetos
             XmlSerializer serializer = new XmlSerializer(typeof(ClientesDto));
@@ -852,7 +857,7 @@ namespace AventasApi.Controllers
             sb.Append("<h3>Resumen</h3>");
             sb.Append("<table><tr><th>Tipo</th><th>Número de Pedido</th><th>Cuenta Cliente</th><th>Total Cantidad</th></tr>");
             sb.Append("<tr>");
-            sb.Append("<td>Base</td>");
+            sb.Append("<td>Origen</td>");
             sb.Append("<td>" + pedidoBase + "</td>");
             sb.Append("<td>" + encabezadoPedidoBase.CUSTACCOUNT + "</td>");
             
@@ -944,7 +949,7 @@ namespace AventasApi.Controllers
             {
 
                 var correos = context.Usuarios
-                .Where(u => u.Usuario_Rol.Any(ur => ur.Roles.Nombre == "Seguimiento de traslado"))
+                .Where(u => u.Usuario_Rol.Any(ur => ur.Roles.Nombre == "Seguimiento de traslado" && ur.status == true))
                 .Select(u => new { u.Id, u.Correo })
                 .ToList();
 
@@ -954,6 +959,11 @@ namespace AventasApi.Controllers
                         mail.To.Add(correo.Correo);
                 }
 
+            }
+
+            if (!string.IsNullOrWhiteSpace(emailAsesor))
+            {
+                mail.To.Add(emailAsesor);
             }
 
 

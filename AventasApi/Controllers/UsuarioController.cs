@@ -1,10 +1,10 @@
-﻿using AventasApi.Models;
-using DBData.Database;
+﻿using DBData.Database;
+using System.Data.Entity;
+using AventasApi.Models;
 using ExternalApiData.ApiModels;
 using ExternalApiData.Enviroments;
 using RestSharp;
 using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
