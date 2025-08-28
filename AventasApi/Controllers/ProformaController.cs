@@ -771,7 +771,7 @@ namespace AventasApi.Controllers
                         }
 
                         var Esduplicado = AsyncSqlInsert.IngresarRecibos(recibosxCliente, false);
-                        if (Esduplicado)
+                        if (Esduplicado.duplicado)
                         {
                             foreach (var recibo in recibosxCliente)
                             {

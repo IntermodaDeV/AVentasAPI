@@ -1468,9 +1468,8 @@ namespace AventasApi.Controllers
                 {
                     try
                     {
-                        var Esduplicado = AsyncSqlInsert.IngresarRecibos(recibosxCliente, true);
-
-                        if (Esduplicado)
+                        var respuestaInsert = AsyncSqlInsert.IngresarRecibos(recibosxCliente, true);
+                        if (respuestaInsert.duplicado)
                         {
                             foreach (var recibo in recibosxCliente)
                             {
@@ -1566,8 +1565,9 @@ namespace AventasApi.Controllers
                             }
                             else
                             {
+                                AsyncSqlInsert.ActivarImpresion(respuestaInsert.numeroRecibo);
                                 await ErrorLogger.LogErrorAsync(errorCode: "IT03", controlador: "ReciboController", ruta: "/api/Recibo/PostRecibo", usuario: asesor.Usuario, mensaje: "Ocurrio un error al tratar de sincronizar el recibo con Ax (Linea 1546).");
-                                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT03", Message = "Ocurrió un error al intentar sincronizar el recibo con AX. Por favor, comuníquese con el departamento de IT para recibir apoyo."});
+                                return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT03", Message = "Verifique el listado de recibos para confirmar la creación. Si el recibo no aparece, sincronice y vuelva a intentarlo." });
                             }
                             string empresa = codigoCliente.Substring(0, 4);
                             // syncCuentaCorriente.SyncFacturas(empresa, codigoCliente);
@@ -1590,9 +1590,8 @@ namespace AventasApi.Controllers
                         return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IF01", Message = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Por favor, comuníquese con el departamento de créditos para que procedan a revisar y gestionar su recibo para que sea válido.", resultado = respuestaPagoRecibo });
                     }
 
-                    var Esduplicado = AsyncSqlInsert.IngresarRecibos(recibosxCliente, false);
-
-                    if (Esduplicado)
+                    var respuesta = AsyncSqlInsert.IngresarRecibos(recibosxCliente, false);
+                    if (respuesta.duplicado)
                     {
                         foreach (var recibo in recibosxCliente)
                         {

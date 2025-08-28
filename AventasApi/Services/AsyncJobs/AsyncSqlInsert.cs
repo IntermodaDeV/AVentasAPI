@@ -256,11 +256,10 @@ namespace AventasApi.Services.AsyncJobs
             });
         }
 
-        public static bool IngresarRecibos(List<RecibosxClienteViewModel> recibos,bool sincronizado)
+        public static (bool duplicado, string numeroRecibo) IngresarRecibos(List<RecibosxClienteViewModel> recibos,bool sincronizado)
         {
             try
             {
-
                     var reciboAAgregar = recibos.Select(rec => new RecibosxCliente
                     {
                         NumeroRecibo = rec.NumeroRecibo,
@@ -308,12 +307,12 @@ namespace AventasApi.Services.AsyncJobs
                         ValidarCorrelativoRecibo(recibos[0].CodigoAsesor, recibos[0].EmpresaUsuario);
                     }
 
-                        return false;
+                        return (false, recibos[0].NumeroRecibo);
                     }
             }
             catch
             {
-                return true;
+                return (true, null);
             }
         }
 
@@ -408,6 +407,34 @@ namespace AventasApi.Services.AsyncJobs
                 }
 
             });
+        }
+        public static bool ActivarImpresion(string numeroRecibo)
+        {
+            if (string.IsNullOrWhiteSpace(numeroRecibo))
+                return false;
+
+            using (var ctx = new AVentasEntities())
+            {
+                var recibo = ctx.RecibosxCliente.SingleOrDefault(r => r.NumeroRecibo == numeroRecibo);
+                if (recibo != null)
+                {
+                    recibo.Reimpresion = true;
+                    recibo.Original = true;
+                    ctx.SaveChanges();
+                    return true;
+                }
+
+                var anticipo = ctx.AnticiposxCliente.SingleOrDefault(a => a.NumeroRecibo == numeroRecibo);
+                if (anticipo != null)
+                {
+                    anticipo.Reimpresion = true;
+                    anticipo.Original = true;
+                    ctx.SaveChanges();
+                    return true;
+                }
+
+                return false;
+            }
         }
     }
 }
