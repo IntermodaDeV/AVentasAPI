@@ -1784,6 +1784,17 @@ warning 6002: The table/view 'AVentas.dbo.IncidenciaVisitaDetalle' does not have
           <Property Name="FechaModificacion" Type="datetime" />
           <Property Name="RazonFlotante" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="RegistroDeTraslado">
+          <Key>
+            <PropertyRef Name="IdRegistroDeTraslado" />
+          </Key>
+          <Property Name="IdRegistroDeTraslado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PedidoBase" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PedidoTraslado" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CreadoPor" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="FechaDeCreacion" Type="datetime" Nullable="false" />
+          <Property Name="Company" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="RespuestaAnidadaDetalle">
           <Key>
             <PropertyRef Name="Id" />
@@ -5208,6 +5219,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySet Name="RecibosProformaDetalle" EntityType="Self.RecibosProformaDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecibosxCliente" EntityType="Self.RecibosxCliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecibosxClienteFlotante" EntityType="Self.RecibosxClienteFlotante" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RegistroDeTraslado" EntityType="Self.RegistroDeTraslado" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RespuestaAnidadaDetalle" EntityType="Self.RespuestaAnidadaDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RespuestaDetalle" EntityType="Self.RespuestaDetalle" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Respuestas" EntityType="Self.Respuestas" Schema="dbo" store:Type="Tables" />
@@ -8910,6 +8922,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             <End Role="PedidosxClienteFlotante" EntitySet="PedidosxClienteFlotante" />
             <End Role="FirmasxPedido" EntitySet="FirmasxPedido" />
           </AssociationSet>
+          <EntitySet Name="RegistroDeTraslado" EntityType="AventasModel.RegistroDeTraslado" />
           </EntityContainer>
         <ComplexType Name="CuentaCorriente_Result">
           <Property Type="String" Name="Tipo" Nullable="true" MaxLength="250" />
@@ -13145,6 +13158,17 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="RegistroDeTraslado">
+          <Key>
+            <PropertyRef Name="IdRegistroDeTraslado" />
+          </Key>
+          <Property Name="IdRegistroDeTraslado" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PedidoBase" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PedidoTraslado" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreadoPor" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FechaDeCreacion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Company" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -15943,6 +15967,18 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SP_ObtenerFechaDescuentoBot" FunctionName="AventasModel.Store.SP_ObtenerFechaDescuentoBot" />
+          <EntitySetMapping Name="RegistroDeTraslado">
+            <EntityTypeMapping TypeName="AventasModel.RegistroDeTraslado">
+              <MappingFragment StoreEntitySet="RegistroDeTraslado">
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="FechaDeCreacion" ColumnName="FechaDeCreacion" />
+                <ScalarProperty Name="CreadoPor" ColumnName="CreadoPor" />
+                <ScalarProperty Name="PedidoTraslado" ColumnName="PedidoTraslado" />
+                <ScalarProperty Name="PedidoBase" ColumnName="PedidoBase" />
+                <ScalarProperty Name="IdRegistroDeTraslado" ColumnName="IdRegistroDeTraslado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

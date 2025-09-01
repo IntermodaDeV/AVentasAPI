@@ -189,6 +189,33 @@ public class AsesorController : ApiController
             return InternalServerError(e);
         }
     }
+
+    [HttpGet]
+    [Route("api/asesor/byCodigo/{codigo}")]
+    public async Task<IHttpActionResult> ObtenerAsesorByCorreo(string codigo)
+    {
+        try
+        {
+            using (var ctx = new AVentasEntities())
+            {
+               
+                var resultado = await ctx.Usuarios.FirstOrDefaultAsync(x => x.usuario == codigo);
+
+                return Ok(new
+                {
+                    CodigoAsesor = codigo,
+                    NombreAsesor = resultado.nombre,
+                    CorreoUsuario = resultado.Correo
+                });
+            }
+        }
+        catch (Exception e)
+        {
+            return InternalServerError(e);
+        }
+    }
+
+
 }
 public class AsesorViewModel
 {

@@ -513,6 +513,9 @@
     <Compile Include="Database\RecibosxClienteFlotante.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\RegistroDeTraslado.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\RespuestaAnidadaDetalle.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
