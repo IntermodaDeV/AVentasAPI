@@ -139,7 +139,7 @@ namespace AventasApi.Controllers
 
 
 
-                detalleDelPedido.Motivos = await this.TrasladoPedidoMotivo();
+                detalleDelPedido.Motivos = await this.TrasladoPedidoMotivo(body.dataAreaId);
                 detalleDelPedido.Lineas = await this.TrasladoPedidolLineas(body.pedido, body.dataAreaId);
 
 
@@ -683,11 +683,11 @@ namespace AventasApi.Controllers
         }
 
 
-        private async Task<List<IMTrasladoPedidoMotivoDTO>> TrasladoPedidoMotivo()
+        private async Task<List<IMTrasladoPedidoMotivoDTO>> TrasladoPedidoMotivo(string dataAreaId)
         {
             List<IMTrasladoPedidoMotivoDTO> listaMotivo = new List<IMTrasladoPedidoMotivoDTO>();
 
-            var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}traslado/motivo");
+            var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}traslado/motivo/{dataAreaId}");
             client.Timeout = 480 * (1000);
             var request = new RestRequest(Method.GET);
             request.AddHeader("Accept", "application/json");
@@ -953,22 +953,42 @@ namespace AventasApi.Controllers
                 mail.From = new MailAddress(context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "CorreoGira").Valor);
 
                 var correos = context.Usuarios
-                .Where(u => u.Usuario_Rol.Any(ur => ur.Roles.Nombre == "Seguimiento de traslado" && ur.status == true))
-                .Select(u => new { u.Id, u.Correo })
+                .Where(u =>
+                    u.EmpresaId == company &&
+                    u.Usuario_Rol.Any(ur => ur.Roles.Nombre == "Seguimiento de traslado" && ur.status == true)
+                )
+                .Select(u => new {u.Id, u.Correo })
                 .ToList();
+
+                var correosUnicos = new List<string>();
 
                 foreach (var correo in correos)
                 {
-                    if (!string.IsNullOrWhiteSpace(correo.Correo))
-                        mail.To.Add(correo.Correo);
+                    if (!string.IsNullOrWhiteSpace(correo.Correo) && !correosUnicos.Contains(correo.Correo))
+                    {
+                        correosUnicos.Add(correo.Correo);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(emailAsesor))
+                {
+                    bool existe = correosUnicos.Contains(emailAsesor);
+
+                    if (!existe)
+                    {
+                        mail.To.Add(emailAsesor);
+                    }
+                }
+
+                foreach (var correo in correosUnicos)
+                {
+                    if (!string.IsNullOrWhiteSpace(correo))
+                        mail.To.Add(correo);
                 }
 
             }
 
-            if (!string.IsNullOrWhiteSpace(emailAsesor))
-            {
-                mail.To.Add(emailAsesor);
-            }
+            
 
 
             mail.Subject = $"Traslado de Pedido {pedidoBase}";
