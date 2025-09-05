@@ -146,32 +146,35 @@ namespace AventasApi.Controllers
                 // Generar Excel
                 byte[] archivoExcel = await GenerarExcelTraslado(body.pedido, detalleDelPedido);
 
-                // Preparar correo
-                MailMessage mail = new MailMessage();
-                mail.From = new MailAddress(Enviroment.Correo);
-                mail.To.Add(body.emailDestino);
-
-                mail.Subject = $"Traslado de Pedido {body.pedido}";
-                mail.Body = "Se adjunta el archivo de distribución del pedido.";
-                mail.IsBodyHtml = false;
-
-                using (MemoryStream ms = new MemoryStream(archivoExcel))
+                using (var ctx = new AVentasEntities())
                 {
-                    string fileName = $"Traslado_{body.pedido}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
-                    Attachment attachment = new Attachment(ms, fileName,
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-                    mail.Attachments.Add(attachment);
+                    // Preparar correo
+                    MailMessage mail = new MailMessage();
+                    mail.From = new MailAddress(ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "CorreoGira").Valor);
+                    mail.To.Add(body.emailDestino);
 
-                    // Configurar SMTP
-                    SmtpClient smtp = new SmtpClient("smtp.office365.com", 587)
+                    mail.Subject = $"Traslado de Pedido {body.pedido}";
+                    mail.Body = "Se adjunta el archivo de distribución del pedido.";
+                    mail.IsBodyHtml = false;
+
+                    using (MemoryStream ms = new MemoryStream(archivoExcel))
                     {
-                        EnableSsl = true,
-                        UseDefaultCredentials = false,
-                        Credentials = new NetworkCredential(Enviroment.Correo, Enviroment.CorreoPassword)
-                    };
+                        string fileName = $"Traslado_{body.pedido}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+                        Attachment attachment = new Attachment(ms, fileName,
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        mail.Attachments.Add(attachment);
 
-                    smtp.Send(mail);
-                    smtp.Dispose();
+                        // Configurar SMTP
+                        SmtpClient smtp = new SmtpClient("smtp.office365.com", 587)
+                        {
+                            EnableSsl = true,
+                            UseDefaultCredentials = false,
+                            Credentials = new NetworkCredential(ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "CorreoGira").Valor, ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "PasswordCorreoGira").Valor)
+                        };
+
+                        smtp.Send(mail);
+                        smtp.Dispose();
+                    }
                 }
 
                 response.message = "Plantilla fue enviada al correo: " + body.emailDestino;
@@ -650,7 +653,7 @@ namespace AventasApi.Controllers
             if (responseExec.IsSuccessful)
             {
                 response.isComplete = responseExec.Data.Contains("OK:");
-                response.message = responseExec.Data.Replace("OK:","").Trim();
+                response.message = responseExec.Data.Replace("OK:", "").Trim();
 
                 if (response.isComplete)
                 {
@@ -658,8 +661,8 @@ namespace AventasApi.Controllers
                     try
                     {
 
-                       await this.NewRegistroDeTraslado(salesId, response.message, request.Company, request.CodigoDelVendedor);
-                       await this.EnvioDeCoreoDeTraslados(xmlFinal, salesId, request.Company, response.message, request.CorreoUsuario);
+                        await this.NewRegistroDeTraslado(salesId, response.message, request.Company, request.CodigoDelVendedor);
+                        await this.EnvioDeCoreoDeTraslados(xmlFinal, salesId, request.Company, response.message, request.CorreoUsuario);
                     }
                     catch (Exception)
                     {
@@ -779,7 +782,7 @@ namespace AventasApi.Controllers
 
                 return BadRequest(e.ToString());
             }
-            
+
         }
 
         private async Task<bool> ExisteTrasladoParaPedido(string pedidoBase, string company)
@@ -860,7 +863,7 @@ namespace AventasApi.Controllers
             sb.Append("<td>Origen</td>");
             sb.Append("<td>" + pedidoBase + "</td>");
             sb.Append("<td>" + encabezadoPedidoBase.CUSTACCOUNT + "</td>");
-            
+
             int sumaBase = 0;
             foreach (var l in lineasPedidoBase)
             {
@@ -913,11 +916,11 @@ namespace AventasApi.Controllers
 
             // Traslados realizados
             int trasladoNum = 1;
-            foreach (var cliente in clientes.Cliente) 
+            foreach (var cliente in clientes.Cliente)
             {
                 sb.Append("<div class='section'>");
                 sb.Append("<h3>Traslado #" + trasladoNum + "</h3>");
-                sb.Append("<p><strong>Pedido Destino:</strong> " + listaPedidosMsg.Find(x=> x.Cuenta == cliente.Encabezado.CuentaDeCliente).PV + "</p>");
+                sb.Append("<p><strong>Pedido Destino:</strong> " + listaPedidosMsg.Find(x => x.Cuenta == cliente.Encabezado.CuentaDeCliente).PV + "</p>");
                 sb.Append("<p><strong>Cliente Destino:</strong> " + cliente.Encabezado.CuentaDeCliente + "</p>");
                 sb.Append("<p><strong>Lote:</strong> " + encabezadoPedidoBase.BFPSEASONID + "</p>");
                 sb.Append("<table><tr><th>Código Artículo</th><th>Color</th><th>Talla</th><th>Cantidad</th></tr>");
@@ -943,10 +946,11 @@ namespace AventasApi.Controllers
 
             // 4. Enviar correo
             MailMessage mail = new MailMessage();
-            mail.From = new MailAddress(Enviroment.Correo);
 
             using (AVentasEntities context = new AVentasEntities())
             {
+
+                mail.From = new MailAddress(context.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "CorreoGira").Valor);
 
                 var correos = context.Usuarios
                 .Where(u => u.Usuario_Rol.Any(ur => ur.Roles.Nombre == "Seguimiento de traslado" && ur.status == true))
@@ -971,13 +975,16 @@ namespace AventasApi.Controllers
             mail.Body = htmlBody;
             mail.IsBodyHtml = true;
 
-            SmtpClient smtp = new SmtpClient("smtp.office365.com", 587)
+            using (var ctx = new AVentasEntities())
             {
-                EnableSsl = true,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(Enviroment.Correo, Enviroment.CorreoPassword)
-            };
-            smtp.Send(mail);
+                SmtpClient smtp = new SmtpClient("smtp.office365.com", 587)
+                {
+                    EnableSsl = true,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "CorreoGira").Valor, ctx.Configuraciones.FirstOrDefault(x => x.CodigoConfiguracion == "PasswordCorreoGira").Valor)
+                };
+                smtp.Send(mail);
+            }
         }
 
         private static List<ExtraerPedidosDto> ExtraerPedidos(string mensaje)
