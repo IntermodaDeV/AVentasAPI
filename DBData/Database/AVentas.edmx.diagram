@@ -390,6 +390,7 @@
         <EntityTypeShape EntityType="AventasModel.ContactoServicio" Width="1.5" PointX="33.625" PointY="1.5" />
         <AssociationConnector Association="AventasModel.FK_ContactoServicio_Servicio" />
         <AssociationConnector Association="AventasModel.FK__FirmasxPe__Pedid__458AE82D" />
+        <EntityTypeShape EntityType="AventasModel.RegistroDeTraslado" Width="1.5" PointX="31.375" PointY="6.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
