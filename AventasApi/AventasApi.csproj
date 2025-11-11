@@ -313,6 +313,8 @@
     <Compile Include="Models\ViewModels\AcuerdoVentaDetalleViewModel.cs" />
     <Compile Include="Models\ViewModels\AcuerdoVentaViewModel.cs" />
     <Compile Include="Models\ViewModels\AnticiposViewModel.cs" />
+    <Compile Include="Models\ViewModels\AsesorEstadoDevolucionDTO.cs" />
+    <Compile Include="Models\ViewModels\AsesorPedidos.cs" />
     <Compile Include="Models\ViewModels\AsesorXClienteViewModel.cs" />
     <Compile Include="Models\ViewModels\AsignacionesXFechaViewModel.cs" />
     <Compile Include="Models\ViewModels\AsignacionXAsesorViewModel.cs" />
