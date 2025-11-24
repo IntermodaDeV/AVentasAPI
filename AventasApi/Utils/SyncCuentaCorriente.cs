@@ -1,4 +1,5 @@
-﻿using DBData.Database;
+﻿using AventasApi.Models.ViewModels;
+using DBData.Database;
 using ExternalApiData.ApiModels;
 using ExternalApiData.Enviroments;
 using ExternalApiData.Models.ApiModels;
@@ -6,8 +7,10 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AventasApi.Utils
 {
@@ -298,16 +301,52 @@ namespace AventasApi.Utils
 
             }
         }
-        private void UpdateDocumentosEnTransito(string asesor, List<DocumentonsEnTransitoApiModel> documentos)
+        private async Task UpdateDocumentosEnTransito(string asesor, List<DocumentonsEnTransitoApiModel> documentos)
         {
             try
             {
                 using (AVentasEntities context = new AVentasEntities())
                 {
                     context.SP_DocumentosTransitoxFactura_UpdateSaldo(asesor);
-                    context.SP_Devoluciones_UpdateEstado(asesor);
+                    //context.SP_Devoluciones_UpdateEstado(asesor);
+                    /*Llamar al endpoint para cargar informacion desde el SAV */
+                    /* Anexo de endpoint */
+                    var Devoluciones_db = context.Devolucion
+                     .Where(dev => dev.CodigoAsesor == asesor
+                        && dev.Estado != "CERRADO" 
+                        && dev.Sincronizado == true )
+                     .Select(dev => new
+                     {
+                         dev.CodigoAsesor
+                        , dev.PedidoDevolucion
+                        , dev.NumeroRMA
+                        , dev.EmpresaId
+                        , dev.NumDevolucion
+                        , dev.Estado
+                     })
+                     .Distinct()
+                     .ToList();
+                    var dto = new List<AsesorPedidosDTO>();
 
-                    foreach(var datos in documentos)
+                    foreach (var item in Devoluciones_db)
+                    {
+                        dto.Add(new AsesorPedidosDTO
+                        {
+                            CodigoAsesor = item.CodigoAsesor
+                            , PedidoDevolucion = item.PedidoDevolucion
+                            , NumeroRMA = item.NumeroRMA
+                            , EmpresaId = item.EmpresaId
+                            , NumDevolucion = item.NumDevolucion
+                            , NumPedido = ""
+                            , Estado = item.Estado
+                        });
+                    }
+
+                    await this.Devoluciones_UpdateEstado(dto);                    
+
+                    //context.SP_Devoluciones_UpdateEstado(asesor);
+
+                    foreach (var datos in documentos)
                     {
                         DateTime dummy = new DateTime();
 
@@ -376,6 +415,44 @@ namespace AventasApi.Utils
             catch (Exception e)
             {
 
+            }
+        }
+
+        private async Task Devoluciones_UpdateEstado(List<AsesorPedidosDTO> Devoluciones_db)
+        {            
+            var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}Devoluciones/estadodevolucion");            
+            var request = new RestRequest(Method.POST);            
+            request.AddHeader("Content-Type", "application/json");            
+            request.AddJsonBody(Devoluciones_db);
+
+            var response = await client.ExecuteAsync(request);
+            
+            if (response.IsSuccessful)
+            {
+             var resultado = JsonConvert.DeserializeObject<List<AsesorEstadoDevolucionDTO>>(response.Content);
+
+                using (AVentasEntities context = new AVentasEntities())
+                {                    
+                    foreach (var item in resultado)
+                    {                        
+                        var devolucion = await context.Devolucion
+                            .FirstOrDefaultAsync(d =>
+                                d.NumDevolucion == item.NumDevolucion &&
+                                d.NumeroRMA == item.NumRMA &&
+                                d.PedidoDevolucion == item.NumPedido);
+
+                        if (devolucion != null)
+                        {
+                            devolucion.Estado = item.Estado;
+                        }
+                    }                   
+                    await context.SaveChangesAsync();
+                }
+                Console.WriteLine("Estados de devoluciones actualizados correctamente.");
+            }
+            else
+            {
+                Console.WriteLine($"Error ({response.StatusCode}): {response.Content}");
             }
         }
 
