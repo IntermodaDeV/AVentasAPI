@@ -954,7 +954,6 @@ namespace AventasApi.Controllers
 
                 var correos = context.Usuarios
                 .Where(u =>
-                    u.EmpresaId == company &&
                     u.Usuario_Rol.Any(ur => ur.Roles.Nombre == "Seguimiento de traslado" && ur.status == true)
                 )
                 .Select(u => new {u.Id, u.Correo })
