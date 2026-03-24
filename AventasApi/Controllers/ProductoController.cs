@@ -5,6 +5,10 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using RestSharp;
+using ExternalApiData.Enviroments;
+using AventasApi.Models.Producto;
+using System.Collections.Generic;
 
 namespace AventasApi.Controllers
 {
@@ -194,6 +198,57 @@ namespace AventasApi.Controllers
                     }
 
                     return Ok();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        [HttpGet]
+        [Route("productoPorCodigobarra/{codigo}")]
+        public async Task<IHttpActionResult> GetProductoBarra(string codigo)
+        {
+            try
+            {
+                var client = new RestClient($"{Enviroment.CRMWebServiceURLApi}productos/imhn/{codigo}/codigobarra");
+                client.Timeout = 480 * (1000);
+                var request = new RestRequest(Method.GET);
+                request.AddHeader("Accept", "application/json");
+                var response = client.Execute<List<ProductoPorCodigoDeBarraDto>>(request);
+
+                if (response.Data.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                var detalle = response.Data[0];
+                var productoId = detalle.productoId;
+
+                using (var ctx = new AVentasEntities())
+                {
+                    var idsProducto = await ctx.ProductosxColeccion
+                        .Where(x => x.CodigoProducto == productoId && x.EmpresaId == "imhn")
+                        .Select(x => x.IdProducto)
+                        .ToListAsync();
+
+                    var fotografias = await ctx.FotografiasXProducto
+                        .Where(x => idsProducto.Contains(x.IdProducto) &&
+                                    (x.CodigoColor == detalle.colorId || x.CodigoColor == null))
+                        .OrderBy(x => x.IdProducto)
+                        .ThenByDescending(x => x.Principal)
+                        .ThenBy(x => x.CodigoColor == null)
+                        .ThenBy(x => x.FotografiaProducto)
+                        .Select(x => x.FotografiaProducto)
+                        .Distinct()
+                        .ToListAsync();
+
+                    return Ok(new
+                    {
+                        detalle,
+                        fotografias
+                    });
                 }
             }
             catch (Exception e)
