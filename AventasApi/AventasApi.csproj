@@ -286,6 +286,7 @@
     <Compile Include="Models\PantallaModel.cs" />
     <Compile Include="Models\PosteoColeccionSincEspecificoModel.cs" />
     <Compile Include="Models\ProductoImpuestoModel.cs" />
+    <Compile Include="Models\Producto\Dtos\ProductoPorCodigoDeBarra.cs" />
     <Compile Include="Models\PromesaPagoModel.cs" />
     <Compile Include="Models\RazonNoVentaCausaViewModel.cs" />
     <Compile Include="Models\RazonNoVentaTipoViewModel.cs" />
