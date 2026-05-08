@@ -1514,7 +1514,7 @@ namespace AventasApi.Controllers
                             }
                             var reciboHeaders = new List<ReciboApiModel>();
                             var client = new RestClient();
-                            client.Timeout = 4000;
+                            client.Timeout = 120000;
                             var request = new RestRequest($"{Enviroment.CRMWebServiceURLApi}recibos/upload", Method.POST)
                             {
                                 RequestFormat = DataFormat.Json
