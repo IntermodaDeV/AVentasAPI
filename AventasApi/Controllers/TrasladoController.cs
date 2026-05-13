@@ -856,42 +856,78 @@ namespace AventasApi.Controllers
             ");
 
             //Resumen
-            sb.Append("<div class='section'>");
-            sb.Append("<h3>Resumen</h3>");
-            sb.Append("<table><tr><th>Tipo</th><th>Número de Pedido</th><th>Cuenta Cliente</th><th>Total Cantidad</th></tr>");
-            sb.Append("<tr>");
-            sb.Append("<td>Origen</td>");
-            sb.Append("<td>" + pedidoBase + "</td>");
-            sb.Append("<td>" + encabezadoPedidoBase.CUSTACCOUNT + "</td>");
+            var clientesResumen = new List<(string Cuenta, string Nombre, string pedidoDeVenta, string OrigenTraslado)>();
 
-            int sumaBase = 0;
-            foreach (var l in lineasPedidoBase)
+            using (AVentasEntities context = new AVentasEntities())
             {
-                sumaBase = sumaBase + (int)l.REMAININVENTPHYSICAL;
-            }
+                sb.Append("<div class='section'>");
+                sb.Append("<h3>Resumen</h3>");
+                sb.Append("<table><tr><th>Tipo</th><th>Número de Pedido</th><th>Cuenta Cliente</th><th>Nombre Cliente</th><th>Total Cantidad</th></tr>");
 
-            sb.Append("<td>" + sumaBase + "</td>");
-            sb.Append("</tr>");
+                var cuentaBase = encabezadoPedidoBase.CUSTACCOUNT;
 
-            foreach (var cliente in clientes.Cliente)
-            {
+                var clienteBase = await context.Clientes
+                    .FirstOrDefaultAsync(x =>
+                        x.CodigoCliente == cuentaBase &&
+                        x.EmpresaId == company);
 
-                int sumaQty = 0;
+                var nombreBase = clienteBase?.Nombre ?? "-";
 
-                foreach (var linea in cliente.Lineas.Lineas)
-                {
-                    sumaQty = sumaQty + linea.qty;
-                }
                 sb.Append("<tr>");
-                sb.Append("<td>Traslado</td>");
-                sb.Append("<td>" + listaPedidosMsg.Find(x => x.Cuenta == cliente.Encabezado.CuentaDeCliente).PV + "</td>");
-                sb.Append("<td>" + cliente.Encabezado.CuentaDeCliente + "</td>");
-                sb.Append("<td>" + sumaQty + "</td>");
+                sb.Append("<td>Origen</td>");
+                sb.Append("<td>" + pedidoBase + "</td>");
+                sb.Append("<td>" + cuentaBase + "</td>");
+
+                int sumaBase = 0;
+
+                foreach (var l in lineasPedidoBase)
+                {
+                    sumaBase += (int)l.REMAININVENTPHYSICAL;
+                }
+
+                sb.Append("<td>" + nombreBase + "</td>");
+                sb.Append("<td>" + sumaBase + "</td>");
                 sb.Append("</tr>");
 
+
+                clientesResumen.Add((cuentaBase, nombreBase, pedidoBase, "O"));
+
+                foreach (var cliente in clientes.Cliente)
+                {
+                    var cuentaCliente = cliente.Encabezado.CuentaDeCliente;
+
+                    var nombreCliente = await context.Clientes
+                        .FirstOrDefaultAsync(x =>
+                            x.CodigoCliente == cuentaCliente &&
+                            x.EmpresaId == company);
+
+                    var nombre = nombreCliente?.Nombre ?? "-";
+
+
+                    int sumaQty = 0;
+
+                    foreach (var linea in cliente.Lineas.Lineas)
+                    {
+                        sumaQty += linea.qty;
+                    }
+
+                    var pedidoMsg = listaPedidosMsg
+                        .FirstOrDefault(x => x.Cuenta == cuentaCliente);
+
+                    clientesResumen.Add((cuentaCliente, nombre, pedidoMsg?.PV, "T"));
+
+                    sb.Append("<tr>");
+                    sb.Append("<td>Traslado</td>");
+                    sb.Append("<td>" + (pedidoMsg?.PV ?? "-") + "</td>");
+                    sb.Append("<td>" + cuentaCliente + "</td>");
+                    sb.Append("<td>" + nombre + "</td>");
+                    sb.Append("<td>" + sumaQty + "</td>");
+                    sb.Append("</tr>");
+                }
+
+                sb.Append("</table>");
+                sb.Append("</div>");
             }
-            sb.Append("</table>");
-            sb.Append("</div>");
 
 
             // Pedido Base
@@ -916,6 +952,8 @@ namespace AventasApi.Controllers
 
             // Traslados realizados
             int trasladoNum = 1;
+
+
             foreach (var cliente in clientes.Cliente)
             {
                 sb.Append("<div class='section'>");
@@ -956,7 +994,7 @@ namespace AventasApi.Controllers
                 .Where(u =>
                     u.Usuario_Rol.Any(ur => ur.Roles.Nombre == "Seguimiento de traslado" && ur.status == true)
                 )
-                .Select(u => new {u.Id, u.Correo })
+                .Select(u => new { u.Id, u.Correo })
                 .ToList();
 
                 var correosUnicos = new List<string>();
@@ -987,10 +1025,15 @@ namespace AventasApi.Controllers
 
             }
 
-            
 
 
-            mail.Subject = $"Traslado de Pedido {pedidoBase}";
+            var traslados = clientesResumen
+            .Where(x => x.OrigenTraslado == "T")
+            .ToList();
+
+            mail.Subject = traslados.Count == 1
+                ? $"Traslado de Pedido {traslados[0].pedidoDeVenta} - {traslados[0].Nombre} "
+                : $"Traslado de Pedido {pedidoBase}";
             mail.Body = htmlBody;
             mail.IsBodyHtml = true;
 
