@@ -271,7 +271,7 @@ namespace AventasApi.Services.AsyncJobs
                         IdBanco = rec.IdBanco,
                         Valor = rec.Valor,
                         IdMoneda = rec.IdMoneda,
-                        Sincronizado = sincronizado,
+                        Sincronizado = false,
                         CodigoAsesor = rec.CodigoAsesor,
                         IdFactura = rec.IdFactura,
                         Descuento = rec.Descuento,

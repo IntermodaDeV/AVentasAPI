@@ -92,7 +92,6 @@ namespace AventasApi.Controllers
                     string inicialesAsesor = asesor.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
 
-
                     return Ok(numeroReferencia);
                 }
             }
@@ -125,7 +124,6 @@ namespace AventasApi.Controllers
                     }
 
                     List<RecibosxClienteViewModel> ListaRecibos = new List<RecibosxClienteViewModel>();
-
 
                     var clientes = context.Clientes.Where(x => x.CodigoAsesor.ToUpper() == Asesor.ToUpper()).Select(x => x.CodigoCliente);
 
@@ -286,24 +284,6 @@ namespace AventasApi.Controllers
                     }).ToList();
                     ListaRecibos.AddRange(Recibos);
                     ListaRecibos.AddRange(anticiposXAsesor);
-
-
-
-                    /*foreach (var recibo in ListaRecibos)
-                    {
-                        if (recibo.firmaByte != null)
-                        {
-                            string firma = "";
-                            firma = "data:image/png;base64," + Convert.ToBase64String(recibo.firmaByte);
-                            recibo.firma = firma;
-                            recibo.firmaByte = null;
-                        }
-                        else
-                        {
-                            recibo.firma = "";
-                            recibo.firmaByte = null;
-                        }
-                    }*/
 
                     return Ok(ListaRecibos.OrderBy(x => x.Fecha));
                 }
@@ -577,7 +557,6 @@ namespace AventasApi.Controllers
                     };
                     ReciboSincronizar.Add(Recibos);
 
-
                     return await PostAnticipoAx(ReciboSincronizar);
                 }
             }
@@ -828,7 +807,7 @@ namespace AventasApi.Controllers
                         };
                         respuestaPagoRecibo.Total = pago.Valor;
                         respuestaPagoRecibo.CodigoUltimoRecibo = anticipoPost.NumeroRecibo;
-                        respuestaPagoRecibo.Facturas.Add(pagoAplicado);                        
+                        respuestaPagoRecibo.Facturas.Add(pagoAplicado);
 
                         if (existeAnticipo > 0)
                         {
@@ -903,7 +882,6 @@ namespace AventasApi.Controllers
                                     syncCuentaCorriente.SyncFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                                     syncCuentaCorriente.SyncSubFacturas(recibos[0].COMPANY, recibos[0].CLIENTE, recibos[0].ASESOR);
                                 }
-
                             }
                             catch (Exception)
                             {
@@ -1196,7 +1174,6 @@ namespace AventasApi.Controllers
                                             aplicaDescuento = false;
                                         }
                                     }
-
                                 }
 
                                 var pagoValor = Decimal.Parse((valor).ToString());
@@ -1222,15 +1199,6 @@ namespace AventasApi.Controllers
                                     existeRecibo = 1;
                                     razonFlotante = "Banco o referencia vacía";
                                 }
-                                /*else
-                                {
-                                    bool existeCorrelativo = context.RecibosxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == bank.IdBanco && x.Anulado == false) || context.AnticiposxCliente.Any(x => x.Referencia == pago.Referencia && x.IdBanco == bank.IdBanco && x.Anulado == false);
-                                    if (existeCorrelativo)
-                                    {
-                                        existeRecibo = 1;
-                                        razonFlotante = "Referencia encontrada";
-                                    }
-                                }*/
 
                                 if (existeRecibo == 0)
                                 {
@@ -1272,8 +1240,6 @@ namespace AventasApi.Controllers
                                     }
 
                                     recibosXPago.Add(recibo);
-                                    //if (reciboPost.Pagos.Count() > 1)
-                                    //numeroCorrelativoRecibo++;
                                 }
                                 if (reciboXCliente == null && existeRecibo == 0)
                                 {
@@ -1328,7 +1294,7 @@ namespace AventasApi.Controllers
                                         SpecPago = pago.TipoPagoDetalle,
                                         UsuarioCreacion = user.UserAccount,
                                         FechaCreacion = DateTime.Now,
-                                        RazonFlotante =  razonFlotante,
+                                        RazonFlotante = razonFlotante,
                                         Estado = 0  ///0: Pendiente, 1: Sincronizado, 2:Cancelado
                                     };
                                     recibosxClienteFlotante.Add(reciboXClienteFlotante);
@@ -1501,11 +1467,11 @@ namespace AventasApi.Controllers
                             }
                             AsyncSqlInsert.IngresarRecibosFlotante(recibosxClienteFlotante);
                             await ErrorLogger.LogErrorAsync(errorCode: "IT02", controlador: "ReciboController", ruta: "/api/Recibo/PostRecibo", usuario: asesor.Usuario, mensaje: "Ocurrió un error al tratar de registrar el recibo en la base de datos de Eva (Linea 1480).");
-                            return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT02", Message = "Ocurrió un error al procesar la solicitud. Por favor, comuníquese con el departamento de IT para recibir apoyo.", resultado = respuestaPagoRecibo});
+                            return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT02", Message = "Ocurrió un error al procesar la solicitud. Por favor, comuníquese con el departamento de IT para recibir apoyo.", resultado = respuestaPagoRecibo });
                         }
                         else
                         {
-                            if (reciboPost.SaldoFavor > 0)
+                            /*if (reciboPost.SaldoFavor > 0)
                             {
                                 string ultimoValor = recibos[recibos.Count() - 1].APLICADO;
                                 decimal valorConSaldoFavor = decimal.Parse(ultimoValor) + Convert.ToDecimal(reciboPost.SaldoFavor);
@@ -1524,56 +1490,46 @@ namespace AventasApi.Controllers
                             request.AddParameter("application/json", Newtonsoft.Json.JsonConvert.SerializeObject(recibos), ParameterType.RequestBody);
                             var respuesta = client.Execute(request);
                             if (respuesta.IsSuccessful && respuesta.Content.Equals("\"\""))
+                            {*/
+
+
+                            foreach (var iter in recibos)
                             {
-                                //using (AVentasEntities context = new AVentasEntities())
-                                //{
-                                //    asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                                //    if (reciboPost.Pagos.Count() == 1)
-                                //    {
-                                //        numeroCorrelativoRecibo++;
-                                //        asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
-                                //        context.SaveChanges();
-                                //    }
-                                //}
-                                //ValidarCorrelativoRecibo(asesor.CodigoAsesor,reciboPost.EmpresaUsuario);
-
-                                foreach (var iter in recibos)
+                                using (AVentasEntities ctx = new AVentasEntities())
                                 {
-                                    using (AVentasEntities ctx = new AVentasEntities())
+                                    var factura = ctx.FacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA && x.EmpresaId == iter.COMPANY);
+
+                                    if (factura != null)
                                     {
-                                        var factura = ctx.FacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA && x.EmpresaId == iter.COMPANY);
-
-                                        if (factura != null)
-                                        {
-                                            var pagoAplicado = iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
-                                            var descuentoAplicado = iter.DESCUENTO != null ? Convert.ToDecimal(iter.DESCUENTO) : 0;
-                                            factura.Saldo -= (pagoAplicado + descuentoAplicado);
-                                        }
-
-                                        var subfactura = ctx.SubFacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA & x.EmpresaId == iter.COMPANY & x.Referencia == iter.REF_TRANSOPEN);
-
-                                        if (subfactura != null)
-                                        {
-                                            var pagoAplicado = iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
-                                            var descuentoAplicado = iter.DESCUENTO != null ? Convert.ToDecimal(iter.DESCUENTO) : 0;
-                                            subfactura.Saldo -= (pagoAplicado + descuentoAplicado);
-                                        }
-
-                                        ctx.SaveChanges();
+                                        var pagoAplicado = iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
+                                        var descuentoAplicado = iter.DESCUENTO != null ? Convert.ToDecimal(iter.DESCUENTO) : 0;
+                                        factura.Saldo -= (pagoAplicado + descuentoAplicado);
                                     }
+
+                                    var subfactura = ctx.SubFacturasxCliente.FirstOrDefault(x => x.Factura == iter.FACTURA & x.EmpresaId == iter.COMPANY & x.Referencia == iter.REF_TRANSOPEN);
+
+                                    if (subfactura != null)
+                                    {
+                                        var pagoAplicado = iter.APLICADO != null ? Convert.ToDecimal(iter.APLICADO) : 0;
+                                        var descuentoAplicado = iter.DESCUENTO != null ? Convert.ToDecimal(iter.DESCUENTO) : 0;
+                                        subfactura.Saldo -= (pagoAplicado + descuentoAplicado);
+                                    }
+
+                                    ctx.SaveChanges();
                                 }
                             }
-                            else
+                            /*}
+                                else
                             {
                                 AsyncSqlInsert.ActivarImpresion(respuestaInsert.numeroRecibo);
                                 await ErrorLogger.LogErrorAsync(errorCode: "IT03", controlador: "ReciboController", ruta: "/api/Recibo/PostRecibo", usuario: asesor.Usuario, mensaje: "Ocurrio un error al tratar de sincronizar el recibo con Ax (Linea 1546).");
                                 return Content(HttpStatusCode.InternalServerError, new { ErrorCode = "IT03", Message = "Verifique el listado de recibos para confirmar la creación. Si el recibo no aparece, sincronice y vuelva a intentarlo." });
                             }
-                            string empresa = codigoCliente.Substring(0, 4);
+                            string empresa = codigoCliente.Substring(0, 4);*/
                             // syncCuentaCorriente.SyncFacturas(empresa, codigoCliente);
                             // syncCuentaCorriente.SyncSubFacturas(empresa, codigoCliente, asesor.CodigoAsesor);
 
-                            respuestaPagoRecibo.Mensaje = "El recibo ha sido sincronizado exitosamente.";
+                            respuestaPagoRecibo.Mensaje = "El recibo fue creado correctamente.";
                             return Ok(respuestaPagoRecibo);
                         }
                     }
@@ -1627,18 +1583,6 @@ namespace AventasApi.Controllers
                     }
                     else
                     {
-                        //using (AVentasEntities ctx = new AVentasEntities())
-                        //{
-                        //    asesor = ctx.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount);
-                        //    if (reciboPost.Pagos.Count() == 1)
-                        //    {
-                        //        numeroCorrelativoRecibo++;
-                        //        asesor.CorrelativoRecibos = numeroCorrelativoRecibo;
-                        //        ctx.SaveChanges();
-                        //    }
-                        //}
-                        //ValidarCorrelativoRecibo(asesor.CodigoAsesor,reciboPost.EmpresaUsuario);
-
 
                         foreach (var iter in recibos)
                         {
