@@ -855,7 +855,7 @@ namespace AventasApi.Controllers
                     if (affectedRows > 0)
                     {
                         AsyncSqlInsert.ValidarCorrelativoRecibo(asesor.CodigoAsesor, asesor.EmpresaId);
-                        if (EnLinea(recibos[0].COMPANY, recibos[0].ASESOR))
+                        /*if (EnLinea(recibos[0].COMPANY, recibos[0].ASESOR))
                         {
                             try
                             {
@@ -887,7 +887,7 @@ namespace AventasApi.Controllers
                             {
 
                             }
-                        }
+                        }*/
                         respuestaPagoRecibo.Mensaje = "";
                         return Ok(respuestaPagoRecibo);
                     }
