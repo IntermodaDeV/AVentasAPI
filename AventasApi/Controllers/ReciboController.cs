@@ -1044,7 +1044,8 @@ namespace AventasApi.Controllers
                 var razonFlotante = "";
                 var asesoresHabilitados = await ObtenerAsesoresDelUsuario(context, user.Id, reciboPost.EmpresaUsuario);
                 var clienteAsesorReal = context.Clientes.AsNoTracking().FirstOrDefault(x => x.CodigoCliente.ToUpper() == reciboPost.CodigoCliente.ToUpper() && asesoresHabilitados.Contains(x.CodigoAsesor));
-                var asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.CodigoAsesor == (clienteAsesorReal != null ? clienteAsesorReal.CodigoAsesor : null) && ase.EmpresaId == reciboPost.EmpresaUsuario);
+                var codigoAsesorReal = clienteAsesorReal != null ? clienteAsesorReal.CodigoAsesor : null;
+                var asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.CodigoAsesor == codigoAsesorReal && ase.EmpresaId == reciboPost.EmpresaUsuario);
 
                 /*var clienteAsesor = context.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == reciboPost.CodigoCliente.ToUpper() && x.CodigoAsesor.ToUpper() == asesor.CodigoAsesor.ToUpper());
                 if (clienteAsesor == null)
