@@ -203,6 +203,38 @@ namespace AventasApi.Services.AsyncJobs
             }
         }
         
+        public static void ValidarCorrelativoReciboUsuario(string usuario)
+        {
+            using (AVentasEntities context = new AVentasEntities())
+            {
+                try
+                {
+                    var usuarioBD = context.Usuarios.FirstOrDefault(x => x.usuario == usuario);
+                    if (usuarioBD == null || usuarioBD.InicialesNombre == null)
+                    {
+                        return;
+                    }
+
+                    var correlativo = $"{usuarioBD.InicialesNombre}-{100000 + (usuarioBD.CorrelativoRecibos != null ? usuarioBD.CorrelativoRecibos : 0)}";
+
+                    if (context.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo == correlativo) == null && context.AnticiposxCliente.FirstOrDefault(x => x.NumeroRecibo == correlativo) == null)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        usuarioBD.CorrelativoRecibos = (usuarioBD.CorrelativoRecibos != null ? usuarioBD.CorrelativoRecibos : 0) + 1;
+                        context.SaveChanges();
+                        ValidarCorrelativoReciboUsuario(usuario);
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+        }
+
         public static void ValidarCorrelativoRecibo(string CodigoAsesor, string empresa)
         {
             using (AVentasEntities context = new AVentasEntities())
@@ -304,7 +336,7 @@ namespace AventasApi.Services.AsyncJobs
 
                     if (affectedRows > 0)
                     {
-                        ValidarCorrelativoRecibo(recibos[0].CodigoAsesor, recibos[0].EmpresaUsuario);
+                        ValidarCorrelativoReciboUsuario(recibos[0].UsuarioCreacion);
                     }
 
                         return (false, recibos[0].NumeroRecibo);

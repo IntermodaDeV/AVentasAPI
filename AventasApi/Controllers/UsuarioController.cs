@@ -81,6 +81,8 @@ namespace AventasApi.Controllers
                         return BadRequest("El usuario ya ha sido registrado anteriormente.");
                     }
 
+                    var iniciales = string.Concat(usuario.nombre.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(palabra => palabra[0])).ToUpper();
+
                     var newUsuario = new Usuarios()
                     {
                         usuario = usuario.usuario,
@@ -96,7 +98,9 @@ namespace AventasApi.Controllers
                         CreatedDate=DateTime.Now,
                         ModifiedBy=usuario.creador,
                         ModifiedDate=DateTime.Now,
-                        status=true
+                        status=true,
+                        InicialesNombre = iniciales,
+                        CorrelativoRecibos = 1
                     };
 
                     ctx.Usuarios.Add(newUsuario);

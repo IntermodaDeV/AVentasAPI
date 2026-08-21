@@ -40,6 +40,7 @@ namespace AventasApi.Models.ViewModels
         public string SpecPago { get; set; }
         public string Asesor { get; set; }
         public string UsuarioCreacion { get; set; }
+        public string NombreUsuarioCreacion { get; set; }
         public Nullable<DateTime> FechaCreacion { get; set; }
         public int? proformaId { get; set; }
         public string firma { get; set; }

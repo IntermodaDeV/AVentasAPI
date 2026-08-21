@@ -2165,6 +2165,8 @@ warning 6002: The table/view 'AVentas.dbo.TipoIncidencia' does not have a primar
           <Property Name="FlagBodegaEspecifico" Type="bit" Nullable="false" />
           <Property Name="CorreoDevolucion" Type="bit" />
           <Property Name="Correo" Type="varchar" MaxLength="100" />
+          <Property Name="CorrelativoRecibos" Type="int" />
+          <Property Name="InicialesNombre" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Usuarios_Asesores">
           <Key>
@@ -9599,6 +9601,8 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <NavigationProperty Name="Devolucion" Relationship="AventasModel.FK_tbDevolucion_Usuario_IdUsuario" FromRole="Usuarios" ToRole="Devolucion" />
           <Property Name="CorreoDevolucion" Type="Boolean" />
           <Property Name="Correo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CorrelativoRecibos" Type="Int32" />
+          <Property Name="InicialesNombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="PromesaPago" Relationship="AventasModel.FK_Usuarios_IdUsuario" FromRole="Usuarios" ToRole="PromesaPago" />
           <NavigationProperty Name="BitacoraNoVentaEnVisitas" Relationship="AventasModel.FK_Usuario_UsuarioCrea" FromRole="Usuarios" ToRole="BitacoraNoVentaEnVisitas" />
           <NavigationProperty Name="UsuarioLinea" Relationship="AventasModel.FK__UsuarioLi__Usuar__22ABC044" FromRole="Usuarios" ToRole="UsuarioLinea" />
@@ -14223,6 +14227,8 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySetMapping Name="Usuarios">
             <EntityTypeMapping TypeName="AventasModel.Usuarios">
               <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="CorrelativoRecibos" ColumnName="CorrelativoRecibos" />
+                <ScalarProperty Name="InicialesNombre" ColumnName="InicialesNombre" />
                 <ScalarProperty Name="Correo" ColumnName="Correo" />
                 <ScalarProperty Name="CorreoDevolucion" ColumnName="CorreoDevolucion" />
                 <ScalarProperty Name="FlagBodegaEspecifico" ColumnName="FlagBodegaEspecifico" />

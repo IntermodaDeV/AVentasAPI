@@ -25,6 +25,7 @@ namespace AventasApi.Controllers
 {
     public class ReciboController : ApiController
     {
+        private static readonly string[] CodigosAsesorCasa = { "ohn", "ogt", "ocr" };
         AVentasEntities context = new AVentasEntities();
         private readonly AuthenticationAppService _authenticationAppService;
         private SyncCuentaCorriente syncCuentaCorriente;
@@ -32,6 +33,31 @@ namespace AventasApi.Controllers
         {
             _authenticationAppService = new AuthenticationAppService();
             syncCuentaCorriente = new SyncCuentaCorriente();
+        }
+
+        private async Task<List<string>> ObtenerAsesoresDelUsuario(AVentasEntities ctx, int userId, string empresaId = null)
+        {
+            var usuario = await ctx.Usuarios.AsNoTracking().FirstOrDefaultAsync(x => x.Id == userId);
+            var asesoresQuery = ctx.Asesores.Where(x => x.Activo == true);
+            if (empresaId != null)
+            {
+                asesoresQuery = asesoresQuery.Where(x => x.EmpresaId == empresaId);
+            }
+
+            var codigosAsignados = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == userId).Select(x => x.CodigoAsesor).ToListAsync();
+            var carterasCompartidas = codigosAsignados.Where(c => CodigosAsesorCasa.Contains(c)).ToList();
+
+            if (carterasCompartidas.Any())
+            {
+                return await asesoresQuery.Where(x => carterasCompartidas.Contains(x.CodigoAsesor)).Select(x => x.CodigoAsesor).ToListAsync();
+            }
+
+            if (usuario != null && usuario.FlagTodosAsesores == true)
+            {
+                return await asesoresQuery.Select(x => x.CodigoAsesor).ToListAsync();
+            }
+
+            return await asesoresQuery.Where(x => codigosAsignados.Contains(x.CodigoAsesor)).Select(x => x.CodigoAsesor).ToListAsync();
         }
 
         private bool EnLinea(string empresa, string asesor)
@@ -54,7 +80,8 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
+                    var asesoresHabilitados = await ObtenerAsesoresDelUsuario(ctx, user.Id, empresa);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => asesoresHabilitados.Contains(ase.CodigoAsesor) && ase.EmpresaId == empresa);
 
                     if (asesor.firma == null)
                     {
@@ -81,15 +108,17 @@ namespace AventasApi.Controllers
                 using (var ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
+                    var asesoresHabilitados = await ObtenerAsesoresDelUsuario(ctx, user.Id, empresa);
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => asesoresHabilitados.Contains(ase.CodigoAsesor) && ase.EmpresaId == empresa);
 
                     if (asesor == null)
                     {
                         return Ok();
                     }
 
-                    int numeroCorelativo = asesor.CorrelativoRecibos ?? 0;
-                    string inicialesAsesor = asesor.InicialesNombre;
+                    var usuarioActual = await ctx.Usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.Id == user.Id);
+                    int numeroCorelativo = usuarioActual?.CorrelativoRecibos ?? 0;
+                    string inicialesAsesor = usuarioActual?.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
 
                     return Ok(numeroReferencia);
@@ -136,6 +165,8 @@ namespace AventasApi.Controllers
                         Anticipo = false,
                         NombreAsesor = "",
                         Asesor = rec.CodigoAsesor,
+                        UsuarioCreacion = rec.UsuarioCreacion,
+                        NombreUsuarioCreacion = context.Usuarios.Where(u => u.usuario == rec.UsuarioCreacion).Select(u => u.nombre).FirstOrDefault(),
                         NumeroRecibo = rec.NumeroRecibo,
                         CodigoCliente = rec.CodigoCliente,
                         Fecha = rec.Fecha,
@@ -225,6 +256,8 @@ namespace AventasApi.Controllers
                         Anticipo = true,
                         NombreAsesor = "",
                         Asesor = ant.CodigoAsesor,
+                        UsuarioCreacion = ant.UsuarioCreacion,
+                        NombreUsuarioCreacion = context.Usuarios.Where(u => u.usuario == ant.UsuarioCreacion).Select(u => u.nombre).FirstOrDefault(),
                         NumeroRecibo = ant.NumeroRecibo,
                         CodigoCliente = ant.CodigoCliente,
                         Fecha = ant.Fecha,
@@ -296,12 +329,13 @@ namespace AventasApi.Controllers
 
         [HttpGet]
         [Route("api/Recibo/Pendiente")]
-        public IHttpActionResult GetPendientes()
+        public async Task<IHttpActionResult> GetPendientes()
         {
             try
             {
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                var recibosXAsesor = context.RecibosxCliente.Where(recCli => recCli.CodigoAsesor == user.UserAccount && recCli.Sincronizado == false).Select(rec => new RecibosxClienteViewModel
+                var asesoresHabilitados = await ObtenerAsesoresDelUsuario(context, user.Id);
+                var recibosXAsesor = context.RecibosxCliente.Where(recCli => asesoresHabilitados.Contains(recCli.CodigoAsesor) && recCli.Sincronizado == false).Select(rec => new RecibosxClienteViewModel
                 {
                     Anticipo = false,
                     NumeroRecibo = rec.NumeroRecibo,
@@ -371,7 +405,7 @@ namespace AventasApi.Controllers
                     }
                       ).ToList()
                 }).ToList();
-                var anticiposXAsesor = context.AnticiposxCliente.Where(recCli => recCli.CodigoAsesor == user.UserAccount && recCli.Sincronizado == false).Select(ant => new RecibosxClienteViewModel
+                var anticiposXAsesor = context.AnticiposxCliente.Where(recCli => asesoresHabilitados.Contains(recCli.CodigoAsesor) && recCli.Sincronizado == false).Select(ant => new RecibosxClienteViewModel
                 {
                     Anticipo = true,
                     NumeroRecibo = ant.NumeroRecibo,
@@ -584,14 +618,13 @@ namespace AventasApi.Controllers
                 }
                 RespuestaRecibo respuestaPagoRecibo = new RespuestaRecibo();
                 var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                var asesor = context.Asesores.FirstOrDefault(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == anticipoPost.EmpresaUsuario);
-
-                var clienteAsesor = context.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == anticipoPost.CodigoCliente.ToUpper() && x.CodigoAsesor.ToUpper() == asesor.CodigoAsesor.ToUpper());
+                var asesoresHabilitados = await ObtenerAsesoresDelUsuario(context, user.Id, anticipoPost.EmpresaUsuario);
+                var clienteAsesor = context.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == anticipoPost.CodigoCliente.ToUpper() && asesoresHabilitados.Contains(x.CodigoAsesor));
                 if (clienteAsesor == null)
                 {
-                    ////AQUIIIIIIIIIIIII
                     return BadRequest("El usuario no tiene permiso para realizar recibos al cliente seleccionado.");
                 }
+                var asesor = context.Asesores.FirstOrDefault(ase => ase.CodigoAsesor == clienteAsesor.CodigoAsesor && ase.EmpresaId == anticipoPost.EmpresaUsuario);
 
                 var correlativo = anticipoPost.ReciboProforma ? anticipoPost.NumeroRecibo.Substring(2, anticipoPost.NumeroRecibo.Length - 2) : anticipoPost.NumeroRecibo;
                 if (anticipoPost.Pagos != null)
@@ -649,7 +682,7 @@ namespace AventasApi.Controllers
                                     IdBanco = codigobanco,
                                     Valor = valorPago,
                                     IdMoneda = pago.IdMoneda,
-                                    CodigoAsesor = user.UserAccount,
+                                    CodigoAsesor = asesor.CodigoAsesor,
                                     SpecPago = pago.TipoPagoDetalle,
                                     UsuarioCreacion = user.UserAccount,
                                     FechaCreacion = DateTime.Now,
@@ -668,7 +701,7 @@ namespace AventasApi.Controllers
                                     Sincronizado = false,
                                     Valor = valorPago,
                                     IdMoneda = pago.IdMoneda,
-                                    CodigoAsesor = user.UserAccount,
+                                    CodigoAsesor = asesor.CodigoAsesor,
                                     Tipo = anticipoPost.Tipo,
                                     NumeroRecibo = correlativo,
                                     NumPedido = anticipoPost.NumPedido,
@@ -728,7 +761,7 @@ namespace AventasApi.Controllers
                                     Sincronizado = false,
                                     Valor = valorPago,
                                     IdMoneda = pago.IdMoneda,
-                                    CodigoAsesor = user.UserAccount,
+                                    CodigoAsesor = asesor.CodigoAsesor,
                                     Tipo = anticipoPost.Tipo,
                                     NumeroRecibo = correlativo,
                                     NumPedido = anticipoPost.NumPedido,
@@ -854,7 +887,7 @@ namespace AventasApi.Controllers
 
                     if (affectedRows > 0)
                     {
-                        AsyncSqlInsert.ValidarCorrelativoRecibo(asesor.CodigoAsesor, asesor.EmpresaId);
+                        AsyncSqlInsert.ValidarCorrelativoReciboUsuario(user.UserAccount);
                         /*if (EnLinea(recibos[0].COMPANY, recibos[0].ASESOR))
                         {
                             try
@@ -1009,7 +1042,9 @@ namespace AventasApi.Controllers
                 reciboPost.FechaPago = new DateTime(reciboPost.FechaPago.Year, reciboPost.FechaPago.Month, reciboPost.FechaPago.Day);
                 var existeRecibo = 0;
                 var razonFlotante = "";
-                var asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                var asesoresHabilitados = await ObtenerAsesoresDelUsuario(context, user.Id, reciboPost.EmpresaUsuario);
+                var clienteAsesorReal = context.Clientes.AsNoTracking().FirstOrDefault(x => x.CodigoCliente.ToUpper() == reciboPost.CodigoCliente.ToUpper() && asesoresHabilitados.Contains(x.CodigoAsesor));
+                var asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.CodigoAsesor == (clienteAsesorReal != null ? clienteAsesorReal.CodigoAsesor : null) && ase.EmpresaId == reciboPost.EmpresaUsuario);
 
                 /*var clienteAsesor = context.Clientes.FirstOrDefault(x => x.CodigoCliente.ToUpper() == reciboPost.CodigoCliente.ToUpper() && x.CodigoAsesor.ToUpper() == asesor.CodigoAsesor.ToUpper());
                 if (clienteAsesor == null)
@@ -2002,9 +2037,10 @@ namespace AventasApi.Controllers
                         return BadRequest("El recibo no existe.");
                     }
 
-                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == recibo.CodigoAsesor && ase.CorrelativoRecibos != null);
-                    int numeroCorelativo = asesor.CorrelativoRecibos ?? 0;
-                    string inicialesAsesor = asesor.InicialesNombre;
+                    var asesor = await ctx.Asesores.FirstOrDefaultAsync(ase => ase.Usuario == recibo.CodigoAsesor);
+                    var usuarioCreador = await ctx.Usuarios.FirstOrDefaultAsync(u => u.usuario == recibo.UsuarioCreacion);
+                    int numeroCorelativo = usuarioCreador?.CorrelativoRecibos ?? 0;
+                    string inicialesAsesor = usuarioCreador?.InicialesNombre;
                     string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
 
                     RecibosxCliente reciboBD = null;
@@ -2028,7 +2064,7 @@ namespace AventasApi.Controllers
                         recibo.UsuarioModificacion = user.UserAccount;
                         recibo.Estado = 1;
                         recibo.FechaModificacion = DateTime.Now;
-                        asesor.CorrelativoRecibos = asesor.CorrelativoRecibos + 1;
+                        usuarioCreador.CorrelativoRecibos = (usuarioCreador.CorrelativoRecibos ?? 0) + 1;
                         await ctx.SaveChangesAsync();
                     }
 
@@ -2110,32 +2146,34 @@ namespace AventasApi.Controllers
                     var reciboBD = await entities.RecibosxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == recibo.ToUpper());
                     if (reciboBD != null)
                     {
-                        var asesor = await entities.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor.ToUpper() == reciboBD.UsuarioCreacion.ToUpper());
+                        var asesor = await entities.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor.ToUpper() == reciboBD.CodigoAsesor.ToUpper());
                         if (asesor != null)
                         {
+                            var usuarioCreador = await entities.Usuarios.FirstOrDefaultAsync(x => x.usuario.ToUpper() == reciboBD.UsuarioCreacion.ToUpper());
                             string firma = "";
                             if (asesor.firma != null)
                             {
                                 firma = "data:image/png;base64," + Convert.ToBase64String(asesor.firma);
                             }
 
-                            return Ok(new { nombreAsesor = asesor.Nombre, firma = firma });
+                            return Ok(new { nombreAsesor = usuarioCreador != null ? usuarioCreador.nombre : asesor.Nombre, firma = firma });
                         }
                     }
 
                     var anticipoBd = await entities.AnticiposxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == recibo.ToUpper());
                     if (anticipoBd != null)
                     {
-                        var asesor = await entities.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor.ToUpper() == anticipoBd.UsuarioCreacion.ToUpper());
+                        var asesor = await entities.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor.ToUpper() == anticipoBd.CodigoAsesor.ToUpper());
                         if (asesor != null)
                         {
+                            var usuarioCreador = await entities.Usuarios.FirstOrDefaultAsync(x => x.usuario.ToUpper() == anticipoBd.UsuarioCreacion.ToUpper());
                             string firma = "";
                             if (asesor.firma != null)
                             {
                                 firma = "data:image/png;base64," + Convert.ToBase64String(asesor.firma);
                             }
 
-                            return Ok(new { nombreAsesor = asesor.Nombre, firma = firma });
+                            return Ok(new { nombreAsesor = usuarioCreador != null ? usuarioCreador.nombre : asesor.Nombre, firma = firma });
                         }
                     }
 
