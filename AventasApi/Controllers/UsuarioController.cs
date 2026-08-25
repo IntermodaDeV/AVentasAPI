@@ -81,8 +81,6 @@ namespace AventasApi.Controllers
                         return BadRequest("El usuario ya ha sido registrado anteriormente.");
                     }
 
-                    var iniciales = string.Concat(usuario.nombre.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(palabra => palabra[0])).ToUpper();
-
                     var newUsuario = new Usuarios()
                     {
                         usuario = usuario.usuario,
@@ -98,9 +96,7 @@ namespace AventasApi.Controllers
                         CreatedDate=DateTime.Now,
                         ModifiedBy=usuario.creador,
                         ModifiedDate=DateTime.Now,
-                        status=true,
-                        InicialesNombre = iniciales,
-                        CorrelativoRecibos = 1
+                        status=true
                     };
 
                     ctx.Usuarios.Add(newUsuario);
@@ -180,6 +176,51 @@ namespace AventasApi.Controllers
                     return Ok(usuariosActivos);
                 }
             }catch(Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("activosconfirma")]
+        public async Task<IHttpActionResult> ObtenerUsuariosActivosConFirma()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var usuariosActivos = await ctx.Usuarios.Where(x => x.status == true).Select(x => new { id = x.Id, codigo = x.usuario, nombre = x.nombre, firma = x.firma }).ToListAsync();
+                    return Ok(usuariosActivos);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("firma")]
+        public async Task<IHttpActionResult> CambiarFirmaUsuario([FromBody] CambiarFirma body)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var usuario = await ctx.Usuarios.FirstOrDefaultAsync(x => x.Id == body.Id);
+                    if (usuario == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var firmaConversion = new AventasApi.ImageManager.ByteArrayImageConversion(body.Firma);
+
+                    usuario.firma = firmaConversion.ContentByteArray;
+                    await ctx.SaveChangesAsync();
+                    return Ok();
+                }
+            }
+            catch (Exception e)
             {
                 return BadRequest();
             }
