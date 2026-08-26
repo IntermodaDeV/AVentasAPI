@@ -86,6 +86,7 @@ namespace AventasApi.Models
         public string EmpresaId { get; set; }
         public string Codigo { get; set; }
         public string Nombre { get; set; }
+        public string CodigoAsesor { get; set; }
         public string ComunidadAutonoma { get; set; }
         public string GrupoPrecio { get; set; }
         public string NombreGrupoPrecio { get; set; }

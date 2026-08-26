@@ -487,6 +487,30 @@ namespace AventasApi.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/colecciones/{codigoColeccion}/{empresa}/info")]
+        public async Task<IHttpActionResult> GetColeccionInfo(string codigoColeccion, string empresa)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var coleccion = await ctx.Colecciones.AsNoTracking().FirstOrDefaultAsync(c => c.CodigoColeccion == codigoColeccion && c.EmpresaId == empresa.ToUpper());
+
+                    if (coleccion == null)
+                    {
+                        return NotFound();
+                    }
+
+                    return Ok(new { coleccion.CodigoColeccion, coleccion.ColeccionTipo, coleccion.Linea, coleccion.EmpresaId });
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
         [Route("~/api/producto/{pais}/{grupoPrecio}/{producto}/{color}")]
         public async Task<IHttpActionResult> GetProducto(string pais, string grupoPrecio, string producto, string color)
         {

@@ -131,6 +131,7 @@ namespace AventasApi.Controllers
                 CONFIGURACIONE SyncTelContado;
                 CONFIGURACIONE SyncTelCredito;
                 List<DireccionesCliente> direccionesClientes;
+                string codigoAsesorPedido;
 
                 using (AVentasConfigEntities config = new AVentasConfigEntities())
                 {
@@ -145,9 +146,88 @@ namespace AventasApi.Controllers
                     acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
                     tipoPedido = acuerdoVenta == null ? Pedido.ModoVenta == "Contado" ? 5 : 1 : acuerdoVenta?.TiposdePedido?.IdTipoPedido;
                     cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
-                    coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
+
+                    if (cliente == null)
+                    {
+                        return BadRequest($"El cliente {Pedido.CodigoCliente} no existe.");
+                    }
+
+                    // El usuario que envía el pedido (ej. un usuario de oficina cargando el Excel de varios
+                    // clientes) puede no tener su propio registro de Asesor; en ese caso se usa el asesor
+                    // asignado al cliente.
+                    codigoAsesorPedido = asesor != null ? asesor.CodigoAsesor : cliente.CodigoAsesor;
+
+                    coleccion = context.Colecciones
+                        .Include("ProductosxColeccion.ColoresxProducto")
+                        .Include("ProductosxColeccion.TallasxProducto.TallasXGrupo")
+                        .AsNoTracking()
+                        .FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
+
+                    if (coleccion == null)
+                    {
+                        return BadRequest($"El paquete {Pedido.CodigoColeccion} no existe para la empresa {cliente.EmpresaId}.");
+                    }
+
                     ubicacion = context.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == Pedido.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == cliente.EmpresaId && x.Estatus == true);
                     direccionesClientes = context.DireccionesCliente.Where(x => x.codigoCliente.ToUpper() == Pedido.CodigoCliente.ToUpper()).ToList();
+
+                    // Validaciones de línea: el detalle nunca se valida contra disponible/color/paquete antes de esto,
+                    // así que se agregan aquí para ambos orígenes (manual y Excel). El disponible solo se exige
+                    // cuando el pedido NO viene de la carga masiva por Excel.
+                    Dictionary<string, decimal> disponibilidadPorLinea = null;
+                    if (!Pedido.OrigenExcel)
+                    {
+                        var idsProducto = Pedido.DetallePedido.Select(d => d.IdProducto).Distinct().ToList();
+                        disponibilidadPorLinea = context.FisicoDisponible
+                            .Where(f => idsProducto.Contains(f.IdProducto) && f.Sitio == Pedido.Sitio && f.Almacen == Pedido.Almacen)
+                            .ToList()
+                            .GroupBy(f => $"{f.IdProducto}|{f.CodigoColor}|{f.CodigoTalla}")
+                            .ToDictionary(g => g.Key, g => g.Sum(f => f.Disponible ?? 0));
+                    }
+
+                    var erroresDetalle = new List<string>();
+                    foreach (var detalle in Pedido.DetallePedido)
+                    {
+                        int cantidadLinea = 0;
+                        int.TryParse(detalle.Cantidad, out cantidadLinea);
+                        if (cantidadLinea <= 0)
+                        {
+                            continue;
+                        }
+
+                        var productoColeccion = coleccion.ProductosxColeccion.FirstOrDefault(p => p.IdProducto == detalle.IdProducto && p.VisibleParaVentas && !p.Deshabilitado);
+                        if (productoColeccion == null)
+                        {
+                            erroresDetalle.Add($"El producto {detalle.CodigoProducto} no pertenece al paquete {Pedido.CodigoColeccion}.");
+                            continue;
+                        }
+
+                        if (!productoColeccion.ColoresxProducto.Any(c => string.Equals(c.CodigoColor, detalle.CodigoColor, StringComparison.OrdinalIgnoreCase) && !c.Deshabilitado))
+                        {
+                            erroresDetalle.Add($"El color {detalle.CodigoColor} no existe para el producto {detalle.CodigoProducto}.");
+                            continue;
+                        }
+
+                        if (!productoColeccion.TallasxProducto.Any(t => t.TallasXGrupo != null && string.Equals(t.TallasXGrupo.CodigoTalla, detalle.Talla, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            erroresDetalle.Add($"La talla {detalle.Talla} no existe para el producto {detalle.CodigoProducto}.");
+                            continue;
+                        }
+
+                        if (disponibilidadPorLinea != null)
+                        {
+                            disponibilidadPorLinea.TryGetValue($"{detalle.IdProducto}|{detalle.CodigoColor}|{detalle.Talla}", out decimal disponible);
+                            if (cantidadLinea > disponible)
+                            {
+                                erroresDetalle.Add($"Disponible insuficiente para {detalle.CodigoProducto} color {detalle.CodigoColor} talla {detalle.Talla} (disponible: {disponible}, solicitado: {cantidadLinea}).");
+                            }
+                        }
+                    }
+
+                    if (erroresDetalle.Any())
+                    {
+                        return BadRequest(string.Join(" | ", erroresDetalle));
+                    }
                 }
                 DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
 
@@ -182,7 +262,7 @@ namespace AventasApi.Controllers
                         EmpresaId = cliente.EmpresaId,
                         Fecha = DateTime.Now,
                         FechaEntrega = fechaEntrega,
-                        CodigoAsesor = asesor.CodigoAsesor,
+                        CodigoAsesor = codigoAsesorPedido,
                         Observacion = Pedido.Observacion,
                         TotalUnidades = 0,
                         PedidosDetalle = new List<PedidosDetalle>(),
@@ -199,7 +279,7 @@ namespace AventasApi.Controllers
                         Almacen = Pedido.Almacen,
                         Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
                         SalesStatusId = 1,
-                        Origen = "Web",
+                        Origen = Pedido.OrigenExcel ? "Excel" : "Web",
                         postalAddress = postalAddress,
                     };
 
@@ -221,7 +301,7 @@ namespace AventasApi.Controllers
                                 Cantidad = cantidad,
                                 MontoLinea = (precioUnitario * cantidad),
                                 Fecha = DateTime.Now,
-                                CodigoAsesor = asesor.CodigoAsesor,
+                                CodigoAsesor = codigoAsesorPedido,
                                 PrecioUnitario = precioUnitario,
                                 CantidadDevolucion = 0,
                                 CodigoImpuesto = detalle.CodigoImpuesto,
@@ -269,7 +349,7 @@ namespace AventasApi.Controllers
                             EmpresaId = cliente.EmpresaId,
                             Fecha = DateTime.Now,
                             FechaEntrega = fechaEntrega,
-                            CodigoAsesor = asesor.CodigoAsesor,
+                            CodigoAsesor = codigoAsesorPedido,
                             Observacion = Pedido.Observacion,
                             TotalUnidades = 0,
                             PedidosDetalleFlotante = new List<PedidosDetalleFlotante>(),
@@ -316,7 +396,7 @@ namespace AventasApi.Controllers
                                     Cantidad = cantidad,
                                     MontoLinea = (precioUnitario * cantidad),
                                     Fecha = DateTime.Now,
-                                    CodigoAsesor = asesor.CodigoAsesor,
+                                    CodigoAsesor = codigoAsesorPedido,
                                     PrecioUnitario = precioUnitario,
                                     CodigoImpuesto = detalle.CodigoImpuesto
                                 });
@@ -351,7 +431,7 @@ namespace AventasApi.Controllers
                         EmpresaId = cliente.EmpresaId,
                         Fecha = DateTime.Now,
                         FechaEntrega = fechaEntrega,
-                        CodigoAsesor = asesor.CodigoAsesor,
+                        CodigoAsesor = codigoAsesorPedido,
                         Observacion = Pedido.Observacion,
                         TotalUnidades = 0,
                         PedidosDetalleFlotante = new List<PedidosDetalleFlotante>(),
@@ -398,7 +478,7 @@ namespace AventasApi.Controllers
                                 Cantidad = cantidad,
                                 MontoLinea = (precioUnitario * cantidad),
                                 Fecha = DateTime.Now,
-                                CodigoAsesor = asesor.CodigoAsesor,
+                                CodigoAsesor = codigoAsesorPedido,
                                 PrecioUnitario = precioUnitario,
                                 CodigoImpuesto = detalle.CodigoImpuesto,
                             });
@@ -456,6 +536,37 @@ namespace AventasApi.Controllers
                         }
                     }*/
 
+
+                    return Ok(numeroReferencia);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        // Igual que GetCorrelativo, pero por código de asesor explícito en vez del usuario logueado.
+        // Se usa en la carga masiva por Excel, donde quien sube el archivo puede no ser el asesor
+        // del cliente: el correlativo del pedido debe seguir siendo el del asesor asignado al cliente.
+        [HttpGet]
+        [Route("~/api/PedidosXCliente/correlativo/asesor/{codigoAsesor}/{empresa}")]
+        public async Task<IHttpActionResult> GetCorrelativoPorAsesor(string codigoAsesor, string empresa)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.CodigoAsesor == codigoAsesor && ase.EmpresaId == empresa);
+
+                    if (asesor == null)
+                    {
+                        return Ok();
+                    }
+
+                    int numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                    string inicialesAsesor = asesor.InicialesNombre;
+                    string numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
 
                     return Ok(numeroReferencia);
                 }

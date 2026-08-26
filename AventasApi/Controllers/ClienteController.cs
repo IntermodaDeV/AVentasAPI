@@ -817,6 +817,7 @@ namespace AventasApi.Controllers
                             EmpresaId = cli.EmpresaId,
                             Codigo = cli.CodigoCliente,
                             Nombre = cli.Nombre,
+                            CodigoAsesor = cli.CodigoAsesor,
                             ComunidadAutonoma = cli.ComunidadAutonoma,
                             GrupoPrecio = cli.GrupoPrecio,
                             NombreGrupoPrecio = ctx.MaestroGrupoPrecio.FirstOrDefault(m => m.GrupoPrecio == cli.GrupoPrecio).Descripcion,
