@@ -915,6 +915,101 @@ namespace AventasApi.Controllers
             }
         }
 
+        // Nombre de la Función (Seguridad > Permisos) que habilita, para la carga masiva de pedidos
+        // por Excel, ingresar pedidos de clientes de CUALQUIER asesor (no solo los de la cartera del
+        // usuario). Se asigna a un Rol y ese Rol a los usuarios que deban tener este permiso.
+        public const string FuncionExcelSinRestriccionCartera = "PedidosExcelSinCartera";
+
+        private async Task<bool> TieneFuncion(AVentasEntities ctx, int usuarioId, string nombreFuncion)
+        {
+            return await ctx.Usuario_Rol
+                .Where(ur => ur.usuarioId == usuarioId && ur.status == true)
+                .Join(ctx.Funciones_Roles.Where(fr => fr.Status == true), ur => ur.rolId, fr => fr.IdRol, (ur, fr) => fr.IdFuncion)
+                .Join(ctx.Funciones.Where(f => f.Status == true && f.Nombre == nombreFuncion), idFuncion => idFuncion, f => f.Id, (idFuncion, f) => f.Id)
+                .AnyAsync();
+        }
+
+        // Igual que GetClientesPedido, pero pensado para la carga masiva por Excel: es más liviano
+        // (no calcula reservado por línea ni resumen de crédito, que esa pantalla no usa) y, si el
+        // usuario tiene la Función FuncionExcelSinRestriccionCartera, devuelve TODOS los clientes
+        // habilitados de sus empresas en vez de restringirlo a los asesores de su cartera.
+        [HttpGet]
+        [Route("~/api/cliente/pedido/excel")]
+        public async Task<IHttpActionResult> GetClientesPedidoExcel()
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                    var empresas = await ctx.Usuarios_Empresas.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.EmpresaId).ToListAsync();
+                    // A propósito NO se considera FlagTodosAsesores aquí: ese flag da acceso amplio en
+                    // otros módulos (Recibos, pedido manual), pero para la carga por Excel el único
+                    // permiso que debe habilitar ver clientes fuera de la cartera es este Rol específico.
+                    bool sinRestriccionCartera = await TieneFuncion(ctx, user.Id, FuncionExcelSinRestriccionCartera);
+
+                    List<Clientes> clientesBase;
+                    if (sinRestriccionCartera)
+                    {
+                        clientesBase = await ctx.Clientes.Where(cli => cli.Habilitado == true && empresas.Contains(cli.EmpresaId)).ToListAsync();
+                    }
+                    else
+                    {
+                        var asesores = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        var asesoresHabilitados = await ctx.Asesores.Where(x => asesores.Contains(x.CodigoAsesor) && empresas.Contains(x.EmpresaId) && x.Activo == true).Select(x => x.CodigoAsesor).Distinct().ToListAsync();
+                        clientesBase = await ctx.Clientes.Where(cli => cli.Habilitado == true && asesoresHabilitados.Contains(cli.CodigoAsesor)).ToListAsync();
+                    }
+
+                    var codigosClientes = clientesBase.Select(c => c.CodigoCliente).ToList();
+                    var direcciones = await ctx.DireccionesCliente.Where(x => codigosClientes.Contains(x.codigoCliente) && x.activo == true).ToListAsync();
+                    var acuerdos = await ctx.AcuerdosxCliente.Where(a => a.Desde <= DateTime.Today && a.Hasta >= DateTime.Today && codigosClientes.Contains(a.CodigoCliente)).AsNoTracking().ToListAsync();
+                    var cuentasCorrientes = await ctx.LimiteCreditoxCliente.Where(x => codigosClientes.Contains(x.CodigoCliente)).ToListAsync();
+
+                    List<ClientePedidoViewModel> listaClientes = clientesBase.Select(cli => new ClientePedidoViewModel
+                    {
+                        EmpresaId = cli.EmpresaId,
+                        Codigo = cli.CodigoCliente,
+                        Nombre = cli.Nombre,
+                        CodigoAsesor = cli.CodigoAsesor,
+                        GrupoPrecio = cli.GrupoPrecio,
+                        GrupoImpuesto = string.IsNullOrEmpty(cli.GrupoImpuesto) ? "CLIENTES" : cli.GrupoImpuesto.ToUpper(),
+                        IncluyeImpuesto = cli.IncluyeImpuesto.Value,
+                        FacturacionEntrega = cli.FacturacionEntrega,
+                        Latitud = cli.Latitud,
+                        Longitud = cli.Longitud,
+                        CuentaCorriente = cuentasCorrientes.Where(lcc => lcc.CodigoCliente == cli.CodigoCliente).Select(lcc => new CuentaCorrienteViewModel
+                        {
+                            Descripcion = lcc.Descripcion,
+                            Valor = lcc.Valor ?? 0
+                        }).ToList(),
+                        Direcciones = direcciones.Where(x => x.codigoCliente == cli.CodigoCliente).Select(x => new DireccionesClienteViewModel { postalAddress = x.postalAddress, nombreDireccion = x.nombreDireccion, direccion = x.direccion, principal = x.principal, latitud = x.latitud, longitud = x.longitud }).ToList(),
+                        AcuerdosVenta = acuerdos.Where(a => a.CodigoCliente == cli.CodigoCliente).Select(axc => new AcuerdoVentaViewModel
+                        {
+                            IdAcuerdoxCliente = axc.IdAcuerdoxCliente,
+                            CodigoCliente = axc.CodigoCliente,
+                            IdTipoPedido = axc.IdTipoPedido,
+                            IdMoneda = axc.IdMoneda,
+                            EmpresaId = axc.EmpresaId,
+                            Tipo = axc.Tipo,
+                            TipoPago = axc.TipoPago,
+                            Total = axc.Total,
+                            Saldo = axc.Saldo,
+                            Linea = axc.IdLinea,
+                            Liberado = axc.Liberado,
+                            Facturado = axc.Facturado,
+                            Entregado = axc.Entregado,
+                        }).ToList(),
+                    }).ToList();
+
+                    return Ok(listaClientes);
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet]
         [Route("~/api/cliente/cuenta")]
         public async Task<IHttpActionResult> GetClientesCuenta()

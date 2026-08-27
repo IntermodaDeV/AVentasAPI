@@ -79,6 +79,8 @@ namespace AventasApi.Models
         public string nombreDireccion { get; set; }
         public string direccion { get; set; }
         public bool principal { get; set; }
+        public Nullable<decimal> latitud { get; set; }
+        public Nullable<decimal> longitud { get; set; }
     }
 
     public class ClientePedidoViewModel

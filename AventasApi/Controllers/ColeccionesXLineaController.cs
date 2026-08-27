@@ -486,6 +486,94 @@ namespace AventasApi.Controllers
             }
         }
 
+        // Igual que GetProductosPorColeccion, pero SIN los filtros de disponible que ocultan
+        // colores/tallas sin stock positivo: la carga masiva por Excel necesita validar que el
+        // color/talla EXISTAN para el producto, sin que la falta de stock los oculte (el disponible
+        // se valida aparte, y ahí sí se puede omitir intencionalmente para pedidos de Excel).
+        [HttpGet]
+        [Route("~/api/colecciones/estructura/{coleccion}/{grupoprecio}/{pais}")]
+        public async Task<IHttpActionResult> GetEstructuraColeccion(string coleccion, string grupoprecio, string pais)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    string urlImagenes = ctx.Configuraciones.FirstOrDefault(conf => conf.CodigoConfiguracion == "UrlImages")?.Valor ?? "";
+                    List<ColeccionViewModel> colecciones = await ctx.Colecciones
+                        .Where(vw_coleccion => vw_coleccion.EmpresaId.ToUpper() == pais.ToUpper() && vw_coleccion.CodigoColeccion == coleccion.ToUpper())
+                        .Select(vw_coleccion =>
+                             new ColeccionViewModel
+                             {
+                                 Edades = vw_coleccion.EdadesxColeccion
+                               .OrderBy(me => me.MaestroEdad.Orden).Select(me => new EdadesViewModel
+                               {
+                                   IdEdad = me.IdEdad,
+                                   Edad = me.MaestroEdad.Edad,
+                                   Orden = me.MaestroEdad.Orden,
+                                   ProductosXEdad = ctx.ProductosxColeccion.Where(pxc => pxc.EmpresaId == pais.ToUpper() && pxc.IdColeccion == vw_coleccion.IdColeccion && pxc.IdEdad == me.IdEdad && pxc.IdLinea == me.IdLinea && pxc.VisibleParaVentas == true).Select(pxc => new ProductoXColeccionViewModel
+                                   {
+                                       ProductoId = pxc.CodigoProducto,
+                                       idColeccion = pxc.IdColeccion,
+                                       CodigoColeccion = vw_coleccion.CodigoColeccion,
+                                       CodigoProducto = pxc.IdProducto,
+                                       NombreProducto = pxc.NombreProducto,
+                                       GrupoImpuesto = (string.IsNullOrEmpty(pxc.GrupoImpuesto)) ? "GENERAL" : pxc.GrupoImpuesto.ToUpper(),
+                                       Deshabilitado = pxc.Deshabilitado,
+                                       Precio = pxc.PreciosxProducto.Where(preEsp => preEsp.GrupoPrecio == grupoprecio).Select(precio => new PrecioXProductoViewModel
+                                       {
+                                           GrupoPrecio = precio.GrupoPrecio,
+                                           IdMoneda = precio.IdMoneda,
+                                           Precio = precio.Hasta == new DateTime(1900, 1, 1) ? precio.Precio : 0
+                                       }).ToList(),
+                                       GrupoTalla = pxc.CodigoGrupoTalla,
+                                       ListaTalla = ctx.TallasxProducto.Where(txp => txp.IdProducto == pxc.IdProducto && txp.IdTallaxGrupo != null).Select(txp => txp.TallasXGrupo)
+                                           .Select(txp => new TallaViewModel
+                                           {
+                                               Talla = txp.CodigoTalla.ToUpper(),
+                                               GrupoTallaId = txp.CodigoGrupoTalla,
+                                               Orden = txp.Orden ?? 0,
+                                           }).OrderBy(txp => txp.Orden).ToList(),
+                                       ListaColores = pxc.ColoresxProducto.OrderBy(cpp => cpp.Colores.Color).Select(cpp => new ColorViewModel
+                                       {
+                                           CodigoColor = cpp.Colores.CodigoColor,
+                                           NombreColor = cpp.Colores.Color,
+                                           Color = cpp.Colores.Rgb,
+                                           Prioridad = cpp.Prioridad,
+                                           Deshabilitado = cpp.Deshabilitado,
+                                           IdColorxProducto = cpp.IdColorxProducto,
+                                       }).ToList(),
+                                       fisicaDisponible = pxc.FisicoDisponible
+                                              .Select(f => new FisicoDisponibleViewModel
+                                              {
+                                                  CodigoColor = f.CodigoColor,
+                                                  IdTalla = f.CodigoTalla.ToUpper(),
+                                                  Cantidad = f.Disponible < 0 ? 0 : f.Disponible,
+                                                  MinStock = f.MinStock,
+                                                  PreciosEspecificos = f.PrecioEspecifico.Where(preEsp => preEsp.GrupoPrecio == grupoprecio).Select(preEsp => new PrecioEspecificoViewModel
+                                                  {
+                                                      IdPrecioEspecifico = preEsp.IdPrecioEspecifico,
+                                                      IdMoneda = preEsp.IdMoneda,
+                                                      IdProducto = preEsp.IdProducto,
+                                                      GrupoPrecio = preEsp.GrupoPrecio,
+                                                      IdFisicoDisponible = preEsp.IdFisicoDisponible,
+                                                      Precio = preEsp.Hasta == new DateTime(1900, 1, 1) ? preEsp.Precio : pxc.PreciosxProducto.FirstOrDefault(pre => pre.GrupoPrecio == grupoprecio && pre.IdProducto == preEsp.IdProducto).Precio,
+                                                  }).ToList(),
+                                              }).ToList()
+                                   }).ToList()
+                               }
+                               ).ToList()
+
+                             }).ToListAsync();
+
+                    return Ok(colecciones[0].Edades);
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet]
         [Route("~/api/colecciones/{codigoColeccion}/{empresa}/info")]
         public async Task<IHttpActionResult> GetColeccionInfo(string codigoColeccion, string empresa)

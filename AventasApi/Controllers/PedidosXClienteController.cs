@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.IO;
 using AventasApi.Utils;
+using System.Text.RegularExpressions;
 using System.Net;
 
 namespace AventasApi.Controllers
@@ -98,7 +99,7 @@ namespace AventasApi.Controllers
 
                     DateTime fechaHasta = DateTime.Now;
                     DateTime fechaDesde = fechaHasta.AddHours(-7);
-                                       
+
                     var totalUnidades = Pedido.DetallePedido.Sum(x => decimal.Parse(x.Cantidad));
                     var totalPedido = Pedido.subtotal + decimal.Parse(Pedido.Impuesto.ToString()) + Pedido.Flete;
 
@@ -131,7 +132,6 @@ namespace AventasApi.Controllers
                 CONFIGURACIONE SyncTelContado;
                 CONFIGURACIONE SyncTelCredito;
                 List<DireccionesCliente> direccionesClientes;
-                string codigoAsesorPedido;
 
                 using (AVentasConfigEntities config = new AVentasConfigEntities())
                 {
@@ -146,88 +146,9 @@ namespace AventasApi.Controllers
                     acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
                     tipoPedido = acuerdoVenta == null ? Pedido.ModoVenta == "Contado" ? 5 : 1 : acuerdoVenta?.TiposdePedido?.IdTipoPedido;
                     cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
-
-                    if (cliente == null)
-                    {
-                        return BadRequest($"El cliente {Pedido.CodigoCliente} no existe.");
-                    }
-
-                    // El usuario que envía el pedido (ej. un usuario de oficina cargando el Excel de varios
-                    // clientes) puede no tener su propio registro de Asesor; en ese caso se usa el asesor
-                    // asignado al cliente.
-                    codigoAsesorPedido = asesor != null ? asesor.CodigoAsesor : cliente.CodigoAsesor;
-
-                    coleccion = context.Colecciones
-                        .Include("ProductosxColeccion.ColoresxProducto")
-                        .Include("ProductosxColeccion.TallasxProducto.TallasXGrupo")
-                        .AsNoTracking()
-                        .FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
-
-                    if (coleccion == null)
-                    {
-                        return BadRequest($"El paquete {Pedido.CodigoColeccion} no existe para la empresa {cliente.EmpresaId}.");
-                    }
-
+                    coleccion = context.Colecciones.Include(col => col.ProductosxColeccion).AsNoTracking().FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
                     ubicacion = context.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == Pedido.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == cliente.EmpresaId && x.Estatus == true);
                     direccionesClientes = context.DireccionesCliente.Where(x => x.codigoCliente.ToUpper() == Pedido.CodigoCliente.ToUpper()).ToList();
-
-                    // Validaciones de línea: el detalle nunca se valida contra disponible/color/paquete antes de esto,
-                    // así que se agregan aquí para ambos orígenes (manual y Excel). El disponible solo se exige
-                    // cuando el pedido NO viene de la carga masiva por Excel.
-                    Dictionary<string, decimal> disponibilidadPorLinea = null;
-                    if (!Pedido.OrigenExcel)
-                    {
-                        var idsProducto = Pedido.DetallePedido.Select(d => d.IdProducto).Distinct().ToList();
-                        disponibilidadPorLinea = context.FisicoDisponible
-                            .Where(f => idsProducto.Contains(f.IdProducto) && f.Sitio == Pedido.Sitio && f.Almacen == Pedido.Almacen)
-                            .ToList()
-                            .GroupBy(f => $"{f.IdProducto}|{f.CodigoColor}|{f.CodigoTalla}")
-                            .ToDictionary(g => g.Key, g => g.Sum(f => f.Disponible ?? 0));
-                    }
-
-                    var erroresDetalle = new List<string>();
-                    foreach (var detalle in Pedido.DetallePedido)
-                    {
-                        int cantidadLinea = 0;
-                        int.TryParse(detalle.Cantidad, out cantidadLinea);
-                        if (cantidadLinea <= 0)
-                        {
-                            continue;
-                        }
-
-                        var productoColeccion = coleccion.ProductosxColeccion.FirstOrDefault(p => p.IdProducto == detalle.IdProducto && p.VisibleParaVentas && !p.Deshabilitado);
-                        if (productoColeccion == null)
-                        {
-                            erroresDetalle.Add($"El producto {detalle.CodigoProducto} no pertenece al paquete {Pedido.CodigoColeccion}.");
-                            continue;
-                        }
-
-                        if (!productoColeccion.ColoresxProducto.Any(c => string.Equals(c.CodigoColor, detalle.CodigoColor, StringComparison.OrdinalIgnoreCase) && !c.Deshabilitado))
-                        {
-                            erroresDetalle.Add($"El color {detalle.CodigoColor} no existe para el producto {detalle.CodigoProducto}.");
-                            continue;
-                        }
-
-                        if (!productoColeccion.TallasxProducto.Any(t => t.TallasXGrupo != null && string.Equals(t.TallasXGrupo.CodigoTalla, detalle.Talla, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            erroresDetalle.Add($"La talla {detalle.Talla} no existe para el producto {detalle.CodigoProducto}.");
-                            continue;
-                        }
-
-                        if (disponibilidadPorLinea != null)
-                        {
-                            disponibilidadPorLinea.TryGetValue($"{detalle.IdProducto}|{detalle.CodigoColor}|{detalle.Talla}", out decimal disponible);
-                            if (cantidadLinea > disponible)
-                            {
-                                erroresDetalle.Add($"Disponible insuficiente para {detalle.CodigoProducto} color {detalle.CodigoColor} talla {detalle.Talla} (disponible: {disponible}, solicitado: {cantidadLinea}).");
-                            }
-                        }
-                    }
-
-                    if (erroresDetalle.Any())
-                    {
-                        return BadRequest(string.Join(" | ", erroresDetalle));
-                    }
                 }
                 DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
 
@@ -262,6 +183,415 @@ namespace AventasApi.Controllers
                         EmpresaId = cliente.EmpresaId,
                         Fecha = DateTime.Now,
                         FechaEntrega = fechaEntrega,
+                        CodigoAsesor = asesor.CodigoAsesor,
+                        Observacion = Pedido.Observacion,
+                        TotalUnidades = 0,
+                        PedidosDetalle = new List<PedidosDetalle>(),
+                        Subtotal = 0,
+                        Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
+                        Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
+                        IdLinea = Pedido.Linea,
+                        ClienteContadoId = Pedido.ClienteContadoId,
+                        ModoVenta = Pedido.ModoVenta,
+                        Flete = Pedido.Flete,
+                        RequiereEntrega = Pedido.RequiereEntrega,
+                        BodegaEspecifica = Pedido.BodegaEspecifica,
+                        Sitio = Pedido.Sitio,
+                        Almacen = Pedido.Almacen,
+                        Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
+                        SalesStatusId = 1,
+                        Origen = "Web",
+                        postalAddress = postalAddress,
+                    };
+
+                    foreach (var detalle in Pedido.DetallePedido)
+                    {
+                        int cantidad = 0;
+                        int.TryParse(detalle.Cantidad, out cantidad);
+                        if (cantidad > 0)
+                        {
+                            PedidoBDAGuardar.TotalUnidades += cantidad;
+                            decimal precioUnitario = 0;
+                            decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
+
+                            PedidoBDAGuardar.PedidosDetalle.Add(new PedidosDetalle
+                            {
+                                IdProducto = detalle.IdProducto,
+                                CodigoColor = detalle.CodigoColor,
+                                CodigoTalla = detalle.Talla,
+                                Cantidad = cantidad,
+                                MontoLinea = (precioUnitario * cantidad),
+                                Fecha = DateTime.Now,
+                                CodigoAsesor = asesor.CodigoAsesor,
+                                PrecioUnitario = precioUnitario,
+                                CantidadDevolucion = 0,
+                                CodigoImpuesto = detalle.CodigoImpuesto,
+                            });
+                        }
+
+                    }
+
+                    PedidoBDAGuardar.Subtotal = cliente.IncluyeImpuesto.Value ? Pedido.subtotal - decimal.Parse(Pedido.Impuesto.ToString()) : Pedido.subtotal;
+                    PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
+                    PedidoBDAGuardar.TotalPedido = cliente.IncluyeImpuesto.Value ? (Pedido.subtotal + Pedido.Flete) : (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                    PedidoBDAGuardar.PedidoId = numeroReferencia;
+                    PedidoBDAGuardar.NumeroPedido = "";
+                    PedidoBDAGuardar.Sincronizado = false;
+                    PedidoBDAGuardar.Procesando = false;
+
+                    PResumenCredito_Result resultado;
+
+                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma, Pedido.EmpresaUsuario);
+                    if (guardadoExito)
+                    {
+                        using (AVentasEntities context = new AVentasEntities())
+                        {
+                            resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
+                        }
+
+                        if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
+                        {
+                            if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                            {
+                                ReducirStock(PedidoBDAGuardar);
+                            }
+                        }
+
+                        return Ok(new { correlativo = numeroReferencia, mensaje = "El pedido ha sido registrado con exito." });
+                    }
+                    else
+                    {
+                        PedidosxClienteFlotante PedidoFlotante = new PedidosxClienteFlotante
+                        {
+                            IdTipoPedido = tipoPedido,
+                            IdColeccion = coleccion.IdColeccion,
+                            CodigoCliente = cliente.CodigoCliente,
+                            AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
+                            EmpresaId = cliente.EmpresaId,
+                            Fecha = DateTime.Now,
+                            FechaEntrega = fechaEntrega,
+                            CodigoAsesor = asesor.CodigoAsesor,
+                            Observacion = Pedido.Observacion,
+                            TotalUnidades = 0,
+                            PedidosDetalleFlotante = new List<PedidosDetalleFlotante>(),
+                            Subtotal = 0,
+                            Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
+                            Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
+                            IdLinea = Pedido.Linea,
+                            ClienteContadoId = Pedido.ClienteContadoId,
+                            ModoVenta = Pedido.ModoVenta,
+                            Flete = Pedido.Flete,
+                            RequiereEntrega = Pedido.RequiereEntrega,
+                            ESTADO = 0,
+                            BodegaEspecifica = Pedido.BodegaEspecifica,
+                            Sitio = Pedido.Sitio,
+                            Almacen = Pedido.Almacen,
+                            Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
+                            postalAddress = postalAddress
+                        };
+
+                        //if (numeroReferencia == "")
+                        //{
+                        //    cache = true;
+                        //    numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                        //    string inicialesAsesor = asesor.InicialesNombre;
+                        //    numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                        //}
+
+                        foreach (var detalle in Pedido.DetallePedido)
+                        {
+                            int cantidad = 0;
+                            int.TryParse(detalle.Cantidad, out cantidad);
+                            if (cantidad > 0)
+                            {
+                                PedidoFlotante.TotalUnidades += cantidad;
+                                decimal precioUnitario = 0;
+                                decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
+
+                                PedidoFlotante.PedidosDetalleFlotante.Add(new PedidosDetalleFlotante
+                                {
+                                    PedidoId = numeroReferencia,
+                                    IdProducto = detalle.IdProducto,
+                                    CodigoColor = detalle.CodigoColor,
+                                    CodigoTalla = detalle.Talla,
+                                    Cantidad = cantidad,
+                                    MontoLinea = (precioUnitario * cantidad),
+                                    Fecha = DateTime.Now,
+                                    CodigoAsesor = asesor.CodigoAsesor,
+                                    PrecioUnitario = precioUnitario,
+                                    CodigoImpuesto = detalle.CodigoImpuesto
+                                });
+                            }
+
+                        }
+
+                        PedidoFlotante.Subtotal = cliente.IncluyeImpuesto.Value ? Pedido.subtotal - decimal.Parse(Pedido.Impuesto.ToString()) : Pedido.subtotal;
+                        PedidoFlotante.TotalImpuesto = Pedido.Impuesto;
+                        PedidoFlotante.TotalPedido = cliente.IncluyeImpuesto.Value ? (Pedido.subtotal + Pedido.Flete) : (PedidoFlotante.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                        PedidoFlotante.PedidoId = numeroReferencia;
+                        PedidoFlotante.NumeroPedido = "";
+                        PedidoFlotante.Sincronizado = false;
+                        PedidoFlotante.Procesando = false;
+
+
+                        AsyncSqlInsert.IngresarPedidoFlotante(PedidoFlotante, Pedido.Firma);
+                    }
+
+                    return Ok(new { correlativo = numeroReferencia, mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de pedidos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento comercial para que procedan a revisar y gestionar su pedido para que sea válido." });
+
+                    //s_ = PostPedidoPendiente(numeroReferencia);
+                }
+                else
+                {
+                    PedidosxClienteFlotante PedidoBDAGuardar = new PedidosxClienteFlotante
+                    {
+                        IdTipoPedido = tipoPedido,
+                        IdColeccion = coleccion.IdColeccion,
+                        CodigoCliente = cliente.CodigoCliente,
+                        AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
+                        EmpresaId = cliente.EmpresaId,
+                        Fecha = DateTime.Now,
+                        FechaEntrega = fechaEntrega,
+                        CodigoAsesor = asesor.CodigoAsesor,
+                        Observacion = Pedido.Observacion,
+                        TotalUnidades = 0,
+                        PedidosDetalleFlotante = new List<PedidosDetalleFlotante>(),
+                        Subtotal = 0,
+                        Latitude = (Pedido.location != null) ? Pedido.location.latitude : null,
+                        Longitude = (Pedido.location != null) ? Pedido.location.longitude : null,
+                        IdLinea = Pedido.Linea,
+                        ClienteContadoId = Pedido.ClienteContadoId,
+                        ModoVenta = Pedido.ModoVenta,
+                        Flete = Pedido.Flete,
+                        RequiereEntrega = Pedido.RequiereEntrega,
+                        ESTADO = 0,
+                        BodegaEspecifica = Pedido.BodegaEspecifica,
+                        Sitio = Pedido.Sitio,
+                        Almacen = Pedido.Almacen,
+                        Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
+                        postalAddress = postalAddress
+                    };
+
+                    //if (numeroReferencia == "")
+                    //{
+                    //    cache = true;
+                    //    numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
+                    //    string inicialesAsesor = asesor.InicialesNombre;
+                    //    numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
+                    //}
+
+                    foreach (var detalle in Pedido.DetallePedido)
+                    {
+                        int cantidad = 0;
+                        int.TryParse(detalle.Cantidad, out cantidad);
+                        if (cantidad > 0)
+                        {
+                            PedidoBDAGuardar.TotalUnidades += cantidad;
+                            decimal precioUnitario = 0;
+                            decimal.TryParse(detalle.PrecioUnitario, out precioUnitario);
+
+                            PedidoBDAGuardar.PedidosDetalleFlotante.Add(new PedidosDetalleFlotante
+                            {
+                                PedidoId = numeroReferencia,
+                                IdProducto = detalle.IdProducto,
+                                CodigoColor = detalle.CodigoColor,
+                                CodigoTalla = detalle.Talla,
+                                Cantidad = cantidad,
+                                MontoLinea = (precioUnitario * cantidad),
+                                Fecha = DateTime.Now,
+                                CodigoAsesor = asesor.CodigoAsesor,
+                                PrecioUnitario = precioUnitario,
+                                CodigoImpuesto = detalle.CodigoImpuesto,
+                            });
+                        }
+
+                    }
+
+                    PedidoBDAGuardar.Subtotal = cliente.IncluyeImpuesto.Value ? Pedido.subtotal - decimal.Parse(Pedido.Impuesto.ToString()) : Pedido.subtotal;
+                    PedidoBDAGuardar.TotalImpuesto = Pedido.Impuesto;
+                    PedidoBDAGuardar.TotalPedido = cliente.IncluyeImpuesto.Value ? (Pedido.subtotal + Pedido.Flete) : (PedidoBDAGuardar.Subtotal.Value + decimal.Parse(Pedido.Impuesto.ToString())) + Pedido.Flete;
+                    PedidoBDAGuardar.PedidoId = numeroReferencia;
+                    PedidoBDAGuardar.NumeroPedido = "";
+                    PedidoBDAGuardar.Sincronizado = false;
+                    PedidoBDAGuardar.Procesando = false;
+
+
+                    AsyncSqlInsert.IngresarPedidoFlotante(PedidoBDAGuardar, Pedido.Firma);
+                }
+
+                return Ok(new { correlativo = numeroReferencia, mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de pedidos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento comercial para que procedan a revisar y gestionar su pedido para que sea válido." });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+
+        // Endpoint dedicado para la carga masiva de pedidos por Excel. Es una copia adaptada de Post():
+        // valida siempre que el producto pertenezca al paquete y que el color/talla existan, pero NUNCA
+        // valida disponible (a propósito, así se pidió para esta carga), y no toca en nada la lógica del
+        // endpoint de pedido manual (Post) de arriba, que se dejó exactamente como estaba.
+        [HttpPost]
+        [Route("~/api/PedidosXCliente/excel")]
+        public IHttpActionResult PostExcel([FromBody] PedidoPostViewModel Pedido)
+        {
+            try
+            {
+                PedidosxCliente found = null;
+                try
+                {
+                    var json = new JavaScriptSerializer().Serialize(Pedido);
+
+                    EscribirEnArchivo($"PedidoExcel At: {DateTime.Now} : {json}.\n");
+                }
+                catch (Exception)
+                {
+
+                }
+                var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
+                using (AVentasEntities ctx = new AVentasEntities())
+                {
+                    DateTime fechaHasta = DateTime.Now;
+                    DateTime fechaDesde = fechaHasta.AddHours(-7);
+
+                    var totalUnidades = Pedido.DetallePedido.Sum(x => decimal.Parse(x.Cantidad));
+                    var totalPedido = Pedido.subtotal + decimal.Parse(Pedido.Impuesto.ToString()) + Pedido.Flete;
+
+                    found = ctx.PedidosxCliente.FirstOrDefault(x =>
+                        x.Fecha >= fechaDesde && x.Fecha < fechaHasta &&
+                        x.CodigoCliente == Pedido.CodigoCliente &&
+                        x.Colecciones.CodigoColeccion == Pedido.CodigoColeccion &&
+                        x.TotalPedido == totalPedido &&
+                        x.TotalUnidades == totalUnidades);
+
+                    if (found == null)
+                    {
+                        found = ctx.PedidosxCliente.FirstOrDefault(x => x.PedidoId == Pedido.NumeroReferencia);
+                    }
+                }
+
+                string numeroReferencia = Pedido.NumeroReferencia;
+
+                Asesores asesor;
+                Colecciones coleccion;
+                AcuerdosxCliente acuerdoVenta;
+                int? tipoPedido;
+                Clientes cliente;
+                UbicacionesXAlmacen ubicacion;
+                List<DireccionesCliente> direccionesClientes;
+                string codigoAsesorPedido;
+
+                using (AVentasEntities context = new AVentasEntities())
+                {
+                    asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
+                    acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
+                    tipoPedido = acuerdoVenta == null ? Pedido.ModoVenta == "Contado" ? 5 : 1 : acuerdoVenta?.TiposdePedido?.IdTipoPedido;
+                    cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
+
+                    if (cliente == null)
+                    {
+                        return BadRequest($"El cliente {Pedido.CodigoCliente} no existe.");
+                    }
+
+                    // Quien sube el Excel puede no tener su propio registro de Asesor (usuario de oficina);
+                    // en ese caso se usa el asesor asignado al cliente.
+                    codigoAsesorPedido = asesor != null ? asesor.CodigoAsesor : cliente.CodigoAsesor;
+
+                    coleccion = context.Colecciones
+                        .Include("ProductosxColeccion.ColoresxProducto")
+                        .Include("ProductosxColeccion.TallasxProducto.TallasXGrupo")
+                        .AsNoTracking()
+                        .FirstOrDefault(col => col.CodigoColeccion == Pedido.CodigoColeccion && col.EmpresaId == cliente.EmpresaId);
+
+                    if (coleccion == null)
+                    {
+                        return BadRequest($"El paquete {Pedido.CodigoColeccion} no existe para la empresa {cliente.EmpresaId}.");
+                    }
+
+                    ubicacion = context.UbicacionesXAlmacen.FirstOrDefault(x => x.MaestroBodegaAlmacenes.Almacen == Pedido.Almacen && x.MaestroBodegaAlmacenes.EmpresaId == cliente.EmpresaId && x.Estatus == true);
+                    direccionesClientes = context.DireccionesCliente.Where(x => x.codigoCliente.ToUpper() == Pedido.CodigoCliente.ToUpper()).ToList();
+
+                    // Validaciones de línea: producto pertenece al paquete, color y talla existen.
+                    // El disponible NUNCA se valida aquí (a propósito, para la carga por Excel).
+                    var erroresDetalle = new List<string>();
+                    foreach (var detalle in Pedido.DetallePedido)
+                    {
+                        int cantidadLinea = 0;
+                        int.TryParse(detalle.Cantidad, out cantidadLinea);
+                        if (cantidadLinea <= 0)
+                        {
+                            continue;
+                        }
+
+                        var productoColeccion = coleccion.ProductosxColeccion.FirstOrDefault(p => p.IdProducto == detalle.IdProducto && p.VisibleParaVentas && !p.Deshabilitado);
+                        if (productoColeccion == null)
+                        {
+                            erroresDetalle.Add($"El producto {detalle.CodigoProducto} no pertenece al paquete {Pedido.CodigoColeccion}.");
+                            continue;
+                        }
+
+                        if (!productoColeccion.ColoresxProducto.Any(c => string.Equals(c.CodigoColor, detalle.CodigoColor, StringComparison.OrdinalIgnoreCase) && !c.Deshabilitado))
+                        {
+                            erroresDetalle.Add($"El color {detalle.CodigoColor} no existe para el producto {detalle.CodigoProducto}.");
+                            continue;
+                        }
+
+                        if (!productoColeccion.TallasxProducto.Any(t => t.TallasXGrupo != null && string.Equals(t.TallasXGrupo.CodigoTalla, detalle.Talla, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            erroresDetalle.Add($"La talla {detalle.Talla} no existe para el producto {detalle.CodigoProducto}.");
+                            continue;
+                        }
+                    }
+
+                    if (erroresDetalle.Any())
+                    {
+                        return BadRequest(string.Join(" | ", erroresDetalle));
+                    }
+                }
+                DateTime fechaEntrega = (Pedido.FechaEntrega.HasValue) ? Pedido.FechaEntrega.Value : DateTime.Now;
+
+                // Tienda: si la fila no traía TIENDA, el frontend manda DireccionEntrega en 0 y aquí se
+                // usa la dirección principal del cliente. Si SÍ traía una tienda (valor distinto de 0)
+                // pero no le pertenece a este cliente, se rechaza en vez de rellenar con la principal
+                // en silencio (evita mandar el pedido a la tienda equivocada sin que nadie lo note).
+                long? postalAddress = Pedido.DireccionEntrega;
+                if (postalAddress == null || postalAddress == 0)
+                {
+                    var direccionEntregaPrincipal = direccionesClientes.FirstOrDefault(x => x.principal == true && x.activo == true);
+                    postalAddress = direccionEntregaPrincipal != null ? direccionEntregaPrincipal.postalAddress : (long?)null;
+                }
+                else
+                {
+                    var direccionEntrega = direccionesClientes.FirstOrDefault(x => x.postalAddress == postalAddress);
+                    if (direccionEntrega == null)
+                    {
+                        return BadRequest($"La tienda {postalAddress} no corresponde al cliente {Pedido.CodigoCliente}.");
+                    }
+                }
+
+                if (cliente.Nombre.Contains("CONSUMIDOR FINAL"))
+                {
+                    postalAddress = null;
+                }
+
+                // El correlativo que la pantalla de Excel consulta (GetCorrelativoPorAsesor) nunca se
+                // persiste en la BD por sí solo: si no se guarda aquí el número ya usado, cada nueva
+                // carga vuelve a arrancar desde el mismo punto y genera referencias repetidas/desordenadas
+                // entre una carga y otra. Se guarda el número usado en ESTA fila, sin importar si termina
+                // como pedido normal o flotante, para que la siguiente carga continúe donde quedó esta.
+                ActualizarCorrelativoAsesor(codigoAsesorPedido, cliente.EmpresaId, numeroReferencia);
+
+                if (found == null)
+                {
+                    PedidosxCliente PedidoBDAGuardar = new PedidosxCliente
+                    {
+                        IdTipoPedido = tipoPedido,
+                        IdColeccion = coleccion.IdColeccion,
+                        CodigoCliente = cliente.CodigoCliente,
+                        AcuerdoVenta = acuerdoVenta?.IdAcuerdoxCliente,
+                        EmpresaId = cliente.EmpresaId,
+                        Fecha = DateTime.Now,
+                        FechaEntrega = fechaEntrega,
                         CodigoAsesor = codigoAsesorPedido,
                         Observacion = Pedido.Observacion,
                         TotalUnidades = 0,
@@ -279,7 +609,7 @@ namespace AventasApi.Controllers
                         Almacen = Pedido.Almacen,
                         Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
                         SalesStatusId = 1,
-                        Origen = Pedido.OrigenExcel ? "Excel" : "Web",
+                        Origen = "Excel",
                         postalAddress = postalAddress,
                     };
 
@@ -328,7 +658,7 @@ namespace AventasApi.Controllers
                             resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
                         }
 
-                        if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
+                        if (resultado != null && PedidoBDAGuardar.TotalPedido < resultado.Disponible)
                         {
                             if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
                             {
@@ -369,14 +699,6 @@ namespace AventasApi.Controllers
                             postalAddress = postalAddress
                         };
 
-                        //if (numeroReferencia == "")
-                        //{
-                        //    cache = true;
-                        //    numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
-                        //    string inicialesAsesor = asesor.InicialesNombre;
-                        //    numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
-                        //}
-
                         foreach (var detalle in Pedido.DetallePedido)
                         {
                             int cantidad = 0;
@@ -412,13 +734,10 @@ namespace AventasApi.Controllers
                         PedidoFlotante.Sincronizado = false;
                         PedidoFlotante.Procesando = false;
 
-
                         AsyncSqlInsert.IngresarPedidoFlotante(PedidoFlotante, Pedido.Firma);
                     }
 
                     return Ok(new { correlativo = numeroReferencia, mensaje = "El documento creado ha sido enviado al flujo de flotantes por validaciones de sistema. Verifíque en el listado de pedidos si este se encuentra ya creado correctamente. De lo contrario, contacte con el departamento comercial para que procedan a revisar y gestionar su pedido para que sea válido." });
-
-                    //s_ = PostPedidoPendiente(numeroReferencia);
                 }
                 else
                 {
@@ -450,14 +769,6 @@ namespace AventasApi.Controllers
                         Ubicacion = ubicacion != null ? ubicacion.CodigoUbicacion : "",
                         postalAddress = postalAddress
                     };
-
-                    //if (numeroReferencia == "")
-                    //{
-                    //    cache = true;
-                    //    numeroCorelativo = asesor.CorrelativoPedidos ?? 0;
-                    //    string inicialesAsesor = asesor.InicialesNombre;
-                    //    numeroReferencia = $"{inicialesAsesor}-1{numeroCorelativo.ToString("D5")}";
-                    //}
 
                     foreach (var detalle in Pedido.DetallePedido)
                     {
@@ -493,7 +804,6 @@ namespace AventasApi.Controllers
                     PedidoBDAGuardar.NumeroPedido = "";
                     PedidoBDAGuardar.Sincronizado = false;
                     PedidoBDAGuardar.Procesando = false;
-
 
                     AsyncSqlInsert.IngresarPedidoFlotante(PedidoBDAGuardar, Pedido.Firma);
                 }
@@ -574,6 +884,42 @@ namespace AventasApi.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.Message);
+            }
+        }
+
+        // Marca como usado el número de referencia que se acaba de asignar en la carga por Excel,
+        // guardando en Asesores.CorrelativoPedidos el siguiente número disponible. Sin esto, cada
+        // carga nueva vuelve a arrancar desde el mismo correlativo y genera referencias repetidas.
+        // Es "mejor esfuerzo": si algo falla aquí no debe impedir que el pedido se guarde.
+        private void ActualizarCorrelativoAsesor(string codigoAsesor, string empresa, string numeroReferencia)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(codigoAsesor) || string.IsNullOrEmpty(numeroReferencia))
+                {
+                    return;
+                }
+
+                var match = Regex.Match(numeroReferencia, @"^(.*-1)(\d+)$");
+                if (!match.Success)
+                {
+                    return;
+                }
+
+                int numero = int.Parse(match.Groups[2].Value);
+
+                using (var ctx = new AVentasEntities())
+                {
+                    var asesorRow = ctx.Asesores.FirstOrDefault(a => a.CodigoAsesor == codigoAsesor && a.EmpresaId == empresa);
+                    if (asesorRow != null && numero >= (asesorRow.CorrelativoPedidos ?? 0))
+                    {
+                        asesorRow.CorrelativoPedidos = numero + 1;
+                        ctx.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception)
+            {
             }
         }
 
