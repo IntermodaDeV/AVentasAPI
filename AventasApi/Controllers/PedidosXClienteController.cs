@@ -472,7 +472,6 @@ namespace AventasApi.Controllers
 
                 string numeroReferencia = Pedido.NumeroReferencia;
 
-                Asesores asesor;
                 Colecciones coleccion;
                 AcuerdosxCliente acuerdoVenta;
                 int? tipoPedido;
@@ -483,7 +482,6 @@ namespace AventasApi.Controllers
 
                 using (AVentasEntities context = new AVentasEntities())
                 {
-                    asesor = context.Asesores.AsNoTracking().FirstOrDefault(ase => ase.Usuario == user.UserAccount);
                     acuerdoVenta = context.AcuerdosxCliente.Include(acu => acu.TiposdePedido).AsNoTracking().FirstOrDefault(acu => acu.IdAcuerdoxCliente == Pedido.AcuerdoVenta);
                     tipoPedido = acuerdoVenta == null ? Pedido.ModoVenta == "Contado" ? 5 : 1 : acuerdoVenta?.TiposdePedido?.IdTipoPedido;
                     cliente = context.Clientes.AsNoTracking().FirstOrDefault(cli => cli.CodigoCliente == Pedido.CodigoCliente);
@@ -493,9 +491,16 @@ namespace AventasApi.Controllers
                         return BadRequest($"El cliente {Pedido.CodigoCliente} no existe.");
                     }
 
-                    // Quien sube el Excel puede no tener su propio registro de Asesor (usuario de oficina);
-                    // en ese caso se usa el asesor asignado al cliente.
-                    codigoAsesorPedido = asesor != null ? asesor.CodigoAsesor : cliente.CodigoAsesor;
+                    // El asesor del pedido SIEMPRE es el asignado al cliente, sin importar quién suba
+                    // el Excel: distintos usuarios pueden cargar pedidos de clientes de asesores
+                    // distintos (esa es justo la idea de la carga masiva), así que nunca se debe usar
+                    // el asesor propio de quien sube el archivo.
+                    if (string.IsNullOrEmpty(cliente.CodigoAsesor))
+                    {
+                        return BadRequest($"El cliente {Pedido.CodigoCliente} no tiene un asesor asignado.");
+                    }
+
+                    codigoAsesorPedido = cliente.CodigoAsesor;
 
                     coleccion = context.Colecciones
                         .Include("ProductosxColeccion.ColoresxProducto")
