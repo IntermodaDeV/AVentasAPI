@@ -43,5 +43,9 @@ namespace DBData.Database
         public bool Anulado { get; set; }
         public Nullable<bool> Reimpresion { get; set; }
         public bool Original { get; set; }
+        public Nullable<int> MotivoAnulacionId { get; set; }
+        public Nullable<System.DateTime> FechaAnulacion { get; set; }
+        public string ComentarioAnulacion { get; set; }
+        public string UsuarioAnulacion { get; set; }
     }
 }

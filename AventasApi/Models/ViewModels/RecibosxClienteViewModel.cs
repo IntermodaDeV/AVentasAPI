@@ -56,5 +56,10 @@ namespace AventasApi.Models.ViewModels
         public string EmpresaUsuario { get; set; }
         public object depositos { get; set; }
         public bool anulado { get; set; }
+        public Nullable<int> MotivoAnulacionId { get; set; }
+        public string MotivoAnulacionDescripcion { get; set; }
+        public Nullable<DateTime> FechaAnulacion { get; set; }
+        public string ComentarioAnulacion { get; set; }
+        public string UsuarioAnulacion { get; set; }
     }
 }

@@ -238,6 +238,9 @@
     <Compile Include="Controllers\RazonNoVentaController.cs" />
     <Compile Include="Controllers\ReciboController.cs" />
     <Compile Include="Controllers\RolController.cs" />
+    <Compile Include="Controllers\TipoConfiguracionCorreoController.cs" />
+    <Compile Include="Controllers\ConfiguracionCorreoController.cs" />
+    <Compile Include="Controllers\MotivoAnulacionController.cs" />
     <Compile Include="Controllers\SincronizacionEspecificoController.cs" />
     <Compile Include="Controllers\SincronizacionListaController.cs" />
     <Compile Include="Controllers\SitiosController.cs" />
@@ -292,6 +295,12 @@
     <Compile Include="Models\RazonNoVentaTipoViewModel.cs" />
     <Compile Include="Models\RolCrearModel.cs" />
     <Compile Include="Models\RolModificarModel.cs" />
+    <Compile Include="Models\TipoConfiguracionCorreoModel.cs" />
+    <Compile Include="Models\ConfiguracionCorreoModel.cs" />
+    <Compile Include="Models\MotivoAnulacionModel.cs" />
+    <Compile Include="Models\AnularReciboModel.cs" />
+    <Compile Include="Models\ReciboAnuladoEmailModel.cs" />
+    <Compile Include="Models\DatosAnulacionModel.cs" />
     <Compile Include="Models\TransportePrecioCaja.cs" />
     <Compile Include="Models\Traslado\DTOs\DetallePedidoDto.cs" />
     <Compile Include="Models\Traslado\DTOs\ExtraerPedidosDto.cs" />

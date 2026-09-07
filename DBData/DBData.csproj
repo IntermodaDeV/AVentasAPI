@@ -402,6 +402,18 @@
     <Compile Include="Database\MailSpConfig.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\MotivoAnulacion.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\TipoConfiguracionCorreo.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\TipoConfiguracionCorreoRol.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\ConfiguracionCorreo.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\MODULOS.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>

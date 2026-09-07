@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -181,6 +182,11 @@ namespace AventasApi.Controllers
                         Latitude = rec.Latitude,
                         //firmaByte = rec.firma,
                         anulado = rec.Anulado,
+                        MotivoAnulacionId = rec.MotivoAnulacionId,
+                        MotivoAnulacionDescripcion = context.MotivoAnulacion.Where(m => m.Id == rec.MotivoAnulacionId).Select(m => m.Descripcion).FirstOrDefault(),
+                        FechaAnulacion = rec.FechaAnulacion,
+                        ComentarioAnulacion = rec.ComentarioAnulacion,
+                        UsuarioAnulacion = rec.UsuarioAnulacion,
                         firma = "",
                         locationCliente = new LocationCliente
                         {
@@ -2367,37 +2373,377 @@ namespace AventasApi.Controllers
 
         [HttpDelete]
         [Route("~/api/recibo/anular/{numero}")]
-        public IHttpActionResult AnularRecibo(string numero)
+        public async Task<IHttpActionResult> AnularRecibo(string numero, [FromBody] AnularReciboModel model)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
-                    var reciboAnular = ctx.RecibosxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
-                    var anticipoAnular = ctx.AnticiposxCliente.FirstOrDefault(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                    var reciboAnular = await ctx.RecibosxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                    var anticipoAnular = await ctx.AnticiposxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
                     if (reciboAnular == null && anticipoAnular == null)
                     {
                         return NotFound();
                     }
 
+                    bool seVaAnular = reciboAnular != null ? !reciboAnular.Anulado : !anticipoAnular.Anulado;
+
+                    if (seVaAnular && (model == null || model.MotivoAnulacionId == null))
+                    {
+                        return BadRequest("Debe seleccionar un motivo de anulación.");
+                    }
+
                     if (reciboAnular != null)
                     {
                         reciboAnular.Anulado = !reciboAnular.Anulado;
+
+                        if (reciboAnular.Anulado)
+                        {
+                            reciboAnular.MotivoAnulacionId = model.MotivoAnulacionId;
+                            reciboAnular.FechaAnulacion = DateTime.Now;
+                            reciboAnular.ComentarioAnulacion = model.Comentario;
+                            reciboAnular.UsuarioAnulacion = model.Usuario;
+                        }
+                        else
+                        {
+                            reciboAnular.MotivoAnulacionId = null;
+                            reciboAnular.FechaAnulacion = null;
+                            reciboAnular.ComentarioAnulacion = null;
+                            reciboAnular.UsuarioAnulacion = null;
+                        }
                     }
 
                     if (anticipoAnular != null)
                     {
                         anticipoAnular.Anulado = !anticipoAnular.Anulado;
+
+                        if (anticipoAnular.Anulado)
+                        {
+                            anticipoAnular.MotivoAnulacionId = model.MotivoAnulacionId;
+                            anticipoAnular.FechaAnulacion = DateTime.Now;
+                            anticipoAnular.ComentarioAnulacion = model.Comentario;
+                            anticipoAnular.UsuarioAnulacion = model.Usuario;
+                        }
+                        else
+                        {
+                            anticipoAnular.MotivoAnulacionId = null;
+                            anticipoAnular.FechaAnulacion = null;
+                            anticipoAnular.ComentarioAnulacion = null;
+                            anticipoAnular.UsuarioAnulacion = null;
+                        }
                     }
 
-                    ctx.SaveChanges();
-                    return Ok();
+                    await ctx.SaveChangesAsync();
+
+                    bool seAnuloAlgo = (reciboAnular != null && reciboAnular.Anulado) || (anticipoAnular != null && anticipoAnular.Anulado);
+                    bool? correoEnviado = null;
+                    string mensajeCorreo = null;
+
+                    if (seAnuloAlgo)
+                    {
+                        try
+                        {
+                            mensajeCorreo = reciboAnular != null
+                                ? await EnviarCorreoAnulacionInterno(ctx, DatosAnulacionDeRecibo(reciboAnular))
+                                : await EnviarCorreoAnulacionInterno(ctx, DatosAnulacionDeAnticipo(anticipoAnular));
+
+                            correoEnviado = mensajeCorreo == null;
+                        }
+                        catch (Exception exCorreo)
+                        {
+                            // La anulación ya se guardó; un fallo al enviar el correo no debe revertirla.
+                            correoEnviado = false;
+                            mensajeCorreo = exCorreo.Message;
+                        }
+
+                        if (!correoEnviado.Value)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[AnularRecibo] No se pudo enviar el correo de anulación para {numero}: {mensajeCorreo}");
+                        }
+                    }
+
+                    return Ok(new { success = true, correoEnviado, mensajeCorreo });
                 }
             }
             catch (Exception ex)
             {
                 return InternalServerError(ex);
             }
+        }
+
+        [HttpPost]
+        [Route("~/api/recibo/enviarcorreoanulacion/{numero}")]
+        public async Task<IHttpActionResult> EnviarCorreoAnulacion(string numero)
+        {
+            try
+            {
+                using (var ctx = new AVentasEntities())
+                {
+                    var recibo = await ctx.RecibosxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == numero.ToUpper());
+                    var anticipo = recibo == null ? await ctx.AnticiposxCliente.FirstOrDefaultAsync(x => x.NumeroRecibo.ToUpper() == numero.ToUpper()) : null;
+
+                    if (recibo == null && anticipo == null)
+                    {
+                        return NotFound();
+                    }
+
+                    string error = recibo != null
+                        ? await EnviarCorreoAnulacionInterno(ctx, DatosAnulacionDeRecibo(recibo))
+                        : await EnviarCorreoAnulacionInterno(ctx, DatosAnulacionDeAnticipo(anticipo));
+
+                    if (error != null)
+                    {
+                        return BadRequest(error);
+                    }
+
+                    return Ok(new { success = true, message = "Correo enviado exitosamente" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        private static DatosAnulacionModel DatosAnulacionDeRecibo(RecibosxCliente recibo) => new DatosAnulacionModel
+        {
+            NumeroRecibo = recibo.NumeroRecibo,
+            CodigoCliente = recibo.CodigoCliente,
+            IdMoneda = recibo.IdMoneda,
+            CodigoAsesor = recibo.CodigoAsesor,
+            Valor = recibo.Valor,
+            Anulado = recibo.Anulado,
+            MotivoAnulacionId = recibo.MotivoAnulacionId,
+            FechaAnulacion = recibo.FechaAnulacion,
+            ComentarioAnulacion = recibo.ComentarioAnulacion,
+            EsAnticipo = false
+        };
+
+        private static DatosAnulacionModel DatosAnulacionDeAnticipo(AnticiposxCliente anticipo) => new DatosAnulacionModel
+        {
+            NumeroRecibo = anticipo.NumeroRecibo,
+            CodigoCliente = anticipo.CodigoCliente,
+            IdMoneda = anticipo.IdMoneda,
+            CodigoAsesor = anticipo.CodigoAsesor,
+            Valor = anticipo.Valor,
+            Anulado = anticipo.Anulado,
+            MotivoAnulacionId = anticipo.MotivoAnulacionId,
+            FechaAnulacion = anticipo.FechaAnulacion,
+            ComentarioAnulacion = anticipo.ComentarioAnulacion,
+            EsAnticipo = true
+        };
+
+        // Devuelve null si el correo se envió correctamente, o el mensaje de error si no se pudo enviar.
+        // Sirve tanto para RecibosxCliente como para AnticiposxCliente (comparten la misma forma de datos de anulación).
+        private async Task<string> EnviarCorreoAnulacionInterno(AVentasEntities ctx, DatosAnulacionModel datos)
+        {
+            if (!datos.Anulado)
+            {
+                return "El recibo no está anulado.";
+            }
+
+            var cliente = await ctx.Clientes.FirstOrDefaultAsync(x => x.CodigoCliente == datos.CodigoCliente);
+
+            if (cliente == null)
+            {
+                return "No se encontró el cliente del recibo.";
+            }
+
+            var tipoConfiguracion = await ctx.TipoConfiguracionCorreo.FirstOrDefaultAsync(x => x.Codigo == "Anulacion Recibos");
+
+            if (tipoConfiguracion == null)
+            {
+                return "No existe el tipo de configuración de correo 'Anulacion Recibos'. Créalo en la pantalla de Tipos de Configuración de Correo.";
+            }
+
+            var configuracionCorreo = await ctx.ConfiguracionCorreo.FirstOrDefaultAsync(x =>
+                x.TipoConfiguracionId == tipoConfiguracion.Id &&
+                x.EmpresaId == cliente.EmpresaId &&
+                x.Activo == true);
+
+            if (configuracionCorreo == null)
+            {
+                return "No se encontró una configuración de correo activa de tipo 'Anulacion Recibos' para la empresa de este recibo.";
+            }
+
+            var asesor = await ctx.Asesores.FirstOrDefaultAsync(x => x.CodigoAsesor == datos.CodigoAsesor);
+            string correoAsesor = null;
+
+            if (asesor != null && !string.IsNullOrWhiteSpace(asesor.Usuario))
+            {
+                correoAsesor = await ctx.Usuarios.Where(u => u.usuario == asesor.Usuario).Select(u => u.Correo).FirstOrDefaultAsync();
+            }
+
+            var motivo = await ctx.MotivoAnulacion.FirstOrDefaultAsync(x => x.Id == datos.MotivoAnulacionId);
+            var moneda = await ctx.MaestroMoneda.FirstOrDefaultAsync(x => x.IdMoneda == datos.IdMoneda);
+
+            var datosCorreo = new ReciboAnuladoEmailModel
+            {
+                NumeroRecibo = datos.NumeroRecibo,
+                Cliente = cliente.Nombre,
+                CodigoCliente = cliente.CodigoCliente,
+                ValorRecibo = datos.Valor ?? 0,
+                MonedaSimbolo = moneda?.Abreviacion,
+                MotivoAnulacion = motivo?.Descripcion,
+                FechaAnulado = datos.FechaAnulacion,
+                ComentarioAnulacion = datos.ComentarioAnulacion,
+                Asesor = asesor?.Nombre,
+                CodigoEmpresa = cliente.EmpresaId,
+                EsAnticipo = datos.EsAnticipo
+            };
+
+            string cuerpoHtml = CuerpoCorreoReciboAnuladoHTML(datosCorreo, configuracionCorreo.CuerpoPlantilla);
+            string asunto = $"{configuracionCorreo.Asunto} - {datos.NumeroRecibo}";
+
+            var destinatarios = configuracionCorreo.CorreosDestino
+                .Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(c => c.Trim())
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Distinct()
+                .ToArray();
+
+            var copia = (configuracionCorreo.CorreosCopia ?? string.Empty)
+                .Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(c => c.Trim())
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .ToArray();
+
+            if (destinatarios.Length == 0)
+            {
+                return "No hay correos destino configurados para el envío.";
+            }
+
+            try
+            {
+                EnviarCorreoConCopia(destinatarios, copia, asunto, cuerpoHtml);
+            }
+            catch (Exception ex)
+            {
+                return $"Ocurrió un error al enviar el correo: {ex.Message}";
+            }
+
+            return null;
+        }
+
+        private void EnviarCorreoConCopia(string[] destinatarios, string[] copia, string asunto, string cuerpoHtml)
+        {
+            var email = System.Configuration.ConfigurationManager.AppSettings["SmtpEmail"];
+            var ps = System.Configuration.ConfigurationManager.AppSettings["SmtpPassword"];
+            var host = System.Configuration.ConfigurationManager.AppSettings["SmtpHost"];
+            var portTexto = System.Configuration.ConfigurationManager.AppSettings["SmtpPort"];
+
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(ps) || string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(portTexto))
+            {
+                throw new InvalidOperationException("Falta configurar las credenciales de correo (SmtpEmail/SmtpPassword/SmtpHost/SmtpPort) en Web.config.");
+            }
+
+            var port = int.Parse(portTexto);
+            MailMessage msg = new MailMessage();
+
+            foreach (var destino in destinatarios)
+            {
+                msg.To.Add(new MailAddress(destino));
+            }
+
+            foreach (var cc in copia)
+            {
+                msg.CC.Add(new MailAddress(cc));
+            }
+
+            msg.Bcc.Add(new MailAddress("ldiscua@intermoda.com.hn"));
+
+            msg.From = new MailAddress(email);
+            msg.Subject = asunto;
+            msg.Body = cuerpoHtml;
+            msg.IsBodyHtml = true;
+            msg.BodyEncoding = System.Text.Encoding.UTF8;
+            msg.SubjectEncoding = System.Text.Encoding.Default;
+
+            SmtpClient client = new SmtpClient();
+            client.UseDefaultCredentials = false;
+            client.Credentials = new System.Net.NetworkCredential(email, ps);
+            client.Port = port;
+            client.Host = host;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            client.Send(msg);
+        }
+
+        private static string CuerpoCorreoReciboAnuladoHTML(ReciboAnuladoEmailModel recibo, string descripcionCorreo)
+        {
+            bool tieneComentario = !string.IsNullOrWhiteSpace(recibo.ComentarioAnulacion);
+
+            string descripcion = !string.IsNullOrWhiteSpace(descripcionCorreo) ? descripcionCorreo : "Se ha anulado el siguiente recibo:";
+
+            string fechaAnulado = recibo.FechaAnulado.HasValue ? recibo.FechaAnulado.Value.ToString("dd/MM/yyyy HH:mm") : "";
+            string encabezado = recibo.EsAnticipo ? "Anticipo Anulado" : "Recibo Anulado";
+
+            const string thStyle = "font-family:'Segoe UI', Arial, sans-serif;text-align:center;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;color:#8b90a6;padding:10px 12px;border-bottom:1px solid #313545;white-space:nowrap;background-color:#1b1e29;";
+            const string tdStyle = "font-family:'Segoe UI', Arial, sans-serif;text-align:center;font-size:14px;color:#e6e8ef;padding:12px;border-bottom:1px solid #313545;background-color:#1b1e29;";
+
+            string columnaComentarioHeader = tieneComentario ? $@"<th style=""{thStyle}"">Comentario de anulación</th>" : string.Empty;
+            string columnaComentarioValor = tieneComentario ? $@"<td style=""{tdStyle}"">{recibo.ComentarioAnulacion}</td>" : string.Empty;
+
+            const string fontFamily = "font-family:'Segoe UI', Arial, sans-serif;";
+
+            return $@"
+                 <!DOCTYPE html>
+                 <html lang=""es"">
+                 <head>
+                   <meta charset=""UTF-8"">
+                   <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+                   <meta name=""color-scheme"" content=""only light"">
+                   <meta name=""supported-color-schemes"" content=""only light"">
+                   <title>{encabezado}</title>
+                 </head>
+                 <body style=""margin:0; padding:0; {fontFamily}"" bgcolor=""#1b1e29"">
+                   <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""width:100%; border-collapse:collapse;"" bgcolor=""#1b1e29"">
+                     <tr>
+                       <td style=""background-color:#e3e8fa; padding:24px 28px; {fontFamily}"" bgcolor=""#e3e8fa"">
+                         <h1 style=""margin:0 0 12px 0; font-size:24px; color:#16182b; {fontFamily}"">{encabezado}</h1>
+                         {(string.IsNullOrWhiteSpace(recibo.CodigoEmpresa) ? "" : $@"<table role=""presentation"" cellpadding=""0"" cellspacing=""0"" border=""0""><tr><td style=""background-color:#cdd8fb; color:#2b3990; font-weight:bold; font-size:12px; padding:3px 10px; border-radius:4px; {fontFamily}"" bgcolor=""#cdd8fb"">{recibo.CodigoEmpresa}</td></tr></table><div style=""height:10px; line-height:10px; font-size:1px;"">&nbsp;</div>")}
+                         <div style=""font-size:14px; color:#5a5f73; {fontFamily}"">
+                           Fecha de anulación: <b style=""color:#16182b;"">{fechaAnulado}</b>
+                         </div>
+                         <div style=""font-size:14px; color:#5a5f73; margin-top:6px; {fontFamily}"">
+                           {descripcion}
+                         </div>
+                       </td>
+                     </tr>
+                     <tr>
+                       <td style=""background-color:#1b1e29; padding:20px 28px 24px 28px; {fontFamily}"" bgcolor=""#1b1e29"">
+                         <p style=""margin:0; font-size:18px; color:#ffffff; font-weight:bold; {fontFamily}"">Asesor(a): {recibo.Asesor}</p>
+                         <p style=""margin:4px 0 16px 0; font-size:13px; color:#9aa0b4; {fontFamily}"">Cliente: {recibo.Cliente} ({recibo.CodigoCliente})</p>
+
+                         <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""width:100%; border-collapse:collapse; background-color:#1b1e29;"" bgcolor=""#1b1e29"">
+                           <tr>
+                             <th style=""{thStyle}"">Número recibo</th>
+                             <th style=""{thStyle}"">Cliente</th>
+                             <th style=""{thStyle}"">Código cliente</th>
+                             <th style=""{thStyle}"">Valor</th>
+                             <th style=""{thStyle}"">Motivo</th>
+                             <th style=""{thStyle}"">Fecha anulación</th>
+                             {columnaComentarioHeader}
+                           </tr>
+                           <tr>
+                             <td style=""{tdStyle}"">{recibo.NumeroRecibo}</td>
+                             <td style=""{tdStyle}"">{recibo.Cliente}</td>
+                             <td style=""{tdStyle}"">{recibo.CodigoCliente}</td>
+                             <td style=""{tdStyle}"">{recibo.MonedaSimbolo} {recibo.ValorRecibo:N2}</td>
+                             <td style=""{tdStyle}"">{recibo.MotivoAnulacion}</td>
+                             <td style=""{tdStyle}"">{fechaAnulado}</td>
+                             {columnaComentarioValor}
+                           </tr>
+                         </table>
+
+                         <div style=""margin-top:16px; padding-top:12px; border-top:1px solid #313545; text-align:center; font-size:12px; color:#6b7086; {fontFamily}"">
+                           Este mensaje fue generado automáticamente. No responda a este correo.
+                         </div>
+                       </td>
+                     </tr>
+                   </table>
+                 </body>
+                 </html>";
         }
 
         [HttpPut]
