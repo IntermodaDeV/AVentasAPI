@@ -2595,7 +2595,7 @@ namespace AventasApi.Controllers
             string cuerpoHtml = CuerpoCorreoReciboAnuladoHTML(datosCorreo, configuracionCorreo.CuerpoPlantilla);
             string asunto = $"{configuracionCorreo.Asunto} - {datos.NumeroRecibo}";
 
-            var destinatarios = configuracionCorreo.CorreosDestino
+            var destinatarios = (configuracionCorreo.CorreosDestino + ";" + (correoAsesor ?? string.Empty))
                 .Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(c => c.Trim())
                 .Where(c => !string.IsNullOrWhiteSpace(c))
