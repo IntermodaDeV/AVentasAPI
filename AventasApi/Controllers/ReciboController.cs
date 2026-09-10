@@ -101,15 +101,42 @@ namespace AventasApi.Controllers
 
         [HttpGet]
         [Route("~/api/recibos/correlativo/{empresa}")]
-        public async Task<IHttpActionResult> GetCorrelativo(string empresa)
+        public async Task<IHttpActionResult> GetCorrelativo(string empresa, string codigoCliente = null)
         {
             try
             {
                 using (var ctx = new AVentasEntities())
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
-                    var asesoresHabilitados = await ObtenerAsesoresDelUsuario(ctx, user.Id, empresa);
-                    var asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => asesoresHabilitados.Contains(ase.CodigoAsesor) && ase.EmpresaId == empresa);
+                    Asesores asesor = null;
+
+                    if (!string.IsNullOrWhiteSpace(codigoCliente))
+                    {
+                        // El correlativo debe salir del asesor dueño de la cartera del cliente que se está facturando,
+                        // sin importar quién esté logueado (funciona igual para asesores propios y carteras casa).
+                        var cliente = await ctx.Clientes.AsNoTracking().FirstOrDefaultAsync(c => c.CodigoCliente == codigoCliente);
+
+                        if (cliente != null && !string.IsNullOrWhiteSpace(cliente.CodigoAsesor))
+                        {
+                            asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.CodigoAsesor == cliente.CodigoAsesor && ase.EmpresaId == empresa);
+                        }
+                    }
+
+                    if (asesor == null)
+                    {
+                        // Sin cliente (ej. la carga inicial al iniciar sesión): se resuelve por el usuario logueado.
+                        var codigosAsignados = await ctx.Usuarios_Asesores.Where(x => x.Status == true && x.UsuarioId == user.Id).Select(x => x.CodigoAsesor).ToListAsync();
+                        var carteraCasa = codigosAsignados.FirstOrDefault(c => CodigosAsesorCasa.Contains(c));
+
+                        if (carteraCasa != null)
+                        {
+                            asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.CodigoAsesor == carteraCasa && ase.EmpresaId == empresa);
+                        }
+                        else
+                        {
+                            asesor = await ctx.Asesores.AsNoTracking().FirstOrDefaultAsync(ase => ase.Usuario == user.UserAccount && ase.EmpresaId == empresa);
+                        }
+                    }
 
                     if (asesor == null)
                     {
