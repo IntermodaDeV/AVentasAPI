@@ -215,6 +215,7 @@ namespace AventasApi.Controllers
                         FechaAnulacion = rec.FechaAnulacion,
                         ComentarioAnulacion = rec.ComentarioAnulacion,
                         UsuarioAnulacion = rec.UsuarioAnulacion,
+                        NombreUsuarioAnulacion = context.Usuarios.Where(u => u.usuario == rec.UsuarioAnulacion).Select(u => u.nombre).FirstOrDefault(),
                         firma = "",
                         locationCliente = new LocationCliente
                         {
@@ -311,6 +312,12 @@ namespace AventasApi.Controllers
                         //firmaByte = ant.firma,
                         firma = "",
                         anulado = ant.Anulado,
+                        MotivoAnulacionId = ant.MotivoAnulacionId,
+                        MotivoAnulacionDescripcion = context.MotivoAnulacion.Where(m => m.Id == ant.MotivoAnulacionId).Select(m => m.Descripcion).FirstOrDefault(),
+                        FechaAnulacion = ant.FechaAnulacion,
+                        ComentarioAnulacion = ant.ComentarioAnulacion,
+                        UsuarioAnulacion = ant.UsuarioAnulacion,
+                        NombreUsuarioAnulacion = context.Usuarios.Where(u => u.usuario == ant.UsuarioAnulacion).Select(u => u.nombre).FirstOrDefault(),
                         Cliente = context.Clientes.Where(cli => cli.CodigoCliente == ant.CodigoCliente).Select(cli => new ClienteViewModel
                         {
                             Codigo = cli.CodigoCliente,
@@ -2545,11 +2552,13 @@ namespace AventasApi.Controllers
             FechaAnulacion = recibo.FechaAnulacion,
             ComentarioAnulacion = recibo.ComentarioAnulacion,
             EsAnticipo = false,
-            Fecha = recibo.Fecha,
+            FechaCheque = recibo.FechaCheque,
             FechaCreacion = recibo.FechaCreacion,
             IdTipoPago = recibo.IdTipoPago,
             SpecPago = recibo.SpecPago,
-            UsuarioAnulacion = recibo.UsuarioAnulacion
+            UsuarioAnulacion = recibo.UsuarioAnulacion,
+            IdBanco = recibo.IdBanco,
+            Referencia = recibo.Referencia
         };
 
         private static DatosAnulacionModel DatosAnulacionDeAnticipo(AnticiposxCliente anticipo) => new DatosAnulacionModel
@@ -2564,11 +2573,13 @@ namespace AventasApi.Controllers
             FechaAnulacion = anticipo.FechaAnulacion,
             ComentarioAnulacion = anticipo.ComentarioAnulacion,
             EsAnticipo = true,
-            Fecha = anticipo.Fecha,
+            FechaCheque = anticipo.FechaCheque,
             FechaCreacion = anticipo.FechaCreacion,
             IdTipoPago = anticipo.IdTipoPago,
             SpecPago = anticipo.SpecPago,
-            UsuarioAnulacion = anticipo.UsuarioAnulacion
+            UsuarioAnulacion = anticipo.UsuarioAnulacion,
+            IdBanco = anticipo.IdBanco,
+            Referencia = anticipo.Referencia
         };
 
         // Devuelve null si el correo se envió correctamente, o el mensaje de error si no se pudo enviar.
@@ -2621,6 +2632,7 @@ namespace AventasApi.Controllers
             var usuarioAnulo = !string.IsNullOrWhiteSpace(datos.UsuarioAnulacion)
                 ? await ctx.Usuarios.Where(u => u.usuario == datos.UsuarioAnulacion).Select(u => u.nombre).FirstOrDefaultAsync()
                 : null;
+            var banco = await ctx.Bancos.FirstOrDefaultAsync(x => x.IdBanco == datos.IdBanco);
 
             var datosCorreo = new ReciboAnuladoEmailModel
             {
@@ -2635,11 +2647,13 @@ namespace AventasApi.Controllers
                 Asesor = asesor?.Nombre,
                 CodigoEmpresa = cliente.EmpresaId,
                 EsAnticipo = datos.EsAnticipo,
-                FechaRecibo = datos.Fecha,
+                FechaDeposito = datos.FechaCheque,
                 FechaCreacion = datos.FechaCreacion,
                 TipoPagoDescripcion = tipoPago?.Descripcion,
                 SpecPagoDescripcion = specPagoDetalle?.Descripcion,
-                UsuarioAnulo = usuarioAnulo ?? datos.UsuarioAnulacion
+                UsuarioAnulo = FormatearNombrePropio(usuarioAnulo ?? datos.UsuarioAnulacion),
+                BancoDescripcion = banco?.Descripcion,
+                Referencia = datos.Referencia
             };
 
             string cuerpoHtml = CuerpoCorreoReciboAnuladoHTML(datosCorreo, configuracionCorreo.CuerpoPlantilla);
@@ -2719,7 +2733,35 @@ namespace AventasApi.Controllers
             client.Send(msg);
         }
 
-        private static readonly CultureInfo CulturaEsCorreo = CultureInfo.GetCultureInfo("es-ES");
+        // InvariantCulture en vez de "es-ES": no depende de la configuración regional instalada
+        // en el sistema operativo (que puede venir incompleta o distinta entre máquinas/servidores).
+        private static readonly CultureInfo CulturaEsCorreo = CultureInfo.InvariantCulture;
+
+        // Convierte un nombre (a veces guardado en mayúsculas) a formato de nombre propio: "ARIEL QUIJADA" -> "Ariel Quijada".
+        private static string FormatearNombrePropio(string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre))
+            {
+                return nombre;
+            }
+
+            return CulturaEsCorreo.TextInfo.ToTitleCase(nombre.ToLower(CulturaEsCorreo));
+        }
+
+        // No usa el designador "tt" del sistema (puede venir vacío si el servidor no tiene
+        // instalada la data regional de es-ES); el a. m./p. m. se arma a mano para que sea consistente en cualquier máquina.
+        private static string FormatearFechaHoraCorreo(DateTime? fecha)
+        {
+            if (!fecha.HasValue)
+            {
+                return "";
+            }
+
+            string fechaHora = fecha.Value.ToString("dd/MM/yyyy hh:mm", CulturaEsCorreo);
+            string ampm = fecha.Value.Hour < 12 ? "a. m." : "p. m.";
+
+            return $"{fechaHora} {ampm}";
+        }
 
         private static string FilaCorreo(string etiqueta, string valor, bool negrita = false)
         {
@@ -2745,19 +2787,21 @@ namespace AventasApi.Controllers
             string descripcion = !string.IsNullOrWhiteSpace(descripcionCorreo) ? descripcionCorreo : "Se ha anulado el siguiente recibo:";
             string encabezado = recibo.EsAnticipo ? "Anticipo Anulado" : "Recibo Anulado";
 
-            string fechaAnulado = recibo.FechaAnulado.HasValue ? recibo.FechaAnulado.Value.ToString("dd/MM/yyyy hh:mm tt", CulturaEsCorreo) : "";
-            string fechaRecibo = recibo.FechaRecibo.HasValue ? recibo.FechaRecibo.Value.ToString("dd/MM/yyyy", CulturaEsCorreo) : "";
-            string fechaCreacion = recibo.FechaCreacion.HasValue ? recibo.FechaCreacion.Value.ToString("dd/MM/yyyy hh:mm tt", CulturaEsCorreo) : "";
+            string fechaAnulado = FormatearFechaHoraCorreo(recibo.FechaAnulado);
+            string fechaDeposito = recibo.FechaDeposito.HasValue ? recibo.FechaDeposito.Value.ToString("dd/MM/yyyy", CulturaEsCorreo) : "";
+            string fechaCreacion = FormatearFechaHoraCorreo(recibo.FechaCreacion);
 
             const string fontFamily = "font-family:'Segoe UI', Arial, sans-serif;";
 
             string filasDatosRecibo = string.Concat(
                 FilaCorreo("Número de recibo", recibo.NumeroRecibo, negrita: true),
-                FilaCorreo("Fecha del recibo", fechaRecibo),
-                FilaCorreo("Tipo de pago", recibo.TipoPagoDescripcion),
-                FilaCorreo("Especificación de pago", recibo.SpecPagoDescripcion),
                 FilaCorreo("Fecha de registro", fechaCreacion),
-                FilaCorreo("Valor", $"{recibo.MonedaSimbolo} {recibo.ValorRecibo:N2}", negrita: true)
+                FilaCorreo("Fecha de depósito", fechaDeposito),
+                FilaCorreo("Tipo de pago", recibo.TipoPagoDescripcion),
+                FilaCorreo("Forma de Pago", recibo.SpecPagoDescripcion),
+                FilaCorreo("Banco", recibo.BancoDescripcion),
+                FilaCorreo("Referencia", recibo.Referencia),
+                FilaCorreo("Monto", $"{recibo.MonedaSimbolo} {recibo.ValorRecibo:N2}", negrita: true)
             );
 
             string filasDetalleAnulacion = string.Concat(
@@ -2799,7 +2843,7 @@ namespace AventasApi.Controllers
                      <tr>
                        <td style=""background-color:#1b1e29; padding:20px 28px 24px 28px; {fontFamily}"" bgcolor=""#1b1e29"">
                          <p style=""margin:0; font-size:18px; color:#ffffff; font-weight:bold; {fontFamily}"">Asesor(a): {recibo.Asesor}</p>
-                         <p style=""margin:4px 0 8px 0; font-size:13px; color:#9aa0b4; {fontFamily}"">Cliente: {recibo.Cliente} ({recibo.CodigoCliente})</p>
+                         <p style=""margin:4px 0 8px 0; font-size:13px; color:#9aa0b4; {fontFamily}"">Cliente: {recibo.CodigoCliente} {recibo.Cliente}</p>
 
                          {SeccionCorreo("Datos del recibo")}
                          <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""width:100%; border-collapse:collapse;"">

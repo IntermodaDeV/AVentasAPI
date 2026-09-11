@@ -15,10 +15,12 @@ namespace AventasApi.Models
         public string Asesor { get; set; }
         public string CodigoEmpresa { get; set; }
         public bool EsAnticipo { get; set; }
-        public Nullable<DateTime> FechaRecibo { get; set; }
+        public Nullable<DateTime> FechaDeposito { get; set; }
         public Nullable<DateTime> FechaCreacion { get; set; }
         public string TipoPagoDescripcion { get; set; }
         public string SpecPagoDescripcion { get; set; }
         public string UsuarioAnulo { get; set; }
+        public string BancoDescripcion { get; set; }
+        public string Referencia { get; set; }
     }
 }

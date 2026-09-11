@@ -61,5 +61,6 @@ namespace AventasApi.Models.ViewModels
         public Nullable<DateTime> FechaAnulacion { get; set; }
         public string ComentarioAnulacion { get; set; }
         public string UsuarioAnulacion { get; set; }
+        public string NombreUsuarioAnulacion { get; set; }
     }
 }
