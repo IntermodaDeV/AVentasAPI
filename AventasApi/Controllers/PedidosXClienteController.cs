@@ -241,7 +241,7 @@ namespace AventasApi.Controllers
 
                     PResumenCredito_Result resultado;
 
-                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma, Pedido.EmpresaUsuario);
+                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma, Pedido.EmpresaUsuario, out string errorFirma);
                     if (guardadoExito)
                     {
                         using (AVentasEntities context = new AVentasEntities())
@@ -255,6 +255,11 @@ namespace AventasApi.Controllers
                             {
                                 ReducirStock(PedidoBDAGuardar);
                             }
+                        }
+
+                        if (errorFirma != null)
+                        {
+                            return Ok(new { correlativo = numeroReferencia, mensaje = $"El pedido ha sido registrado con exito. {errorFirma}" });
                         }
 
                         return Ok(new { correlativo = numeroReferencia, mensaje = "El pedido ha sido registrado con exito." });
@@ -655,7 +660,7 @@ namespace AventasApi.Controllers
 
                     PResumenCredito_Result resultado;
 
-                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma, Pedido.EmpresaUsuario);
+                    bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma, Pedido.EmpresaUsuario, out string errorFirma);
                     if (guardadoExito)
                     {
                         using (AVentasEntities context = new AVentasEntities())
@@ -669,6 +674,11 @@ namespace AventasApi.Controllers
                             {
                                 ReducirStock(PedidoBDAGuardar);
                             }
+                        }
+
+                        if (errorFirma != null)
+                        {
+                            return Ok(new { correlativo = numeroReferencia, mensaje = $"El pedido ha sido registrado con exito. {errorFirma}" });
                         }
 
                         return Ok(new { correlativo = numeroReferencia, mensaje = "El pedido ha sido registrado con exito." });

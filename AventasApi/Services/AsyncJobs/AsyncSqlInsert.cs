@@ -19,39 +19,59 @@ namespace AventasApi.Services.AsyncJobs
         {
             factory = new TaskFactory();
         }
-        public static bool IngresarPedido(PedidosxCliente pedido, string firma,string empresa)
+        public static bool IngresarPedido(PedidosxCliente pedido, string firma, string empresa, out string errorFirma)
         {
+            errorFirma = null;
+
+            // Se valida el formato de la firma antes de intentar nada. Si no viene o no es válida,
+            // simplemente no se guarda (igual que antes); esto no es un error, es un dato ausente/incorrecto.
+            ByteArrayImageConversion firmaConversion = new ByteArrayImageConversion(firma);
+            bool firmaValida = firmaConversion.IsSuccesful;
+
             try
             {
-                bool value = true;
                 using (AVentasEntities context = new AVentasEntities())
                 {
                     context.PedidosxCliente.Add(pedido);
                     int rowAffected = context.SaveChanges();
-                    if (rowAffected > 0)
-                    {
-                        ValidarCorrelativoPedido(pedido.CodigoAsesor,empresa);
-                    }
-                    else
-                    {
-                        value = false;
-                    }
-                    ByteArrayImageConversion firmaConversion = new ByteArrayImageConversion(firma);
-                    if (firmaConversion.IsSuccesful)
-                    {
 
-                        FirmasxPedido firmaAGuardar = new FirmasxPedido
+                    if (rowAffected <= 0)
+                    {
+                        return false;
+                    }
+
+                    // El pedido ya quedó guardado en este punto. Un fallo al validar el correlativo
+                    // no debe reportarse como si el pedido no se hubiera creado.
+                    try
+                    {
+                        ValidarCorrelativoPedido(pedido.CodigoAsesor, empresa);
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    // La firma sí depende del pedido ya creado: si el dato era válido pero el guardado
+                    // falla, se reporta explícitamente en vez de ocultarlo (el pedido sigue siendo válido).
+                    if (firmaValida)
+                    {
+                        try
                         {
-                            PedidoId = pedido.PedidoId,
-                            Firma = firmaConversion.ContentByteArray
-                        };
-                        context.FirmasxPedido.Add(firmaAGuardar);
-                        context.SaveChanges();
+                            FirmasxPedido firmaAGuardar = new FirmasxPedido
+                            {
+                                PedidoId = pedido.PedidoId,
+                                Firma = firmaConversion.ContentByteArray
+                            };
+                            context.FirmasxPedido.Add(firmaAGuardar);
+                            context.SaveChanges();
+                        }
+                        catch (Exception exFirma)
+                        {
+                            errorFirma = "Ocurrió un error al insertar la firma: " + exFirma.Message;
+                        }
                     }
-                    value = true;
-                }
 
-                return value;
+                    return true;
+                }
             }
             catch(Exception e)
             {
