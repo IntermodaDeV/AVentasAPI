@@ -16,5 +16,10 @@ namespace AventasApi.Models
         public Nullable<DateTime> FechaAnulacion { get; set; }
         public string ComentarioAnulacion { get; set; }
         public bool EsAnticipo { get; set; }
+        public Nullable<DateTime> Fecha { get; set; }
+        public Nullable<DateTime> FechaCreacion { get; set; }
+        public Nullable<int> IdTipoPago { get; set; }
+        public string SpecPago { get; set; }
+        public string UsuarioAnulacion { get; set; }
     }
 }

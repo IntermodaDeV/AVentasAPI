@@ -12,6 +12,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -2543,7 +2544,12 @@ namespace AventasApi.Controllers
             MotivoAnulacionId = recibo.MotivoAnulacionId,
             FechaAnulacion = recibo.FechaAnulacion,
             ComentarioAnulacion = recibo.ComentarioAnulacion,
-            EsAnticipo = false
+            EsAnticipo = false,
+            Fecha = recibo.Fecha,
+            FechaCreacion = recibo.FechaCreacion,
+            IdTipoPago = recibo.IdTipoPago,
+            SpecPago = recibo.SpecPago,
+            UsuarioAnulacion = recibo.UsuarioAnulacion
         };
 
         private static DatosAnulacionModel DatosAnulacionDeAnticipo(AnticiposxCliente anticipo) => new DatosAnulacionModel
@@ -2557,7 +2563,12 @@ namespace AventasApi.Controllers
             MotivoAnulacionId = anticipo.MotivoAnulacionId,
             FechaAnulacion = anticipo.FechaAnulacion,
             ComentarioAnulacion = anticipo.ComentarioAnulacion,
-            EsAnticipo = true
+            EsAnticipo = true,
+            Fecha = anticipo.Fecha,
+            FechaCreacion = anticipo.FechaCreacion,
+            IdTipoPago = anticipo.IdTipoPago,
+            SpecPago = anticipo.SpecPago,
+            UsuarioAnulacion = anticipo.UsuarioAnulacion
         };
 
         // Devuelve null si el correo se envió correctamente, o el mensaje de error si no se pudo enviar.
@@ -2603,6 +2614,13 @@ namespace AventasApi.Controllers
 
             var motivo = await ctx.MotivoAnulacion.FirstOrDefaultAsync(x => x.Id == datos.MotivoAnulacionId);
             var moneda = await ctx.MaestroMoneda.FirstOrDefaultAsync(x => x.IdMoneda == datos.IdMoneda);
+            var tipoPago = await ctx.TiposdePago.FirstOrDefaultAsync(x => x.IdTipoPago == datos.IdTipoPago);
+            var specPagoDetalle = !string.IsNullOrWhiteSpace(datos.SpecPago)
+                ? await ctx.TiposdePagoDetalle.FirstOrDefaultAsync(x => x.IdTipoPago == datos.IdTipoPago && x.CodigoDetalle == datos.SpecPago)
+                : null;
+            var usuarioAnulo = !string.IsNullOrWhiteSpace(datos.UsuarioAnulacion)
+                ? await ctx.Usuarios.Where(u => u.usuario == datos.UsuarioAnulacion).Select(u => u.nombre).FirstOrDefaultAsync()
+                : null;
 
             var datosCorreo = new ReciboAnuladoEmailModel
             {
@@ -2616,7 +2634,12 @@ namespace AventasApi.Controllers
                 ComentarioAnulacion = datos.ComentarioAnulacion,
                 Asesor = asesor?.Nombre,
                 CodigoEmpresa = cliente.EmpresaId,
-                EsAnticipo = datos.EsAnticipo
+                EsAnticipo = datos.EsAnticipo,
+                FechaRecibo = datos.Fecha,
+                FechaCreacion = datos.FechaCreacion,
+                TipoPagoDescripcion = tipoPago?.Descripcion,
+                SpecPagoDescripcion = specPagoDetalle?.Descripcion,
+                UsuarioAnulo = usuarioAnulo ?? datos.UsuarioAnulacion
             };
 
             string cuerpoHtml = CuerpoCorreoReciboAnuladoHTML(datosCorreo, configuracionCorreo.CuerpoPlantilla);
@@ -2696,22 +2719,58 @@ namespace AventasApi.Controllers
             client.Send(msg);
         }
 
-        private static string CuerpoCorreoReciboAnuladoHTML(ReciboAnuladoEmailModel recibo, string descripcionCorreo)
+        private static readonly CultureInfo CulturaEsCorreo = CultureInfo.GetCultureInfo("es-ES");
+
+        private static string FilaCorreo(string etiqueta, string valor, bool negrita = false)
         {
-            bool tieneComentario = !string.IsNullOrWhiteSpace(recibo.ComentarioAnulacion);
-
-            string descripcion = !string.IsNullOrWhiteSpace(descripcionCorreo) ? descripcionCorreo : "Se ha anulado el siguiente recibo:";
-
-            string fechaAnulado = recibo.FechaAnulado.HasValue ? recibo.FechaAnulado.Value.ToString("dd/MM/yyyy HH:mm") : "";
-            string encabezado = recibo.EsAnticipo ? "Anticipo Anulado" : "Recibo Anulado";
-
-            const string thStyle = "font-family:'Segoe UI', Arial, sans-serif;text-align:center;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;color:#8b90a6;padding:10px 12px;border-bottom:1px solid #313545;white-space:nowrap;background-color:#1b1e29;";
-            const string tdStyle = "font-family:'Segoe UI', Arial, sans-serif;text-align:center;font-size:14px;color:#e6e8ef;padding:12px;border-bottom:1px solid #313545;background-color:#1b1e29;";
-
-            string columnaComentarioHeader = tieneComentario ? $@"<th style=""{thStyle}"">Comentario de anulación</th>" : string.Empty;
-            string columnaComentarioValor = tieneComentario ? $@"<td style=""{tdStyle}"">{recibo.ComentarioAnulacion}</td>" : string.Empty;
+            if (string.IsNullOrWhiteSpace(valor))
+            {
+                return string.Empty;
+            }
 
             const string fontFamily = "font-family:'Segoe UI', Arial, sans-serif;";
+            string estiloEtiqueta = $"{fontFamily}font-size:13px;color:#9aa0b4;padding:10px 0;border-bottom:1px solid #2a2e3d;";
+            string estiloValor = $"{fontFamily}font-size:14px;color:#e6e8ef;padding:10px 0;border-bottom:1px solid #2a2e3d;text-align:right;" + (negrita ? "font-weight:bold;" : "");
+
+            return $@"<tr><td style=""{estiloEtiqueta}"">{etiqueta}</td><td style=""{estiloValor}"">{valor}</td></tr>";
+        }
+
+        private static string SeccionCorreo(string texto)
+        {
+            return $@"<div style=""font-family:'Segoe UI', Arial, sans-serif;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;color:#8b90a6;margin:20px 0 4px 0;"">{texto}</div>";
+        }
+
+        private static string CuerpoCorreoReciboAnuladoHTML(ReciboAnuladoEmailModel recibo, string descripcionCorreo)
+        {
+            string descripcion = !string.IsNullOrWhiteSpace(descripcionCorreo) ? descripcionCorreo : "Se ha anulado el siguiente recibo:";
+            string encabezado = recibo.EsAnticipo ? "Anticipo Anulado" : "Recibo Anulado";
+
+            string fechaAnulado = recibo.FechaAnulado.HasValue ? recibo.FechaAnulado.Value.ToString("dd/MM/yyyy hh:mm tt", CulturaEsCorreo) : "";
+            string fechaRecibo = recibo.FechaRecibo.HasValue ? recibo.FechaRecibo.Value.ToString("dd/MM/yyyy", CulturaEsCorreo) : "";
+            string fechaCreacion = recibo.FechaCreacion.HasValue ? recibo.FechaCreacion.Value.ToString("dd/MM/yyyy hh:mm tt", CulturaEsCorreo) : "";
+
+            const string fontFamily = "font-family:'Segoe UI', Arial, sans-serif;";
+
+            string filasDatosRecibo = string.Concat(
+                FilaCorreo("Número de recibo", recibo.NumeroRecibo, negrita: true),
+                FilaCorreo("Fecha del recibo", fechaRecibo),
+                FilaCorreo("Tipo de pago", recibo.TipoPagoDescripcion),
+                FilaCorreo("Especificación de pago", recibo.SpecPagoDescripcion),
+                FilaCorreo("Fecha de registro", fechaCreacion),
+                FilaCorreo("Valor", $"{recibo.MonedaSimbolo} {recibo.ValorRecibo:N2}", negrita: true)
+            );
+
+            string filasDetalleAnulacion = string.Concat(
+                FilaCorreo("Motivo", recibo.MotivoAnulacion, negrita: true),
+                FilaCorreo("Usuario que anuló", recibo.UsuarioAnulo),
+                FilaCorreo("Fecha de anulación", fechaAnulado)
+            );
+
+            string bloqueComentario = string.IsNullOrWhiteSpace(recibo.ComentarioAnulacion) ? "" : $@"
+                         <div style=""background-color:#23273a; border-radius:8px; padding:14px 16px; margin-top:20px;"">
+                           <div style=""font-family:'Segoe UI', Arial, sans-serif;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;color:#8b90a6;margin-bottom:6px;"">Comentario</div>
+                           <div style=""font-family:'Segoe UI', Arial, sans-serif;font-size:14px;color:#e6e8ef;"">{recibo.ComentarioAnulacion}</div>
+                         </div>";
 
             return $@"
                  <!DOCTYPE html>
@@ -2740,28 +2799,18 @@ namespace AventasApi.Controllers
                      <tr>
                        <td style=""background-color:#1b1e29; padding:20px 28px 24px 28px; {fontFamily}"" bgcolor=""#1b1e29"">
                          <p style=""margin:0; font-size:18px; color:#ffffff; font-weight:bold; {fontFamily}"">Asesor(a): {recibo.Asesor}</p>
-                         <p style=""margin:4px 0 16px 0; font-size:13px; color:#9aa0b4; {fontFamily}"">Cliente: {recibo.Cliente} ({recibo.CodigoCliente})</p>
+                         <p style=""margin:4px 0 8px 0; font-size:13px; color:#9aa0b4; {fontFamily}"">Cliente: {recibo.Cliente} ({recibo.CodigoCliente})</p>
 
-                         <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""width:100%; border-collapse:collapse; background-color:#1b1e29;"" bgcolor=""#1b1e29"">
-                           <tr>
-                             <th style=""{thStyle}"">Número recibo</th>
-                             <th style=""{thStyle}"">Cliente</th>
-                             <th style=""{thStyle}"">Código cliente</th>
-                             <th style=""{thStyle}"">Valor</th>
-                             <th style=""{thStyle}"">Motivo</th>
-                             <th style=""{thStyle}"">Fecha anulación</th>
-                             {columnaComentarioHeader}
-                           </tr>
-                           <tr>
-                             <td style=""{tdStyle}"">{recibo.NumeroRecibo}</td>
-                             <td style=""{tdStyle}"">{recibo.Cliente}</td>
-                             <td style=""{tdStyle}"">{recibo.CodigoCliente}</td>
-                             <td style=""{tdStyle}"">{recibo.MonedaSimbolo} {recibo.ValorRecibo:N2}</td>
-                             <td style=""{tdStyle}"">{recibo.MotivoAnulacion}</td>
-                             <td style=""{tdStyle}"">{fechaAnulado}</td>
-                             {columnaComentarioValor}
-                           </tr>
+                         {SeccionCorreo("Datos del recibo")}
+                         <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""width:100%; border-collapse:collapse;"">
+                           {filasDatosRecibo}
                          </table>
+
+                         {SeccionCorreo("Detalle de anulación")}
+                         <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" border=""0"" style=""width:100%; border-collapse:collapse;"">
+                           {filasDetalleAnulacion}
+                         </table>
+                         {bloqueComentario}
 
                          <div style=""margin-top:16px; padding-top:12px; border-top:1px solid #313545; text-align:center; font-size:12px; color:#6b7086; {fontFamily}"">
                            Este mensaje fue generado automáticamente. No responda a este correo.
