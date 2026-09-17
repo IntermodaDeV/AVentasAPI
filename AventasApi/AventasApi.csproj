@@ -297,6 +297,7 @@
     <Compile Include="Models\RolModificarModel.cs" />
     <Compile Include="Models\TipoConfiguracionCorreoModel.cs" />
     <Compile Include="Models\ConfiguracionCorreoModel.cs" />
+    <Compile Include="Models\ConfiguracionModel.cs" />
     <Compile Include="Models\MotivoAnulacionModel.cs" />
     <Compile Include="Models\AnularReciboModel.cs" />
     <Compile Include="Models\ReciboAnuladoEmailModel.cs" />
