@@ -254,7 +254,7 @@ namespace AventasApi.Controllers
             {
                 using (AVentasEntities ctx = new AVentasEntities())
                 {
-                    var facturas = ctx.FacturasxCliente.Where(f => f.Saldo > 0.1M && f.CodigoCliente == cliente).Select(fa => new FacturasXClienteDiasGraciaViewModel
+                    var facturas = ctx.FacturasxCliente.Where(f => f.Saldo > 0 && f.CodigoCliente == cliente).Select(fa => new FacturasXClienteDiasGraciaViewModel
                     {
                         Tipo = fa.Tipo,
                         Factura = fa.Factura,

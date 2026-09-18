@@ -346,7 +346,7 @@ namespace AventasApi.Controllers
                         CodigoCliente = ch.CodigoCliente
                     }).ToList();
 
-                    cliente.AcuerdosXTipoPedido = context.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0.1M).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
+                    cliente.AcuerdosXTipoPedido = context.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                     {
                         IdTipoPedido = asa.Key.IdTipoPedido,
                         TipoPedido = asa.Key.TipoPedido,
@@ -363,7 +363,7 @@ namespace AventasApi.Controllers
                                 Dias = d.Dias,
                                 Empresa = d.empresaId
                             }).FirstOrDefault(),
-                            Facturas = acu.Where(fac => fac.Saldo > 0.1M).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
+                            Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                             {
                                 IdFactura = facCli.IdFactura,
                                 Factura = facCli.Factura,
@@ -1110,7 +1110,7 @@ namespace AventasApi.Controllers
 
                         foreach (var cliente in clientes)
                         {
-                            cliente.AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0.1M).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
+                            cliente.AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente.Codigo && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                             {
                                 IdTipoPedido = asa.Key.IdTipoPedido,
                                 TipoPedido = asa.Key.TipoPedido,
@@ -1127,7 +1127,7 @@ namespace AventasApi.Controllers
                                         Dias = d.Dias,
                                         Empresa = d.empresaId
                                     }).FirstOrDefault(),
-                                    Facturas = acu.Where(fac => fac.Saldo > 0.1M).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
+                                    Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                                     {
                                         IdFactura = facCli.IdFactura,
                                         Factura = facCli.Factura,
@@ -1297,7 +1297,7 @@ namespace AventasApi.Controllers
                     }).ToListAsync();
 
 
-                    clientes[0].AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente && x.Saldo > 0.1M).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
+                    clientes[0].AcuerdosXTipoPedido = ctx.FacturasxCliente.Where(x => x.CodigoCliente == cliente && x.Saldo > 0).GroupBy(facCli => facCli.TiposdePedido).Select(asa => new AcuerdosXTipoPedidoViewModel
                     {
                         IdTipoPedido = asa.Key.IdTipoPedido,
                         TipoPedido = asa.Key.TipoPedido,
@@ -1314,7 +1314,7 @@ namespace AventasApi.Controllers
                                 Dias = d.Dias,
                                 Empresa = d.empresaId
                             }).FirstOrDefault(),
-                            Facturas = acu.Where(fac => fac.Saldo > 0.1M).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
+                            Facturas = acu.Where(fac => fac.Saldo > 0).OrderBy(facCli => facCli.FechaVencimiento).Select(facCli => new FacturasXClienteViewModel
                             {
                                 IdFactura = facCli.IdFactura,
                                 Factura = facCli.Factura,
