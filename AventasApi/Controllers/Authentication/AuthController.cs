@@ -24,27 +24,41 @@ namespace AventasApi.Controllers.Authentication
         [HttpPost, Route("authentication")]
         public IHttpActionResult Authentication([FromBody] Credential credential)
         {
-            var answer = _authenticationAppService.Authentication(credential);
-
-            if (answer.Type != "1")
+            try
             {
-                return BadRequest(answer.Message);
-            }
+                var answer = _authenticationAppService.Authentication(credential);
 
-            return Ok(answer);
+                if (answer.Type != "1")
+                {
+                    return BadRequest(answer.Message);
+                }
+
+                return Ok(answer);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
 
         [HttpPost, Route("authentication/movil")]
         public IHttpActionResult AuthenticationMovil([FromBody] Credential credential)
         {
-            var answer = _authenticationAppService.AuthenticationMovil(credential);
-
-            if (answer.Type != "1")
+            try
             {
-                return BadRequest(answer.Message);
-            }
+                var answer = _authenticationAppService.AuthenticationMovil(credential);
 
-            return Ok(answer);
+                if (answer.Type != "1")
+                {
+                    return BadRequest(answer.Message);
+                }
+
+                return Ok(answer);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
         }
 
 

@@ -46,9 +46,9 @@ namespace AventasApi.Services.Authentication
 
         public AuthenticationResponse Authentication(Credential credential)
         {
-            using (var context = new AVentasEntities())
+            try
             {
-                try
+                using (var context = new AVentasEntities())
                 {
                     string message = string.Empty;
                     if (credential.IsValid(out message) == false)
@@ -130,18 +130,18 @@ namespace AventasApi.Services.Authentication
 
                     return new AuthenticationResponse { Type = "1", Message = "Ok", Data = result };
                 }
-                catch (Exception ex)
-                {
-                    return new AuthenticationResponse { Message = ex.Message, Data = null };
-                }
+            }
+            catch (Exception ex)
+            {
+                return new AuthenticationResponse { Message = ex.Message, Data = null };
             }
         }
 
         public AuthenticationResponse AuthenticationMovil(Credential credential)
         {
-            using (var context = new AVentasEntities())
+            try
             {
-                try
+                using (var context = new AVentasEntities())
                 {
                     string message = string.Empty;
                     if (credential.IsValid(out message) == false)
@@ -223,10 +223,10 @@ namespace AventasApi.Services.Authentication
 
                     return new AuthenticationResponse { Type = "1", Message = "Ok", Data = result };
                 }
-                catch (Exception ex)
-                {
-                    return new AuthenticationResponse { Message = ex.Message, Data = null };
-                }
+            }
+            catch (Exception ex)
+            {
+                return new AuthenticationResponse { Message = ex.Message, Data = null };
             }
         }
         public UserAuthenticated Validate(string token)
