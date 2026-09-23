@@ -21,6 +21,7 @@ using System.IO;
 using AventasApi.Utils;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.Data.SqlClient;
 
 namespace AventasApi.Controllers
 {
@@ -239,22 +240,26 @@ namespace AventasApi.Controllers
                     PedidoBDAGuardar.Sincronizado = false;
                     PedidoBDAGuardar.Procesando = false;
 
-                    PResumenCredito_Result resultado;
-
                     bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma, Pedido.EmpresaUsuario, out string errorFirma);
                     if (guardadoExito)
                     {
-                        using (AVentasEntities context = new AVentasEntities())
+                        try
                         {
-                            resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
-                        }
+                            PResumenCredito_Result resultado = ObtenerResumenCreditoConReintento(cliente.CodigoCliente);
 
-                        if (PedidoBDAGuardar.TotalPedido < resultado.Disponible)
-                        {
-                            if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                            if (resultado != null && PedidoBDAGuardar.TotalPedido < resultado.Disponible)
                             {
-                                ReducirStock(PedidoBDAGuardar);
+                                if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                                {
+                                    ReducirStock(PedidoBDAGuardar);
+                                }
                             }
+                        }
+                        catch (Exception e)
+                        {
+                            // El pedido ya quedo guardado arriba; un fallo aqui (p.ej. deadlock persistente en
+                            // PResumenCredito) no debe mostrarsele al usuario como si el pedido no se hubiera creado.
+                            ErrorLogger.LogErrorAsync(errorCode: "IT09", controlador: "PedidosXClienteController", ruta: "api/PedidosXCliente", usuario: user.UserAccount, mensaje: $"Pedido {numeroReferencia} guardado, pero fallo la verificacion de credito/reduccion de stock: {e.Message}").GetAwaiter().GetResult();
                         }
 
                         if (errorFirma != null)
@@ -658,22 +663,24 @@ namespace AventasApi.Controllers
                     PedidoBDAGuardar.Sincronizado = false;
                     PedidoBDAGuardar.Procesando = false;
 
-                    PResumenCredito_Result resultado;
-
                     bool guardadoExito = AsyncSqlInsert.IngresarPedido(PedidoBDAGuardar, Pedido.Firma, Pedido.EmpresaUsuario, out string errorFirma);
                     if (guardadoExito)
                     {
-                        using (AVentasEntities context = new AVentasEntities())
+                        try
                         {
-                            resultado = context.PResumenCredito().FirstOrDefault(x => x.codigocliente == cliente.CodigoCliente && x.Tipo == "Ordinario");
-                        }
+                            PResumenCredito_Result resultado = ObtenerResumenCreditoConReintento(cliente.CodigoCliente);
 
-                        if (resultado != null && PedidoBDAGuardar.TotalPedido < resultado.Disponible)
-                        {
-                            if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                            if (resultado != null && PedidoBDAGuardar.TotalPedido < resultado.Disponible)
                             {
-                                ReducirStock(PedidoBDAGuardar);
+                                if (cliente.FacturacionEntrega.ToUpper() == "NO" || cliente.FacturacionEntrega.ToUpper() == "NUNCA")
+                                {
+                                    ReducirStock(PedidoBDAGuardar);
+                                }
                             }
+                        }
+                        catch (Exception e)
+                        {
+                            ErrorLogger.LogErrorAsync(errorCode: "IT09", controlador: "PedidosXClienteController", ruta: "api/PedidosXCliente/excel", usuario: user.UserAccount, mensaje: $"Pedido {numeroReferencia} guardado, pero fallo la verificacion de credito/reduccion de stock: {e.Message}").GetAwaiter().GetResult();
                         }
 
                         if (errorFirma != null)
@@ -2501,6 +2508,41 @@ namespace AventasApi.Controllers
         }
 
 
+
+        private static bool EsErrorDeDeadlock(Exception ex)
+        {
+            while (ex != null)
+            {
+                if (ex is SqlException sqlEx && sqlEx.Number == 1205)
+                {
+                    return true;
+                }
+                ex = ex.InnerException;
+            }
+            return false;
+        }
+
+        // PResumenCredito escanea varias tablas (FacturasxCliente, SubFacturasxCliente, ChequesContabilizados,
+        // AcuerdosxCliente) que se actualizan constantemente desde otros pedidos/recibos y desde la sincronizacion
+        // con AX, por lo que es propenso a deadlocks bajo concurrencia. Reintenta un par de veces antes de rendirse.
+        private PResumenCredito_Result ObtenerResumenCreditoConReintento(string codigoCliente, int intentos = 3)
+        {
+            for (int intento = 1; intento <= intentos; intento++)
+            {
+                try
+                {
+                    using (AVentasEntities context = new AVentasEntities())
+                    {
+                        return context.PResumenCredito().FirstOrDefault(x => x.codigocliente == codigoCliente && x.Tipo == "Ordinario");
+                    }
+                }
+                catch (Exception ex) when (EsErrorDeDeadlock(ex) && intento < intentos)
+                {
+                    System.Threading.Thread.Sleep(300 * intento);
+                }
+            }
+            return null;
+        }
 
         private async void ReducirStock(PedidosxCliente pedido)
         {
