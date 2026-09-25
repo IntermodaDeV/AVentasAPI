@@ -1106,8 +1106,16 @@ namespace AventasApi.Controllers
                 var codigoCliente = "";
                 int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
                 string inicialesAsesor = asesor.InicialesNombre;
-                var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(x => x.NumeroCuota).ThenBy(subFac => subFac.FechaVencimiento).ThenBy(x => x.Factura).ToList();
-                var subFacturasCopy = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).OrderBy(x => x.NumeroCuota).ThenBy(subFac => subFac.FechaVencimiento).ThenBy(x => x.Factura).ToList();
+                // El pago se aplica completo a una factura antes de pasar a la siguiente (cascada), en este orden de
+                // prioridad: primero las facturas vencidas, y luego el orden en que el asesor las selecciono en pantalla
+                // (reciboPost.SubFacturas conserva ese orden). Antes se ordenaba por NumeroCuota/FechaVencimiento/Factura,
+                // lo cual no respetaba ninguno de los dos criterios y hacia que el pago cayera completo en la factura
+                // "equivocada" segun ese orden, dejando el resto de facturas seleccionadas sin ningun detalle guardado.
+                Func<SubFacturasxCliente, bool> esVencida = sf => sf.FechaVencimiento.HasValue && sf.FechaVencimiento.Value.Date < DateTime.Today;
+                var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).ToList()
+                    .OrderByDescending(esVencida).ThenBy(subFac => reciboPost.SubFacturas.IndexOf(subFac.IdSubFactura)).ToList();
+                var subFacturasCopy = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).ToList()
+                    .OrderByDescending(esVencida).ThenBy(subFac => reciboPost.SubFacturas.IndexOf(subFac.IdSubFactura)).ToList();
                 List<ReciboApiModel> recibos = new List<ReciboApiModel>();
                 var isOnline = EnLinea(asesor.EmpresaId, asesor.CodigoAsesor);
                 Dictionary<int, double> pagadoMemory = new Dictionary<int, double>();
