@@ -1106,16 +1106,22 @@ namespace AventasApi.Controllers
                 var codigoCliente = "";
                 int numeroCorrelativoRecibo = asesor.CorrelativoRecibos ?? 0;
                 string inicialesAsesor = asesor.InicialesNombre;
-                // El pago se aplica completo a una factura antes de pasar a la siguiente (cascada), en este orden de
-                // prioridad: primero las facturas vencidas, y luego el orden en que el asesor las selecciono en pantalla
-                // (reciboPost.SubFacturas conserva ese orden). Antes se ordenaba por NumeroCuota/FechaVencimiento/Factura,
-                // lo cual no respetaba ninguno de los dos criterios y hacia que el pago cayera completo en la factura
-                // "equivocada" segun ese orden, dejando el resto de facturas seleccionadas sin ningun detalle guardado.
+                // El pago se aplica completo a una factura antes de pasar a la siguiente (cascada). Orden de prioridad:
+                // 1) NumeroCuota (obligatorio para cuotas de un Acuerdo de venta: cuota 1 antes que cuota 2, etc.)
+                // 2) entre facturas que comparten el mismo NumeroCuota (p.ej. facturas normales, sin Acuerdo, que no
+                //    tienen numero de cuota propio), primero las vencidas
+                // 3) entre las vencidas, la que vencio hace mas tiempo primero (fecha de vencimiento mas antigua)
+                // 4) y como ultimo desempate (entre las NO vencidas, o empate de fecha entre vencidas), el orden en
+                //    que el asesor las selecciono en pantalla (reciboPost.SubFacturas conserva ese orden).
+                // Antes del fix, el 2do/3er/4to criterio eran FechaVencimiento/Factura (sin separar vencidas de no
+                // vencidas), lo cual hacia que el pago cayera completo en la factura "equivocada", dejando el resto
+                // de facturas seleccionadas sin ningun detalle guardado.
                 Func<SubFacturasxCliente, bool> esVencida = sf => sf.FechaVencimiento.HasValue && sf.FechaVencimiento.Value.Date < DateTime.Today;
+                Func<SubFacturasxCliente, long> antiguedadVencimiento = sf => esVencida(sf) ? sf.FechaVencimiento.Value.Ticks : long.MaxValue;
                 var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).ToList()
-                    .OrderByDescending(esVencida).ThenBy(subFac => reciboPost.SubFacturas.IndexOf(subFac.IdSubFactura)).ToList();
+                    .OrderBy(subFac => subFac.NumeroCuota).ThenByDescending(esVencida).ThenBy(antiguedadVencimiento).ThenBy(subFac => reciboPost.SubFacturas.IndexOf(subFac.IdSubFactura)).ToList();
                 var subFacturasCopy = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).ToList()
-                    .OrderByDescending(esVencida).ThenBy(subFac => reciboPost.SubFacturas.IndexOf(subFac.IdSubFactura)).ToList();
+                    .OrderBy(subFac => subFac.NumeroCuota).ThenByDescending(esVencida).ThenBy(antiguedadVencimiento).ThenBy(subFac => reciboPost.SubFacturas.IndexOf(subFac.IdSubFactura)).ToList();
                 List<ReciboApiModel> recibos = new List<ReciboApiModel>();
                 var isOnline = EnLinea(asesor.EmpresaId, asesor.CodigoAsesor);
                 Dictionary<int, double> pagadoMemory = new Dictionary<int, double>();
@@ -2667,17 +2673,16 @@ namespace AventasApi.Controllers
             string cuerpoHtml = CuerpoCorreoReciboAnuladoHTML(datosCorreo, configuracionCorreo.CuerpoPlantilla);
             string asunto = $"{configuracionCorreo.Asunto} - {datos.NumeroRecibo}";
 
-            var destinatarios = (configuracionCorreo.CorreosDestino + ";" + (correoAsesor ?? string.Empty))
-                .Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(c => c.Trim())
+            var correosDestinoConfig = await ConfiguracionCorreoHelper.ObtenerCorreosAsync(ctx, configuracionCorreo.Id, "DESTINO");
+
+            var destinatarios = correosDestinoConfig
+                .Concat(new[] { correoAsesor })
+                .Select(c => c?.Trim())
                 .Where(c => !string.IsNullOrWhiteSpace(c))
                 .Distinct()
                 .ToArray();
 
-            var copia = (configuracionCorreo.CorreosCopia ?? string.Empty)
-                .Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(c => c.Trim())
-                .Where(c => !string.IsNullOrWhiteSpace(c))
+            var copia = (await ConfiguracionCorreoHelper.ObtenerCorreosAsync(ctx, configuracionCorreo.Id, "COPIA"))
                 .ToArray();
 
             if (destinatarios.Length == 0)
@@ -2687,7 +2692,7 @@ namespace AventasApi.Controllers
 
             try
             {
-                EnviarCorreoConCopia(destinatarios, copia, asunto, cuerpoHtml);
+               EnviarCorreoConCopia(destinatarios, copia, asunto, cuerpoHtml);
             }
             catch (Exception ex)
             {

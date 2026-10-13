@@ -1287,6 +1287,21 @@ warning 6002: The table/view 'AVentas.dbo.IncidenciaVisitaDetalle' does not have
           <Property Name="UsuarioModifico" Type="varchar" MaxLength="20" />
           <Property Name="FechaModificacion" Type="datetime" />
         </EntityType>
+        <EntityType Name="ConfiguracionCorreoUsuario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ConfiguracionCorreoId" Type="int" Nullable="false" />
+          <Property Name="UsuarioId" Type="int" />
+          <Property Name="CorreoManual" Type="varchar" MaxLength="200" />
+          <Property Name="Tipo" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Activo" Type="bit" Nullable="false" />
+          <Property Name="FechaCreacion" Type="datetime" Nullable="false" />
+          <Property Name="UsuarioCreacionId" Type="int" />
+          <Property Name="UsuarioModificoId" Type="int" />
+          <Property Name="FechaModificacion" Type="datetime" />
+        </EntityType>
         <EntityType Name="MonedasxEmpresa">
           <Key>
             <PropertyRef Name="IdMonedaxEmpresa" />
@@ -4357,6 +4372,30 @@ warning 6035: The relationship 'FK_MailReceptors_ServiciosCorreo' has columns th
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ConfigCorreoUsuario_Config">
+          <End Role="ConfiguracionCorreo" Type="Self.ConfiguracionCorreo" Multiplicity="1" />
+          <End Role="ConfiguracionCorreoUsuario" Type="Self.ConfiguracionCorreoUsuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ConfiguracionCorreo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConfiguracionCorreoUsuario">
+              <PropertyRef Name="ConfiguracionCorreoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConfigCorreoUsuario_Usuario">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="ConfiguracionCorreoUsuario" Type="Self.ConfiguracionCorreoUsuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConfiguracionCorreoUsuario">
+              <PropertyRef Name="UsuarioId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TipoConfigCorreoRol_TipoConfigCorreo">
           <End Role="TipoConfiguracionCorreo" Type="Self.TipoConfiguracionCorreo" Multiplicity="1" />
           <End Role="TipoConfiguracionCorreoRol" Type="Self.TipoConfiguracionCorreoRol" Multiplicity="*" />
@@ -5294,6 +5333,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySet Name="TipoConfiguracionCorreo" EntityType="Self.TipoConfiguracionCorreo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TipoConfiguracionCorreoRol" EntityType="Self.TipoConfiguracionCorreoRol" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ConfiguracionCorreo" EntityType="Self.ConfiguracionCorreo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ConfiguracionCorreoUsuario" EntityType="Self.ConfiguracionCorreoUsuario" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MonedasxEmpresa" EntityType="Self.MonedasxEmpresa" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MotivosDevConAprobacion" EntityType="Self.MotivosDevConAprobacion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MotivosDevolucion" EntityType="Self.MotivosDevolucion" Schema="dbo" store:Type="Tables" />
@@ -6152,6 +6192,14 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <AssociationSet Name="FK_ConfigCorreo_Tipo" Association="Self.FK_ConfigCorreo_Tipo">
             <End Role="TipoConfiguracionCorreo" EntitySet="TipoConfiguracionCorreo" />
             <End Role="ConfiguracionCorreo" EntitySet="ConfiguracionCorreo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConfigCorreoUsuario_Config" Association="Self.FK_ConfigCorreoUsuario_Config">
+            <End Role="ConfiguracionCorreo" EntitySet="ConfiguracionCorreo" />
+            <End Role="ConfiguracionCorreoUsuario" EntitySet="ConfiguracionCorreoUsuario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConfigCorreoUsuario_Usuario" Association="Self.FK_ConfigCorreoUsuario_Usuario">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="ConfiguracionCorreoUsuario" EntitySet="ConfiguracionCorreoUsuario" />
           </AssociationSet>
           <AssociationSet Name="FK_TipoConfigCorreoRol_TipoConfigCorreo" Association="Self.FK_TipoConfigCorreoRol_TipoConfigCorreo">
             <End Role="TipoConfiguracionCorreo" EntitySet="TipoConfiguracionCorreo" />
@@ -9027,6 +9075,7 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <EntitySet Name="TipoConfiguracionCorreo" EntityType="AventasModel.TipoConfiguracionCorreo" />
           <EntitySet Name="TipoConfiguracionCorreoRol" EntityType="AventasModel.TipoConfiguracionCorreoRol" />
           <EntitySet Name="ConfiguracionCorreo" EntityType="AventasModel.ConfiguracionCorreo" />
+          <EntitySet Name="ConfiguracionCorreoUsuario" EntityType="AventasModel.ConfiguracionCorreoUsuario" />
           <AssociationSet Name="FK_ConfigCorreo_Empresa" Association="AventasModel.FK_ConfigCorreo_Empresa">
             <End Role="Empresa" EntitySet="Empresa" />
             <End Role="ConfiguracionCorreo" EntitySet="ConfiguracionCorreo" />
@@ -9034,6 +9083,14 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <AssociationSet Name="FK_ConfigCorreo_Tipo" Association="AventasModel.FK_ConfigCorreo_Tipo">
             <End Role="TipoConfiguracionCorreo" EntitySet="TipoConfiguracionCorreo" />
             <End Role="ConfiguracionCorreo" EntitySet="ConfiguracionCorreo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConfigCorreoUsuario_Config" Association="AventasModel.FK_ConfigCorreoUsuario_Config">
+            <End Role="ConfiguracionCorreo" EntitySet="ConfiguracionCorreo" />
+            <End Role="ConfiguracionCorreoUsuario" EntitySet="ConfiguracionCorreoUsuario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConfigCorreoUsuario_Usuario" Association="AventasModel.FK_ConfigCorreoUsuario_Usuario">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="ConfiguracionCorreoUsuario" EntitySet="ConfiguracionCorreoUsuario" />
           </AssociationSet>
           <AssociationSet Name="FK_TipoConfigCorreoRol_TipoConfigCorreo" Association="AventasModel.FK_TipoConfigCorreoRol_TipoConfigCorreo">
             <End Role="TipoConfiguracionCorreo" EntitySet="TipoConfiguracionCorreo" />
@@ -13245,6 +13302,23 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
           <NavigationProperty Name="Empresa" Relationship="AventasModel.FK_ConfigCorreo_Empresa" FromRole="ConfiguracionCorreo" ToRole="Empresa" />
           <NavigationProperty Name="TipoConfiguracionCorreo" Relationship="AventasModel.FK_ConfigCorreo_Tipo" FromRole="ConfiguracionCorreo" ToRole="TipoConfiguracionCorreo" />
         </EntityType>
+        <EntityType Name="ConfiguracionCorreoUsuario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ConfiguracionCorreoId" Type="Int32" Nullable="false" />
+          <Property Name="UsuarioId" Type="Int32" />
+          <Property Name="CorreoManual" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Tipo" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Activo" Type="Boolean" Nullable="false" />
+          <Property Name="FechaCreacion" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UsuarioCreacionId" Type="Int32" />
+          <Property Name="UsuarioModificoId" Type="Int32" />
+          <Property Name="FechaModificacion" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ConfiguracionCorreo" Relationship="AventasModel.FK_ConfigCorreoUsuario_Config" FromRole="ConfiguracionCorreoUsuario" ToRole="ConfiguracionCorreo" />
+          <NavigationProperty Name="Usuarios" Relationship="AventasModel.FK_ConfigCorreoUsuario_Usuario" FromRole="ConfiguracionCorreoUsuario" ToRole="Usuarios" />
+        </EntityType>
         <Association Name="FK_tbInventariosCliente_Usuarios_Id">
           <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
           <End Type="AventasModel.InventariosCliente" Role="InventariosCliente" Multiplicity="*" />
@@ -13292,6 +13366,30 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
             </Principal>
             <Dependent Role="ConfiguracionCorreo">
               <PropertyRef Name="TipoConfiguracionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConfigCorreoUsuario_Config">
+          <End Type="AventasModel.ConfiguracionCorreo" Role="ConfiguracionCorreo" Multiplicity="1" />
+          <End Type="AventasModel.ConfiguracionCorreoUsuario" Role="ConfiguracionCorreoUsuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ConfiguracionCorreo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConfiguracionCorreoUsuario">
+              <PropertyRef Name="ConfiguracionCorreoId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConfigCorreoUsuario_Usuario">
+          <End Type="AventasModel.Usuarios" Role="Usuarios" Multiplicity="0..1" />
+          <End Type="AventasModel.ConfiguracionCorreoUsuario" Role="ConfiguracionCorreoUsuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConfiguracionCorreoUsuario">
+              <PropertyRef Name="UsuarioId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -16201,6 +16299,22 @@ warning 6035: The relationship 'FkMSP_MS' has columns that are not part of the k
                 <ScalarProperty Name="CorreosDestino" ColumnName="CorreosDestino" />
                 <ScalarProperty Name="TipoConfiguracionId" ColumnName="TipoConfiguracionId" />
                 <ScalarProperty Name="EmpresaId" ColumnName="EmpresaId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ConfiguracionCorreoUsuario">
+            <EntityTypeMapping TypeName="AventasModel.ConfiguracionCorreoUsuario">
+              <MappingFragment StoreEntitySet="ConfiguracionCorreoUsuario">
+                <ScalarProperty Name="FechaModificacion" ColumnName="FechaModificacion" />
+                <ScalarProperty Name="UsuarioModificoId" ColumnName="UsuarioModificoId" />
+                <ScalarProperty Name="UsuarioCreacionId" ColumnName="UsuarioCreacionId" />
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="Activo" ColumnName="Activo" />
+                <ScalarProperty Name="Tipo" ColumnName="Tipo" />
+                <ScalarProperty Name="CorreoManual" ColumnName="CorreoManual" />
+                <ScalarProperty Name="UsuarioId" ColumnName="UsuarioId" />
+                <ScalarProperty Name="ConfiguracionCorreoId" ColumnName="ConfiguracionCorreoId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

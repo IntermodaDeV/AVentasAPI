@@ -414,6 +414,9 @@
     <Compile Include="Database\ConfiguracionCorreo.cs">
       <DependentUpon>AVentas.tt</DependentUpon>
     </Compile>
+    <Compile Include="Database\ConfiguracionCorreoUsuario.cs">
+      <DependentUpon>AVentas.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\MODULOS.cs">
       <DependentUpon>AVentasConfig.tt</DependentUpon>
     </Compile>

@@ -189,6 +189,7 @@ namespace DBData.Database
         public virtual DbSet<TipoConfiguracionCorreo> TipoConfiguracionCorreo { get; set; }
         public virtual DbSet<TipoConfiguracionCorreoRol> TipoConfiguracionCorreoRol { get; set; }
         public virtual DbSet<ConfiguracionCorreo> ConfiguracionCorreo { get; set; }
+        public virtual DbSet<ConfiguracionCorreoUsuario> ConfiguracionCorreoUsuario { get; set; }
         public virtual DbSet<ErroresLog> ErroresLog { get; set; }
         public virtual DbSet<Servicio> Servicio { get; set; }
         public virtual DbSet<ContactoServicio> ContactoServicio { get; set; }
