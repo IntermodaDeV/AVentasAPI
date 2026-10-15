@@ -1111,17 +1111,20 @@ namespace AventasApi.Controllers
                 // 2) entre facturas que comparten el mismo NumeroCuota (p.ej. facturas normales, sin Acuerdo, que no
                 //    tienen numero de cuota propio), primero las vencidas
                 // 3) entre las vencidas, la que vencio hace mas tiempo primero (fecha de vencimiento mas antigua)
-                // 4) y como ultimo desempate (entre las NO vencidas, o empate de fecha entre vencidas), el orden en
-                //    que el asesor las selecciono en pantalla (reciboPost.SubFacturas conserva ese orden).
+                // 4) entre vencidas con la MISMA fecha de vencimiento, por numero de factura (nunca por orden de
+                //    seleccion -- las vencidas siempre van por fecha y numero de factura, sin excepcion)
+                // 5) y como ultimo desempate (solo relevante entre las NO vencidas), el orden en que el asesor las
+                //    selecciono en pantalla (reciboPost.SubFacturas conserva ese orden).
                 // Antes del fix, el 2do/3er/4to criterio eran FechaVencimiento/Factura (sin separar vencidas de no
                 // vencidas), lo cual hacia que el pago cayera completo en la factura "equivocada", dejando el resto
                 // de facturas seleccionadas sin ningun detalle guardado.
                 Func<SubFacturasxCliente, bool> esVencida = sf => sf.FechaVencimiento.HasValue && sf.FechaVencimiento.Value.Date < DateTime.Today;
                 Func<SubFacturasxCliente, long> antiguedadVencimiento = sf => esVencida(sf) ? sf.FechaVencimiento.Value.Ticks : long.MaxValue;
+                Func<SubFacturasxCliente, string> facturaSiVencida = sf => esVencida(sf) ? sf.Factura : null;
                 var subFacturas = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).ToList()
-                    .OrderBy(subFac => subFac.NumeroCuota).ThenByDescending(esVencida).ThenBy(antiguedadVencimiento).ThenBy(subFac => reciboPost.SubFacturas.IndexOf(subFac.IdSubFactura)).ToList();
+                    .OrderBy(subFac => subFac.NumeroCuota).ThenByDescending(esVencida).ThenBy(antiguedadVencimiento).ThenBy(facturaSiVencida).ThenBy(subFac => reciboPost.SubFacturas.IndexOf(subFac.IdSubFactura)).ToList();
                 var subFacturasCopy = context.SubFacturasxCliente.Include(b => b.FacturasxCliente).AsNoTracking().Where(subFac => reciboPost.SubFacturas.Contains(subFac.IdSubFactura)).ToList()
-                    .OrderBy(subFac => subFac.NumeroCuota).ThenByDescending(esVencida).ThenBy(antiguedadVencimiento).ThenBy(subFac => reciboPost.SubFacturas.IndexOf(subFac.IdSubFactura)).ToList();
+                    .OrderBy(subFac => subFac.NumeroCuota).ThenByDescending(esVencida).ThenBy(antiguedadVencimiento).ThenBy(facturaSiVencida).ThenBy(subFac => reciboPost.SubFacturas.IndexOf(subFac.IdSubFactura)).ToList();
                 List<ReciboApiModel> recibos = new List<ReciboApiModel>();
                 var isOnline = EnLinea(asesor.EmpresaId, asesor.CodigoAsesor);
                 Dictionary<int, double> pagadoMemory = new Dictionary<int, double>();
