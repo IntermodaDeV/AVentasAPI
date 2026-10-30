@@ -83,14 +83,27 @@ namespace AventasApi.Controllers
                 {
                     var user = _authenticationAppService.Validate(Request.Headers.Authorization.Parameter);
                     var usuarioActual = await ctx.Usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.Id == user.Id);
+                    var firmaBytes = usuarioActual?.firma;
 
-                    if (usuarioActual == null || usuarioActual.firma == null)
+                    if (firmaBytes == null)
+                    {
+                        // Igual que en el listado (obtenerfirma): si el usuario no tiene firma se usa la del asesor.
+                        var userAccount = user.UserAccount;
+                        var asesoresHabilitados = await ObtenerAsesoresDelUsuario(ctx, user.Id, empresa);
+                        firmaBytes = await ctx.Asesores.AsNoTracking()
+                            .Where(ase => asesoresHabilitados.Contains(ase.CodigoAsesor) && ase.EmpresaId == empresa && ase.firma != null)
+                            .OrderByDescending(ase => ase.Usuario == userAccount)
+                            .Select(ase => ase.firma)
+                            .FirstOrDefaultAsync();
+                    }
+
+                    if (firmaBytes == null)
                     {
                         return Ok("");
                     }
 
                     string firma = "";
-                    firma = "data:image/png;base64," + Convert.ToBase64String(usuarioActual.firma);
+                    firma = "data:image/png;base64," + Convert.ToBase64String(firmaBytes);
                     return Ok(firma);
                 }
             }
